@@ -1,0 +1,1231 @@
+<?php
+const CULTURE_PERIODS_VID = 20;                         // vid словаря Периоды роста культур
+const AGRO_CATEGORY_TID = 1;                            // tid термина категории Агрохимикаты
+const AGRO_CATEGORY_DESSICANTS_TID      = 71534;        // tid термина категории Десиканты
+const AGRO_CATEGORY_HERBICIDES_TID      = 15;           // tid термина категории Гербициды
+const AGRO_CATEGORY_DISINFECTANTS_TID   = 71533;        // tid термина категории Протравители
+const AGRO_CATEGORY_FUNGICIDES_TID      = 16;           // tid термина категории Фунгициды
+const AGRO_CATEGORY_INCECTICIDES_TID    = 17;           // tid термина категории Инсектициды
+const AGRO_CATEGORY_FERT_TID            = 93;           // tid термина категории Удобрения
+const AGRO_CATEGORY_MIX_TID             = 72343;        // tid термина категории Баковые смеси
+const AGRO_FIELD_MEASURE                = 'ha';         // ед. измерения площади поля (гектар)
+const AGRO_SEED_MEASURE                 = 't';          // ед. измерения веса семян (тонна)
+
+//устарело
+const HOBJECTS_WEEDS_TID                = 71340;        // tid термина категории Сорняки
+const HOBJECTS_PESTS_TID                = 71341;        // tid термина категории Вредители
+const HOBJECTS_FUNGIS_TID               = 72339;        // tid термина категории Болезни
+
+
+/**
+ * Implements hook_init().
+ */
+function chibs_init()
+{
+    // редирект с Cart на Checkout
+    if ($_GET['q'] == 'cart') drupal_goto('/checkout');
+
+    // редирект с expo на en/expo
+    if (drupal_get_path_alias($_GET['q']) == 'expo' && $GLOBALS['language']->language == 'ru') drupal_goto('en/expo');
+
+    // редирект с expo на en/expo
+    if (drupal_get_path_alias($_GET['q']) == 'china' && $GLOBALS['language']->language == 'ru') drupal_goto('en/china');
+
+    // запретить доступ анонимным пользователям к заданным страницам (админка - "Настройки страниц")
+    if ($pages_list = variable_get('aa_list', '')) {
+        foreach(explode(PHP_EOL,$pages_list) as $page_url) {
+            if (!$GLOBALS['user']->uid && url($_GET['q']) == '/' . $page_url) {
+                drupal_goto('toboggan/denied', array('query' => array('destination' => $page_url)));
+            }
+        }
+    };
+
+}
+
+/**
+ *  Implementation of hook_menu()
+ */
+function chibs_menu() {
+    // команды для текущего модального окна (закрыть, обновить страницу)
+    $items['ctools_modal/%/cmd/%'] = array(
+        'page callback' => 'ctools_modal_ajax_cmd',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    $items['promchem/firepowders/contact'] = array(
+        'page callback' => 'chibs_dry_chemicals_ajax_contact',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    $items['board/ad/%/message'] = array(
+        'page callback' => 'chibs_ads_ajax_contact',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+//    $items['run-batch'] = array(
+//        'page callback' => 'chibs_run_batch',
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+
+  // путь для автокомплита Основных культур
+  // используется в приложении, модуль Agrohelp
+  $items['autocomplete-culture'] = array(
+    'page callback' => '_chibs_autocomplete_culture',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+    $items['admin/config/administration/manager'] = array(
+        'title' => 'Настройки страниц',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('chibs_settings'),
+        'access arguments' => array('access manager settings'),
+        'file' => 'chibs.admin.inc',
+    );
+    return $items;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function chibs_theme() {
+    return array(
+        // карточка контакта
+        'contact_card' => array(
+            'variables' => array('contact' => null),
+            'template' => 'contact-card',
+            'path' => drupal_get_path('theme', 'gard') . '/templates/system',
+        ),
+        // темизация Entityform Обратная связь для темы Gard
+        'contact_us_entityform_edit_form' => array(
+            'render element' => 'form',
+            'template' => 'contact-us-entityform',
+            'path' => drupal_get_path('theme', 'gard') . '/templates/entity',
+        ),
+        'tabular_form' => array(
+            'render element' => 'form',
+        ),
+    );
+}
+
+
+/**
+ * Реализация функции темизации tabular_form
+ */
+function theme_tabular_form($vars) {
+    $form = $vars['form'];
+    $rows = array();
+
+    foreach (element_children($form['data']) as $key) {
+        foreach (element_children($form['data'][$key]) as $name) {
+            $rows[$key][] = drupal_render($form['data'][$key][$name]);
+        }
+    }
+
+    return theme('table', array(
+        'header' => $form['header']['#value'],
+        'rows' => $rows,
+    ));
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function chibs_js_alter(&$js) {
+
+    // замена версии библиотеки jquery.form с 2.69 на последнюю - 3.51
+    // старая библиотека не загружала файл при использовании поля managed_file в форме с аяксифицированным сабмитом
+    // или форме, размещенной во всплывающем окне
+        // Define path to old jQuery Form plugin, alter to your needs.
+    $old_path = drupal_get_path('module', 'jquery_update') . '/replace/misc/jquery.form.min.js';
+
+        // The script does not get loaded on every page, so check the $js array.
+    if (isset($js[$old_path])) {
+        // Define path to newer jQuery Form plugin, alter to your needs.
+        $new_path = drupal_get_path('module', 'chibs') . '/js/jquery.form.min.js';
+
+        // Copy data from old javascript to new and remove old javascript.
+        $js[$new_path] = $js[$old_path];
+        unset($js[$old_path]);
+
+        // Set new path as data property and alter version number.
+        $js[$new_path]['data'] = $new_path;
+        $js[$new_path]['version'] = '3.51.0';
+    }
+}
+
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function chibs_preprocess_html(&$vars)
+{
+    $color = '';
+    $path_array = explode('/', $_GET['q']);
+    // класс в зависимости от категории
+    if ($path_array[0] == 'taxonomy' && is_numeric($path_array[2]) && $term = taxonomy_term_load($path_array[2])) {
+        if (isset($term->name_field['en'][0]['value'])) {
+            $color = drupal_strtolower($term->name_field['en'][0]['value']);
+            $color = str_replace(' ', '-', $color);
+        }
+    }
+
+    // добавить цветовой класс в зависимости от категории выводимого препарата
+    if ($path_array[0] == 'node' && is_numeric($path_array[1]) && isset($vars['page']['content']['system_main']['nodes'][$path_array[1]])) {
+
+        $node = $vars['page']['content']['system_main']['nodes'][$path_array[1]];
+        // определить категорию
+        $tid = empty($node['#node']->field_pd_category['und'][0]['tid']) ? 0 : $node['#node']->field_pd_category['und'][0]['tid'];
+        if (!empty($_GET['cat'])) $tid = $_GET['cat'];
+
+        if ($term = taxonomy_term_load($tid)) {
+            if (isset($term->name_field['en'][0]['value'])) {
+                $color = drupal_strtolower($term->name_field['en'][0]['value']);
+                $color = str_replace(' ', '-', $color);
+            }
+        }
+    }
+
+    if ($color) $vars['classes_array'][] = 'page-'. $color;
+
+    // подключить FontAwesome 5
+    drupal_add_css('https://use.fontawesome.com/releases/v5.0.6/css/all.css', array('type' => 'external'));
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function chibs_preprocess_page(&$vars) {
+
+    // подключить скрипт определения устройства и вывода строки со ссылкой на скачивание мобильного приложения
+    // только на главной
+    $path = drupal_get_path_alias($_GET['q']);
+    if (drupal_is_front_page() || strpos($path, 'catalog/joy') === 0) {
+        drupal_add_library('system', 'jquery.cookie');
+        drupal_add_js(drupal_get_path('module', 'chibs') . '/js/device.js');
+        drupal_add_js(drupal_get_path('module', 'chibs') . '/js/mobApp.js');
+        drupal_add_css(drupal_get_path('module', 'chibs') . '/css/mobApp.css');
+    }
+}
+
+
+
+/**
+ * ------------------------------------------ Path Breadcrumbs -------------------------------------------
+ * динамически формируем Крошку на описание товара
+ */
+function chibs_path_breadcrumbs_view_alter(&$breadcrumbs, $path_breadcrumbs, $contexts)
+{
+    // перевести пункт Home
+    if ($path_breadcrumbs->home == 1) $breadcrumbs[0] = '<a href="/">' . t('Home', array(), array('context' => 'Path Breadcrumbs Home link')) . '</a>';
+
+    // для Описания товара
+    // определить текущую категорию товара
+    if ($path_breadcrumbs->machine_name == 'product' && isset($_GET['cat'])) {
+        $tid = $_GET['cat'];
+        $term = taxonomy_term_load($tid);
+        // ссылки на категории
+        $tid_url = drupal_get_path_alias('taxonomy/term/' . $tid);
+        // название
+        $breadcrumbs[3] = '<a href="/' . $tid_url . '">' . $term->name . '</a>';
+    }
+}
+
+/**
+ * --------------------------------------------- Views -----------------------------------------------------------------
+ *
+ */
+
+
+
+/**
+ * --------------------------------------------- раздел Вакансий -------------------------------------------------------
+ *
+ */
+//function chibs_views_query_alter(&$view, &$query) {
+//  // если организация Агрохимикат - не учитывать фильтр по регионам
+////  if ($view->name == 'vacancies') {
+////    if ($view->exposed_data['employer'] == 'ag') {
+////      foreach( $query->where['1']['conditions'] as $key=>$condition ) {
+////        if (is_string($condition['field']) && $condition['field'] == 'field_data_field_region.field_region_value' ) {
+////          unset( $query->where['1']['conditions'][$key] );
+////        }
+////      }
+////    }
+////  }
+//}
+//
+
+
+
+/**
+ * -------------------------------------- Дополнение для модуля Advanced Poll -----------------------------------------
+ *
+ * начисление и вычитание бонуса за голосование и отмену голоса
+ *
+ */
+
+const ADVPOLL_VOTE_BONUS = 100; // размер бонуса за голосование
+
+// функция для добавления действий после удачного голосования
+function chibs_votingapi_insert() {
+    global $user;
+
+    // TODO проверка, даётся ли за это голосование бонус
+    if (true) {
+        // добавить пользователю на личный счёт бонус за голосование ( константа ADVPOLL_VOTE_BONUS )
+        if ($profile = profile2_load_by_user($user, 'main')) {
+            $lang = $GLOBALS['language']->language;
+            if (!isset($profile->field_profile_account[$lang][0]['value'])) $profile->field_profile_account[$lang][0]['value'] = 0;
+            $profile->field_profile_account[$lang][0]['value'] += ADVPOLL_VOTE_BONUS;
+            profile2_save($profile);
+        }
+    }
+}
+
+
+// функция для добавления действий после отмены голосования
+function chibs_votingapi_delete() {
+    global $user;
+
+    // TODO проверка, даётся ли за это голосование бонус
+    if (true) {
+        // вычесть у пользователя с личного счёта бонус за голосование ( константа ADVPOLL_VOTE_BONUS )
+        if ($profile = profile2_load_by_user($user, 'main')) {
+            $lang = $GLOBALS['language']->language;
+            if (!isset($profile->field_profile_account[$lang][0]['value'])) $profile->field_profile_account[$lang][0]['value'] = 0;
+            $profile->field_profile_account[$lang][0]['value'] -= ADVPOLL_VOTE_BONUS;
+            if ($profile->field_profile_account[$lang][0]['value'] < 0) {
+                $profile->field_profile_account[$lang][0]['value'] = 0;
+            }
+            profile2_save($profile);
+        }
+    }
+}
+
+/**
+ *  --------------------------------------------- Прочие изменения -----------------------------------------------------
+ */
+
+// не менять расширение js на js.txt для поля field_page_files, тип контента: Страница
+function chibs_file_presave($file) {
+
+    // Bypass secure file extension for .js for field_additional_js field only
+    if((isset($file->source) && strpos($file->source, "field_page_files") !== FALSE) && substr($file->filename, strlen($file->filename) - 7) == ".js.txt") {
+
+        // Define new uri and save previous
+        $original_uri = $file->uri;
+        $new_uri = substr($file->destination, null, -4);
+
+        // Alter file object
+        $file->filemime = 'application/javascript';
+        $file->filename = substr($file->filename, null, -4);
+        $file->destination = file_destination($new_uri, FILE_EXISTS_RENAME);
+        $file->uri = $file->destination;
+
+        // Move fil (to remove .txt)
+        file_unmanaged_move($original_uri, $file->destination);
+
+        // Display message that says that
+        drupal_set_message(t('Security bypassed for .js for this specific field (%f).', array('%f' => $file->filename)));
+    }
+}
+
+
+
+/*
+ * автозаполнение полей title и alt изображений в продукции при сохранении ноды
+ */
+function chibs_node_submit($node, $form, &$form_state) {
+    if (strpos($node->type, 'product_') === 0 && $node->type != 'product_mix') {
+        $site_name = 'ООО ТД "Кирово-Чепецкая Химическая Компания"';
+        $pd_wrapper = entity_metadata_wrapper('node', $node);
+        foreach($pd_wrapper->field_product as $p_wrapper) {
+            foreach($p_wrapper->field_p_images as $image) {
+                $image->alt = $node->title . ' - ' . strip_tags($pd_wrapper->body->summary->value()) . ' - ' . $site_name;
+                $image->title = $node->title . ' - ' . strip_tags($pd_wrapper->body->summary->value()) . ' - ' . $site_name;
+            }
+            $p_wrapper->save();
+        }
+    }
+}
+
+/**
+ * ----------------------------------------------- Модальное окно ------------------------------------------------
+ */
+function chibs_include_modal($options = array()) {
+    static $added = FALSE;
+    if ($added == FALSE) {
+        $added = TRUE;
+
+        // Include the CTools tools that we need.
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        // Add CTools' javascript to the page.
+        ctools_modal_add_js();
+
+        // Создаем массив с настройками для модального окна.
+//        $style = array(
+//            'style' => array(
+//                'modalSize' => array(
+//                    'type' => 'dynamic', // Тип модального окна. фиксированный или резиновый.
+////                    'width' => 200, // Ширина модального окна.
+////                    'height' => 130, // Высота модального окна.
+//                ),
+//                'modalOptions' => array(
+//                    'opacity' => .7, // Прозрачность фона.
+//                    'background-color' => '#000', // Цвет фона.
+//                ),
+//                'closeText' => '', // Текст для закрытия модального окна.
+//                'loadingText' => '', // Текст, отображаемый в момент загрузки модального окна.
+//                'animation' => 'fadeIn',
+//                'speed' => 'slow',
+//                'modalClass' => isset($options['class']) ? $options['class'] : '',
+//                //'modalTheme' => 'CToolsSampleModal',
+//                'closeImage' => theme('image', array(
+//                    'path' => path_to_theme() . '/images/icons/btn-close-w.png',
+//                    'alt' => 'Закрыть окно',
+//                    'title' => 'Закрыть окно',
+//                    )),
+////                'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+//
+//            ),
+//        );
+
+        $style = array(
+            'style-fixed' => array(
+                'modalSize' => array(
+                    'type' => 'fixed',
+                    'width' => 500,
+                    'height' => 300,
+                    'addWidth' => 20,
+                    'addHeight' => 15,
+                ),
+                'modalOptions' => array(
+                    'opacity' => .5,
+                    'background-color' => '#000',
+                ),
+                'animation' => 'fadeIn',
+//                'modalTheme' => 'CToolsSampleModal',
+                'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+            ),
+            'style-dynamic' => array(
+                'modalSize' => array(
+                    'type' => 'dynamic',
+                    'width' => 200,
+                    'height' => 200,
+                ),
+                'modalOptions' => array(
+                    'opacity' => .5,
+                    'background-color' => '#000',
+                ),
+                'animation' => 'slideDown',
+                'speed' => 'fast',
+//                'modalTheme' => 'CToolsSampleModal',
+                'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+            ),
+        );
+
+        // Подключаем настройки для модального окна.
+        drupal_add_js($style, 'setting');
+        drupal_add_js(drupal_get_path('module', 'chibs') . '/js/modal.js');
+        //drupal_add_css(drupal_get_path('module', 'chibs') . '/css/modal.css');
+//        ctools_add_js('ctools-ajax-sample', 'ctools_ajax_sample');
+//        ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
+    }
+}
+
+/**
+ * обработчик запросов от модального окна
+ * в зависимости от параметра: перейти на странице или закрыть модвльное окно
+ */
+function ctools_modal_ajax_cmd($js, $action) {
+    if (!$js) {
+        // we should never be here out of ajax context
+        return MENU_NOT_FOUND;
+    }
+
+    ctools_include('modal');  ctools_include('ajax');
+    ctools_add_js('ajax-responder');
+    $commands = array();
+    if ($action == 'goto_cart') {
+        $commands[] = ctools_ajax_command_redirect('checkout');;
+    }
+    elseif ($action == 'dismiss') {
+        $commands[] = ctools_modal_command_dismiss();
+    }
+    print ajax_render($commands);
+    exit;
+}
+
+
+
+
+/**
+ * ------------------------------------------ Объявления (Ads) ------------------------------------------------
+ *
+ * Новая модальная форма отправки сообщения по email
+ */
+function chibs_ads_ajax_contact($nid, $js = NULL) {
+    if (!$js) {
+        return drupal_get_form('chibs_ads_contact_form', $nid);
+    }
+
+    ctools_include('modal'); ctools_include('ajax');
+    $form_state = array(
+        'title' => t('Send message'),
+        'ajax' => TRUE,
+        'build_info' => array('args' => array('nid' => $nid)),
+    );
+
+
+    $output = ctools_modal_form_wrapper('chibs_ads_contact_form', $form_state);
+    print ajax_render($output);
+    exit;
+}
+
+/**
+ * форма запроса контактных данных на странице описания попрошка
+ */
+function chibs_ads_contact_form($form, &$form_state, $nid) {
+    global $user;
+    $account = array();
+    $form_state['adid'] = $nid;
+
+    // СОЗДАНИЕ ФОРМЫ
+    $form = array(
+        '#prefix' => '<div id="contact-frm">',
+        '#suffix' => '</div>',
+        '#attributes' => array('class' => array('custom-form')),
+    );
+
+
+    // при инициализвции выводим форму
+    if (empty($form_state['complete'])) {
+        // задаём начальные значения
+        if (empty($form_state['submitted'])) {
+            $account = person_get_user_array($user);
+        }
+
+        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');
+        $form['fs1']['text'] = array(
+            '#type' => 'textarea',
+        );
+        $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Представьтесь и оставьте контакты<i>, для связи</i>', '#attributes' => array('class' => array('label-inline')));
+        $form['fs2']['name'] = array(
+            '#type' => 'textfield',
+            '#title' => 'ФИО',
+            '#default_value' => $account['full_name'],
+        );
+        $form['fs2']['phone'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Phone'),
+            '#default_value' => $account['phone'],
+        );
+        $form['fs2']['email'] = array(
+            '#type' => 'textfield',
+            '#title' => t('E-Mail'),
+            '#default_value' => $account['email'],
+        );
+
+        $form['fs4'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+        $form['fs4']['send'] = array(
+            '#type' => 'submit',
+            '#value' => 'Отправить',
+        );
+    }
+    // при завершении генерируем информационное сообщение
+    else {
+        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Сообщение отправлено');
+        $form['fs1']['info'] = array(
+            '#markup' => 'Письмо с вашим сообщением отправлено автору объявления.',
+        );
+    }
+
+    return $form;
+}
+function chibs_ads_contact_form_validate($form, &$form_state) {
+    if (!valid_email_address($form_state['values']['email'])) {
+        form_set_error('email', 'Введите корректный E-Mail адрес.' );
+    }
+    if (empty($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', 'Заполните одно из полей: ' . t('E-Mail') . ' или ' . t('Phone') . '.' );
+    if (empty($form_state['values']['text'])) form_set_error('text', 'Текст сообщения обязателен' );
+}
+function chibs_ads_contact_form_submit($form, &$form_state) {
+    // email автора
+    $ad_wrapper = entity_metadata_wrapper('node', $form_state['adid']);
+//    $ad = $ad_wrapper->value();
+    $ad_email = $ad_wrapper->author->mail->value();
+    $ad_title = $ad_wrapper->title->value();
+
+    // отправка письма автору
+    $author = '';
+    $message = 'Добрый день!<br /><br />';
+    $message .= 'Вам отправлено новое сообщение по объявлению "' . $ad_title . '".<br />';
+    $message .= '<br />';
+    $author .= empty($form_state['values']['name']) ? '' : $form_state['values']['name'] . '<br />';
+    $author .= empty($form_state['values']['phone']) ? '' : 'Телефон: ' . $form_state['values']['phone'] . '<br />';
+    $author .= empty($form_state['values']['email']) ? '' : 'E-Mail: ' . $form_state['values']['email'] . '<br />';
+
+
+    $message .= '<b>Данные пользователя</b><br />' . $author;
+    $message .= '<br />';
+    $message .= '<b>Текст сообщения</b><br />';
+    $message .= $form_state['values']['text'] . '<br />';
+
+    drupal_mail('system', 'mail', $ad_email, language_default(), array(
+        'context' => array(
+            'subject' => 'Новое сообщение по объявлению "' . $ad_title . '"',
+            'message' => $message,
+        ),
+    ));
+
+
+    // сообщаем форме, что можно выводить сообщение об успешном сабмите и перестроить её
+    $form_state['complete'] = true;
+    $form_state['rebuild'] = true;
+}
+
+
+
+
+
+
+/**
+ * Implements of hook_cron().
+ * твик производительности
+ * запретить удаление закэшированных страниц при автоматическом запуске крона
+ */
+function chibs_cron() {
+    if (strpos(request_uri(), 'cron.php')) {
+        if (!db_table_exists('cache_page_temp')) {
+            $schema = drupal_get_schema('cache_page');
+            db_rename_table('cache_page', 'cache_page_temp');
+            db_create_table('cache_page', $schema);
+        }
+        drupal_register_shutdown_function('chibs_restore_cache_page');
+    }
+}
+/**
+ * Shutdown function for cron cleanup.
+ */
+function chibs_restore_cache_page() {
+    db_drop_table('cache_page');
+    db_rename_table('cache_page_temp', 'cache_page');
+}
+
+/**
+ * Implements hook_views_data_alter().
+ * твик производительности
+ * добавляет во Views Fields сырые (raw) значение из БД
+ */
+function chibs_views_data_alter(&$data) {
+    foreach ($data as $table_name => $table_info) {
+        foreach ($table_info as $field_name => $field_info) {
+            if (isset($field_info['field']['handler']) && $field_info['field']['handler'] == 'views_handler_field_field') {
+                $field_info['field']['handler'] = 'views_handler_field';
+                $field_info['title'] .= ' (raw)';
+                $field_info['title short'] .= ' (raw)';
+                $data[$table_name][$field_name . '_raw'] = $field_info;
+            }
+        }
+    }
+}
+
+/**
+ * функция загружает заказ и возвращает итоговую сумму
+ */
+function chibs_order_total_amount($order) {
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+    $total = NULL;
+    // Loop over each line item on the order.
+    foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+        // Get the ещефд value of product line items.
+        $line_item = $line_item_wrapper->value();
+        if (!empty($line_item)) {
+            $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+            $total += $line_item_wrapper->commerce_total->amount->value();
+        }
+    }
+
+    return $total;
+}
+
+/**
+ * ----------------------------------------------- Вспомогательные функции ---------------------------------------------
+ *
+ */
+
+// функция установки подзаголовка для страницы по аналогии с drupal_set_title
+function drupal_set_subtitle($title = NULL, $output = CHECK_PLAIN) {
+    $stored_title = &drupal_static(__FUNCTION__);
+
+    if (isset($title)) {
+        $stored_title = ($output == PASS_THROUGH) ? $title : check_plain($title);
+    }
+
+    return $stored_title;
+}
+
+// function from module file_entity.file_api.inc
+// converts file uri to file object
+function chibs_file_uri_to_object($uri, $use_existing = TRUE) {
+    $file = FALSE;
+    $uri = file_stream_wrapper_uri_normalize($uri);
+
+    if ($use_existing) {
+        // We should always attempt to re-use a file if possible.
+        $files = entity_load('file', FALSE, array('uri' => $uri));
+        $file = !empty($files) ? reset($files) : FALSE;
+    }
+
+    if (empty($file)) {
+        $file = new stdClass();
+        $file->uid = $GLOBALS['user']->uid;
+        $file->filename = basename($uri);
+        $file->uri = $uri;
+        $file->filemime = file_get_mimetype($uri);
+        // This is gagged because some uris will not support it.
+        $file->filesize = @filesize($uri);
+        $file->timestamp = REQUEST_TIME;
+        $file->status = FILE_STATUS_PERMANENT;
+    }
+
+    return $file;
+}
+
+/**
+ * обрезает строку $str до длины $size по пробелу и добавляет символ $symb
+ *
+ * @return string
+ */
+function _cropStr($str, $size, $symb) {
+    $string = $str;
+    if (mb_strlen($str) > $size)
+        $string = mb_substr($str, 0, mb_strrpos(mb_substr($str, 0, $size, 'utf-8'), ' ', 'utf-8'), 'utf-8');
+    if (mb_strlen($string) > $size)
+        $string = mb_substr($str);
+    if (mb_strlen($str) > mb_strlen($string))
+        $string = $string . $symb;
+    return $string;
+}
+
+/**
+ * вставляет в строку $str до длины $size на месте пробела строку $symb
+ * используется для вставки <br /> вместо пробела до заданной длины
+ *
+ * @return string
+ */
+function _insertToStr($str, $size, $symb) {
+    $string = $str;
+    if (mb_strlen($str) > $size)
+        $string = mb_substr($str, 0, mb_strrpos(mb_substr($str, 0, $size, 'utf-8'), ' ', 'utf-8'), 'utf-8');
+    $end = trim(str_replace($string, '', $str));
+    if (mb_strlen($string) > $size)
+        $string = mb_substr($str);
+    if (mb_strlen($str) > mb_strlen($string))
+        $string = $string . $symb . $end;
+    return $string;
+}
+
+/**
+ * вставка пробела через заданный промежутки
+ * @param $value
+ * @param int $offset
+ * @return string
+ */
+function insert_space($value, $offset = 3) {
+    $v = (string)$value;
+    $l = strlen($v);
+    $ret = array();
+    for($i=$l; $i>0; $i--) {
+        if(($i % $offset) == 0) $ret[] = ' ';
+        $ret[] = $v[$l-$i];
+    }
+    return trim(implode(null, $ret));
+}
+
+function translit($st) {
+    $lit = array(
+        "а" => "a",
+        "б" => "b",
+        "в" => "v",
+        "г" => "g",
+        "д" => "d",
+        "е" => "e",
+        "ё" => "yo",
+        "ж" => "g",
+        "з" => "z",
+        "и" => "i",
+        "й" => "y",
+        "к" => "k",
+        "л" => "l",
+        "м" => "m",
+        "н" => "n",
+        "о" => "o",
+        "п" => "p",
+        "р" => "r",
+        "с" => "s",
+        "т" => "t",
+        "у" => "u",
+        "ф" => "f",
+        "х" => "h",
+        "ц" => "ts",
+        "ч" => "ch",
+        "ш" => "sh",
+        "щ" => "shch",
+        "ъ" => "",
+        "ы" => "i",
+        "ь" => "",
+        "э" => "e",
+        "ю" => "yu",
+        "я" => "ya",
+
+        "А" => "A",
+        "Б" => "B",
+        "В" => "V",
+        "Г" => "G",
+        "Д" => "D",
+        "Е" => "E",
+        "Ё" => "Yo",
+        "Ж" => "G",
+        "З" => "Z",
+        "И" => "I",
+        "Й" => "Y",
+        "К" => "K",
+        "Л" => "L",
+        "М" => "M",
+        "Н" => "N",
+        "О" => "O",
+        "П" => "P",
+        "Р" => "R",
+        "С" => "S",
+        "Т" => "T",
+        "У" => "U",
+        "Ф" => "F",
+        "Х" => "H",
+        "Ц" => "Ts",
+        "Ч" => "Ch",
+        "Ш" => "Sh",
+        "Щ" => "Shch",
+        "Ъ" => "",
+        "Ы" => "I",
+        "Ь" => "",
+        "Э" => "E",
+        "Ю" => "Yu",
+        "Я" => "Ya",
+    );
+    return $st = strtr($st, $lit);
+}
+
+/**
+ * формирует иерархический список для select
+ * @param string $taxonomy_name
+ * @return array
+ */
+function get_options_by_taxonomy($taxonomy_name) {
+    $options = array();
+    $vid = taxonomy_vocabulary_machine_name_load($taxonomy_name)->vid;
+    $terms = taxonomy_get_tree($vid, $parent = 0, $max_depth = NULL);
+    foreach ($terms as $term) {
+        $space = '';
+        for ($i=0; $i<$term->depth; $i++) $space .= '--';
+        $options[$term->tid] = $space . ' ' . $term->name;
+    }
+    return $options;
+}
+
+/**
+ * получить список ID категорий препарата
+ * @return array
+ */
+function _get_product_categories($node)
+{
+    $cids = array();
+
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    // для Баковой смеси
+    if (isset($node_wrapper->field_pd_mix_components)) {
+        foreach($node_wrapper->field_pd_mix_components->getIterator() as $mix_wrapper) {
+            foreach($mix_wrapper->field_pd_category->getIterator() as $cat_wrapper) {
+                $cids[] = $cat_wrapper->tid->value();
+            }
+        }
+        // для остальных препаратов
+    } elseif ($node_wrapper->field_pd_category->value()) {
+        foreach($node_wrapper->field_pd_category->getIterator() as $cat_wrapper) {
+            $cids[] = $cat_wrapper->tid->value();
+        }
+    }
+
+    return $cids;
+}
+
+
+/**
+ * Implementation of hook_galleryformatter_styles().
+ *
+ * This hook allows other modules to create additional tab styles for
+ * the galleryformatter module.
+ *
+ * @return array
+ *   An array of key => value pairs suitable for inclusion as the #options in a
+ *   select or radios form element. Each key must be the location of a css
+ *   file for a gallery formatter style. Each value should be the name of the style.
+ */
+function chibs_galleryformatter_styles() {
+    $gallerystyles_directory = drupal_get_path('module', 'chibs') . '/gallerystyles';
+    $files = file_scan_directory($gallerystyles_directory, '/\.css$/');
+    $gallerystyles = array();
+    foreach ($files as $file) {
+        // Skip RTL files.
+        if (!strpos($file->name, '-rtl')) {
+            $gallerystyles[$file->uri] = drupal_ucfirst($file->name);
+        }
+    }
+
+    // если фотка одна, то скрипт в самомо модуле не подключается
+    // а он нужен для адаптивного дополнения в gard.js
+    drupal_add_js(drupal_get_path('module', 'galleryformatter') . '/theme/galleryformatter.js');
+
+    return $gallerystyles;
+}
+
+
+/** ------------------------------------------ Кодировка email -----------------------------------------------------
+ * защита от ботов, парсящих email
+ * кодировка email в кашу с раскодировкой с помощью JS (common.js) на стороне пользователя
+ */
+function email_antibot_encode($email) {
+    // вместо @ - [s1], вместо . - [s2], в имя домена вставить / после 2го символа
+    if (preg_match('!(^.+)@(..)(.*)\.(.+)$!', $email, $email_mtch)) {
+        $email = $email_mtch[1] . '[s1]' . $email_mtch[2] . '/' . $email_mtch[3] . '[s2]' . $email_mtch[4];
+    } else return false;
+
+    return $email;
+}
+
+/** -------------------------------- Дата на русском со склонением - */
+function format_date2($timestamp, $type = 'medium', $format = '', $timezone = NULL, $langcode = 'ru') {
+    if (!isset($timezone)) {
+        global $user;
+        if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
+            $timezone = $user->timezone;
+        }
+        else {
+            $timezone = variable_get('date_default_timezone', 0);
+        }
+    }
+
+    $timestamp += $timezone;
+
+    switch ($type) {
+        case 'small':
+            $format = variable_get('date_format_short', 'm/d/Y - H:i');
+            break;
+        case 'large':
+            $format = variable_get('date_format_long', 'l, F j, Y - H:i');
+            break;
+        case 'custom':
+            // No change to format.
+            break;
+        case 'medium':
+        default:
+            $format = variable_get('date_format_medium', 'D, m/d/Y - H:i');
+    }
+
+    $max = strlen($format);
+    $date = '';
+    for ($i = 0; $i < $max; $i++) {
+        $c = $format[$i];
+        if (strpos('AaDlM', $c) !== FALSE) {
+            $date .= t(gmdate($c, $timestamp), array(), $langcode);
+        }
+        else if ($c == 'F') {
+            $month = format_date($timestamp, 'custom', 'F');
+            //$month = t('!month ' . gmdate($c, $timestamp), array('!month' => ''), array('langcode' => $langcode));
+            $month = ( format_date( $timestamp, 'custom', 'n' ) == 3 || format_date( $timestamp, 'custom', 'n' ) == 8 ) ?
+                $month . 'а' : drupal_substr($month, 0, drupal_strlen($month) - 1) . 'я';
+
+            $date .= drupal_strtolower(trim($month));
+        }
+        else if (strpos('BdgGhHiIjLmnsStTUwWyz', $c) !== FALSE) {
+            $date .= gmdate($c, $timestamp);
+        }
+        else if ($c == 'r') {
+            $date .= format_date($timestamp - $timezone, 'custom', 'D, d M Y H:i:s O', $timezone, $langcode);
+        }
+        else if ($c == 'O') {
+            $date .= sprintf('%s%02d%02d', ($timezone < 0 ? '-' : '+'), abs($timezone / 3600), abs($timezone % 3600) / 60);
+        }
+        else if ($c == 'Z') {
+            $date .= $timezone;
+        }
+        else if ($c == 'Y') {
+            $year = format_date($timestamp, 'custom', 'Y');
+            $date .= $year . ' года';
+        }
+        else if ($c == '\\') {
+            $date .= $format[++$i];
+        }
+        else {
+            $date .= $c;
+        }
+    }
+
+    return $date;
+}
+
+
+/**
+ * Преобразование секунд в секунды/минуты/часы/дни/года
+ *
+ * @param int $seconds - секунды для преобразования
+ *
+ * @return array $times:
+ *        $times[0] - секунды
+ *        $times[1] - минуты
+ *        $times[2] - часы
+ *        $times[3] - дни
+ *        $times[4] - года
+ *
+ */
+function _seconds2times($seconds){
+  $times = array();
+
+  // считать нули в значениях
+  $count_zero = false;
+
+  // количество секунд в году не учитывает високосный год
+  // поэтому функция считает что в году 365 дней
+  // секунд в минуте|часе|сутках|году
+  $periods = array(60, 3600, 86400, 31536000);
+
+  for ($i = 3; $i >= 0; $i--)
+  {
+    $period = floor($seconds/$periods[$i]);
+    if (($period > 0) || ($period == 0 && $count_zero))
+    {
+      $times[$i+1] = $period;
+      $seconds -= $period * $periods[$i];
+
+      $count_zero = true;
+    }
+  }
+
+  $times[0] = $seconds;
+  return $times;
+}
+
+
+function is_child_of_term($child_tid, $parent_tid = 0) {
+    $result_tid = &drupal_static(__FUNCTION__, array());
+
+    $result_tid = '';
+    $pid = '';
+    do {
+        $result_tid = empty($result_tid) ? $child_tid : $pid;
+
+        if ($result_tid) {
+            $query = db_select('taxonomy_term_data', 't');
+            $query->join('taxonomy_term_hierarchy', 'h', 'h.parent = t.tid');
+            $query->addField('t', 'tid');
+            $query->condition('h.tid', $result_tid);
+            $pid = $query->execute()->fetchField();
+        }
+
+    } while ($pid == $parent_tid);
+
+    return $result_tid;
+}
+
+
+// вернуть tid верхнего родителя в иерархии
+function _get_top_parent_tid($term_id) {
+    do {
+        $tid = empty($tid) ? $term_id : key($pid);
+        $pid = taxonomy_get_parents($tid);
+    } while ($pid);
+
+    return $tid;
+}
+
+
+function _get_product_display_by_product_id($product_id, $only_id = true) {
+    $product_display_nid = db_select('field_data_field_product', 'f')
+        ->fields('f', array('entity_id'))
+        ->condition('f.field_product_product_id', $product_id)
+        ->range(0, 1)
+        ->execute()
+        ->fetchField();
+    if ($only_id) return  $product_display_nid;
+    else return node_load($product_display_nid);
+}
+
+function _num2str($num) {
+    $nul='ноль';
+    $ten=array(
+        array('','один','два','три','четыре','пять','шесть','семь', 'восемь','девять'),
+        array('','одна','две','три','четыре','пять','шесть','семь', 'восемь','девять'),
+    );
+    $a20=array('десять','одиннадцать','двенадцать','тринадцать','четырнадцать' ,'пятнадцать','шестнадцать','семнадцать','восемнадцать','девятнадцать');
+    $tens=array(2=>'двадцать','тридцать','сорок','пятьдесят','шестьдесят','семьдесят' ,'восемьдесят','девяносто');
+    $hundred=array('','сто','двести','триста','четыреста','пятьсот','шестьсот', 'семьсот','восемьсот','девятьсот');
+    $unit=array( // Units
+        array('копейка' ,'копейки' ,'копеек',	 1),
+        array('рубль'   ,'рубля'   ,'рублей'    ,0),
+        array('тысяча'  ,'тысячи'  ,'тысяч'     ,1),
+        array('миллион' ,'миллиона','миллионов' ,0),
+        array('миллиард','милиарда','миллиардов',0),
+    );
+    //
+    list($rub,$kop) = explode('.',sprintf("%015.2f", floatval($num)));
+    $out = array();
+    if (intval($rub)>0) {
+        foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
+            if (!intval($v)) continue;
+            $uk = sizeof($unit)-$uk-1; // unit key
+            $gender = $unit[$uk][3];
+            list($i1,$i2,$i3) = array_map('intval',str_split($v,1));
+            // mega-logic
+            $out[] = $hundred[$i1]; # 1xx-9xx
+            if ($i2>1) $out[]= $tens[$i2].' '.$ten[$gender][$i3]; # 20-99
+            else $out[]= $i2>0 ? $a20[$i3] : $ten[$gender][$i3]; # 10-19 | 1-9
+            // units without rub & kop
+            if ($uk>1) $out[]= _morph($v,$unit[$uk][0],$unit[$uk][1],$unit[$uk][2]);
+        } //foreach
+    }
+    else $out[] = $nul;
+    $out[] = _morph(intval($rub), $unit[1][0],$unit[1][1],$unit[1][2]); // rub
+    $out[] = $kop.' '._morph($kop,$unit[0][0],$unit[0][1],$unit[0][2]); // kop
+    return trim(preg_replace('/ {2,}/', ' ', join(' ',$out)));
+}
+
+/**
+ * Склоняем словоформу
+ * @ author runcore
+ */
+function _morph($n, $f1, $f2, $f5) {
+    $n = abs(intval($n)) % 100;
+    if ($n>10 && $n<20) return $f5;
+    $n = $n % 10;
+    if ($n>1 && $n<5) return $f2;
+    if ($n==1) return $f1;
+    return $f5;
+}
+
+function mb_ucfirst($str) {
+    return mb_substr(mb_strtoupper($str,'utf-8'),0,1,'utf-8').mb_strtolower(mb_substr($str,1,mb_strlen($str,'utf-8'),'utf-8'),'utf-8');
+}
+
+/**
+ * ------------------------------------------ Время выполнения блоков и view -------------------------------------------
+ * http://xandeadx.ru/blog/drupal/850
+ * Implements hook_block_list_alter().
+ */
+function chibs_block_list_alter(&$blocks) {
+  $GLOBALS['block_build_microtime'] = microtime(TRUE);
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function chibs_block_view_alter(&$data, $block) {
+  $block->build_time = microtime(TRUE) - $GLOBALS['block_build_microtime'];
+  $GLOBALS['block_build_microtime'] = microtime(TRUE);
+}
+
+/**
+ * Preprocess function for block.tpl.php.
+ */
+function chibs_preprocess_block(&$vars) {
+  if (isset($vars['block']->build_time)) {
+    $build_time = intval($vars['block']->build_time * 100000) / 100;
+    $vars['content'] .= "\n<!-- Block build time: $build_time ms -->\n";
+  }
+}
+/**
+ * http://xandeadx.ru/blog/drupal/848
+ * Implements hook_views_post_render().
+ */
+function chibs_views_post_render(&$view, &$output, &$cache) {
+  $execute_time = intval($view->execute_time * 100000) / 100;
+  $render_time = intval($view->render_time * 100000) / 100;
+  $output .= "\n<!-- Query time: $execute_time ms, Render time: $render_time ms -->";
+}
+/**
+ * --------------------------------- Заглушка вместо отсутствующих картинок --------------------------------------------
+ * http://xandeadx.ru/blog/drupal/854
+ * Preprocess function for theme_image_style().
+ */
+function chibs_preprocess_image_style(&$vars) {
+    // для REST запросов переменная $vars['path'] вместо установки начального значения будет перезаписана
+    // поэтому для REST (мобильные изображения) деф. изображения отключаем
+  if (strpos($_SERVER['HTTP_HOST'],'.local') && $vars['style_name'] != 'category_teaser_mob') {
+    $vars['path'] = 'public://default_images/no_photo.png';
+  }
+}
+
+/**
+ * --------------------------------- Добавить view mode Front ----------------------------------------------------------
+ * Implements hook_entity_info_alter().
+ * http://sanchiz.net/blog/node-view-modes
+ */
+function chibs_entity_info_alter(&$entity_info) {
+    $entity_info['node']['view modes']['front'] = array(
+        'label' => t('Front', array(), array('context' => 'view mode')),
+        'custom settings' => TRUE,
+    );
+}
+
+
+
+
+/**
+ * разрешаить открытие сайта в iframe для сторонних сайтов
+ * http://www.unmoscerinonelweb.com/blog/drupal-7-blocks-external-frame-due-to-x-frame-options/
+ */
+function chibs_page_delivery_callback_alter(&$delivery_callback) {
+  $domains = variable_get('ur_com_xframe_allowed', array(
+      'http://77.72.142.170:8081/',
+      'http://77.72.142.170/',
+//      'https://youtu.be/',
+//      'https://youtube.com/',
+//      'https://www.youtube.com/',
+  ));
+  // removing frameset limitation for certain referrers
+  if (in_array($_SERVER['HTTP_REFERER'], $domains)){
+    //setting the variable to false in order to avoid a future setting of the header
+    variable_set('x_frame_options', FALSE);
+  } else {
+    //default behavior
+    variable_set('x_frame_options', 'SAMEORIGIN');
+  }
+}
+
+/**
+ * --------------------------------- Автокомплиты ----------------------------------------------------------------------------
+ */
+function _chibs_autocomplete_culture()
+{
+  $max = 10;
+  $title = $_GET['title'];
+  $limit = isset($_GET['limit']) ? $_GET['limit'] : $max;
+  if ($limit > $max) { $limit = $max; }
+  $results = db_select('node', 'n')
+    ->fields('n', array('nid', 'title'))
+    ->condition('title', '%' . db_like($title) . '%', 'LIKE')
+    ->condition('type', 'main_cultures')
+    ->range(0, $limit)
+    ->execute()
+    ->fetchAll();
+  drupal_json_output($results);
+  drupal_exit();
+}
+

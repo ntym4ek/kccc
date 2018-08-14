@@ -1,0 +1,173 @@
+<?php
+
+/* hooks ------------------------------------------------------------------------------------------------ */
+function products_filter_menu() {
+    $items['autocomplete/main-cultures'] = array(
+        'page callback' => 'products_filter_autocomplete_main_cultures',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['autocomplete/harmful-objects'] = array(
+        'page callback' => 'products_filter_autocomplete_harmful_objects',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function products_filter_block_info() {
+  return array(
+    'product_filter_front' => array(
+      'info' => 'Главная | Фильтр по продукции',
+      'cache' => DRUPAL_NO_CACHE,
+    ),
+  );
+}
+ 
+function products_filter_block_view( $delta = '' ) {
+  $block = array(); 
+  switch ( $delta ) {
+    case 'product_filter_front':
+      $block['content'] = drupal_get_form('products_filter_block_form');
+      break;
+  }
+  return $block;
+}
+
+/* functions ------------------------------------------------------------------------------------------------ */
+// callback для строки автозаполнения Основные культуры
+function products_filter_autocomplete_main_cultures($string) {
+    $result = db_select('node', 'n')
+      ->fields('n', array('nid', 'title'))
+      ->condition('n.type', 'main_cultures')
+      ->condition('title', '%' . db_like($string) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+
+    $matches = array();
+    foreach ($result as $row) {
+        $matches[$row->title] = check_plain($row->title);
+    }
+
+    drupal_json_output($matches);
+}
+
+// callback для строки автозаполнения Вредные объекты
+function products_filter_autocomplete_harmful_objects($string) {
+    $result = db_select('node', 'n')
+      ->fields('n', array('nid', 'title'))
+      ->condition('n.type', 'harmful_objects')
+      ->condition('title', '%' . db_like($string) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+
+    $matches = array();
+    foreach ($result as $row) {
+        $matches[$row->title] = check_plain($row->title);
+    }
+
+    drupal_json_output($matches);
+}
+
+/* форма с полями ввода для блока фильтра на главной */
+function products_filter_block_form($form, &$form_state) {
+    $form = array();
+    $form['title'] = array(
+        '#markup' => '<div class="block-title"><a href="/catalog/agrochemicals">' . 'Средства защиты растений' . '</a></div>'
+    );
+    $form['intro'] = array(
+        '#markup' => '<h2 class="intro">' . 'Подберите препарат по обрабатываемой культуре и вредному объекту' . '</h2>'
+    );
+    $form['main_culture'] = array(
+        '#type' => 'textfield',
+        '#description' => 'введите название обрабатываемой культуры',
+        '#autocomplete_path' => 'autocomplete/main-cultures',
+        '#size' => 60,
+        '#default_value' => '',
+    );
+    $form['harmful_object'] = array(
+        '#type' => 'textfield',
+        '#description' => 'введите название вредного объекта',
+        '#autocomplete_path' => 'autocomplete/harmful-objects',
+        '#size' => 60,
+        '#default_value' => '',
+    );
+
+    $form['refresh_button'] = array(
+        '#type' => 'button',
+        '#value' => t('Search'),
+        '#prefix' => '<div class="submit-button">',
+        '#suffix' => '</div>',
+        '#ajax' => array(
+            'callback' => 'products_filter_block_form_refresh',
+            'wrapper' => 'block-products-filter-frontpage',
+        ),
+    );
+
+    // получить id категорий
+    $products = array();
+    $main_culture_nids = 0;
+    if (isset( $form_state['input']['main_culture']) && $form_state['input']['main_culture']) {
+        $main_culture_nids = db_select('node', 'n')
+          ->fields('n', array('nid'))
+          ->condition('n.type', 'main_cultures')
+          ->condition('title', '%' . db_like($form_state['input']['main_culture']) . '%', 'LIKE')
+          ->range(0, 1)
+          ->execute()
+          ->fetchCol();
+    }
+    $harmful_object_nids = 0;
+    if (isset( $form_state['input']['harmful_object']) && $form_state['input']['harmful_object']) {
+        $harmful_object_nids = db_select('node', 'n')
+          ->fields('n', array('nid'))
+          ->condition('n.type', 'harmful_objects')
+          ->condition('title', '%' . db_like($form_state['input']['harmful_object']) . '%', 'LIKE')
+          ->range(0, 1)
+          ->execute()
+          ->fetchCol();
+    }
+
+    // найти товары по id категорий
+    if ($main_culture_nids || $harmful_object_nids) {
+        $select = db_select('node', 'n');
+        $select->fields('n', array('nid', 'title'));
+        $select->condition('n.status', '1');
+        $select->condition('n.type', 'product_agro');
+        if ($main_culture_nids) {
+            $select->join('field_data_field_pd_main_cultures', 'mc', 'n.nid = mc.entity_id');
+            $select->condition('mc.field_pd_main_cultures_target_id', $main_culture_nids, 'IN');
+        }
+        if ($harmful_object_nids) {
+            $select->join('field_data_field_pd_harmful_objects', 'ho', 'n.nid = ho.entity_id');
+            $select->condition('ho.field_pd_harmful_objects_target_id', $harmful_object_nids, 'IN');
+        }
+        $result = $select->execute();
+
+
+        foreach($result as $row) {
+            $products[] = '<a href="/'. drupal_get_path_alias('node/'.$row->nid) .'" target="_blank">'. $row->title .'</a>';
+        }
+        if (!$products) $products[] = 'Для заданных параметров препаратов не найдено.';
+    }
+
+    if ($products) {
+        $form['results'] = array(
+            '#markup' => '<div class="pf-results">' . implode(',  ', $products) . '</div>'
+        );
+    }
+
+    $form['#prefix'] = '<div id="block-products-filter-frontpage"><div>';
+    $form['#suffix'] = '</div></div>';
+    $form['#attached']['js'][] = 'misc/autocomplete.js';
+    $form['#attached']['css'][] = drupal_get_path('module', 'products_filter') . '/css/products_filter.css';
+
+    return $form;
+}
+
+/**
+ * Ajax callback
+ */
+function products_filter_block_form_refresh($form, $form_state) {
+    return $form;
+}
+

@@ -1,0 +1,26 @@
+diff --git a/field_group.module b/field_group.module
+index 062013a..0582605 100644
+--- a/field_group.module
++++ b/field_group.module
+@@ -583,6 +583,12 @@ function field_group_field_group_format_settings($group) {
+       break;
+     case 'fieldset':
+       $form['label']['#description'] = t('Please enter a label for collapsible elements');
++      $form['instance_settings']['fieldset_label_html'] = array(
++        '#type' => 'checkbox',
++        '#title' => t('Output label as HTML'),
++        '#default_value' => !empty($group->format_settings['instance_settings']['fieldset_label_html']),
++        '#weight' => -2,
++      );
+       break;
+     case 'multipage-group':
+       $form['instance_settings']['page_header'] = array(
+@@ -695,7 +701,7 @@ function field_group_pre_render_fieldset(&$element, $group, &$form) {
+ 
+   $element += array(
+     '#type' => 'fieldset',
+-    '#title' => check_plain(t($group->label)),
++    '#title' => !empty($group->format_settings['instance_settings']['fieldset_label_html']) ? t($group->label) : check_plain(t($group->label)),
+     '#collapsible' => $group->collapsible,
+     '#collapsed' => $group->collapsed,
+     '#pre_render' => array(),

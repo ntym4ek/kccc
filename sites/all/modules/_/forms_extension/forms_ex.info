@@ -1,0 +1,5 @@
+name = H | Forms Extension
+description = Изменение оформления форм
+package = Jax
+core = 7.x
+

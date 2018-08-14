@@ -1,0 +1,104 @@
+.modal-throbber-wrapper { text-align: center; }
+
+#modalContent {
+    overflow: visible!important;
+}
+
+div.ctools-modal-content {
+    background: #fff;
+    border-radius: 4px;
+    position: relative;
+}
+
+.ctools-modal-content .modal-header {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    overflow: hidden;
+}
+.ctools-modal-content .modal-title {
+    background-color: #2b8aff;
+    color: #fff; font-size: 20px; line-height: 30px;
+    display: block;
+    padding: 7px 70px 7px 20px;
+    min-width: 400px; min-height: 44px;
+}
+.ctools-modal-content .modal-content {
+    /*padding: 20px;*/
+    min-width: 400px; min-height: 130px;
+    overflow: visible!important;
+}
+
+.ctools-modal-content .close {
+    position: absolute;
+    top: 10px; right: 20px;
+    width: 25px; height: 25px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.ctools-modal-content .modal-message {
+    font-size: 16px; line-height: 22px;
+}
+
+.ctools-modal-content .modal-body {
+    min-height: 60px;
+}
+.ctools-modal-content .modal-controls {
+    padding: 14px 23px 14px 25px;
+    height: 29px;
+    background-color: #fafbfc;
+    border-radius: 0 0 2px 2px;
+    border-top: 1px solid #e7e8ec;
+    white-space: nowrap;
+}
+.ctools-modal-content .modal-controls .button-link { margin-left: 15px; }
+
+/*.ctools-modal-content fieldset {*/
+    /*border: 1px solid #A1D7F3;*/
+    /*margin: 0 0 15px 0; padding: 5px 20px 20px 20px;*/
+/*}*/
+/*.ctools-modal-content fieldset legend {*/
+    /*color: #2b8aff; font: 16px/20px open_sansregular;*/
+    /*padding: 0 10px;*/
+/*}*/
+/*.ctools-modal-content fieldset label { display: block; }*/
+/*.ctools-modal-content fieldset.inline .form-type-checkbox label { display: inline; }*/
+
+/*.ctools-modal-content fieldset.inline .fieldset-wrapper>div { float: left; padding-right: 15px; }*/
+/*.ctools-modal-content fieldset.inline .fieldset-wrapper>div:last-child { padding-right: 0; }*/
+/*.ctools-modal-content fieldset.inline input[type="text"] { width: initial; } label & input in one line*/
+/*.ctools-modal-content fieldset.inline.col2 .fieldset-wrapper>div { width: 50%; }*/
+/*.ctools-modal-content fieldset.inline.col3 .fieldset-wrapper>div { width: 33%; }*/
+
+.ctools-modal-content .form-actions .form-submit { float: right; }
+
+.ctools-modal-content .form-item { margin-top: 0; }
+.ctools-modal-content .form-item .description {
+    font-size: 10px; line-height: 12px; font-weight: 100;
+    margin: 0 0 0 10px;
+}
+
+/* исключено для before-after */
+/*.ctools-modal-content .chosen-container { width: 100%!important; }*/
+
+.ctools-modal-content #messages-wrap { padding: 10px 40px; }
+
+.ctools-modal-content .messages { margin: 10px 40px; }
+.ctools-modal-content #messages-wrap .messages { margin: 0; } /* пока модальные формы различаются, с #messages-wrap и без */
+
+/* индивидуальные настройки по окнам */
+/* при первом открытии окна стили применяются после того, как будет вызван метод Resize, некоторые окна из-за этого оказываются не по центру */
+    /* новый этап ПЗ */
+.ctools-modal-content table.stripe td label { font-size: 13px; line-height: 15px; font-weight: 400; }
+.ctools-modal-content .form-item-dosage1,
+.ctools-modal-content .form-item-dosage2 { text-align: right; }
+
+    /* контакты в порошках */
+.modal-dry-chemicals .ctools-modal-content .modal-title {  background-color: #de242a; }
+.modal-dry-chemicals .ctools-modal-content .form-submit {  background-color: #de242a; }
+.modal-dry-chemicals .ctools-modal-content fieldset {  border-color: #F1CDCE; }
+.modal-dry-chemicals .ctools-modal-content fieldset legend {  color: #de242a; }
+
+/* custom-form */
+.modal-custom-form .ctools-modal-content .modal-content {
+    padding: 0; }

@@ -1,0 +1,848 @@
+<?php
+
+define('KCCC_COMPANY_PID', 668);
+
+/**
+ * роли сотрудников компании
+ */
+define('STAFF_PERSONNEL', 4);
+define('STAFF_UNCONFIRMED', 7);
+define('STAFF',           6);
+define('STAFF_EDITOR',    5);
+define('STAFF_SHOP',      11);
+define('STAFF_CHIEF',     8);
+define('STAFF_ADMIN',     3);
+
+include 'includes/person.main.inc';
+include 'includes/person.company.inc';
+include 'includes/person.staff.inc';
+include 'includes/person.blog.inc';
+include 'includes/person.agenda.inc';
+include 'includes/person.reviews.inc';
+include 'includes/person.etc.inc';
+include 'includes/person.bubble.inc';
+
+/**
+ * Implements hook_init().
+ */
+function person_init() {
+    global $base_url;
+    // переадресовать /user на /person и /user/$uid на /person/$uid
+    if ($GLOBALS['user']->uid != 1) {
+        if (preg_match('|^user/{0,1}$|', $_GET['q'], $matches)) {
+            drupal_goto($base_url . '/person');
+        }
+
+        // переадресовать /user на /person и /user/$uid на /person/$uid
+        if (preg_match('|^user(/\d+.*)$|', $_GET['q'], $matches)) {
+            drupal_goto($base_url . '/person' . $matches[1]);
+        }
+    }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function person_menu() {
+    $items['person'] = array(
+        'page callback' => 'person_account_callback',
+        'page arguments' => array(null, null, null, null),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/%'] = array(
+        'page callback' => 'person_account_callback',
+        'page arguments' => array(1, 2, null, null),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/%/list'] = array(
+        'title' => t('User account'),
+        'page callback' => 'person_account_callback',
+        'page arguments' => array(1, 2, 3, null),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/%/edit'] = array(
+        'title' => t('User account'),
+        'page callback' => 'person_account_callback',
+        'page arguments' => array(1, 2, 3, null),
+        'access callback' => 'person_account_edit_access',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/%/delete'] = array(
+        'title' => t('Delete'),
+        'page callback' => 'person_delete_confirm_callback',
+        'page arguments' => array(1, 2),
+        'access callback' => 'person_account_edit_access',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/%/view/%'] = array(
+        'title' => t('User account'),
+        'page callback' => 'person_account_callback',
+        'page arguments' => array(1, 2, 3, 4),
+        'access callback' => 'person_account_edit_access',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+    );
+    $items['person/%/company/staff/%/%'] = array(
+        'title' => t('User account'),
+        'page callback' => 'person_company_staff_confirm_callback',
+        'page arguments' => array(1, 4, 5),
+        'access callback' => 'person_account_edit_access',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+
+// callback проверки прав на редактирование профиля
+function person_account_edit_access($acid) {
+    global $user;
+
+    if (($acid && $user->uid == $acid) || $user->uid == 1)  return true;
+
+    return false;
+}
+
+function person_account_callback($acid, $section, $op = '', $item_id = '', $mode = NULL) {
+  global $user;
+
+  if ($acid && $account = user_load($acid)) {
+    $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
+
+
+    if ($is_own_account) drupal_set_title(t('User account'));
+    else                 drupal_set_title(person_get_user_name($acid));
+
+    // определить контент
+    $function = 'person_' . str_replace('-', '_', $section);
+
+    //if (!(function_exists($function) && $body = $function($acid, $op, $item_id))) $body = 'Содержимое не определено.';
+    $body = t('No content');
+    if (function_exists($function)) $body = $function($acid, $op, $item_id);
+
+    // доступные пользователю ссылки в ЛК
+    $menu = _person_actions($acid, $section);
+
+    // завернуть контент и меню
+    $message = theme('status_messages');
+    $output = theme('person_wrap', array('content' => array(
+        'menu' => $menu,
+        'body' => $body,
+        'account' => person_get_user_array($acid),
+        'edit_link' => $is_own_account ? '<a href="/person/' . $acid . '/main/edit/nojs" class="use-ajax"><i class="fas fa-pencil-alt"></i></a>' : '',
+        'class' => $section,
+        'message' => $message ? $message : '',
+    )));
+
+
+    // доставка содержимого
+        // если разрешен JS и уже на странице аккаунта, обновить через ajax
+    if ($mode == 'ajax') {
+        $commands[] = ajax_command_replace('#profile', $output);
+        ajax_deliver(
+            array(
+                '#type' => 'ajax',
+                '#commands' => $commands
+            )
+        );
+    }
+        // если только открывают кабинет, загрузить страницу полностью вместе с библиотеками, js и css
+    else {
+        drupal_add_library('system', 'drupal.ajax');
+        drupal_add_js(drupal_get_path('module', 'person') . '/js/person.js');
+        drupal_add_css(drupal_get_path('module', 'person') . '/css/person.css');
+
+        chibs_include_modal();
+
+        return $output;
+    }
+  } else {
+      if ($user->uid) drupal_goto('person/' . $user->uid . '/summary');
+      else {
+          drupal_set_message('Для доступа к странице необходимо войти в свой аккаунт');
+          drupal_goto('user/login');
+      }
+  }
+}
+
+
+/**
+ * функция, возвращающая сводку по пользователю
+ */
+function person_summary($acid) {
+    global $user;
+
+    $content = array();
+
+    if ($acid && $account = user_load($acid)) {
+        // имя
+        $content['name'] = person_get_user_name($account->uid);
+        if (strpos($content['name'], 'User') === 0) {
+            $link = l(t('add name'), '/person/' . $acid . '/main/edit/nojs', array('attributes' => array('class' => array('use-ajax'))));
+            $content['name'] = $content['name'] . ' <span>(' . $link . ')</span>';
+        }
+
+        $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
+
+        // фото
+        $content['photo'] = '/' . drupal_get_path('theme', 'opie') . '/images/other/no_photo.png';
+        $content['add_photo_link'] = l(t('add photo'), '/person/' . $acid . '/main/edit/nojs', array('attributes' => array('class' => array('use-ajax'))));
+
+        $profile2 = profile2_load_by_user($acid);
+        if (!empty($profile2['main']->pid)) {
+            $main_wrapper = entity_metadata_wrapper('profile2', $profile2['main']->pid);
+            $main_wrapper->language($account->language);
+
+            // добавить фото
+            if ($main_wrapper->field_profile_photo->value()) {
+                $file = $main_wrapper->field_profile_photo->file->value();
+                $content['photo'] = image_style_url('profile_photo', $file->uri);
+                $content['add_photo_link'] = '';
+            }
+        }
+
+        // статус
+        $content['is_online'] = ($user->uid == $account->uid) || (time() - $account->access) / 60 < 5;
+        // роли
+        $content['role'] = 'Пользователь';
+        if (!empty($profile2['staff'])) {
+            $staff_wrapper = entity_metadata_wrapper('profile2', $profile2['staff']->pid);
+            if ($staff_wrapper->field_profile_company2->value()) {
+                $company_type = $staff_wrapper->field_profile_company2->field_profile_company_type->name->value();
+                $company_name = $staff_wrapper->field_profile_company2->field_profile_name->value();
+                $content['role'] .= '<br>Cотрудник ' . $company_type . ' ' . $company_name;
+            }
+        }
+        // счётчики
+            // блоги
+        $query = db_select('node');
+        $query->addExpression('COUNT(*)');
+        $query->condition('uid', $account->uid);
+        $query->condition('type', 'blog');
+        $result = $query->execute()->fetchField();
+        $content['counts'][] = array(
+            'title' => t('Blog'),
+            'amount' => $result,
+            'link' => '/blogs/user/' . $account->uid,
+        );
+            // отзывы
+        $query = db_select('node');
+        $query->addExpression('COUNT(*)');
+        $query->condition('uid', $account->uid);
+        $query->condition('type', 'review');
+        $result = $query->execute()->fetchField();
+        $content['counts'][] = array(
+            'title' => t('Reviews'),
+            'amount' => $result,
+            'link' => '/reviews/user/' . $account->uid,
+        );
+
+            // До и После
+        if (user_access('access before_after edit')) {
+            $query = db_select('field_data_field_f_sowing', 's');
+            $query->addExpression('COUNT(*)');
+            $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
+            $query->condition('n.uid', $account->uid);
+            $result = $query->execute()->fetchField();
+
+            $content['counts'][] = array(
+                'title' => t('Before & After'),
+                'amount' => $result,
+                //'link' => '/before-after/user/' . $account->uid,
+                'link' => '/before-after',
+            );
+        }
+
+        if ($is_own_account) {
+            // заказы
+            $content['counts'][] = array(
+                'title' => t('Orders'),
+                'amount' => person_orders_count($acid),
+                'link' => "/person/$acid/orders/list/nojs",
+                'class' => array('use-ajax'),
+            );
+            // баллы
+//            $content['counts'][] = array(
+//                'title' => t('Points'),
+//                'amount' => person_get_points($acid),
+//                'link' => "",
+//                'class' => '',
+//            );
+        }
+
+
+        $output = theme('person_summary', array('content' => $content));
+
+        return $output;
+    } else {
+        drupal_goto('/404');
+    }
+}
+
+/**
+ * функция, возвращающая массив со ссылками на разрешенные пользователю пункты меню в ЛК
+ * $acid - id просматриваемого аккаунта
+ * $section = текущий раздел
+ */
+function _person_actions($acid, $section) {
+    global $user;
+
+    // собственный акк?
+    $is_own_account = ($acid == $user->uid) || $user->uid == 1;
+
+    // страница обзора информации о пользователе
+    $user_actions[] = array(
+        'data' => l(t('Review account'), "person/$acid/summary/nojs", array('attributes' => array('class' => array('use-ajax')))),
+        'class' => array($section == 'summary' ? 'active' : NULL),
+    );
+
+    // если собственный аккаунт, добавить ссылки на редактирование и просмотр заказа
+    if ($is_own_account) {
+        $profile2 = profile2_load_by_user($user->uid);
+
+        // Я пользователь
+//        $user_actions[] = array(
+//            'data' => l( t("Edit account"), "person/$acid/main/edit/nojs", array('attributes' => array('class' => array('use-ajax')))),
+//            'class' => array($section == 'main' ? 'active' : NULL),
+//        );
+
+        // Блог пользователя
+        if (user_access('create blog content')) {
+          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_BLOG)) : '';
+          $user_actions[] = array(
+              'data' => l(t('Blog'), "/person/$acid/blog/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+              'class' => array($section == 'blog' ? 'active' : NULL),
+          );
+        }
+
+        // Отзывы пользователя
+      $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_REVIEWS)) : '';
+      $user_actions[] = array(
+          'data' => l(t('Reviews'), "/person/$acid/reviews/list/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+          'class' => array($section == 'reviews' ? 'active' : NULL),
+      );
+
+      // афиша
+      if (user_access('create agenda content')) {
+        $bubble = '';
+        $user_actions[] = array(
+          'data' => l(t('Agenda'), "/person/$acid/agenda/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+          'class' => array($section == 'agenda' ? 'active' : NULL),
+        );
+      }
+
+        // До и После для сотрудников компании
+//        if (false) {
+        if (user_access('access before_after edit')) {
+          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_BEFORE_AFTER)) : '';
+          $user_actions[] = array(
+              'data' => l(t('Before & After'), "fields/list") . $bubble,
+          );
+        }
+
+        // вывести ссылку Заказы, если они есть (проверка по статусу)
+//        if (person_orders_count($acid)) {
+//          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_ORDERS)) : '';
+//          $user_actions[] = array(
+//              'data' => l(t('Orders'), "person/$acid/orders/list/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+//              'class' => array($section == 'orders' ? 'active' : NULL),
+//          );
+//        }
+
+        // Компания, добавление и редактирование (оставлено только для админа, тк не работает форма ввода адреса)
+        if (in_array('administrator', $user->roles)) {
+            $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_COMPANY)) : '';
+            $company_menu = isset($profile2['company']) ? t('My company') : t('Add company');
+            $user_actions[] = array(
+                'data' => l($company_menu, "person/$acid/company/edit/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+                'class' => array($section == 'company' ? 'active' : NULL),
+            );
+        }
+
+      // Я сотрудник
+//      $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_STAFF)) : '';
+//      $user_actions[] = array(
+//          'data' => l( t("I'm employee"), "person/$acid/staff/edit/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+//          'class' => array($section == 'staff' ? 'active' : NULL),
+//      );
+    } else {
+        // блог пользователя
+        $user_actions[] = array(
+            'data' => l( t('Blog'), "blogs/user/$acid" ),
+            'class' => array( "blogs/user/$acid"  == $_GET ['q'] ? 'active' : NULL ),
+        );
+        // отзывы пользователя
+        $user_actions[] = array(
+            'data' => l( t('Reviews'), "reviews/user/$acid" ),
+            'class' => array( "reviews/user/$acid"  == $_GET ['q'] ? 'active' : NULL ),
+        );
+    }
+
+    if (!empty($user_actions)) {
+        $user_actions = theme('item_list', array('items' => $user_actions, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
+    }
+
+    return $user_actions;
+}
+
+function person_theme() {
+    return array(
+        // ----------  страница summary -----------------
+        'person_summary' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/person-summary',
+        ),
+        // ----------  добавление меню в аккаунте -----------------
+        'person_wrap' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/person-account',
+        ),
+        // ----------  уведомление -----------------
+        'bubble' => array(
+            'variables' => array('bubbles' => NULL, 'with_popup' => null),
+            'template' => 'templates/bubble',
+        ),
+    );
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function person_user_insert( &$edit, &$account, $category = NULL ) {
+    // при регистрации нового пользователя установить уникальное имя: Пользователь #uid
+    $new_name = t('User ') . $account->uid;
+
+    db_update('users')
+        ->fields(array('name' => $new_name))
+        ->condition('uid', $account->uid)
+        ->execute();
+
+    $edit['name'] = $new_name;
+    $account->name = $new_name;
+}
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function person_form_user_login_alter(&$form, &$form_state)
+{
+  unset($form['name']['#title']);
+  $form['name']['#attributes']['placeholder'] = [t('Your e-mail')];;
+  unset($form['name']['#description']);
+
+  unset($form['pass']['#title']);
+  $form['pass']['#attributes']['placeholder'] = [t('Your password')];
+  unset($form['pass']['#description']);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function person_form_user_register_form_alter(&$form, &$form_state) {
+    // изменение формы регистрации
+    unset($form['account']['mail']['#title']);
+    $form['account']['mail']['#attributes']['placeholder'] = array($form['account']['mail']['#description']);
+    unset($form['account']['mail']['#description']);
+
+    // вместо пароля с подтверждением и рекомендациями выводим одно поле пароля
+    $form['account']['pass']['#type'] = 'password';
+    unset($form['account']['pass']['#title']);
+    $form['account']['pass']['#attributes']['placeholder'] = $form['account']['pass']['#description'];
+    unset($form['account']['pass']['#description']);
+
+    $form['account']['name']['#type'] = 'hidden';
+    $form['account']['name']['#value'] = 'person_' . user_password();
+
+    // добавить обработчик сабмита регистрации
+    // дать пользователям с почтой @kccc.ru роль сотрудника
+    $form['#submit'][] = 'person_user_register_form_submit';
+
+    // убрать капчу для DrupalGap и local сервера
+    if (arg(0) == 'drupalgap' || strpos($GLOBALS['base_url'], '.local') !== false) {
+        $form['#after_build'][] = 'person_form_captcha_after_build';
+    }
+}
+
+/**
+ * дополнительный сабмит при регистрации
+ */
+function person_user_register_form_submit($form, $form_state) {
+    // дать пользователям с почтой @kccc.ru роль сотрудника
+    if (drupal_substr($form_state['values']['mail'], -8) == '@kccc.ru') {
+        global $user;
+        $user->roles[STAFF] = 1;
+        user_save($user);
+    }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function person_form_user_pass_alter(&$form) {
+    $form['name']['#title'] = t('E-mail');
+}
+
+// возвращает количество совершенных пользователем заказов
+function person_orders_count($acid) {
+    $count = 0;
+    foreach (commerce_order_load_multiple(array(), array('uid' => $acid)) as $order) {
+        if (!$order->status != 'cart') {
+            $count++;
+        }
+    }
+    return $count;
+}
+/**
+ * An after build handler to remove captcha from DrupalGap forms.
+ */
+function person_form_captcha_after_build($form, &$form_state) {
+    // ReCAPTCHA
+    if (isset($form['captcha'])) { unset($form['captcha']); }
+    // Mollom
+    if (isset($form['mollom'])) { unset($form['mollom']); }
+    return $form;
+}
+
+
+
+/**
+ * Implements hook_translated_menu_link_alter
+ *
+ * изменить путь ссылки Мой аккаунт
+ */
+function person_translated_menu_link_alter(&$item, $map) {
+    global $user;
+
+    if($item['mlid']==3) {
+        $item['link_path'] = 'person/' . $user->uid . '/summary';
+        $item['router_path'] = 'person/' . $user->uid . '/summary';
+        $item['href'] = 'person/' . $user->uid . '/summary';
+    }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function person_preprocess_page(&$vars)
+{
+    global $user;
+
+    // отключить заголовок на странице
+    $path_alias_wo_lang = strpos(url($_GET['q']), '/en') === 0 ? drupal_substr(url($_GET['q']), 3) : url($_GET['q']);
+    if (arg(0) == 'person' || in_array($_GET['q'], array('user/login', 'user/register', 'toboggan/denied'))) {
+        $vars['header']['title_off'] = true;
+
+        $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'person') . '/images/header_image.jpg';
+    }
+
+    // предупреждение для неподтвержденных аккаунтов
+    if (isset($user->roles[7])) {
+        drupal_set_message(t('You have to confirm your account, otherwise it wound be deleted soon. Check your e-mail.'), 'warning');
+    }
+
+//    switch (request_path()) {
+//        case 'user/register':
+//            drupal_set_message(t('Sign up to have full access'), 'warning');
+//            break;
+//        case 'user/login':
+//            drupal_set_message(t('Sign up to have full access'), 'warning');
+//            break;
+//    }
+}
+
+// редирект пользователя после входа на сайт
+function person_user_login(&$edit, $account) {
+    $edit['redirect'] = 'person/' . $account->uid . '/summary';
+}
+
+
+// массив с информацией о пользователе
+function person_get_user_array($user) {
+    if (is_numeric($user)) $account = user_load($user);
+    else $account = $user;
+
+    $name_arr = array('', '', '');
+    $email = $phone = '';
+    $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
+    $role = t('User');
+    $post = $company = '';
+
+    if (!empty($account->uid)) {
+        if ($main = profile2_load_by_user($account, 'main')) {
+            $main_wrapper = entity_metadata_wrapper('profile2', $main);
+            $name_arr[0] = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
+            $name_arr[1] = $main_wrapper->field_profile_name->value() ? $main_wrapper->field_profile_name->value() : '';
+            $name_arr[2] = $main_wrapper->field_profile_name2->value() ? $main_wrapper->field_profile_name2->value() : '';
+            $email = $account->mail;
+            $phone = $main_wrapper->field_profile_phone->value() ? $main_wrapper->field_profile_phone->value() : '';
+            if ($main_wrapper->field_profile_photo->value()) {
+                $file = $main_wrapper->field_profile_photo->file->value();
+                $photo_url = image_style_url('user_photo', $file->uri);
+            }
+        }
+
+        // если утвержденный сотрудник вывести регалии
+        if ($staff = profile2_load_by_user($user, 'staff')) {
+            $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
+
+            if ($staff_wrapper->field_profile_company_approved->value() == 1) {
+                $company = person_get_user_company_name($staff_wrapper->field_profile_company2->pid->value());
+                $post = $staff_wrapper->field_profile_post->value();
+                $role = $post . ' ' . $company;
+            }
+        }
+    }
+
+    return array(
+        'surname' => $name_arr[0],
+        'name' => $name_arr[1],
+        'name2' => $name_arr[2],
+        'full_name' => implode(' ', $name_arr),
+        'short_name' => $name_arr[1] . ' ' . $name_arr[0],
+        'role' => $role,
+        'post' => $post,
+        'company' => $company,
+        'photo' => $photo_url,
+        'email' => $email,
+        'phone' => $phone,
+    );
+}
+
+
+/**
+ * возвращает имя пользователя аккаунта в разных форматах
+ * @param $user
+ * @param string $format
+ * @return bool|string
+ */
+function person_get_user_name($user, $format = 'short_ns'){
+    if (is_numeric($user)) $account = user_load($user);
+    else $account = $user;
+
+    $user_name = false;
+    if (!empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
+        $main_wrapper = entity_metadata_wrapper('profile2', $main);
+        $name       = $main_wrapper->field_profile_name->value()    ? $main_wrapper->field_profile_name->value()    : '';
+        $surname    = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
+        $name2      = $main_wrapper->field_profile_name2->value()   ? $main_wrapper->field_profile_name2->value()   : '';
+        switch($format) {
+            case 'short_sn':
+                $user_name = $surname . ' ' . $name;
+                break;
+            case 'short_ns':
+                $user_name = $name . ' ' . $surname;
+                break;
+            case 'full':
+                $user_name = $surname . ' ' . $name . ' ' . $name2;
+                break;
+        }
+    }
+    if (!trim($user_name)) $user_name = $account->name;
+
+    return $user_name;
+}
+
+/**
+ * -------------------------------------- функции для работы с Баллами ------------------------------------------------
+ *
+ */
+
+/**
+ * начисление Баллов за различные действия
+ *
+ * @param $user - account || account id кому начисляем
+ * @param $action - действие, за которое начисляется награда
+ * @param array $params - 'id' : id объекта для уточнения, за что начислены Баллы
+ *                      - 'points' : количество списываемых или начисляемых Баллов, нужно для некоторых действий
+ * @return int/false - добавленное количество Баллов или false в случае неудачной операции
+ */
+function person_activity_reward($user, $action, $params = array()) {
+
+    $points = 0; $info = '';
+    switch($action) {
+        case PREPARATION_REVIEW:
+            $points = 10;
+            $info = empty($params['id']) ? '' : $params['id'];
+            break;
+
+        case ORDER_USE:
+            $points = empty($params['points']) ? 0 : $params['points'];
+            $info = empty($params['id']) ? '' : $params['id'];
+            break;
+    }
+
+    if ($points && person_set_points($user, $points, $action, $info)) return $points;
+    else return false;
+}
+
+/**
+ * вернуть текущее количество Баллов пользователя
+ *
+ * @param $acid - account || account id
+ */
+function person_get_points($user) {
+    if (is_numeric($user)) $account = user_load($user);
+    else $account = $user;
+
+    $points = 0;
+    if (!empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
+        $main_wrapper = entity_metadata_wrapper('profile2', $main);
+        if (isset($main_wrapper->field_profile_points)) {
+            foreach($main_wrapper->field_profile_points->getIterator() as $record_ppts) {
+                $points += $record_ppts->field_ppts_points->value();
+                if ($points < 0) $points = 0;
+            }
+        }
+    }
+
+    return $points;
+}
+
+/**
+ * Изменить воличество Баллов на счету Юзера путём внесения новой записи в историю изменения Баллов
+ *
+ * @param $user - account || account id
+ * @param $points - положительное или отрицательное количество Баллов
+ * @param $comment - комментарий к изменению Баллов
+ * @return int - результируюее количество Баллов или false в случае неудачной операции
+ */
+function person_set_points($user, $points, $action_id, $info) {
+    if (is_numeric($user)) $account = user_load($user);
+    else $account = $user;
+
+    $points_new = false;
+    if (is_numeric($points) && !empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
+        $fc_item = entity_create('field_collection_item', array('field_name' => 'field_profile_points'));
+        $fc_item_wrapper = entity_metadata_wrapper('field_collection_item', $fc_item);
+        $fc_item->setHostEntity('profile2', $main);
+        $fc_item_wrapper->field_ppts_points->set($points);
+        $fc_item_wrapper->field_ppts_action_id->set($action_id);
+        $fc_item_wrapper->field_ppts_info->set($info);
+        $fc_item_wrapper->save(TRUE);
+
+        $points_new = person_get_points($account);
+    }
+
+    return $points_new;
+}
+
+///**
+// * добавление обработчика на сабмит формы в Афише
+// *  - создание или редактирование термина Слайдеры
+// */
+//function person_form_agenda_node_form_alter(&$form, &$form_state) {
+//  global $user;
+//
+//  $banner_text = '';
+//  $banner_fid = 0;
+//  $banner_weight = 1;
+//  $node_wrapper = entity_metadata_wrapper('node', $form['#node']);
+//  // если Баннер существует, извлечь
+//  if ($node_wrapper->field_banner->value()) {
+//    $banner = $node_wrapper->field_banner->value();
+//    $banner_text = $node_wrapper->field_banner->description->value();
+//    $banner_fid = $node_wrapper->field_banner->field_promo_image->file->fid->value();
+//  }
+//  // добавить поля Баннера
+//  $form['banner'] = array('#type' => 'fieldset', '#title' => 'Добавьте баннер для главной<i>, при необходимости</i>', '#weight' => '10');
+//  $form['banner']['image'] = array(
+//    '#type' => 'managed_file',
+//    '#title' => 'Фото поля',
+//    '#description' => 'Выберите файл с расширением jpg, jpeg, png',
+//    '#upload_location' => "public://images/agenda/banner/",
+//    '#upload_validators' => array(
+//      'file_validate_is_image' => array(),
+//      'file_validate_extensions' => array('png jpg jpeg'),
+//      'file_validate_image_resolution' => array('1440x500', '1440x500'),
+//    ),
+//    '#default_value' => empty($form_state['values']['image']) ? $banner_fid : $form_state['values']['image'],
+//    '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate
+//  );
+//  $form['banner']['text'] = array(
+//    '#type' => 'textfield',
+//    '#title' => 'Текст в блоке Далее',
+//    '#default_value' => $banner_text,
+//  );
+//  $form['banner']['weight'] = array(
+//    '#type' => 'textfield',
+//    '#title' => 'Очередность',
+//    '#description' => 'Позиция баннера в очереди слайдера',
+//    '#default_value' => $banner_weight,
+//  );
+//
+//
+//  // поле баннера не выводим
+////  $form['field_banner']['#access'] = false;
+//
+//  // добавить обработчик сабмита
+//  $form['actions']['submit']['#validate'][] = 'person_agenda_node_form_validate';
+//  $form['actions']['submit']['#submit'][] = 'person_agenda_node_form_submit';
+//}
+//
+//function person_agenda_node_form_validate($form, &$form_state)
+//{
+//  // если задан текст, то должно быть и изображение
+//  if (!empty($form_state['values']['banner_text']) && empty($form_state['values']['banner_fid'])) {
+//    form_set_error('banner_text', 'Если задан текст, то необходимо добавить и изображение.');
+//    return false;
+//  }
+//}
+//
+//function person_agenda_node_form_submit($form, &$form_state)
+//{
+//  // если баннер не задан - создать новый
+//  if (empty($form_state['values']['field_banner'])) {
+//    $vocabulary = taxonomy_vocabulary_machine_name_load('slider_category');
+//    $term = (object)array(
+//      'vid' => $vocabulary->vid,
+//      'name' => 'Название термина',
+//      'description' => '',
+//      'format' => 'full_html',
+//      'weight' => $form_state['values']['weight'],
+//      'parent' => array(72758), // фронтальный слайдер
+//      'field_promo_image' => array(),
+//    );
+//  } else {
+//    // если задан - загрузить
+//    $term = taxonomy_term_load($form_state['values']['field_banner']);
+//  }
+//
+//
+//  if (empty($form_state['values']['image']) && empty($form_state['values']['text'])) {
+//    // пустые поля - удалить
+//    if (!empty($term->tid)) taxonomy_term_delete($term);
+//  } else {
+//    // заполнены поля - отредактировать
+//    // работа с изображением
+//    $old_file_fid = empty($term->field_promo_image) ? $form_state['values']['image'] : $term->field_promo_image['und'][0]['fid'];
+//    if ($old_file_fid != $form_state['values']['image']) {
+//      // удалить старое изображение
+//      // сначала очистить поле, без этого картинка не меняется на новую
+//      $measurement_wrapper->field_f_s_m_foto_field->set(null);
+//      $measurement_wrapper->save();
+//      // удалить сам файл
+//      if ($old_file_fid && $old_file = file_load($form_state['photo_f'])) {
+//        file_usage_delete($old_file);
+//        file_delete($old_file);
+//      }
+//      // сохранить новый файл
+//      if ($form_state['values']['photo_f']) {
+//        $file = file_load($form_state['values']['photo_f']);
+//        $file->status = FILE_STATUS_PERMANENT;
+//        $filename = 'field_' . $file->timestamp . '.' . pathinfo($file->filename, PATHINFO_EXTENSION);
+//        $file->filename = $filename;
+//        $file = file_move($file, "public://images/agenda/banner/" . $filename, FILE_EXISTS_REPLACE);
+//        file_save($file);
+//        file_usage_add($file, 'before_after', 'field_collection_item', 0);
+//        $form_state['photo_f'] = $file->fid;
+//        $measurement_wrapper->field_f_s_m_foto_field->set($form_state['photo_f']);
+//      }
+//    }
+//
+//    taxonomy_term_save($term);
+//  }
+//}

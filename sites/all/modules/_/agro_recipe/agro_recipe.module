@@ -1,0 +1,974 @@
+<?php
+function agro_recipe_menu() {
+    $items['protection-program/%'] = array(
+        'title' => t('Программа защиты'),
+        'description' => t('Программа защиты'),
+        'page callback' => 'protection_program_main_page',
+        'page arguments' => array(1),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['agro-recipe1'] = array(
+        'title' => t('АгроРецепт'),
+        'description' => t('Описание АгроРецепта'),
+        'page callback' => 'agro_recipe_main_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['agro-recipe/weeds/add'] = array(
+        'page callback' => 'agro_recipe_add_weeds_callback',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    $items['agro-recipe/fungis/add'] = array(
+        'page callback' => 'agro_recipe_add_fungis_callback',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    $items['agro-recipe/pests/add'] = array(
+        'page callback' => 'agro_recipe_add_pests_callback',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    $items['agro-recipe/dessic/add'] = array(
+        'page callback' => 'agro_recipe_add_dessic_callback',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+function agro_recipe_form_alter(&$form, &$form_state, $form_id) {
+
+    if ($form_id == 'field_collection_item_form') {
+        // оставить в поле Функция только категории заданные для этого товара
+            // отключено из-за баковых смесей
+//        $product = $form['#entity']->hostEntity();
+//        $categories = $product ? $product->field_pd_category['und'] : array();
+//
+//            // массив установленных для товара категорий
+//        $options = array();
+//        foreach($categories as $cat) $options[] = $cat['tid'];
+//
+//            // убрать из списка опций все лишние
+//        foreach($form['field_pd_r_function']['und']['#options'] as $key => $option) {
+//            if (!in_array($key, $options) && $key != '_none') {
+//                unset($form['field_pd_r_function']['und']['#options'][$key]);
+//            }
+//        }
+            // задать значение по умолчанию, если оно одно
+//        if (count($form['field_pd_r_function']['und']['#options']) == 1) {
+//            $keys = array_keys($form['field_pd_r_function']['und']['#options']);
+//            $form['field_pd_r_function']['und']['#default_value'] = $keys[1];
+//        }
+
+        // в форме доб/ред регламента вывести вредителей в зависимости от набора культур и функции препарата
+        if ( $form['#bundle'] == 'field_pd_reglaments2') {
+            $form['field_pd_r_pest']['#prefix'] = '<div id="field-pd-r-pest-wrapper">';
+            $form['field_pd_r_pest']['#suffix'] = '</div>';
+
+            $cultures = empty($form['field_pd_r_culture']['und']['#default_value']) ? array() : $form['field_pd_r_culture']['und']['#default_value'];
+            if (!empty($form_state['values']['field_pd_r_culture']['und'])) {
+                foreach($form_state['values']['field_pd_r_culture']['und'] as $c_item) {
+                    $cultures[] = $c_item['target_id'];
+                }
+            }
+
+            // если выбрано значение культур, составить список вредителей
+            if ($cultures) {
+                $prep = $form['#entity']->hostEntity();
+                $function = empty($prep->field_pd_category['und']) ? 0 : $prep->field_pd_category['und'][0]['tid'];
+                $options = array('_none' => '- None -');
+                foreach($cultures as $cid) {
+                    $hobject_tid = 0;
+                    if ($function == AGRO_CATEGORY_HERBICIDES_TID || AGRO_CATEGORY_DESSICANTS_TID) $hobject_tid = HOBJECTS_WEEDS_TID;
+                    if ($function == AGRO_CATEGORY_INCECTICIDES_TID) $hobject_tid = HOBJECTS_PESTS_TID;
+                    if ($function == AGRO_CATEGORY_DISINFECTANTS_TID
+                        || $function == AGRO_CATEGORY_FUNGICIDES_TID) {
+                        $culture = node_load($cid);
+                        $hobject_tid = empty($culture->field_mc_deseases['und'][0]) ? 0 : $culture->field_mc_deseases['und'][0]['tid'];
+                    };
+                    // запрос
+                    $query = db_select('node', 'n');
+                    $query->innerJoin('field_data_field_category', 'fc', 'n.nid = fc.entity_id');
+                    $query->condition('fc.bundle', 'harmful_objects');
+                    $query->condition('fc.field_category_tid', $hobject_tid);
+                    $query->condition('n.type', 'harmful_objects');
+                    $query->fields('n', array('nid', 'title'));
+                    $hobjects = $query->execute()->fetchAll();
+
+                    if (!empty($hobjects))
+                        foreach ($hobjects as $key => $item) {
+                            $options[$item->nid] = $item->title;
+                        }
+                }
+                $form['field_pd_r_pest']['und']['#options'] = $options;
+            }
+            // навешиваем ajax на культуру и функцию
+            $form['field_pd_r_culture']['und']['#ajax'] = array(
+                'callback' => 'fc_item_reglaments2_form_callback',
+                'wrapper' => 'field-pd-r-pest-wrapper',
+            );
+        }
+    }
+
+}
+
+
+function fc_item_reglaments2_form_callback($form, $form_state) {
+    return $form['field_pd_r_pest'];
+}
+
+// главная страница
+function agro_recipe_main_page() {
+    $html = 'Главная страница';
+
+    return drupal_get_form('agro_recipe_field_form', 'demo');
+};
+
+/**
+* форма ввода данных по Полю
+* op - операция: демо режим, добавление, редактирование
+*/
+function agro_recipe_field_form($form, &$form_state, $op) {
+    // подключить стиль и js
+    chibs_include_modal();
+    $form['#attached']['library'][] = array('system', 'jquery.cookie');
+    $form['#attached']['js'][] = drupal_get_path('module', 'agro_recipe') . '/js/agro_recipe.js';
+    $form['#attached']['css'][] = drupal_get_path('module', 'agro_recipe') . '/css/agro_recipe.css';
+    $form['#attached']['css'][] = drupal_get_path('module', 'protection_program') . '/css/protection_program.css';
+
+    // извлекаем параметры Поля из кукис или полей формы
+    $culture = !empty($_COOKIE['selected_culture']) && !isset($form_state['values']['field_culture']) ? $_COOKIE['selected_culture'] : array();
+    $culture = !empty($form_state['values']['field_culture']) ? $form_state['values']['field_culture'] : $culture;
+
+    $period = !empty($_COOKIE['selected_period']) && !isset($form_state['values']['field_period']) ? $_COOKIE['selected_period'] : '';
+    $period = !empty($form_state['values']['field_period']) ? $form_state['values']['field_period'] : $period;
+
+    $area = !empty($_COOKIE['selected_area']) && !isset($form_state['values']['field_area']) ? $_COOKIE['selected_area'] : 1000;
+    $area = (!empty($form_state['values']['field_area']) && is_numeric($form_state['values']['field_area'])) ? $form_state['values']['field_area'] : $area;
+
+    $seeding = !empty($_COOKIE['selected_seeding']) && !isset($form_state['values']['field_seeding']) ? $_COOKIE['selected_seeding'] : 100;
+    $seeding = (!empty($form_state['values']['field_seeding']) && is_numeric($form_state['input']['field_seeding'])) ? $form_state['values']['field_seeding'] : $seeding;
+
+    // значения для ВО берем из 'input', так как в 'values' при изменения через ajax остаются старые значения
+    $weeds = !empty($_COOKIE['selected_weeds']) && !isset($form_state['input']['weeds']) ? explode(',', $_COOKIE['selected_weeds']) : array();
+    $weeds = !empty($form_state['input']['weeds']) ? explode(',', $form_state['input']['weeds']) : $weeds;
+
+    $fungis = !empty($_COOKIE['selected_fungis']) && !isset($form_state['input']['fungis']) ? explode(',', $_COOKIE['selected_fungis']) : array();
+    $fungis = !empty($form_state['input']['fungis']) ? explode(',', $form_state['input']['fungis']) : $fungis;
+
+    $pests = !empty($_COOKIE['selected_pests']) && !isset($form_state['input']['pests']) ? explode(',', $_COOKIE['selected_pests']) : array();
+    $pests = !empty($form_state['input']['pests']) ? explode(',', $form_state['input']['pests']) : $pests;
+
+    $dessic = isset($_COOKIE['selected_dessic']) && !isset($form_state['values']['dessic']) ? $_COOKIE['selected_dessic'] : '';
+    $dessic = isset($form_state['values']['dessic']) ? $form_state['values']['dessic'] : $dessic;
+
+    $poll_advantages = isset($form_state['poll_advantages']) ? $form_state['poll_advantages'] : array();
+    $poll_options = isset($form_state['poll_options']) ? $form_state['poll_options'] : array();
+
+    $ppid = '';
+    $individual = false;            // если флаг установлен, выводится индивидуальная программа, иначе общая (все препараты из программы)
+//    $ppid = !empty($_COOKIE['selected_ppid']) && !isset($form_state['input']['field_pp']) ? $_COOKIE['selected_ppid'] : '';
+//    $ppid = !empty($form_state['values']['field_pp']) ? $form_state['values']['field_pp'] : $ppid;
+
+    // найти ПЗ для заданной культуры
+    if ($culture) {
+        $query = db_select('node', 'n');
+        $query->condition('n.type', 'protection_program');
+        $query->innerJoin('field_data_field_pp_cultures', 'fc', 'n.nid = fc.entity_id');
+        $query->condition('fc.field_pp_cultures_target_id', $culture);
+        $query->fields('n', array('nid'));
+        $ppid = $query->execute()->fetchField();
+    }
+
+    // если проведены опросы по дубликатам, сформировать массив и передать в функцию формирования ПЗ
+    if (isset($form_state['values'])) {
+        foreach ($form_state['values'] as $key => $item) {
+            if (strpos($key, 'poll_a_') !== false) {
+                $hoid = str_replace('poll_a_', '', $key);
+                $poll_advantages[$hoid] = $item;
+            }
+            if (strpos($key, 'poll_o_') !== false) {
+                $sid = str_replace('poll_o_', '', $key);
+                $poll_options[$sid] = $item;
+            }
+        }
+        $form_state['poll_advantages'] = $poll_advantages;
+        $form_state['poll_options'] = $poll_options;
+    }
+
+    // если хватает данных, просчитываеми и формируем html ПЗ
+    $data = array(
+        'area' => $area,
+        'period' => $period,
+        'seeding' => $seeding,
+        'hobjects' => array(
+            'weeds' => $weeds,
+            'fungis' => $fungis,
+            'pests' => $pests,
+        ),
+        'dessic' => $dessic,
+        'poll_advantages' => $poll_advantages,
+        'poll_options' => $poll_options,
+    );
+
+    $table = $list = '';
+    if ($pp = get_protection_program($ppid, $data)) {
+        $table = theme('protection_program_table', array('pp' => $pp, 'op' => 'calculation'));
+
+        // список препаратов и количество
+        if (!empty($pp['products'])) {
+            $order_array = array();
+            $list = '<div class="intro">Список препаратов</div>';
+            $list .= '<table class="table">'
+                . '<tr>'
+                . '<th>Препарат</th>'
+                . '<th width="15%">Количество</th>'
+                . '<th width="25%">Стоимость</th>'
+                . '</tr>';
+            foreach ($pp['products'] as $prep_key => $prep_item) {
+                if (!is_numeric($prep_key)) continue;
+
+                // наименование
+                $title = get_product_agro_title($prep_item['pid']);
+
+                // Норма расходя на всё поле
+                $rate_field = ($prep_item['rate_min'] == $prep_item['rate_max']) ? number_format($prep_item['rate_field_min'], 0, ',', ' ') : number_format($prep_item['rate_field_min'], 0, ',', ' ') . ' - ' . number_format($prep_item['rate_field_max'], 0, ',', ' ');
+
+                // Стоимость обработки всего поля
+                $cost_field = ($prep_item['cost_min'] == $prep_item['cost_max']) ? number_format($prep_item['cost_field_min'], 0, ',', ' ') : (number_format($prep_item['cost_field_min'], 0, ',', ' ') . ' - ' . number_format($prep_item['cost_field_max'], 0, ',', ' '));
+
+                $list .= '<tr>'
+                    . '<td>' . ' ' . $title['title'] . ', ' . $title['formulation'] . '</td>'
+                    . '<td align="right">' . $rate_field . ' ' . $prep_item['unit'] . '</td>'
+                    . '<td align="right">' . $cost_field . ' руб.' . '</td>'
+                    . '</tr>';
+                // массив для добавления в корзину
+                $order_array[$prep_key] = $prep_item['rate_field_max'];
+            }
+            $sum = ($pp['products']['total']['sum_min'] == $pp['products']['total']['sum_max']) ? number_format($pp['products']['total']['sum_min'], 0, ',', ' ') : number_format($pp['products']['total']['sum_min'], 0, ',', ' ') . ' - ' . number_format($pp['products']['total']['sum_max'], 0, ',', ' ');
+            $sum_field = ($pp['products']['total']['sum_min'] == $pp['products']['total']['sum_max']) ? number_format($pp['products']['total']['sum_field_min'], 0, ',', ' ') : number_format($pp['products']['total']['sum_field_min'], 0, ',', ' ') . ' - ' . number_format($pp['products']['total']['sum_field_max'], 0, ',', ' ');
+            $form_state['order'] = $order_array;
+
+            $list .= '<tr>'
+                . '<td colspan="2" align="right">Затраты на 1 га: ' . '</td>'
+                . '<td align="right">' . $sum . ' руб.' . '</td></tr>';
+            $list .= '<tr>'
+                . '<td colspan="2" align="right">Затраты на <span style="font: 15px/17px open_sanssemibold;">' . $area . '</span> га:</td>'
+                . '<td align="right">' . $sum_field . ' руб.' . '</td></tr>';
+            $list .= '</table>';
+
+            $individual = true;
+        }
+    }
+
+    // задаём форму
+    // id формы для ajax обновления
+    $form['#prefix'] = '<div id="agro-recipe-form-wrapper">';
+    $form['#suffix'] = '</div>';
+
+    $form['#attributes'] = array(
+        'class' => 'agro-recipe-field-form'
+    );
+
+    // комментарий к вредным объектам
+    $form['field_intro'] = array(
+        '#markup' => '<div class="intro">Параметры поля</div>',
+    );
+
+    // при создании нового Поля добавить поле наименования
+    if ($op != 'demo') {
+        $form['field_name'] = array(
+            '#type' => 'textfield',
+            '#title' => 'Наименование поля',
+        );
+    }
+
+    // ввод культуры
+        // список Культур, для которых составлена ПЗ
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'main_cultures');
+    $query->fields('n', array('nid', 'title'));
+    $query->innerJoin('field_data_field_pp_cultures', 'c', 'c.field_pp_cultures_target_id = n.nid');
+    $query->orderBy('n.title', 'ASC');
+    $result_cs = $query->execute()->fetchAll();
+
+    $options = $culture ? $options = array() : array(' - Выберите с/х культуру - ');
+    foreach($result_cs as $c_item) {
+        $options[$c_item->nid] = $c_item->title;
+    }
+    $form['field_culture'] = array(
+        '#type' => 'select',
+        '#title' => 'Культура',
+        '#options' => $options,
+        '#chosen' => true,
+        '#default_value' => $culture,
+        '#prefix' => '<div class="line row-1">',
+        '#ajax' => array(
+            'callback' => 'agro_recipe_field_form_refresh',
+            'wrapper' => 'agro-recipe-form-wrapper',
+        ),
+    );
+
+    // список периодов для культуры
+    $options_p = array();
+    if ($culture) {
+        $culture_wrapper = entity_metadata_wrapper('node', $culture);
+        $options_p = _get_processing_periods($culture_wrapper->field_mc_periods->value());
+    }
+    if (!$period && $options_p) {
+        $keys = array_keys($options_p);
+        $period = $keys[0];
+    }
+
+    $form['field_period'] = array(
+        '#type' => 'select',
+        '#title' => 'Этап',
+        '#chosen' => true,
+        '#options' => $options_p,
+        '#default_value' => $period,
+        '#description' => 'этап, на котором находится культура',
+        '#ajax' => array(
+            'callback' => 'agro_recipe_field_form_refresh',
+            'wrapper' => 'agro-recipe-form-wrapper',
+        ),
+    );
+
+    // ввод площади
+    $form['field_area'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Площадь поля (га)',
+        '#default_value' => $area,
+        '#size' => '15',
+    );
+
+    // ввод нормы высева
+    $form['field_seeding'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Норма высева (кг/га)',
+        '#size' => '15',
+        '#default_value' => $seeding,
+        '#suffix' => '</div>',
+    );
+
+    // комментарий к вредным объектам
+    $form['hobjects_intro'] = array(
+        '#markup' => '<div class="hobjects"><div class="intro">Вредные объекты</div>',
+    );
+    $form['hobjects_descr'] = array(
+        '#markup' => '<div class="description">Укажите доминирующие на вашем поле вредные объекты.</div>',
+    );
+
+    // таблица ввода ВО
+    // если в кукис есть данные о Сорняках, вывести список, изменить кнопку и заполнить input (сразу из кукис)
+    $list_w = '';
+    $asterisk = false;
+        // получить списки наименований посорнячно
+    if ($weeds) {
+        $hobjects_w = _get_hobject_name($weeds);
+        // если ПЗ была просчитана, то отметить ВО, которые не были пролечены
+        foreach ($hobjects_w as $w_key => $w_item) {
+            $hobjects_w[$w_key] = '<a href="' . drupal_get_path_alias('node/' . $w_key) . '" target="_blank">' . $w_item . '</a>';
+            if (empty($pp['hobjects'][$w_key]['preparations'])) {
+                $hobjects_w[$w_key] = $hobjects_w[$w_key] . '<span class="asterisk">*</span>';
+                $asterisk = true;
+            }
+        }
+        if (array_keys($hobjects_w)) $list_w .= implode(', ', array_values($hobjects_w));
+    }
+    if (!$list_w) $list_w = '<span class="faded">Список пуст</span>';
+        // ссылка для добавления Сорняков
+    $txt_w = ($list_w != '<span class="faded">Список пуст</span>') ? 'Редактировать' : 'Добавить';
+    $link_w = l($txt_w, 'agro-recipe/weeds/add/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
+
+    // если в кукис есть данные о Болезни, вывести список, изменить кнопку и заполнить input (сразу из кукис)
+    $hobjects_f = _get_hobject_name($fungis);
+        // если ПЗ была просчитана, то отметить ВО, которые не были пролечены
+    foreach($hobjects_f as $f_key => $f_item) {
+        $hobjects_f[$f_key] = '<a href="' . drupal_get_path_alias('node/' . $f_key) . '" target="_blank">' . $hobjects_f[$f_key] . '</a>';
+        if (empty($pp['hobjects'][$f_key]['preparations'])) {
+            $hobjects_f[$f_key] = $hobjects_f[$f_key] . '<span class="asterisk">*</span>';
+            $asterisk = true;
+        }
+    }
+    $list_f = $hobjects_f ? implode(', ', array_values($hobjects_f)) : '<span class="faded">Список пуст</span>';
+
+        // ссылка для добавления Болезни
+    $txt_f = $hobjects_f ? 'Редактировать' : 'Добавить';
+    $link_f = l($txt_f, 'agro-recipe/fungis/add/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
+
+    // если в кукис есть данные о Вредителях, вывести список, изменить кнопку и заполнить input (сразу из кукис)
+    $hobjects_p = _get_hobject_name($pests);                                          // получить имена по списку nid
+    // если ПЗ была просчитана, то отметить ВО, которые не были пролечены
+    foreach($hobjects_p as $p_key => $p_item) {
+        $hobjects_p[$p_key] = '<a href="' . drupal_get_path_alias('node/' . $p_key) . '" target="_blank">' . $hobjects_p[$p_key] . '</a>';
+        if (empty($pp['hobjects'][$p_key]['preparations'])) {
+            $hobjects_p[$p_key] = $hobjects_p[$p_key] . '<span class="asterisk">*</span>';
+            $asterisk = true;
+        }
+    }
+    $list_p = $hobjects_p ? implode(', ', array_values($hobjects_p)) : '<span class="faded">Список пуст</span>';
+        // ссылка для добавления Вредителей
+    $txt_p = $hobjects_p ? 'Редактировать' : 'Добавить';
+    $link_p = l($txt_p, 'agro-recipe/pests/add/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
+
+
+
+        // оформление таблицы ВО
+    $html = '<table class="table h-objects">
+        <tr class="weeds">
+        <td class="x-fade" style="background-color: #FF9900;">
+            <div class="prep">С</div><div class="proc"><span style="background-color: #FF9900; ">орняки</span></div>
+        </td>
+        <td class="list">' . $list_w . '</td>
+        <td class="action" style="background-color: #FF9900; ">' . $link_w . '</td>
+        </tr>
+        <tr class="fungi">
+        <td class="x-fade" style="background-color: #00B0F0;">
+            <div class="prep">Б</div><div class="proc"><span style="background-color: #00B0F0; ">олезни</span></div>
+        </td>
+        <td class="list">' . $list_f . '</td>
+        <td class="action"style="background-color: #00B0F0; ">' . $link_f . '</td>
+        </tr>
+        <tr class="pests">
+        <td class="x-fade" style="background-color: #9E2170;">
+            <div class="prep">В</div><div class="proc"><span style="background-color: #9E2170; ">редители</span></div>
+        </td>
+        <td class="list">' . $list_p . '</td>
+        <td class="action" style="background-color: #9E2170; ">' . $link_p . '</td>
+        </tr>
+    </table>';
+    $html .= '<div class="table-note">' . ($asterisk ? '<span class="asterisk">*</span> - на этот вредный объект выбранная программа защиты не воздействует' : '') . '</div>';
+
+    $form['hobjects_table'] = array(
+        '#markup' => $html,
+        '#prefix' => '<div class="line">',
+        '#suffix' => '</div></div>',
+    );
+
+
+//    $links[] = '<a href="' . '/handbook/protection-program/' . $ppid  . '" target="_blank">просмотреть</a>';
+//    if (node_access('update', node_load($ppid))) $links[] =  '<a href="' . '/protection-program/' . $ppid  . '/edit">редактировать</a>';
+//    if (user_access('create protection_program content')) {
+//        $links[] = l('добавить', 'protection-program/add/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
+//    } else {
+//        $links[] = l('Войдите', 'user/login') . ' или ' . l('зарегистрируйтесь', 'user/register') . ' чтобы создавать свои программы.';
+//    }
+//    $form['pp_links'] = array(
+//        '#markup' => ($ppid ? '<div class="links">' . implode(', ', $links) . '</div>' : '') . '</div>',
+//    );
+
+
+    // если в полученной для ВО Программе Защиты есть аналоги? фичи или опции, то запросить уточнения
+    if (!empty($pp['advantages']) || !empty($pp['options'])) {
+        $form['poll_intro'] = array(
+            '#markup' => '<div class="intro">Уточнения</div><div class="line">',
+        );
+
+        // аналоги
+        if (!empty($pp['advantages'])) {
+            $form['adv_in'] = array(
+                '#markup' => '<div class="advantages">'
+                    . '<div class="description">Для борьбы с указанными вредными объектами мы можем предложить несколько вариантов препаратов.
+                        Чтобы составить для Вас индивидуальную программу защиты, ответьте на следующие вопросы. </div>',
+            );
+
+            // для каждой группы аналогов вывести вопросы (сравнительные преимущества)
+            foreach ($pp['advantages'] as $key_a => $item_a) {
+                $options_a = array();
+                // выясняем категорию пестицидов из которых нужно выбрать
+                $category = '';
+
+                foreach ($item_a as $key_p => $item_p) {
+                    $prep_wrapper = entity_metadata_wrapper('node', $key_p);
+
+                    // определяем наименование препарата
+                    $titles = $titles_arr = array();
+                    if ($prep_wrapper->field_pd_category[0]->tid->value() == AGRO_CATEGORY_MIX_TID) {
+                        foreach($prep_wrapper->field_pd_mix_components->getIterator() as $key => $value) {
+                            $titles_arr = get_product_agro_title($value->nid->value());
+                            $titles[] = $titles_arr['title'] . ', ' . $titles_arr['formulation'];
+                        }
+                    } else {
+                        $titles_arr = get_product_agro_title($prep_wrapper->nid->value());
+                        $titles[] = $titles_arr['title'] . ', ' . $titles_arr['formulation'];
+                    }
+                    $prep = implode(' + ', $titles);
+
+                    $options_a[$key_p] = '<span>' . $prep . '</span>: ' . ($prep_wrapper->field_pd_advantages->value() ? $prep_wrapper->field_pd_advantages->value() : '');
+
+                    if (!$category) {
+                        $cat_name = $prep_wrapper->field_pd_category[0]->name->value();
+                        //$cat_color = $prep_wrapper->field_pd_category[0]->field_color->value();
+                    }
+                }
+
+                $answer_a = empty($poll_advantages[$key_a]) ? '' : $poll_advantages[$key_a];
+                $form['poll_a_' . $key_a] = array(
+                    '#type' => 'radios',
+                    '#title' => 'Все ' . drupal_strtolower($cat_name) . ' имеют свои преимущества. Выберите из следующих:',
+                    '#options' => $options_a,
+                    '#default_value' => $answer_a,
+                    '#ajax' => array(
+                        'callback' => 'agro_recipe_field_form_refresh',
+                        'wrapper' => 'agro-recipe-form-wrapper',
+                    ),
+                );
+            }
+            $form['adv_out'] = array(
+                '#markup' => '</div>',
+            );
+        }
+        // вопросы про опции (из регламентов)
+        if (!empty($pp['options'])) {
+            $form['opt_in'] = array('#markup' => '<div class="options"><label>Дополнительные опции</label>');
+
+            foreach ($pp['options'] as $key_o => $item_o) {
+                $answer_o = empty($poll_options[$key_o]) ? '' : $poll_options[$key_o];
+                $form['poll_o_' . $key_o] = array(
+                    '#type' => 'checkbox',
+                    '#title' => drupal_strtolower($item_o),
+                    '#default_value' => $answer_o,
+                    '#ajax' => array(
+                        'callback' => 'agro_recipe_field_form_refresh',
+                        'wrapper' => 'agro-recipe-form-wrapper',
+                    ),
+                );
+            }
+            $form['opt_out'] = array('#markup' => '</div>');
+        }
+
+        $form['poll_outro'] = array(
+            '#markup' => '</div>'
+        );
+    }
+
+    // формируем сообщениt перед ПЗ
+    $intro = $individual ? 'Индивидуальная программа защиты' : 'Обобщённая программа защиты';
+
+    if (!$culture) $cure_descr = 'Выберите сельскохозяйственную культуру.';
+    elseif (!$ppid) $cure_descr = 'Для выбранной сельскохозяйственной культуры программы защиты не разработаны.';
+    elseif (!empty($pp['hobjects']) && empty($pp['options'])) {
+        $cure_descr = 'На заданные вредные объекты программа защиты не воздействует.';
+    }
+    elseif (empty($pp['hobjects']) && empty($pp['advantages'])) {
+        $cure_descr = 'Ниже представлен программа защиты, включающая все препараты выпускаемые нашей компанией для выбранной культуры.<br />'
+                    . 'Добавьте вредные объекты в таблицу выше и мы составим для Вас индивидуальную программу защиты и расчитаем стоимость необходимых препаратов.';
+    }
+    elseif (!empty($pp['advantages'])) $cure_descr = 'Программа требует уточнения вопросов, приведённых выше в разделе Уточнения.';
+    elseif (!empty($pp['options'])) $cure_descr = 'Выберите одну из опций, приведённых выше в разделе Уточнения.';
+
+    if (empty($pp['stages'])) $table = '';
+
+    if ($individual) $cure_descr = 'Ниже представлена программа защиты культуры для борьбы с заданными вредными объектами'
+                                . ' и расчёт стоимости необходимого количества препаратов для Вашего поля.<br />'
+                                . 'Нажав кнопку "Купить", Вы сможете отредактировать количество и отправить нам заявку.';
+
+
+    $form['cure_intro'] = array(
+        '#markup' => '<div class="cure"><div><div class="intro">' . $intro . '</div>'
+
+    );
+    $form['form_refresh'] = array(
+        '#type' => 'button',
+        '#value' => '(обновить)',
+        '#name' => 'form_refresh',
+        '#ajax' => array(
+            'callback' => 'agro_recipe_field_form_refresh',
+            'wrapper' => 'agro-recipe-form-wrapper',
+        ),
+        '#prefix' => '<div class="refresh">',
+        '#suffix' => '</div></div>',
+    );
+    $form['cure_1'] = array(
+        '#markup' => '<div class="description">' . $cure_descr . '</div>',
+    );
+
+    $form['pp_table'] = array(
+        '#markup' => '<div class="protection-program">' . $table . '</div>',
+        '#prefix' => '<div class="line">',
+        '#suffix' => '</div></div>',
+    );
+
+    // выводим список товаров только если программа составлена индивидуально
+    if ($individual) {
+        $form['pp_list'] = array(
+            '#markup' => '<div class="pp-list">' . $list . '</div>',
+            '#prefix' => '<div class="line">',
+            '#suffix' => '</div>',
+        );
+    }
+
+    // инпуты для хранения введенных данных
+    // заполнить, если заданы кукис
+    $form['weeds'] = array(
+        '#type' => 'hidden',
+        '#value' => implode(',', $weeds),
+    );
+    $form['fungis'] = array(
+        '#type' => 'hidden',
+        '#value' => implode(',', $fungis),
+    );
+    $form['pests'] = array(
+        '#type' => 'hidden',
+        '#value' => implode(',', $pests),
+    );
+
+    if ($list && $individual) {
+        $form['field-submit'] = array(
+            '#type' => 'submit',
+            '#value' => 'Купить!',
+            '#ajax' => array(
+                'callback' => 'agro_recipe_field_form_ajax_submit',
+            ),
+            '#attributes' => array('class' => array('ctools-modal-style')), // для подключения стиля к выводимому модальному окну
+        );
+    }
+
+    return $form;
+}
+
+function agro_recipe_field_form_refresh($form, $form_state) {
+    return $form;
+}
+
+/*
+ * добавление списка товаров в корзину
+ */
+function agro_recipe_field_form_submit($form, $form_state) {
+    // в массиве $form_state['order'] содежится препарат и его необходимое количество
+    foreach($form_state['order'] as $nid => $qty_units) {
+        $node_wrapper = entity_metadata_wrapper('node', $nid);
+
+        // получить варианты товара с количеством в упаковке
+        $pr_array = array();
+        foreach ($node_wrapper->field_product as $pr_key => $pr_item) {
+            $pr_array[$pr_item->field_p_qty->value()] = $pr_item->product_id->value();
+        }
+        krsort($pr_array);
+
+        // вычисляем по общему количеству, какой вариант товара и сколько добавить
+        $data = array(
+            'context' => array('display_path' => "node/$nid"),
+        );
+        $key = 0;
+        foreach ($pr_array as $capacity => $product_id) {
+            $key++;
+            $qty = floor($qty_units / $capacity);
+            $qty_units -= $qty * $capacity;
+            // если тара уже минимальная, а разлито не всё, увеличить количество на 1
+            if ((count($pr_array) == $key) && $qty_units > 0) $qty++;
+
+            // добавляем вычисленную позицию в корзину
+            if ($qty > 0) {
+                $product = commerce_product_load($product_id);
+                $line_item = commerce_product_line_item_new($product, $qty, 0, $data, 'product');
+
+                drupal_alter('commerce_product_calculate_sell_price_line_item', $line_item);
+                rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
+
+                $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+                if (!is_null($line_item_wrapper->commerce_unit_price->value()) && $line_item_wrapper->commerce_unit_price->amount->value() != 0) {
+                    $line_item = commerce_cart_product_add($GLOBALS['user']->uid, $line_item, TRUE);
+                }
+            }
+        }
+    }
+}
+
+function agro_recipe_field_form_ajax_submit($form, $form_state) {
+    ctools_include('modal'); ctools_include('ajax');
+
+    if (!empty($form_state['executed'])) {
+        // We'll just overwrite the form output if it was successful.
+        $output = array();
+        $cart = ctools_ajax_text_button('корзину', 'ctools_modal/nojs/cmd/goto_cart', 'Перейти в корзину');
+        $dismiss = ctools_ajax_text_button('расчёт', 'ctools_modal/nojs/cmd/dismiss', 'Остаться на странице');
+        $output[] = ctools_modal_command_display(t('Message'), '<div class="modal-message" style="width:500px;">Список препаратов добавлен.<br /> Вы можете перейти в '. $cart .' или продолжить '. $dismiss .'.</div>');
+    }
+    print ajax_render($output);
+    exit;
+}
+
+
+/**
+ * callback функция добавления сорняков в таблицу через модальное окно
+ */
+function agro_recipe_add_weeds_callback($mode = NULL) {
+    if ($mode == 'ajax') {
+        ctools_include('modal');
+        $form_state = array('ajax' => TRUE, 'title' => 'Cорные растения');
+        $output = ctools_modal_form_wrapper('agro_recipe_weeds_form', $form_state);
+        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else return drupal_get_form('agro_recipe_weeds_form');
+}
+/**
+ * форма ввода списка сорняков
+ */
+function agro_recipe_weeds_form($form, &$form_state) {
+    // список сорняков
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'weeds');
+    $query->fields('n', array('nid', 'title'));
+    $hobjects = $query->execute()->fetchAll();
+
+    $options_ho = array();
+    foreach($hobjects as $hobject) {
+        $options_ho[$hobject->nid] = $hobject->title;
+    }
+
+    // уже выбранные ВО хранятся в кукис
+    $form['weeds'] = array(
+        '#type' => 'fieldset',
+        '#title' => 'Список сорных растений',
+    );
+    $form['weeds']['hobjects'] = array(
+        '#type' => 'select',
+        '#options' => $options_ho,
+        '#multiple' => true,
+        '#chosen' => true,
+        '#default_value' => !empty($_COOKIE['selected_weeds']) ? explode(',', $_COOKIE['selected_weeds']) : array(),
+        '#description' => 'Выберите доминирующие на поле сорные растения. Если какие-то из них не удалось найти в списке, подберите похожие.'
+    );
+
+    // сабмит кнопки в пределах страницы должны иметь уникальные наименования, включая всплывающие окна
+    // ajax.js для этого окна навешивает ajax-processed на кнопку id="edit-submit", принимая её за кнопку в основной форме
+    $form['weeds-submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Отправить',
+    );
+    return $form;
+}
+function agro_recipe_weeds_form_validate($form, $form_state) {
+}
+function agro_recipe_weeds_form_submit($form, &$form_state) {
+    // обновить идентификаторы в input и кукис через js
+    $form_state['ajax_commands'][] = ajax_command_invoke('input[name=weeds]', 'val', array(implode(',', $form_state['values']['hobjects'])));
+    $form_state['ajax_commands'][] = ajax_command_invoke('select[name=field_culture]', 'change');
+    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+}
+
+
+/**
+ * callback функция добавления болезней в таблицу через модальное окно
+ */
+function agro_recipe_add_fungis_callback($mode = NULL) {
+    if ($mode == 'ajax') {
+        ctools_include('modal');
+        $form_state = array('ajax' => TRUE, 'title' => 'Болезни сельскохозяйственных культур');
+        $output = ctools_modal_form_wrapper('agro_recipe_fungi_form', $form_state);
+        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else return drupal_get_form('agro_recipe_fungi_form');
+}
+/**
+ * форма ввода списка сорняков
+ */
+function agro_recipe_fungi_form($form, &$form_state) {
+    // получаем список всех подкатегорий в Болезнях
+    $list = array();
+    $tids = taxonomy_get_children(71339);
+    foreach($tids as $tid) {
+        $list[] = $tid->tid;
+    }
+
+    // список всех Болезней всех подкатегорий
+    // todo получать список только для заданной культуры
+    $query = db_select('node', 'n');
+    $query->innerJoin('field_data_field_category', 'fc', 'n.nid = fc.entity_id');
+    $query->condition('fc.bundle', 'harmful_objects');
+    $query->condition('fc.field_category_tid', $list, 'IN');
+    $query->condition('n.type', 'harmful_objects');
+    $query->fields('n', array('nid', 'title'));
+    $hobjects = $query->execute()->fetchAll();
+
+    $options = array();
+    foreach($hobjects as $hobject) {
+        $options[$hobject->nid] = $hobject->title;
+    }
+
+    $form['fungis'] = array(
+        '#type' => 'fieldset',
+        '#title' => 'Введите одно или несколько значений',
+    );
+    $form['fungis']['hobjects'] = array(
+        '#type' => 'select',
+        '#options' => $options,
+        '#multiple' => true,
+        '#chosen' => true,
+        '#default_value' => !empty($_COOKIE['selected_fungis']) ? explode(',', $_COOKIE['selected_fungis']) : array(),
+    );
+
+    $form['fungis-submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Отправить',
+    );
+    return $form;
+}
+/**
+ * submit формы
+ */
+function agro_recipe_fungi_form_submit($form, &$form_state) {
+    // обновить идентификаторы в input и кукис через js
+    $form_state['ajax_commands'][] = ajax_command_invoke('input[name=fungis]', 'val', array(implode(',', $form_state['values']['hobjects'])));
+    $form_state['ajax_commands'][] = ajax_command_invoke('select[name=field_culture]', 'change');
+    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+}
+
+
+/**
+ * callback функция добавления болезней в таблицу через модальное окно
+ */
+function agro_recipe_add_pests_callback($mode = NULL) {
+    if ($mode == 'ajax') {
+        ctools_include('modal');
+        $form_state = array('ajax' => TRUE, 'title' => 'Вредители сельскохозяйственных культур');
+        $output = ctools_modal_form_wrapper('agro_recipe_pests_form', $form_state);
+        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else return drupal_get_form('agro_recipe_pests_form');
+}
+/**
+ * форма ввода списка сорняков
+ */
+function agro_recipe_pests_form($form, &$form_state) {
+    // получить сисок Вредителей для поля ввода
+    $query = db_select('node', 'n');
+    $query->innerJoin('field_data_field_category', 'fc', 'n.nid = fc.entity_id');
+    $query->condition('fc.bundle', 'harmful_objects');
+    $query->condition('fc.field_category_tid', 71341);
+    $query->condition('n.type', 'harmful_objects');
+    $query->fields('n', array('nid', 'title'));
+    $hobjects = $query->execute()->fetchAll();
+
+    $options = array();
+    foreach($hobjects as $hobject) {
+        $options[$hobject->nid] = $hobject->title;
+    }
+
+    $form['pests'] = array(
+        '#type' => 'fieldset',
+        '#title' => 'Введите одно или несколько значений',
+    );
+    $form['pests']['hobjects'] = array(
+        '#type' => 'select',
+        '#options' => $options,
+        '#multiple' => true,
+        '#chosen' => true,
+        '#default_value' => !empty($_COOKIE['selected_pests']) ? explode(',', $_COOKIE['selected_pests']) : array(),
+        '#description' => 'одно или несколько значений'
+    );
+
+    $form['pests-submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Отправить',
+    );
+    return $form;
+}
+/**
+ * submit формы
+ */
+function agro_recipe_pests_form_submit($form, &$form_state) {
+    // обновить идентификаторы в input и кукис через js
+    $form_state['ajax_commands'][] = ajax_command_invoke('input[name=pests]', 'val', array(implode(',', $form_state['values']['hobjects'])));
+    $form_state['ajax_commands'][] = ajax_command_invoke('select[name=field_culture]', 'change');
+    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+}
+
+
+///**
+// * callback функция добавления десикации в таблицу через модальное окно
+// */
+//function agro_recipe_add_dessic_callback($mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Изменение опции');
+//        $output = ctools_modal_form_wrapper('agro_recipe_dessic_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('agro_recipe_dessic_form');
+//}
+///**
+// * форма ввода
+// */
+//function agro_recipe_dessic_form($form, &$form_state) {
+//    $form['fs'] = array('#type' => 'fieldset', '#title' => 'Десикация');
+//    $form['fs']['dessic'] = array(
+//        '#title' => 'провести обработку',
+//        '#type' => 'checkbox',
+//        '#default_value' => isset($_COOKIE['selected_dessic']) ? $_COOKIE['selected_dessic'] : 0,
+//    );
+//    $form['submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => 'Сохранить',
+//    );
+//    return $form;
+//}
+///**
+// * submit формы
+// */
+//function agro_recipe_dessic_form_submit($form, &$form_state) {
+//    // обновить идентификаторы в input и кукис через js
+//    $form_state['ajax_commands'][] = ajax_command_invoke('input[name=dessic]', 'val', array($form_state['values']['dessic']));
+//    $form_state['ajax_commands'][] = ajax_command_invoke('select[name=field_culture]', 'change');
+//    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+//}
+
+
+/**
+ * получить название Вредного объекта по nid
+ *
+ * @param $hobject_nids - массив nid Вредных объектов
+ * @return array - массив array('nid' => 'name')
+ */
+function _get_hobject_name($hobject_nids) {
+    $result = array();
+    foreach ($hobject_nids as $nid) {
+        $query = db_select('node', 'n');
+        $query->condition('n.nid', $nid);
+        $query->condition('n.type', 'harmful_objects');
+        $query->fields('n', array('title'));
+        $result[$nid] = $query->execute()->fetchField();
+    }
+    return $result;
+}
+
+/**
+ * получить название термина по tid
+ * @param $tids
+ * @param bool $lower - приводить к нижнему регистру
+ * @return array - массив array('tid' => 'name')
+ */
+function _get_term_name($tids, $lower = false) {
+    $result = array();
+    foreach ($tids as $tid) {
+        $query = db_select('taxonomy_term_data', 't');
+        $query->condition('t.tid', $tid);
+        $query->fields('t', array('name'));
+        $class = $query->execute()->fetchField();
+
+        $result[$tid] = $lower ? drupal_strtolower($class) : $class;
+    }
+    return $result;
+}
+
+// главная страница
+function protection_program_main_page($culture_id) {
+    $pp = get_protection_program($culture_id);
+    $table = theme('protection_program_table', array('pp' => $pp));
+
+    return $table;
+};

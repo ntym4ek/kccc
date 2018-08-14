@@ -1,0 +1,5 @@
+name = F | Agro Recipe
+description = Функционал АгроРецепта
+package = Jax
+core = 7.x
+

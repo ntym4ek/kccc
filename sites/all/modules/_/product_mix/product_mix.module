@@ -1,0 +1,66 @@
+<?php
+function product_mix_menu() {
+    $items['product-mix/%/add-to-cart'] = array(
+        'description' => t('List of terms'),
+        'page callback' => 'product_mix_add_to_cart_callback',
+        'page arguments' => array(1),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function product_mix_preprocess_page(&$vars, $hook) {
+}
+
+function product_mix_add_to_cart_callback($nid) {
+
+    // добавить компоненты смеси в корзину
+    $html = 'Список пуст';
+
+    return $html;
+};
+
+function product_mix_add_to_cart_form($form, $form_state, $products) {
+    $form = array(
+        '#attributes' => array('class' => array('form-horizontal')),
+    );
+
+    $form['products'] = array(
+        '#type' => 'hidden',
+        '#value' => $products,
+    );
+
+    $form['comment'] = array(
+        '#markup' => '<div class="form-item-comment form-group col-sm-12"><p>При нажатии на кнопку в список будет добавлено по одной канистре или коробке каждого компонента.</p></div>',
+    );
+    $form['add_to_cart'] = array(
+        '#type' => 'submit',
+        '#value' => t('Add to list'),
+        '#prefix' => '<div class="form-item form-action-wrapper">',
+        '#suffix' => '</div>',
+    );
+    
+    return $form;
+};
+
+function product_mix_add_to_cart_form_submit($form, &$form_state) {
+    foreach($form_state['values']['products'] as $pid) {
+        $product = commerce_product_load($pid);
+        $product_wrapper = entity_metadata_wrapper('commerce_product', $product);
+        $nodes = $product_wrapper->field_product_node->value();
+
+        $data = array(
+            'context' => array('display_path' => "node/" . $nodes[0]->nid),
+        );
+        $line_item = commerce_product_line_item_new($product, 1, 0, $data, 'product');
+
+        drupal_alter('commerce_product_calculate_sell_price_line_item', $line_item);
+        rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
+
+        $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+        if (!is_null($line_item_wrapper->commerce_unit_price->value()) && $line_item_wrapper->commerce_unit_price->amount->value() != 0) {
+            $line_item = commerce_cart_product_add($GLOBALS['user']->uid, $line_item, TRUE);
+        }
+    }
+}

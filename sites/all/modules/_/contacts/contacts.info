@@ -1,0 +1,5 @@
+name = P | Contacts page
+description = Страница контактов
+package = Jax
+core = 7.x
+

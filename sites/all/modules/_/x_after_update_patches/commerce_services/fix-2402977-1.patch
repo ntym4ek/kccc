@@ -1,0 +1,21 @@
+diff --git a/commerce_services.module b/commerce_services.module
+index e9f606f..293c18c 100644
+--- a/commerce_services.module
++++ b/commerce_services.module
+@@ -1076,13 +1076,14 @@ function commerce_services_services_request_preprocess_alter($controller, &$args
+   // values their numeric key in the $args array.
+   $arg_names = array();
+ 
+-  foreach ($controller['args'] as $key => $value) {
++  $controller_args = (isset($controller['args'])) ? $controller['args'] : array();
++  foreach ($controller_args as $key => $value) {
+     $arg_names[$value['name']] = $key;
+   }
+ 
+   // Loop over the argument metadata in the controller looking for any that
+   // include any of our special keys.
+-  foreach ($controller['args'] as $key => $value) {
++  foreach ($controller_args as $key => $value) {
+     // If this argument needs to be exploded into an array...
+     if (!empty($value['commerce_services_explode'])) {
+       // Explode the argument using the specified delimiter.

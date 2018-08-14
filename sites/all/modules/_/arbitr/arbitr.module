@@ -1,0 +1,26 @@
+<?php
+include 'includes/arbitr.btcz.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function arbitr_menu()
+{
+    $items['arbitr/btcz'] = array(
+        'title' => t('Arbitr/btcz'),
+        'page callback' => 'arbitr_page_btcz',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function arbitr_theme()
+{
+    return array(
+        'arbitr_table' => array(
+            'variables' => array('chains' => NULL, 'markets' => NULL),
+            'template' => 'templates/table',
+        ),
+    );
+}

@@ -1,0 +1,410 @@
+<?php
+
+/**
+ * @file
+ * Defines an example shipping method for testing and development.
+ */
+
+
+/**
+ * Implements hook_commerce_shipping_method_info().
+ */
+function russianpost_commerce_shipping_method_info() {
+    $shipping_methods = array();
+
+    $shipping_methods['russianpost_shipping_method'] = array(
+        'title' => t('Russianpost shipping method'),
+        'description' => t('Defines shipping method by russianpost with cash on delivery option.'),
+    );
+
+    return $shipping_methods;
+}
+
+/**
+ * Implements hook_commerce_shipping_service_info().
+ */
+function russianpost_commerce_shipping_service_info() {
+  $shipping_services = array();
+
+  $shipping_services['russianpost_shipping_service'] = array(
+    'title' => t('Russianpost shipping service'),
+    'display_title' => t('Russian Post Shipping'),
+    'shipping_method' => 'russianpost_shipping_method',
+    'price_component' => 'shipping',
+    'callbacks' => array(
+      'rate' => 'russianpost_service_rate',
+      'details_form' => 'russianpost_service_details_form',
+      'details_form_validate' => 'russianpost_service_details_form_validate',
+      'details_form_submit' => 'russianpost_service_details_form_submit',
+    ),
+  );
+
+  return $shipping_services;
+}
+
+/**
+ * Shipping service callback: returns a base price array for a shipping service
+ * calculated for the given order.
+ */
+function russianpost_service_rate($shipping_service, $order) {
+    $address_id = 0;
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $order->order_id);
+    if ($order_wrapper->commerce_customer_shipping) {
+        $shipping_wrapper = $order_wrapper->commerce_customer_shipping;
+        $address_id = $shipping_wrapper->field_ship_address->value();
+    }
+
+    if ($address_id && $cache = cache_get('russianpost_service_rate_' . $order->order_id . '_' . $address_id)) {
+        return $cache->data;
+    } else {
+        $set_cache = false;
+
+        // в $order после ajax submit старые данные, загружаем заново
+        $order = commerce_order_load($order->order_id);
+        $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+
+        $error = $message = '';
+        $shipping_cost = $post_insurance = $post_package = 0;
+        if ($address_id && $address = node_load($address_id)) {
+            // проверить заполнение Обязательных полей
+            $mandatory_fields = russianpost_address_book_info();
+            $absent_fields = address_book_check_mandatory_fields($address, $mandatory_fields);
+
+            if (!$absent_fields) {
+                $address_wrapper = entity_metadata_wrapper('node', $address_id);
+                $zipcode = trim($address_wrapper->field_ab_zipcode->value());
+
+                $order_amount = $order_wrapper->commerce_order_total->value();
+                $order_total = $order_amount['amount'] / 100;
+                // почтовый сбор за страховку
+                $post_insurance = $order_total * 0.04;
+
+                // стоимость упаковочного материала
+                $post_package = 150;
+
+                $weight = commerce_physical_order_weight($order, 'kg');
+
+                if ($weight['weight']) {
+                    //$calc = russianpostcalc_api_calc("613040", $zipcode, $weight['weight'], $order_total);
+                    $calc = postcalc_api_calc("613040", $zipcode, $weight['weight'], $order_total);
+
+                    if (empty($calc['error'])) {
+                        $shipping_cost = $calc['cost'];
+                        $message = 'Примерный срок доставки: ' . $calc['days'] . ' дней.';
+                        $set_cache = true;
+                    } else {
+                        $error = $calc['error'];
+                        $message = $calc['message'];
+                    }
+
+                } else {
+                    $error = 3;
+                    $message = 'Не удалось подсчитать вес товара. Обратитесь к нашим менеджерам через форму "Задать вопрос" в правой части сайта.';
+                }
+            } else {
+                $error = 1;
+                $message = 'Заполните в выбранной записи Адресной книги следующие обязательные поля: ' . implode(', ', array_values($absent_fields));
+            }
+
+
+        } else {
+            $error = 1;
+            $message = 'Для расчёта стоимости доставки выберите запись из Адресной книги';
+        }
+
+        $calculation = array(
+            'amount' => ($shipping_cost + $post_insurance + $post_package) * 100,
+            'currency_code' => $order_wrapper->commerce_order_total->currency_code->value(),
+            'data' => array(
+                'error' => $error,
+                'message' => $message,
+            ),
+        );
+
+        // устанавливаем кеш на 12 часов
+        if ($address_id && $set_cache) cache_set('russianpost_service_rate_' . $order->order_id . '_' . $address_id, $calculation, 'cache', time() + 43200);
+
+        return $calculation;
+    }
+}
+
+
+/**
+ * Allows modules to alter the options array generated to select a shipping
+ * service on the checkout form.
+ */
+function russianpost_commerce_shipping_service_rate_options_alter(&$options, $order){
+    if (isset( $order->shipping_rates['russianpost_shipping_service'] )) {
+        $line_item = $order->shipping_rates['russianpost_shipping_service'];
+        $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+
+        $amount = $line_item_wrapper->commerce_unit_price->amount->value();
+        $data = $line_item_wrapper->commerce_unit_price->data->value();
+        $txt_price = '';
+        if (empty($data['error'])) {
+            $txt_price = $amount ? commerce_currency_format($amount, $line_item_wrapper->commerce_unit_price->currency_code->value()) : t('free');
+            $txt_price = '<div>Стоимость:  <span class="amount">' . $txt_price . '</span></div>';
+        }
+
+        $message = '';
+        if (!empty($data['error']) && $data['error'] == 1) $message = 'уточните адрес';
+        if (!empty($data['error']) && $data['error'] == 2) $message = 'расчёт не выполнен';
+        if (!empty($data['error']) && $data['error'] == 3) $message = 'сервис недоступен';
+
+
+        $options['russianpost_shipping_service'] = t('!shipping_service!price', array(
+            '!shipping_service' => $message ? commerce_shipping_line_item_title($line_item) . '<br /><span class="error">' . $message .  '</span>' : commerce_shipping_line_item_title($line_item) . '<br />',
+            '!price' => $txt_price,
+        ));
+    }
+}
+
+/**
+ * Shipping service callback: returns the example shipping service details form.
+ */
+function russianpost_service_details_form($pane_form, $pane_values, $checkout_pane, $order, $shipping_service) {
+    // в $order после ajax submit старые данные, загружаем заново
+    $order_new = commerce_order_load($order->order_id);
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $order_new);
+
+    // заполнить поля адреса и фио
+    $address_id = 0;
+    $address = array();
+    if (!empty($order->commerce_customer_shipping)) {
+        // загрузить профиль доставки и сформировать в строки
+        if ($order_wrapper->commerce_customer_shipping->field_ship_address->value()) {
+            $address_id = $order_wrapper->commerce_customer_shipping->field_ship_address->value();
+            $address = address_book_addr_to_string($address_id);
+        }
+    }
+
+    $form = array();
+
+    $form['title'] = array(
+        '#markup' => '<div class="fieldset-title">'. t('Shipping by RussianPost') .'</div>'
+    );
+
+    // если есть сообщения об ошибках - вывести
+    if(isset($order->shipping_rates)) {
+        $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $order->shipping_rates['russianpost_shipping_service']);
+        if(isset($line_item_wrapper)) {
+            $data = $line_item_wrapper->commerce_unit_price->data->value();
+        }
+    }
+
+    $message = empty($data['message']) ? '' : $data['message'];
+    if (!empty($data['error'])) $message = '<span class="error">' . $message . '</span>';
+
+    $form['message'] = array(
+        '#markup' => '<div class="item">' . $message . '</div>',
+        '#prefix' => '<div class="fieldset">',
+        '#suffix' => '</div>'
+    );
+
+    $link_adr_message = ($address_id) ? t('Address book') : t('Choose from Address Book');
+    $link_adr = l($link_adr_message, 'adr-book/' . $address_id . '/russianpost/' . $order->order_id . '/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
+
+    $form['customer'] = array(
+        '#markup' =>
+                ($address ? ('<div class="item"><div>ФИО:</div><div id="customer">' . $address['user'] . '</div></div>') : '')
+              . ($address ? ('<div class="item"><div>' . t('Address') . ':</div><div id="address">'. $address['address'] . '</div></div>') : '')
+              . '<div class="info">' . $link_adr . '</div>',
+        '#prefix' => '<div class="fieldset">'
+            . '<div class="head">' .t('Customer information').'</div>',
+        '#suffix' => '</div>',
+    );
+
+
+    $form['information'] = array(
+        '#markup' => '<div class="info">'. 'Стоимость доставки рассчитывается автоматически на основании введенного индекса. Проверьте правильность заполнения полей ФИО и адреса получателя, чтобы Почта России могла доставить посылку без задержек.' .'</div>',
+        '#prefix' => '<div class="fieldset">'
+            .'  <div class="head">' .t('Description').'</div>',
+        '#suffix' => '</div>'
+    );
+
+    return $form;
+}
+
+/**
+ * Shipping service callback: validates the shipping service details.
+ */
+function russianpost_service_details_form_validate($details_form, $details_values, $shipping_service, $order, $form_parents){
+    // проверить наналичие ошибок в форме
+    if (strpos($details_form['message']['#markup'], 'error') !== false) {
+        $error = strip_tags($details_form['message']['#markup']);
+        form_set_error(implode('][', array_merge($form_parents, array('name'))), $error);
+        return false;
+    }
+}
+
+
+/**
+ * Shipping service callback: increases the shipping line item's unit price if
+ * express delivery was selected.
+ */
+function russianpost_service_details_form_submit($details_form, $details_values, $line_item) {
+}
+
+/**
+ * Implements hook_commerce_price_component_type_info().
+ */
+function russianpost_commerce_price_component_type_info() {
+//    return array(
+//        'example_shipping_service_express' => array(
+//            'title' => t('Express delivery'),
+//            'weight' => 20,
+//        ),
+//    );
+}
+
+function postcalc_api_calc($from_index, $to_index, $weight, $ob_cennost_rub) {
+    $site = 'kccc.ru';
+    $email = 'support@kccc.ru';
+    $weight = $weight * 1000; // в граммах
+
+    header('Content-Type: text/html; charset=utf-8');
+
+    // Формируем запрос со всеми необходимыми переменными
+    $queryString  = 'f=' .rawurlencode($from_index);
+    $queryString .= '&t=' .rawurlencode($to_index);
+    $queryString .= "&w=$weight&v=$ob_cennost_rub&c=RU&o=php&cs=utf-8";
+    $queryString .= "&st=$site&ml=$email";
+
+    // Формируем URL запроса.
+    $request = "http://api.postcalc.ru/?$queryString";
+
+    // Формируем опции запроса. Это необязательно, однако упрощает контроль и отладку
+    $arrOptions = array('http' =>
+        array( 'header'  => 'Accept-Encoding: gzip','timeout' => 5, 'user_agent' => phpversion() )
+    );
+
+    $calc = array();
+
+    // Соединяемся с сервером
+      if ($response = file_get_contents($request, false , stream_context_create($arrOptions))) {
+
+        // Разархивируем ответ
+        if ( substr($response,0,3) == "\x1f\x8b\x08" )  $response = gzinflate(substr($response,10,-8));
+
+        // Переводим ответ в массив PHP
+        $arrResponse = unserialize($response);
+        
+        if ($arrResponse['Status'] == 'OK') {
+            if (isset($arrResponse['Отправления']['ЦеннаяПосылка'])) {
+
+                $parcel = $arrResponse['Отправления']['ЦеннаяПосылка'];
+                $calc['cost'] = $parcel['Доставка'];
+                $calc['days'] = $parcel['СрокДоставки'];
+                $calc['error'] = 0;
+
+            } else {
+                $calc['error'] = 2;
+                $calc['message'] = 'Почтовый сервер не вернул стоимость посылки. Обратитесь в <a href="#" onclick="supportAPI.openTab(0); return false;">онлайн-поддержку</a>' ;
+            }
+        } else {
+            $calc['error'] = 2;
+            $calc['message'] = 'Почтовый сервер вернул ошибку ' . $arrResponse['Status'] . '. Обратитесь в <a href="#" onclick="supportAPI.openTab(0); return false;">онлайн-поддержку</a>' ;
+        }
+    } else {
+        $calc['error'] = 3;
+        $calc['message'] = t('No response from server. Refresh the page, please.');
+    }
+
+    return $calc;
+}
+
+function russianpostcalc_api_calc($from_index, $to_index, $weight, $ob_cennost_rub) {
+    $request = array("apikey" => "225a2ea7a58b1d3fc96e256cd9f8938a",
+        "method" => "calc",
+        "from_index" => $from_index,
+        "to_index" => $to_index,
+        "weight" => $weight,
+        "ob_cennost_rub" => $ob_cennost_rub
+    );
+
+    //если пароль указан, аутентификация по методу API ключ + API пароль.
+    $all_to_md5 = $request;
+    $all_to_md5[] = 'kccc613048';
+    $hash = md5(implode("|", $all_to_md5));
+    $request["hash"] = $hash;
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, "http://russianpostcalc.ru/api_v1.php");
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    $data = curl_exec($curl);
+
+    curl_close($curl);
+    if($data === false) return "10000 server error"; 
+
+    $ret = json_decode($data, $assoc = true);
+
+    $calc = array();
+
+    if (isset($ret['msg']['type'])) {
+        if ($ret['msg']['type'] == "done") {
+            // если успешный запрос, найти стоимость обычной доставки (не 1 классом)
+            foreach ($ret['calc'] as $shipping) {
+                if ($shipping['type'] == 'rp_main') {
+                    $calc['cost'] = $shipping['cost'];
+                    $calc['days'] = $shipping['days'];
+                    $calc['error'] = 0;
+                }
+            }
+            if (empty($calc['cost'])) {
+                $calc['error'] = 3;
+                $calc['message'] = 'Неизвестная ошибка. Обратитесь, пожалуйста, к администратору сайта.';
+            }
+        } elseif ($ret['msg']['type'] == "error") {
+            $calc['error'] = 2;
+            $calc['message'] = $ret['msg']['text'];
+        } else {
+            $calc['error'] = 3;
+            $calc['message'] = t('Error. Refresh the page, please.');
+        }
+    } else {
+        $calc['error'] = 3;
+        $calc['message'] = t('No response from server. Refresh the page, please.');
+    }
+
+    return $calc;
+}
+
+/**
+ * функция возвращающая информацию о вызывающем модуле для модуля Address Book
+ * @return array
+ */
+function russianpost_address_book_info() {
+    return array('surname', 'name', 'name2', 'email', 'phone', 'zipcode', 'region', 'city', 'street', 'house');
+}
+/**
+ * функция, вызываемая при ajax submit в модуле Address Book
+ * вставка выбранного адреса в форму
+ */
+function russianpost_address_book_ajax_submit($form_state) {
+    return order_address_book_ajax_submit($form_state);
+}
+
+/**
+ * hook_node_presave
+ * функция очищает кеш расчётов при сохранении нового или измененного адреса в модуле Address Book
+ */
+function russianpost_node_presave($node) {
+    if ($node->type =='address') {
+        if ($order_id = commerce_cart_order_id($GLOBALS['user']->uid)) {
+            cache_clear_all('russianpost_service_rate_' . $order_id . '_', 'cache', TRUE);
+        }
+    }
+}
+/**
+ * hook_node_delete
+ * функция очищает кеш расчётов при удалении адреса в модуле Address Book
+ */
+function russianpost_node_delete($node) {
+    if ($node->type =='address') {
+        if ($order_id = commerce_cart_order_id($GLOBALS['user']->uid)) {
+            cache_clear_all('russianpost_service_rate_' . $order_id . '_', 'cache', TRUE);
+        }
+    }
+}

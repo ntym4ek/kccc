@@ -1,0 +1,358 @@
+diff --git a/ctools_ajax_sample/ctools_ajax_sample.module b/ctools_ajax_sample/ctools_ajax_sample.module
+index 4638ac3..180c123 100644
+--- a/ctools_ajax_sample/ctools_ajax_sample.module
++++ b/ctools_ajax_sample/ctools_ajax_sample.module
+@@ -137,6 +137,21 @@ function ctools_ajax_sample_page() {
+       'modalTheme' => 'CToolsSampleModal',
+       'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+     ),
++    'ctools-sample-style-dynamic' => array(
++      'modalSize' => array(
++        'type' => 'dynamic',
++        'width' => 100,
++        'height' => 100,
++      ),
++      'modalOptions' => array(
++        'opacity' => .5,
++        'background-color' => '#000',
++      ),
++      'animation' => 'slideDown',
++      'speed' => 'fast',
++      'modalTheme' => 'CToolsSampleModal',
++      'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
++    ),
+   );
+ 
+   drupal_add_js($sample_style, 'setting');
+@@ -164,6 +179,7 @@ function ctools_ajax_sample_page() {
+   $links[] = l(t('Wizard (no modal)'), 'ctools_ajax_sample/nojs/animal');
+   $links[] = ctools_modal_text_button(t('Wizard (default modal)'), 'ctools_ajax_sample/nojs/animal', t('Pick an animal'));
+   $links[] = ctools_modal_text_button(t('Wizard (custom modal)'), 'ctools_ajax_sample/nojs/animal', t('Pick an animal'),  'ctools-modal-ctools-sample-style');
++  $links[] = ctools_modal_text_button(t('Wizard (dynamic modal)'), 'ctools_ajax_sample/nojs/animal', t('Pick an animal'),  'ctools-modal-ctools-sample-style-dynamic');
+   $links[] = drupal_render($button_form);
+ 
+   $links[] = ctools_ajax_text_button(t('Hello world!'), "ctools_ajax_sample/nojs/hello", t('Replace text with "hello world"'));
+diff --git a/help/modal.html b/help/modal.html
+index ea823a0..650774c 100644
+--- a/help/modal.html
++++ b/help/modal.html
+@@ -75,19 +75,22 @@ function ctools_modal_text_button($text, $dest, $alt, $class = '') {
+ 
+ <p>Then, when adding the ctools-use-modal class to your link or button, also add the following class: ctools-modal-ID (in the example case, that would be ctools-modal-my-modal-style).</p>
+ 
+-<p>modalSize can be 'fixed' or 'scale'. If fixed it will be a raw pixel value; if 'scale' it will be a percentage of the screen.</p>
++<p>modalSize can be 'fixed', 'scale' or 'dynamic'. If fixed it will be a raw pixel value; if 'scale' it will be a percentage of the screen; if 'dynamic' it will depend on the content size.</p>
+ 
+ <p>You can set:</p>
+   <ul>
+     <li> <strong>modalSize</strong>: an array of data to control the sizing of the modal. It can contain:
+   <ul>
+-  <li> <strong>type</strong>: Either <em>fixed</em> or <em>scale</em>. If fixed, the modal will always be a fixed size. If <em>scale</em> the modal will scale to a percentage of the browser window. <em>Default: scale</em>.
+-<li> <strong>width</strong>: If </em>fixed</em> the width in pixels. If <em>scale</em> the percentage of the screen expressed as a number less than zero. (For 80 percent, use .8, for example). <em>Default: .8</em></li>
+-<li> <strong>height</strong>: If <em>fixed</em> the height in pixels. If <em>scale</em> the percentage of the screen expressed as a number less than zero. (For 80 percent, use .8, for example). <em>Default: .8</em></li>
++  <li> <strong>type</strong>: Either <em>fixed</em>, <em>scale</em> or <em>dynamic</em>. If fixed, the modal will always be a fixed size. If <em>scale</em> the modal will scale to a percentage of the browser window. If <em>dynamic</em> it will depend on the content size. <em>Default: scale</em>.
++<li> <strong>width</strong>: If </em>fixed</em> the width in pixels. If <em>scale</em> the percentage of the screen expressed as a number less than zero. (For 80 percent, use .8, for example). If </em>dynamic</em> the number of pixels (int), scale ratio (float < 1) or string. <em>Default: .8</em></li>
++<li> <strong>height</strong>: If <em>fixed</em> the height in pixels. If <em>scale</em> the percentage of the screen expressed as a number less than zero. (For 80 percent, use .8, for example). If </em>dynamic</em> the number of pixels (int), scale ratio (float < 1) or string. <em>Default: .8</em></li>
+ <li> <strong>addWidth</strong>: Any additional width to add to the modal in pixels. Only useful if the type is scale. <em>Default: 0</em></li>
+ <li> <strong>addHeight</strong>: Any additional height to add to the modal in pixels. Only useful if the type is scale. <em>Default: 0</em></li>
+ <li> <strong>contentRight</strong>: The number of pixels to remove from the content inside the modal to make room for scroll bar and decorations. <em>Default: 25</em></li>
+ <li> <strong>contentBottom</strong>: The number of pixels to remove from the content inside the modal to make room for scroll bar and decorations. <em>Default: 45</em></li>
++<li> <strong>maxWidth</strong>: The number of pixels (int), scale ratio (float < 1) or string. (Only applicable to type 'dynamic'.) <em>Default: 0.8</em></li>
++<li> <strong>maxHeight</strong>: The number of pixels (int), scale ratio (float < 1) or string. (Only applicable to type 'dynamic'.) <em>Default: 0.8</em></li>
++<li> <strong>overflow</strong>: Any valid CSS overflow property value. (Only applicable to type 'dynamic'.) <em>Default: 'auto'</em></li>
+ </ul>
+ </li>
+ <li> <strong>modalTheme</strong>: The Drupal javascript themable function which controls how the modal will be rendered. This function must be in the <em>Drupal.theme.prototype</em> namespace. If you set this value, you must include a corresponding function in a javascript file and use drupal_add_js() to add that file. <em>Default: CToolsModalDialog</em>
+diff --git a/js/modal.js b/js/modal.js
+index c757ef2..b0c7dac 100644
+--- a/js/modal.js
++++ b/js/modal.js
+@@ -43,7 +43,11 @@
+         // How much to remove from the inner content to make space for the
+         // theming.
+         contentRight: 25,
+-        contentBottom: 45
++        contentBottom: 45,
++        // Only applicable to type 'dynamic'.
++        maxWidth: .8,
++        maxHeight: .8,
++        overflow:'auto'
+       },
+       modalOptions: {
+         opacity: .55,
+@@ -62,41 +66,10 @@
+ 
+     Drupal.CTools.Modal.currentSettings = settings;
+ 
+-    var resize = function(e) {
+-      // When creating the modal, it actually exists only in a theoretical
+-      // place that is not in the DOM. But once the modal exists, it is in the
+-      // DOM so the context must be set appropriately.
+-      var context = e ? document : Drupal.CTools.Modal.modal;
+-
+-      if (Drupal.CTools.Modal.currentSettings.modalSize.type == 'scale') {
+-        var width = $(window).width() * Drupal.CTools.Modal.currentSettings.modalSize.width;
+-        var height = $(window).height() * Drupal.CTools.Modal.currentSettings.modalSize.height;
+-      }
+-      else {
+-        var width = Drupal.CTools.Modal.currentSettings.modalSize.width;
+-        var height = Drupal.CTools.Modal.currentSettings.modalSize.height;
+-      }
+-
+-      // Use the additionol pixels for creating the width and height.
+-      $('div.ctools-modal-content', context).css({
+-        'width': width + Drupal.CTools.Modal.currentSettings.modalSize.addWidth + 'px',
+-        'height': height + Drupal.CTools.Modal.currentSettings.modalSize.addHeight + 'px'
+-      });
+-      $('div.ctools-modal-content .modal-content', context).css({
+-        'width': (width - Drupal.CTools.Modal.currentSettings.modalSize.contentRight) + 'px',
+-        'height': (height - Drupal.CTools.Modal.currentSettings.modalSize.contentBottom) + 'px'
+-      });
+-    }
+-
+     if (!Drupal.CTools.Modal.modal) {
+       Drupal.CTools.Modal.modal = $(Drupal.theme(settings.modalTheme));
+-      if (settings.modalSize.type == 'scale') {
+-        $(window).bind('resize', resize);
+-      }
+     }
+ 
+-    resize();
+-
+     $('span.modal-title', Drupal.CTools.Modal.modal).html(Drupal.CTools.Modal.currentSettings.loadingText);
+     Drupal.CTools.Modal.modalContent(Drupal.CTools.Modal.modal, settings.modalOptions, settings.animation, settings.animationSpeed, settings.modalClass);
+     $('#modalContent .modal-content').html(Drupal.theme(settings.throbberTheme)).addClass('ctools-modal-loading');
+@@ -285,6 +258,24 @@
+   // The following are implementations of AJAX responder commands.
+ 
+   /**
++   * Get a prepared value for the modal size styling properties.
++   */
++  Drupal.CTools.Modal.getSizeValue = function (size, windowSize) {
++    // Allow for string values like: auto and none.
++    if (typeof size == 'string') {
++      return size;
++    }
++    // Assume that we need to scale if the value is smaller than one.
++    else if (size < 1) {
++      return size * windowSize;
++    }
++    // Fall back to a fixed pixel size.
++    else {
++      return size + 'px';
++    }
++  };
++
++  /**
+    * AJAX responder command to place HTML within the modal.
+    */
+   Drupal.CTools.Modal.modal_display = function(ajax, response, status) {
+@@ -311,6 +302,8 @@
+       // button by the show() function called above.)
+       $('#modal-content :focusable:first').focus();
+     }
++    // Trigger a resize event to make sure modal is in the right place.
++    $(window).trigger('resize');
+   }
+ 
+   /**
+@@ -396,15 +389,6 @@
+     if ($('#modalBackdrop').length) $('#modalBackdrop').remove();
+     if ($('#modalContent').length) $('#modalContent').remove();
+ 
+-    // position code lifted from http://www.quirksmode.org/viewport/compatibility.html
+-    if (self.pageYOffset) { // all except Explorer
+-    var wt = self.pageYOffset;
+-    } else if (document.documentElement && document.documentElement.scrollTop) { // Explorer 6 Strict
+-      var wt = document.documentElement.scrollTop;
+-    } else if (document.body) { // all other Explorers
+-      var wt = document.body.scrollTop;
+-    }
+-
+     // Get our dimensions
+ 
+     // Get the docHeight and (ugly hack) add 50 pixels to make sure we dont have a *visible* border below our div
+@@ -464,6 +448,48 @@
+       return tabbableElements.get();
+     };
+ 
++    // Set the modal size.
++    var setSize = function($modelContent, winWidth, winHeight) {
++      var width = 0,
++        height = 0,
++        modalSize = Drupal.CTools.Modal.currentSettings.modalSize;
++
++      if (modalSize.type === 'scale') {
++        width = winWidth * modalSize.width;
++        height = winHeight * modalSize.height;
++      }
++      else {
++        width = modalSize.width;
++        height = modalSize.height;
++      }
++
++      if (modalSize.type === 'dynamic') {
++        $modelContent.css('overflow', modalSize.overflow);
++        $('.ctools-modal-content', $modelContent).css('width', 'auto');
++        $('div.ctools-modal-content .modal-content', $modelContent).css({
++          'min-width': Drupal.CTools.Modal.getSizeValue(modalSize.width, winWidth),
++          'min-height': Drupal.CTools.Modal.getSizeValue(modalSize.height, winHeight),
++          'width': 'auto',
++          'height': 'auto',
++          'max-height': Drupal.CTools.Modal.getSizeValue(modalSize.maxHeight, winHeight),
++          'max-width': Drupal.CTools.Modal.getSizeValue(modalSize.maxWidth, winWidth),
++          'overflow': modalSize.overflow
++        });
++      }
++      else {
++        $('.ctools-modal-content', $modelContent).css('overflow', 'hidden');
++        // Use the additional pixels for creating the width and height.
++        $('div.ctools-modal-content, #modalContent', $modelContent).css({
++          'width': width + modalSize.addWidth + 'px',
++          'height': height + modalSize.addHeight + 'px'
++        });
++        $('div.ctools-modal-content .modal-content', $modelContent).css({
++          'width': (width - modalSize.contentRight) + 'px',
++          'height': (height - modalSize.contentBottom) + 'px'
++        });
++      }
++    };
++
+     // Keyboard and focus event handler ensures only modal elements gain focus.
+     modalEventHandler = function( event ) {
+       target = null;
+@@ -549,12 +575,19 @@
+     };
+     $('body').bind('keydown', modalTabTrapHandler);
+ 
+-    // Create our content div, get the dimensions, and hide it
+-    var modalContent = $('#modalContent').css('top','-1000px');
+-    var mdcTop = wt + ( winHeight / 2 ) - (  modalContent.outerHeight() / 2);
+-    var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
++    // Set backdrop styling and show.
+     $('#modalBackdrop').css(css).css('top', 0).css('height', docHeight + 'px').css('width', docWidth + 'px').show();
+-    modalContent.css({top: mdcTop + 'px', left: mdcLeft + 'px'}).hide()[animation](speed);
++
++    // Get the modal content.
++    var $modalContent = $('#modalContent');
++
++    // Set the initial modal content size.
++    setSize($modalContent, winWidth, winHeight);
++
++    // Set the initial modal content position and show animated.
++    var mdcTop = Math.max($(document).scrollTop() + ( winHeight / 2 ) - (  $modalContent.outerHeight() / 2), 10);
++    var mdcLeft = Math.max(( winWidth / 2 ) - ( $modalContent.outerWidth() / 2), 10);
++    $modalContent.css({top: mdcTop + 'px', left: mdcLeft + 'px'}).hide()[animation](speed);
+ 
+     // Bind a click for closing the modalContent
+     modalContentClose = function(){close(); return false;};
+@@ -580,6 +613,7 @@
+     function close() {
+       // Unbind the events
+       $(window).unbind('resize',  modalContentResize);
++      $(window).unbind('scroll', modalContentResize);
+       $('body').unbind( 'focus', modalEventHandler);
+       $('body').unbind( 'keypress', modalEventHandler );
+       $('body').unbind( 'keydown', modalTabTrapHandler );
+@@ -593,49 +627,65 @@
+       if ( animation == 'show' ) animation = 'hide';
+ 
+       // Close the content
+-      modalContent.hide()[animation](speed);
+-
+-      // Remove the content
+-      $('#modalContent').remove();
+-      $('#modalBackdrop').remove();
++      $('#modalContent').hide()[animation](speed, function() {
++        $(this).remove();
++        $('#modalBackdrop').remove();
++      });
+ 
+       // Restore focus to where it was before opening the dialog
+       $(oldFocus).focus();
+     };
+ 
+-    // Move and resize the modalBackdrop and modalContent on window resize.
+-    modalContentResize = function(){
++    // Move and resize the modalBackdrop and modalContent on resize of the window
++    modalContentResize = function(e) {
++      var $modalBackdrop = $('#modalBackdrop');
++      var $modalContent = $('#modalContent');
+ 
+       // Reset the backdrop height/width to get accurate document size.
+-      $('#modalBackdrop').css('height', '').css('width', '');
+-
+-      // Position code lifted from:
+-      // http://www.quirksmode.org/viewport/compatibility.html
+-      if (self.pageYOffset) { // all except Explorer
+-      var wt = self.pageYOffset;
+-      } else if (document.documentElement && document.documentElement.scrollTop) { // Explorer 6 Strict
+-        var wt = document.documentElement.scrollTop;
+-      } else if (document.body) { // all other Explorers
+-        var wt = document.body.scrollTop;
+-      }
++      $modalBackdrop.css('height', '').css('width', '');
++
++      // Reset the model position to allow correct position calculation
++      // in dynamic model sizing mode.
++      $modalContent.css({top: 0, left: 0});
+ 
+       // Get our heights
+-      var docHeight = $(document).height();
+-      var docWidth = $(document).width();
+       var winHeight = $(window).height();
+       var winWidth = $(window).width();
+-      if( docHeight < winHeight ) docHeight = winHeight;
+ 
+-      // Get where we should move content to
+-      var modalContent = $('#modalContent');
+-      var mdcTop = wt + ( winHeight / 2 ) - ( modalContent.outerHeight() / 2);
+-      var mdcLeft = ( winWidth / 2 ) - ( modalContent.outerWidth() / 2);
++      setSize($modalContent, winWidth, winHeight);
++
++      // Get where we should move content to.
++      var height = Math.max($modalContent.outerHeight(), $('div.ctools-modal-content', $modalContent).outerHeight());
++      var width = Math.max($modalContent.outerWidth(), $('div.ctools-modal-content', $modalContent).outerWidth());
++      var mdcTop = Math.max($(document).scrollTop() + ( winHeight / 2 ) - (  height / 2), 10);
++      var mdcLeft = Math.max(( winWidth / 2 ) - ( width / 2), 10);
++
++      // Apply attributes to fix the position of the modal relative to current
++      // position of page. This is required when the modal is larger than the
++      // browser window. This enables the modal to scroll with the rest of the
++      // page, rather than remaining centered in the page whilst scrolling.
++      if (height > $(window).height()) {
++        if (e.type === 'resize') {
++          // Is a resize event so get the position of top relative to current
++          // position of document in browser window.
++          mdcTop = 10 + $(document).scrollTop();
++        }
++        else if (e.type === 'scroll') {
++          // Is a scroll event so mantain to current position of the modal
++          // relative to page.
++          var modalOffSet = $modalContent.offset();
++          mdcTop = modalOffSet.y;
++        }
++      }
+ 
+-      // Apply the changes
+-      $('#modalBackdrop').css('height', docHeight + 'px').css('width', docWidth + 'px').show();
+-      modalContent.css('top', mdcTop + 'px').css('left', mdcLeft + 'px').show();
++      // Apply the changes.
++      $modalBackdrop.css({'height': winHeight + 'px', 'width': winWidth + 'px', 'top': $(document).scrollTop()}).show();
++      $modalContent.css('top', mdcTop + 'px').css('left', mdcLeft + 'px').show();
+     };
+     $(window).bind('resize', modalContentResize);
++    $(window).bind('scroll', modalContentResize);
++
++    $modalContent.focus();
+   };
+ 
+   /**
+@@ -656,6 +706,7 @@
+ 
+     // Unbind the events we bound
+     $(window).unbind('resize', modalContentResize);
++    $(window).unbind('scroll', modalContentResize);
+     $('body').unbind('focus', modalEventHandler);
+     $('body').unbind('keypress', modalEventHandler);
+     $('body').unbind( 'keydown', modalTabTrapHandler );

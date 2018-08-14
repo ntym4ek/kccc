@@ -1,0 +1,84 @@
+<?php
+function terms_menu() {
+    $items['handbook/terms'] = array(
+        'title' => t('Terms'),
+        'description' => t('List of terms'),
+        'page callback' => 'terms_main_page',
+        'page arguments' => array(1),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['handbook/active-substances'] = array(
+        'title' => t('Active substances'),
+        'description' => t('List of active substances'),
+        'page callback' => 'terms_main_page',
+        'page arguments' => array(1),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function terms_theme() {
+    return array(
+        'main_page' => array(
+            'variables' => array('terms' => NULL),
+            'template' => 'templates/main-page',
+        ),
+    );
+}
+
+function terms_preprocess_page(&$vars, $hook) {
+    switch (request_path()) {
+        case 'handbook/terms':
+            $vars['title_description'] = 'Справочник терминов, используемых в сельском хозяйстве и связанной с ним химической промышленности';
+            break;
+        case 'handbook/active-substances':
+            $vars['title_description'] = 'Справочник действующих веществ, используемых при производстве пестицидов';
+            break;
+    }
+}
+
+// главная страница
+function terms_main_page($param) {
+
+    drupal_add_js(drupal_get_path('module', 'terms') . '/js/terms.js');
+    drupal_add_css(drupal_get_path('module', 'terms') . '/css/terms.css');
+
+    $html = 'Список пуст';
+    $terms = array();
+
+    switch ($param) {
+        case 'terms':
+            $voc_info = taxonomy_vocabulary_machine_name_load('terms');
+            break;
+        case 'active-substances':
+            $voc_info = taxonomy_vocabulary_machine_name_load('active_substances');
+            break;
+    }
+
+    if ($voc_info) {
+        $voc = taxonomy_get_tree($voc_info->vid, 0, null, true);
+        foreach($voc as $item) {
+            $letter = drupal_strtolower(drupal_substr($item->name, 0, 1));
+            $mean = $item->description ? $item->description : 'Значение вскоре будет добавлено.';
+            $term = array(
+                'ru' => $item->name,
+                'en' => $item->field_name_latin['und'][0]['value'],
+                'sub' => $item->field_name_latin['und'][0]['value'],
+                'mean' => $mean,
+            );
+
+            if ($param == 'active-substances' && !empty($item->field_textfield_1['und'][0]['value'])) {
+                $term['sub'] = $item->field_textfield_1['und'][0]['value'];
+            }
+            $terms[$letter][] = $term;
+        }
+    }
+
+    if ($terms) {
+        $html = theme('main_page', array('terms' => $terms));
+    }
+
+    return $html;
+};

@@ -1,0 +1,311 @@
+<?
+/**
+ *  Implementation of hook_menu()
+ */
+function forms_ex_menu() {
+    // команды для текущего модального окна (закрыть, обновить страницу)
+    $items['board/add/ad/%/finish'] = array(
+        'page callback' => 'forms_ex_board_add_finish_page',
+        'page arguments' => array(3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    return $items;
+}
+
+function forms_ex_form_alter(&$form, &$form_state, $form_id) {
+
+    switch ($form_id) {
+        case 'news_node_form':
+        case 'blog_node_form':
+            if ($GLOBALS['user']->uid != 1) {
+                $form['language']['#access'] = false;
+                $form['field_promo_image']['#access'] = false;
+                $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме записи</i>';
+                // $form['photo']['field_image_gallery']['#element_validate'][] = '_unset_status_message';
+            }
+            break;
+
+        case 'views_exposed_form':
+            // убрать выбор региона для Агрохимиката в Вакансиях
+            if ( $form['#id'] == 'views-exposed-form-vacancies-page' && isset($form_state['input']['employer']) && $form_state['input']['employer'] == 'ag' ) {
+                $form['region']['#access'] = false;
+                $form['#info']['filter-field_region_value']['label'] = '';
+            }
+            break;
+        
+        case 'contact_us_entityform_edit_form':
+            $form['field_contact_name']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_name']['und']['#title'];
+            $form['field_contact_name']['und'][0]['value']['#title'] = '';
+            $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
+            $form['field_phone']['und'][0]['value']['#title'] = '';
+            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
+            $form['field_contact_email']['und'][0]['value']['#title'] = '';
+            $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
+            $form['field_contact_message']['und'][0]['value']['#title'] = '';
+            break;
+
+        case 'product_agro_node_form':
+        case 'product_mix_node_form':
+        case 'product_fert_node_form':
+        case 'product_chem_node_form':
+            // из за включения мультиязычности поля body все тексты остались в UND, а на редактирование выводится RU
+            // скопировать из UND в RU, если там пусто
+            if (empty($form['body']['ru'][0]['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['value'])) {
+                $form['body']['ru'][0]['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['value'];
+            }
+            if (empty($form['body']['ru'][0]['summary']['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['summary'])) {
+                $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
+            }
+            // пересчитать цены вариантов товаров в админке при редактировании товара
+            $form['#submit'][] = 'forms_ex_product_calc_price';
+            break;
+
+
+        case 'contact_vacancy_entityform_edit_form':
+            $form['field_vacancy_surname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_surname']['und']['#title'];
+            $form['field_vacancy_name_1']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_1']['und']['#title'];
+            $form['field_vacancy_name_2']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_2']['und']['#title'];
+            $form['field_vacancy_location']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_location']['und']['#title'];
+            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
+            break;
+    }
+
+    // из за включения мультиязычности поля body все тексты остались в UND, а на редактирование выводится RU
+    // скопировать из UND в RU, если там пусто
+    if (!empty($form['#node_edit_form'])) {
+            if (empty($form['body']['ru'][0]['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['value'])) {
+                $form['body']['ru'][0]['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['value'];
+            }
+            if (empty($form['body']['ru'][0]['summary']['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['summary'])) {
+                $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
+            }
+    }
+
+    /** -------------------------------------------- Форма добавления в корзину (Add to Cart) ----------------------- */
+    if (commerce_form_callback($form_id, $form_state) == "commerce_cart_add_to_cart_form") {
+        // выводить элементы в одну строку с метками
+        $form['#attributes']['class'][] = 'form-horizontal';
+        $form['submit']['#prefix'] = '<div class="form-item form-action-wrapper">';
+        $form['submit']['#suffix'] = '</div>';
+        $form['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('add_to_cart'); return true;";
+
+        // если установлен в товаре флаг Out_of_stock, сделать Добавление в корзину неактивным
+        $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
+        if (strpos($form_state['default_product']->type, 'product_') === 0) {
+            if (isset($form['product_id']['#value']))
+                $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
+            elseif (isset($form['product_id']['#default_value']))
+                $product_display = _get_product_display_by_product_id($form['product_id']['#default_value'], false);
+
+            $form['submit']['#value'] = t('Add to list');
+        }
+        if ((isset($product_display->out_of_stock) && $product_display->out_of_stock == 1)
+            || (isset($product_display->field_pd_price_per_unit['und']) && (($product_display->field_pd_price_per_unit['und'][0]['amount'] == 0)))
+        ) {
+            $form['submit']['#disabled'] = true;
+            $form['submit']['#value'] = t('Out of stock');
+        }
+    }
+}
+
+
+
+/**
+ * ------------------------------------------------------ Темизация  ---------------------------------------------------
+ * 
+ */
+function forms_ex_theme() {
+    return array(
+        // темизация виджета загрузки изображения
+        'forms_ex_thumb_upload' => array(
+            'render element' => 'element',
+        ),
+        // темизация формы добавления объявления
+        'ad_node_form' => array(
+            'render element' => 'form',
+            'template' => 'templates/forms/ad-node-form',
+            'path' => drupal_get_path('theme', 'opie')
+        ),
+    );
+}
+
+// темизация виджета загрузки изображения - вывод загруженного изображения
+// взято с http://stackoverflow.com/questions/18997423/display-uploaded-image-drupal-7-form-api
+function theme_forms_ex_thumb_upload(&$variables) {
+    $element = $variables['element'];
+    $output = '';
+    $output .= '<div class="image-widget form-managed-file clearfix">';
+
+    // If image is uploaded show its thumbnail to the output HTML
+    if ($element['fid']['#value'] != 0) {
+        // загрузить файл заново, так как в $element['#file'] содержится старая копия до переноса файла в другую папку
+        $file = file_load($element['#file']->fid);
+        $output .= '<div class="image-preview">';
+        $output .= '    <img src="' . image_style_url('profile_photo', $file->uri) . '" />';
+        $output .= '</div>';
+    }
+
+    $output .= '<div class="image-widget-data">';
+
+    // прячем информацию о файле
+    hide($element['filename']);
+    // выводим кнопку
+    $output .= drupal_render_children($element);
+    $output .=     '</div>';
+    $output .= '</div>';
+
+    return $output;
+}
+
+
+/**
+ * ------------------------------------------------------ Продукция  ------------------------------------------------
+ * 
+ */
+
+// перенесено в form_alter
+//function forms_ex_form_product_agro_node_form_alter(&$form, &$form_state, $form_id) {
+//    $form['#submit'][] = 'forms_ex_product_calc_price';
+//}
+//function forms_ex_form_product_fert_node_form_alter(&$form, &$form_state, $form_id) {
+//    $form['#submit'][] = 'forms_ex_product_calc_price';
+//}
+//function forms_ex_form_product_chem_node_form_alter(&$form, &$form_state, $form_id) {
+//    $form['#submit'][] = 'forms_ex_product_calc_price';
+//}
+/**
+ * пересчитать цены вариантов товаров в админке при редактировании дисплее товара, если цена за единицу изменила
+ * TODO: цена не пересчитывается при сохранении сразу после изменения поля Количество, только после повторного сохр.
+*/
+function forms_ex_product_calc_price($form, &$form_state) {
+    if (isset($form['field_pd_price_per_unit'])) {
+        $price = (float) $form_state['values']['field_pd_price_per_unit']['und'][0]['amount'];
+
+        foreach ($form_state['inline_entity_form'] as $inline_form) {
+            foreach ($inline_form['entities'] as $key => $line_item) {
+                $qty = (float) $line_item['entity']->field_p_qty['und'][0]['value'];
+
+                $product_id = $line_item['entity']->product_id;
+                // если товар уже сохранён и имеет ID, загрузить и внести изменения
+                if ($product_id) {
+                    $product = commerce_product_load($product_id);
+                    $product->commerce_price['und'][0]['amount'] = $qty * $price;
+                    commerce_product_save($product);
+                }
+                // если товар только что добавлен, изменить inline_entity_form
+                else {
+                    $line_item['entity']->commerce_price['und'][0]['amount'] = $qty * $price;
+                }
+            }
+        }
+    }
+}
+
+
+
+/**
+ * ------------------------------------------------------ Объявления (Ads) ---------------------------------------------
+ */
+
+/**
+ * hook_form_alter
+ */
+function forms_ex_form_ad_node_form_alter( &$form, &$form_state, $form_id ) {
+    // предзаполнить телефон номером из профиля
+    global $user;
+    $user_array = person_get_user_array($user);
+    if (empty($form['field_phone']['und'][0]['value']['#default_value'])) $form['field_phone']['und'][0]['value']['#default_value'] = $user_array['phone'];
+    // изменить видимость информации о компании по клику по чекбоксу
+    $form['field_ad_allow_company']['#attributes'] = array('onchange' => array('jQuery(".form-company-info").slideToggle();'));
+    // дополнительный валидатор для поля Фото
+    $form['field_image_gallery']['#element_validate'][] = '_unset_status_message';
+    // дополнительный submit callback
+    $form['actions']['submit']['#submit'][] = 'forms_ex_ad_node_form_submit';
+}
+function forms_ex_ad_node_form_submit($form, &$form_state) {
+    // редирект на страницу summary
+    if ($form_state['node']->nid) {
+        $form_state['redirect'] = 'board/add/ad/' . $form_state['node']->nid .  '/finish';
+    }
+}
+/**
+ * контент страницы выводимой после создания Объявления
+ */
+function forms_ex_board_add_finish_page($nid) {
+    global $user;
+    $output = '';
+
+    $node_wr = entity_metadata_wrapper('node', $nid);
+
+    $output .=  '<div class="ad-node-finish">';
+    $output .=      '<h1>Ваше объявление успешно добавлено</h1>';
+    $output .=      '<p>Объявление <a href="/' . drupal_get_path_alias('node/' . $nid) . '">' . $node_wr->title->value() . '</a> добавлено на сайт на 30 дней.<br />';
+    $output .=      'Вы всегда можете отредактировать или удалить своё объявление в <a href="/person/' . $user->uid . '/summary">Личном кабинете</a>.';
+    $output .=  '</div>';
+    return $output;
+}
+
+
+/**
+ * ----------------------------------------------------- Exposed forms -------------------------------------------------
+ *
+ */
+function forms_ex_form_views_exposed_form_alter( &$form, &$form_state, $form_id )
+{
+    switch ($form_state['view']->name) {
+        // на странице Справочника Болезней вывести в списке Культур только те, для которых есть Болезни
+        // todo вписать вместь 12 название view
+        case '12':
+            $options = array('All' => ' - Любая культура - ');
+
+            $query = db_select('node', 'n');
+            $query->condition('n.type', 'main_cultures');
+            $query->distinct();
+            $query->innerJoin('field_data_field_hobject_cultures', 'fc', 'n.nid = fc.field_hobject_cultures_target_id');
+            $query->fields('n', array('nid', 'title'));
+            $cultures = $query->execute()->fetchAll();
+
+            foreach ($cultures as $culture) {
+                $options[$culture->nid] = $culture->title;
+            }
+            $form['culture']['#options'] = $options;
+            break;
+
+        case 'blog':
+        case 'reviews':
+            // в Блогах и Отзывах ограничить значения фильтра существующими в записях
+            $node_type = $form_state['view']->name == 'blog' ? 'blog' : 'review';
+            $query = db_select('taxonomy_term_data', 't');
+            $query->condition('t.vid', 29); // словарь 'regions'
+            $query->distinct();
+            $query->innerJoin('field_data_field_f_region', 'fr', 't.tid = fr.field_f_region_tid');
+            $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
+            $query->condition('n.type', $node_type);
+            $query->fields('t', array('tid', 'name'));
+            $regions = $query->execute()->fetchAll();
+
+            foreach ($regions as $region) {
+                $options[$region->tid] = $region->name;
+            }
+
+            asort($options);
+            $options = array('All' => ' - Любой - ') + $options;
+            $form['region']['#options'] = $options;
+            break;
+    }
+
+}
+
+/**
+ * ----------------------------------------------------- Вспомогательные функции ---------------------------------------
+ *
+ */
+
+/**
+* в форме добавления Объявления при добавлении Фото не выводить (подавить) статусные сообщения
+ */
+function _unset_status_message( &$form, &$form_state, $form_id ) {
+    unset($_SESSION['messages']['status']);
+}

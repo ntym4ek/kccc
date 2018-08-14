@@ -1,0 +1,575 @@
+<?php
+
+/**
+ * Implementation of hook_schema().
+ */
+function parser_schema() {
+  $schema['parser_jobs'] = array(
+    'fields' => array(
+      'jid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'start_url' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'test_url' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'only_this_domen' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'depth' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'parse_limit' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'white_list' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'black_list' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'check_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'save_url' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'no_update' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'site_charset' => array(
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => 'auto',
+      ),
+      'charset_fix' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'entity_type' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'bundle' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'remote_id_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'fields_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+      ),
+      'list_mode_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'init_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'prepare_code' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'headers' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'proxies' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'force_download' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'force_download_list' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'sleep' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'run_period' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'last_run' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+      ),
+    ),
+    'primary key' => array('jid'),
+  );
+  
+  $schema['parser_urls'] = array(
+    'fields' => array(
+      'uid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'url' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'depth' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'parsed' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'jid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('uid'),
+    'indexes' => array(
+      'url' => array(
+        array('url', 100),
+      ),
+    ),
+  );
+  
+  $schema['parser_map'] = array(
+    'fields' => array(
+      'jid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'entity_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'remote_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'url' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'element' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('jid', 'entity_id'),
+  );
+  
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function parser_install() {
+  entity_create('parser_job', array(
+    'title' => 'Парсинг шаблонов с drupal.org',
+    'start_url' => 'https://drupal.org/project/project_theme',
+    'test_url' => 'http://drupal.org/project/zen',
+    'depth' => 1,
+    'parse_limit' => 5,
+    'white_list' => 'http://drupal.org/project/*',
+    'black_list' => '' . 
+      'http://drupal.org/project/issues*' . "\n" .
+      'http://drupal.org/project/themes?solrsort*' . "\n" .
+      'http://drupal.org/project/themes?filters*' . "\n" .
+      'http://drupal.org/project/modules*' . "\n" .
+      '*.jpg' . "\n" .
+      '*.zip' . "\n" .
+      '*.tar.gz',
+    'check_code' => 'return $doc->find(\'body\')->hasClass(\'node-type-project-theme\');',
+    'site_charset' => 'auto',
+    'charset_fix' => 0,
+    'entity_type' => 'node',
+    'bundle' => 'article',
+    'save_url' => 0,
+    'no_update' => 0,
+    'remote_id_code' => '' .
+      '$attr_id = $doc->find(\'.node\')->attr(\'id\');' . "\n" .
+      'list(, $nid) = explode(\'-\', $attr_id);' . "\n" .
+      'return $nid;',
+    'fields_code' => array(
+      'title' => 'return $doc->find(\'h1#page-subtitle\')->text();',
+      'body' => '' .
+        'return array(' . "\n" .
+        '  \'value\' => $doc->find(\'.field-name-body .field-item\')->html(),' . "\n" .
+        '  \'format\' => \'full_html\',' . "\n" .
+        ');',
+      'field_tags' => '' .
+        '$terms = array();' . "\n" .
+        'foreach ($doc->find(\'.project-info a[href^="/taxonomy/term/"]\') as $a) {' . "\n" .
+        '  $terms[] = pq($a)->text();' . "\n" .
+        '}' . "\n" .
+        'return $terms;',
+      'field_image' => '' . 
+        'return array(' . "\n" . 
+        '  \'file\' => $doc->find(\'.field-name-field-project-images a:first\')->attr(\'href\'),' . "\n" .
+        ');',
+      'author' => 'return 1;',
+    ),
+    'list_mode_code' => '',
+    'init_code' => '',
+    'prepare_code' => '',
+    'headers' => 'User-Agent: Opera/9.80 (Windows NT 6.1; U; ru) Presto/2.8.131 Version/11.10' . "\n",
+    'proxies' => '',
+    'force_download' => 0,
+    'force_download_list' => '',
+    'sleep' => 0,
+  ))->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function parser_uninstall() {
+  $vars = array('parser_show_source_link');
+  foreach ($vars as $var) {
+    variable_del($var);
+  }
+  db_query("DELETE FROM {variable} WHERE name LIKE 'parser\_data\_%'");
+}
+
+/**
+ * Add new cols to {parser_urls}
+ */
+function parser_update_7200() {
+  db_add_field('parser_urls', 'page_url', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ));
+  
+  db_add_field('parser_urls', 'href', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ));
+}
+
+/**
+ * Add new col to {parser_urls}
+ */
+function parser_update_7201() {
+  db_add_field('parser_urls', 'element', array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+  ));
+}
+
+/**
+ * Add new col to {parser_map}
+ */
+function parser_update_7202() {
+  db_add_field('parser_map', 'element', array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+  ));
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7203() {
+  db_add_field('parser_jobs', 'remote_id_code', array(
+    'type' => 'text',
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Rename {parser_map}.page_key to {parser_map}.remote_id
+ */
+function parser_update_7204() {
+  db_change_field('parser_map', 'page_key', 'remote_id', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ));
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7205() {
+  db_add_field('parser_jobs', 'list_mode_code', array(
+    'type' => 'text',
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Remove col from {parser_urls}
+ */
+function parser_update_7206() {
+  db_drop_field('parser_urls', 'element');
+}
+
+/**
+ * Increase size of fields
+ */
+function parser_update_7207() {
+  db_change_field('parser_urls', 'url', 'url', array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ));
+  db_change_field('parser_urls', 'page_url', 'page_url', array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ));
+  db_change_field('parser_urls', 'href', 'href', array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ));
+  db_change_field('parser_map', 'url', 'url', array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ));
+}
+
+/**
+ * Add index in {parser_urls}
+ */
+function parser_update_7208() {
+  db_change_field('parser_urls', 'url', 'url', array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => TRUE,
+  ), array(
+    'indexes' => array(
+      'url' => array(
+        array('url', 100),
+      ),
+    )
+  ));
+}
+
+/**
+ * Add new cols to {parser_jobs}
+ */
+function parser_update_7209() {
+  db_add_field('parser_jobs', 'cookie', array(
+    'type' => 'text',
+  ));
+  db_add_field('parser_jobs', 'user_agent', array(
+    'type' => 'text',
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Remove and add cols in {parser_jobs}
+ */
+function parser_update_7210() {
+  db_drop_field('parser_jobs', 'user_agent');
+  db_drop_field('parser_jobs', 'cookie');
+  db_add_field('parser_jobs', 'headers', array(
+    'type' => 'text',
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7211() {
+  db_add_field('parser_jobs', 'force_download', array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7212() {
+  db_add_field('parser_jobs', 'sleep', array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7213() {
+  db_add_field('parser_jobs', 'proxies', array(
+    'type' => 'text',
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new col to {parser_urls} and delete urls with jid=0
+ */
+function parser_update_7214() {
+  db_add_field('parser_urls', 'jid', array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  
+  db_delete('parser_urls')
+    ->condition('jid', 0)
+    ->execute();
+}
+
+/**
+ * Remove cols from `parser_urls`
+ */
+function parser_update_7215() {
+  db_drop_field('parser_urls', 'page_url');
+  db_drop_field('parser_urls', 'href');
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7216() {
+  db_add_field('parser_jobs', 'force_download_list', array('type' => 'text'));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Change {parser_jobs}.start_url
+ */
+function parser_update_7217() {
+  db_change_field('parser_jobs', 'start_url', 'start_url', array(
+    'type' => 'text',
+    'not null' => TRUE,
+  ));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new col to {parser_jobs}
+ */
+function parser_update_7218() {
+  db_add_field('parser_jobs', 'init_code', array('type' => 'text'));
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add new cols to {parser_jobs}
+ */
+function parser_update_7219() {
+  db_add_field('parser_jobs', 'run_period', array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  db_add_field('parser_jobs', 'last_run', array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+  drupal_flush_all_caches();
+}

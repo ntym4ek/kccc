@@ -1,0 +1,86 @@
+.page-taxonomy-term-1 #page-title-wrapper { display: none; }
+
+#block-products-filter-frontpage {
+    float:left;
+    border: 5px solid #fff; box-shadow: 1px 1px 10px #333;
+    background-image: url("../images/block_products_filter.jpg");
+    margin: 10px 0 5px 0;
+    transition: 1000ms;
+    position: relative;
+    width: 1003px;
+}
+#block-products-filter-frontpage form {
+    background-color: rgba(64, 174, 26, 0.7);
+    padding:20px 30px;
+}
+#block-products-filter-frontpage h2{
+    color: #fff; font-size: 20px; line-height: 28px; font-weight: 500;
+    text-shadow: 1px 1px 5px rgba(0,0,0,1);
+    margin-bottom: 10px;
+}
+#block-products-filter-frontpage .block-title {
+    margin: 0;
+    position: absolute; right: 15px; top: 5px;
+}
+#block-products-filter-frontpage .block-title a {
+    font-size: 13px; line-height: 16px; font-weight: 500;
+    color: #fff;
+    text-shadow: 1px 1px 5px rgba(0,0,0,1);
+}
+#block-products-filter-frontpage .form-text{
+    background-color: rgba(255,255,255,0.6);
+}
+#block-products-filter-frontpage .form-item .description{
+    font-size: 12px; line-height: 15px; font-weight: 500;
+    text-shadow: 1px 1px 5px rgba(0,0,0,1);
+    color: #fff;
+}
+#block-products-filter-frontpage .form-item {
+    float:left;
+    margin: 0 10px 10px 0;
+}
+#block-products-filter-frontpage .submit-button .form-submit {
+    color: #fff;
+    background-color: #D0891E; border: 2px solid #D0891E; box-shadow: 1px 1px 10px #333;
+    padding: 5px 30px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+}
+#block-products-filter-frontpage .submit-button .form-submit:hover { background-color: #E89C2A; }
+
+#block-products-filter-frontpage .form-item-main-culture,
+#block-products-filter-frontpage .form-item-harmful-object {
+    width: 403px;
+}
+.pf-results {
+    float:left;
+    color: #fff; font-size: 14px; line-height: 18px;
+    background-color: rgba(0, 0, 0, 0.4);
+    margin-top:10px; padding: 10px 20px;
+    width:100%;
+}
+.pf-results a{
+    color: #fff;
+}
+
+.page-taxonomy-term-1 #block-products-filter-frontpage {
+    border: 7px solid #fff; border-radius: 4px;
+    margin: 10px 0 0 0;
+}
+.page-taxonomy-term-1 #block-products-filter-frontpage form {
+    background-color: rgba(64, 174, 26, 0.8);
+    padding: 10px;
+}
+.page-taxonomy-term-1 #block-products-filter-frontpage .block-title {
+    margin: 0 3px 8px;
+    position: relative;
+    top: 0; right: 0;
+}
+.page-taxonomy-term-1 #block-products-filter-frontpage .block-title a{
+    color: #FFFFFF;
+    font-size: 22px; line-height: 26px; font-weight: 700;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+.page-taxonomy-term-1 #block-products-filter-frontpage h2{
+    color: #fff; font-size: 17px; line-height: 19px; font-weight: 100; text-shadow: 1px 1px 5px rgba(0,0,0,1);
+    margin-bottom: 10px;
+}

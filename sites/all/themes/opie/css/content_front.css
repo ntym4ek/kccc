@@ -1,0 +1,186 @@
+
+
+/* ------------------------------------------------ Главный слайдер, Main slider ------------------------------------------------ */
+#block-views-front-slider-block .views_slideshow_cycle_main {
+    display: inline-block;
+    line-height: 650px;
+}
+#block-views-front-slider-block .views-slideshow-cycle-main-frame {
+    display: inline-block;
+    position: relative;
+    height: 250px;
+    line-height: normal; vertical-align: middle;
+}
+
+#block-views-front-slider-block a { color: #fff; }
+#block-views-front-slider-block a:hover { text-decoration: none; }
+#block-views-front-slider-block .views-field-name-field-et {
+    border: 5px solid #fff;
+    /*border-top-left-radius: 4px; border-top-right-radius: 4px;*/
+    background: #40ae1b;
+    font-size: 19px; font-weight: 300;
+    display: inline-block;
+    height: 50px;
+    padding: 8px 20px;
+}
+#block-views-front-slider-block .views-field-description-field-et {
+    border: 5px solid #fff;
+    /*border-top-right-radius: 4px; border-bottom-right-radius: 4px;*/
+    background: #2b8aff;
+    font-size: 32px; line-height: 38px; font-weight: 500;
+    display: block;
+    padding: 15px 20px; margin-top: -5px;
+    width: 600px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+}
+#block-views-front-slider-block .views-field-description-field-et:hover {
+    background: #2176de;
+}
+#block-views-front-slider-block .views-field-field-more-link-text {
+    border: 5px solid #fff;
+    /*border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;*/
+    background: #40ae1b;
+    display: inline-block;
+    font-size: 19px; font-weight: 300;
+    height: 50px;
+    padding: 8px 35px 8px 20px; margin-top: -5px;
+    position: relative;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+}
+#block-views-front-slider-block .views-field-field-more-link-text a:after {
+    content: "\f105";
+    color: #fff; font-family: FontAwesome;
+    position: absolute; top: 11px; right: 14px;
+}
+#block-views-front-slider-block .views-field-field-more-link-text:hover {
+    background: #399127;
+}
+#block-views-front-slider-block .views-slideshow-pager-fields {
+    background: #fff;
+    border-radius: 20px;
+    height: 28px; width: 72px;
+    margin: 0 auto 20px;
+    padding: 7px;
+}
+#block-views-front-slider-block .views-slideshow-pager-field-item {
+    background: #808080;
+    border-radius: 8px;
+    float: left;
+    height: 14px; width: 14px;
+    margin-right: 8px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out;
+}
+#block-views-front-slider-block .views-slideshow-pager-field-item.active,
+#block-views-front-slider-block .views-slideshow-pager-field-item:hover {
+    background: #2b8aff;
+}
+#block-views-front-slider-block .views-slideshow-pager-field-item:last-child {
+    margin-right: 0;
+}
+
+/* ------------------------------------------------- Блоки, Blocks ------------------------------------------------- */
+.region-content-front .block {
+    float: left;
+    position: relative;
+}
+.block-1-1 {
+    background: #fff;
+    border: 5px solid #fff;
+    overflow: hidden;
+    margin: 0 5px 5px 0;
+}
+.block-1-1 .fb-body {
+    background: #eee;
+    height: 321px; width: 321px;
+}
+.block-2-2 {
+    background: #fff;
+    border: 5px solid #fff;
+    height: 667px; width: 667px;
+    overflow: hidden;
+    margin: 0 5px 5px 0;
+}
+/* содержимое блоков */
+.front-block-article {
+    position: relative;
+    height: 100%;
+}
+.front-block-article a { color: #fff; }
+.front-block-article .fb-name {
+    background: #2b8aff;
+    border: 5px solid #fff; box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+    position: absolute; bottom: 20px; right: 20px;
+    min-height: 70px; max-height: 90px; width: 210px;
+    color: #fff; font-size: 17px;
+    padding: 7px;
+    overflow: hidden;
+}
+
+/* настройки по блокам*/
+
+/* блоги */
+.block-1-1.front-blogs { margin-right: 0; }
+
+/* новости */
+.block-1-1.front-news.block_2 .fb-name { background: #40ae1a; }
+.block-1-1.front-news.block_3 { margin-right: 0; }
+.block-1-1.front-news.block_3 .fb-name { background: #40ae1a; }
+
+/* новинки */
+.block-1-1.view-front-novelties { margin-right: 0; }
+.block-1-1.view-front-novelties .fb-name { background: #40ae1a; }
+.front-block-article .fb-price {
+    position: absolute; top: 20px; right: 20px;
+    color: #40ae1a; font-size: 30px; font-weight: 700;
+
+}
+.front-block-article .fb-price i.fa {
+    color: #40ae1a; font-size: 18px;
+    margin-left: 5px;
+}
+
+
+
+/* ------------------------------------------------- Слайдер 3х1, Slider 3х1 --------------------------------------- */
+
+.views-slideshow-controls-text-previous,
+.views-slideshow-controls-text-next {
+    position: absolute; z-index: 7;
+}
+.views-slideshow-controls-text-previous {
+    top: 320px; left: 14px;
+}
+.views-slideshow-controls-text-previous a,
+.views-slideshow-controls-text-next a {
+    position: relative;
+    font-size: 0; line-height: 0;
+}
+.views-slideshow-controls-text-previous a:before {
+    content: "\f053";
+    color: #ddd; font-family: FontAwesome; font-size: 22px;
+    /*position: absolute; top: 7px; left: 14px;*/
+    vertical-align: middle; line-height: 24px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out;
+}
+.views-slideshow-controls-text-next  {
+    top: 320px; right: 19px;
+}
+.views-slideshow-controls-text-next a:before {
+    content: "\f054";
+    color: #ddd; font-family: FontAwesome; font-size: 22px;
+    /*1 - из-за отсутствия relative у родителя - съезжает вниз на ipad*/
+    /*position: absolute; top: 7px; left: 16px;*/
+    /*2 - решение */
+    vertical-align: middle; line-height: 24px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out;
+}
+.views-slideshow-controls-text-previous:hover a:before,
+.views-slideshow-controls-text-next:hover a:before {
+    color: #fff;
+    text-decoration: none;
+}
+.views-slideshow-controls-text span:hover,
+.views-slideshow-controls-text span:hover a {
+    text-decoration: none;
+}
+.views-slideshow-controls-text-pause { display: none; }

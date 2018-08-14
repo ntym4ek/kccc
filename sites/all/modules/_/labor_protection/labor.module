@@ -1,0 +1,257 @@
+<?php
+
+/* hooks ------------------------------------------------------------------------------------------------ */
+function labor_menu() {
+    // подробный прогноз погоды на сайте
+    $items['info/labor-protection'] = array(
+        'title' => t('Introductory briefing'),
+        'description' => t('Introductory briefing on labor protection for employees and guests'),
+        'page callback' => 'labor_page_router',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function labor_theme() {
+    return array(
+        'labor_page' => array(
+            'variables' => array( 'form' => NULL ),
+            'template' => 'templates/labor-page',
+        ),
+    );
+}
+
+function labor_page_router($form = NULL, $form_state = NULL) {
+    $output = '';
+    if(empty($form_state)) {
+        $output = drupal_get_form('labor_page_1_form');
+    } elseif($form['#form_id']=='labor_page_1_form' || $form['#form_id']=='labor_page_bad_form'){
+        $output = drupal_get_form('labor_page_2_form');
+
+    } elseif($form['#form_id']=='labor_page_2_form'){
+        $output = drupal_get_form('labor_page_3_form');
+    } elseif($form['#form_id']=='labor_page_3_form') {
+        $errors = form_get_errors();
+        form_clear_error();
+
+        if ( $errors ) {
+            // если даны не все ответы, вывести сообщение об ошибке
+            $_SESSION['messages']['error'] = array_diff($_SESSION['messages']['error'], $errors);
+            return array(
+                '#type' => 'ajax',
+                '#commands' => array(
+                    ajax_command_invoke('#error', 'html', array(t('Answer all 3 questions, please!'))),
+                ),
+            );
+        } elseif($form_state['values']['radios_q1']=='2' && $form_state['values']['radios_q2']=='4' && $form_state['values']['radios_q3']=='2') {
+            // если ответ правильный, вывести форму с поздравлением
+            $output = drupal_get_form('labor_page_good_form');
+            // отправить мыло Мельникову sergey_chemcom@mail.ru
+            labor_send_mail();
+        } else
+            // если неправильно, форма со ссылкой на начало
+            $output = drupal_get_form('labor_page_bad_form');
+    }
+    $output['#attached']['css'][] = drupal_get_path('module', 'labor') . '/css/labor.css';
+
+    $output = theme('labor_page', array('form' => $output));
+
+    if(empty($form_state)) {
+        // начальная загрузка страницы, завернуть в обёртку темы Gard
+        $options = array(
+            'header_image' => '',
+            'category_title' => '',
+            'title' => t('Labor protection briefing'),
+            'subtitle' => '',
+            'print' => false,
+            'url' => 'http://kccc.ru/info/labor-protection',
+        );
+
+        return theme('content_wrapper', array('content' => $output, 'options' => $options));
+    } else {
+        // ajax обновление  - загрузка следующего шага
+        return array(
+            '#type' => 'ajax',
+            '#commands' => array(
+                ajax_command_replace('.labor-protection', trim($output)),
+            ),
+        );
+    }
+
+}
+
+// отправить мыло Мельникову sergey_chemcom@mail.ru
+function labor_send_mail() {
+    global $user;
+
+    $fio = '';
+    $lang = $user->language;
+    if($profile = profile2_load_by_user($user, 'main')) {
+        if (isset($profile->field_profile_surname[$lang][0])) $fio = $profile->field_profile_surname[$lang][0]['value'];
+        if (isset($profile->field_profile_name[$lang][0])) $fio .= ' ' .$profile->field_profile_name[$lang][0]['value'];
+        if (isset($profile->field_profile_name2[$lang][0])) $fio .= ' ' .$profile->field_profile_name2[$lang][0]['value'];
+    }
+    $datetime = format_date(time(), 'custom', 'd-m-Y  H:i');
+
+    // sergey.melnikov@kccc.ru
+
+    drupal_mail('system', 'mail', variable_get('lp_notification_email', 'sergey.melnikov@kccc.ru'), $lang, array(
+        'context' => array(
+            'subject' => 'Новый пользователь прошёл инструктаж по ТБ',
+            'message' => 'Данные пользователя<br/>'
+                        .'E-Mail: '. $user->mail . '<br/>'
+                        .'ФИО: '. $fio . '<br/>'
+                        .'Дата и время инструктажа: '. $datetime . '<br/>'
+        )
+    ));
+}
+
+function labor_page_1_form($form, $form_state) {
+    $form = array();
+
+    $form['message'] = array(
+        '#markup' => '<h2 class="header">'. t(variable_get('lp_step1_header', '')) .'</h2>'
+            .'<p>'. t(variable_get('lp_step1_text', '')) .'</p>'
+    );
+
+    $form['actions'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions', 'pull-right')));
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Start'),
+        '#ajax' => array(
+            'callback' => 'labor_page_router',
+        ),
+    );
+
+    return $form;
+}
+
+function labor_page_2_form($form, $form_state) {
+    $form = array();
+
+    if($GLOBALS['language']->language == 'ru')  $video = '<iframe width="100%" src="https://www.youtube.com/embed/tUXi-wtsz5s" frameborder="0" allowfullscreen></iframe>';
+    else                                        $video = '<iframe width="100%" src="https://www.youtube.com/embed/nmRD9Cqaz1w" frameborder="0" allowfullscreen></iframe>';
+
+    $form['video'] = array(
+        '#markup' => '<h2 class="header">'. t(variable_get('lp_step2_header', '')) .'</h2>'
+                    .'<p>' . t(variable_get('lp_step2_text', '')) . '</p>'
+                    .'<div class="video">'. $video .'</div>'
+    );
+    $form['#attached']['js'] = array(drupal_get_path('module', 'labor') . '/js/labor.js');
+
+    $form['actions'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions', 'pull-right')));
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Answer the questions'),
+        '#attributes' => array('class' => array('switch')),
+        '#ajax' => array(
+            'callback' => 'labor_page_router',
+        ),
+    );
+
+    return $form;
+}
+
+function labor_page_3_form($form, $form_state) {
+    $form = array();
+
+    $form['message'] = array(
+        '#markup' => '<h2 class="header">'. t(variable_get('lp_step3_header', '')) .'</h2>'
+            .'<p>' . t(variable_get('lp_step3_text', '')) . '</p>'
+    );
+
+    $form['set'] = array(
+        '#type' => 'fieldset',
+    );
+    $form['set']['radios_q1'] = array(
+        '#type' => 'radios',
+        '#title' => t('What you have to put on, to have access to plant territory?'),
+        '#default_value' => '',
+        '#required' => true,
+        '#options' => array(
+            1 => t('Gloves, goggles, helmet'),
+            2 => t('Glasses, jacket, helmet'),
+            3 => t('Jacket, helmet, gas mask'),
+        ),
+    );
+    $form['set']['radios_q2'] = array(
+        '#type' => 'radios',
+        '#title' => t('What items guests can\'t bring to plant territory?'),
+        '#default_value' => '',
+        '#required' => true,
+        '#options' => array(
+            1 => t('Chewing gum'),
+            2 => t('Cigarettes'),
+            3 => t('Cellphone'),
+            4 => t('All of that'),
+        ),
+    );
+    $form['set']['radios_q3'] = array(
+        '#type' => 'radios',
+        '#title' => t('How to behave when visiting the plant?'),
+        '#default_value' => '',
+        '#required' => true,
+        '#options' => array(
+            1 => t('Freely and independently move around the plant'),
+            2 => t('To walk on footpaths and accompanied by a responsible person'),
+        ),
+    );
+
+    $form['error'] = array(
+        '#markup' => '<div id="error" class="error"></div>'
+    );
+
+    $form['actions'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions', 'pull-right')));
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Finish'),
+        '#ajax' => array(
+            'callback' => 'labor_page_router',
+        ),
+    );
+
+    return $form;
+}
+
+function labor_page_good_form($form, $form_state) {
+    $form = array();
+
+    $form['message'] = array(
+        '#markup' => '<h2 class="header">'. t(variable_get('lp_success_header', '')) .'</h2>'
+                .'<p>'. t(variable_get('lp_success_text', '')) .'</p>'
+    );
+
+    $form['#action'] = '/';
+
+    $form['actions'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions', 'pull-right')));
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Main Page'),
+    );
+
+    return $form;
+}
+
+function labor_page_bad_form($form, $form_state) {
+    $form = array();
+
+    $form['message'] = array(
+        '#markup' => '<h2 class="header">'. t(variable_get('lp_fail_header', '')) .'</h2>'
+                    .'<p>'. t(variable_get('lp_fail_text', '')) .'</p>'
+    );
+
+    $form['actions'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions', 'pull-right')));
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Again'),
+        '#ajax' => array(
+            'callback' => 'labor_page_router',
+        ),
+    );
+
+    return $form;
+}
+
+

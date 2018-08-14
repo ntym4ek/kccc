@@ -1,0 +1,412 @@
+<?
+
+/**
+ *  Implementation of hook_menu()
+ */
+function promo_order_menu() {
+    $items['promo-order'] = array(
+        'page callback' => 'promo_order_modal_ajax_callback',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+
+function promo_order_form_alter(&$form, &$form_state, $form_id) {
+    // для формы добавления в корзину
+    if (commerce_form_callback($form_id, $form_state) == "commerce_cart_add_to_cart_form") {
+        $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
+
+        // добавление кнопки для Акции -10%
+        if ($product_display->type == 'product_agro') {
+            $form['redirect'] = array(
+                '#type' => 'item',
+                '#weight' => 50,
+                '#markup' => '<a href="/news/events/novogodnyaya-rasprodazha" class="submit-button">Купить со скидкой</a>'
+            );
+            $form['submit']['#access'] = false;
+        }
+    }
+}
+
+function promo_order_preprocess_page(&$vars) {
+    // добавить JS для форматирования сумм на страницу с формой промо-заказа
+    if ($_GET['q'] == 'node/5959') {
+        chibs_include_modal(array('class' => 'custom-form'));
+        drupal_add_js(drupal_get_path('module', 'promo_order') . '/js/promo-order.js');
+        drupal_add_js(drupal_get_path('theme', 'opie') . '/js/accounting.js');
+    }
+}
+
+/**
+ * callback вызова окна Промо Заказа
+ */
+function promo_order_modal_ajax_callback($mode = NULL) {
+    if ($mode == 'ajax') {
+        ctools_include('ajax'); ctools_include('modal');
+        $form_state = array('ajax' => TRUE, 'title' => t('Promo order'));
+        $output = ctools_modal_form_wrapper('promo_order_form', $form_state);
+        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else return drupal_get_form('promo_order_form');
+}
+/**
+ * форма Промо Заказа
+ */
+function promo_order_form($form, &$form_state) {
+    $step = 1;
+    if (isset($form_state['triggering_element']['#name'])) {
+
+        // выйти и закрыть окно на Шаге 3
+        if ($form_state['storage']['step'] == 3) {
+            ctools_include('modal');
+            $output = array(ctools_modal_command_dismiss());
+            print ajax_render($output);
+            drupal_exit();
+        }
+
+        // определение следующего шага
+        if ((   $form_state['triggering_element']['#name'] == 'prev')
+            || $form_state['triggering_element']['#name'] == 'prep') $step = 1;
+        if (    $form_state['triggering_element']['#name'] == 'next'
+            || ($form_state['triggering_element']['#name'] == 'file_upload_button')
+            || ($form_state['triggering_element']['#name'] == 'file_remove_button')) $step = 2;
+        if ($form_state['triggering_element']['#name'] == 'mail') $step = 3;
+    }
+    $form_state['storage']['step'] = $step;
+
+    $form = array(
+        '#prefix' => '<div id="promo-order">',
+        '#attributes' => array('class' => array('custom-form', 'promo-order-form')),
+        '#suffix' => '</div>',
+        'form-actions' => array('#type' => 'container', '#attributes' => array('class' => array('form-actions')), '#weight' => '100'),
+    );
+
+    if ($step == 2) {
+        $form['contacts'] = array('#type' => 'fieldset', '#title' => 'Контактная информация');
+        $form['contacts']['email'] = array(
+            '#prefix' => '<div class="form-items-inline">',
+            '#type' => 'textfield',
+            '#title' => 'Email',
+            '#default_value' => isset($form_state['storage']['email']) ? $form_state['storage']['email'] : '',
+            '#required' => true,
+            '#size' => '30',
+        );
+        $form['contacts']['phone'] = array(
+            '#type' => 'textfield',
+            '#title' => 'Телефон',
+            '#default_value' => isset($form_state['storage']['phone']) ? $form_state['storage']['phone'] : '',
+            '#required' => true,
+            '#size' => '30',
+            '#suffix' => '</div>',
+        );
+        $form['contacts']['company'] = array(
+            '#prefix' => '<div class="form-items-inline">',
+            '#type' => 'textfield',
+            '#title' => 'Компания',
+            '#default_value' => isset($form_state['storage']['company']) ? $form_state['storage']['company'] : '',
+            '#required' => true,
+            '#size' => '30',
+        );
+
+        // список Регионов
+        $regions = array('_none' => ' - Выберите из списка - ');
+        $vid = taxonomy_vocabulary_machine_name_load('regions')->vid;
+        $regions_tree = taxonomy_get_tree($vid, 0, 1, true);
+        foreach ($regions_tree as $item_r) $regions[$item_r->tid] = $item_r->name;
+
+        $form['contacts']['region'] = array(
+            '#type' => 'select',
+            '#title' => 'Регион',
+            '#default_value' => isset($form_state['storage']['region']) ? $form_state['storage']['region'] : '',
+            '#required' => true,
+            '#options' => $regions,
+            '#suffix' => '</div>',
+        );
+
+        $form['speedup'] = array(
+            '#type' => 'fieldset',
+            '#title' => 'Дополнительно<i>, можно заполнить для ускорения обаботки заявки</i>',
+            '#attributes' => array('class' => array('#prefix' => 'label-inline')),
+        );
+        $form['speedup']['address'] = array(
+            '#type' => 'textfield',
+            '#title' => 'Место поставки',
+            '#default_value' => isset($form_state['storage']['address']) ? $form_state['storage']['address'] : '',
+            '#attributes' => array('placeholder' => array('Например: 613048, Кировская обл., г. Кирово-Чепецк, ул. Производственная, д.6')),
+            '#size' => '50',
+        );
+        $form['speedup']['file'] = array(
+            '#type' => 'managed_file',
+            '#title' => 'Файл с реквизитами',
+            '#default_value' => isset($form_state['storage']['file']) ? $form_state['storage']['file'] : '',
+            '#upload_location' => 'public://',
+            '#upload_validators' => array(
+                'file_validate_extensions' => array('doc docx rtf pdf txt xls xlsx jpg png jpeg'),
+            ),
+        );
+
+        $form['form-actions']['prev'] = array(
+            '#type' => 'button',
+            '#name' => 'prev',
+            '#value' => 'Вернуться к контактам',
+            '#attributes' => array(
+                'class' => array('button-link'),
+            ),
+            '#limit_validation_errors' => array(),
+            '#ajax' => array(
+                'callback' => 'promo_order_form_ajax_handler',
+                'wrapper' => 'promo-order',
+            ),
+        );
+        $form['form-actions']['mail'] = array(
+            '#type' => 'submit',
+            '#name' => 'mail',
+            '#value' => 'Отправить заявку',
+            '#ajax' => array(
+                'callback' => 'promo_order_form_ajax_handler',
+                'wrapper' => 'promo-order',
+            ),
+        );
+    }
+
+    if ($step == 1) {
+        $form['products'] = array(
+            '#type' => 'container',
+            '#attributes' => array('id' => array('products-wrapper')),
+        );
+        $form['products']['list'] = array(
+            '#type' => 'fieldset',
+            '#title' => 'Выберите препараты',
+            '#attributes' => array('class' => array('products-list')),
+        );
+
+        // список всех Препаратов
+        $query = db_select('node', 'n');
+        $query->condition('n.type', 'product_agro');
+        $query->condition('n.nid', '4529', '!=');
+        $query->fields('n', array('nid', 'title'));
+        $result_p = $query->execute()->fetchAll();
+
+        $preps = array('' => ' - Выберите из списка - ');
+        foreach ($result_p as $p_item) {
+            $prep_arr[$p_item->nid] = get_product_agro_title($p_item->nid);
+            $preps[$p_item->nid] = $p_item->title . ' (' . $prep_arr[$p_item->nid]['ingredients'] . ')';
+        }
+
+        // вывести уже выбранные Препараты
+        $line = $total = 0;
+        if (!empty($form_state['storage']['preps_selected'])) {
+            foreach ($form_state['storage']['preps_selected'] as $p_nid => $p_volume) {
+                $node_url = drupal_get_path_alias('node/' . $p_nid);
+                $form['products']['list']['prep-' . $p_nid] = array(
+                    '#prefix' => '<div class="form-items-inline">',
+                    '#type' => 'item',
+                    '#title' => $line ? '' : 'Препарат',
+                    '#markup' => '<div class="preparation">' . '<a href="/' . $node_url . '" target="_blank">' . $prep_arr[$p_nid]['title'] . ', ' . $prep_arr[$p_nid]['formulation'] . '</a>'
+                        . '    <span>' . $prep_arr[$p_nid]['ingredients'] . '</span>'
+                        . '</div>',
+                );
+                $form['products']['list']['volume-' . $p_nid] = array(
+                    '#type' => 'textfield',
+                    '#title' => $line ? '' : 'Кол-во (л/кг)',
+                    '#default_value' => $p_volume,
+                    '#size' => '4',
+                );
+                $form['products']['list']['price-' . $p_nid] = array(
+                    '#type' => 'item',
+                    '#title' => $line ? '' : 'Цена',
+                    '#markup' => '<div class="promo-price"><span>' . number_format($prep_arr[$p_nid]['price'], 0, '', ' ') . ' руб.' . '</span><br/>' . number_format($prep_arr[$p_nid]['price']*0.9, 0, '', ' ') . ' руб.</div>',
+                );
+                $amount = $prep_arr[$p_nid]['price'] * $p_volume;
+                $form['products']['list']['amount-' . $p_nid] = array(
+                    '#type' => 'item',
+                    '#title' => $line ? '' : 'Сумма',
+                    '#markup' => '<span id="amount-' . $p_nid . '" price="' . $prep_arr[$p_nid]['price'] . '" amount="' . $amount . '">' . number_format(($amount*.9), 0, '', ' ') . '</span> руб.',
+                    '#suffix' => '</div>',
+                );
+                $total += $amount;
+                $line++;
+            };
+        }
+
+        // строка выбора Препарата
+        $form['products']['list']['prep'] = array(
+            '#prefix' => '<div class="form-items-inline preparation-choose">',
+            '#type' => 'select',
+            '#title' => $line ? '' : 'Препарат',
+            '#options' => $preps,
+//        '#chosen' => true,
+            '#default_value' => '',
+            '#ajax' => array(
+                'callback' => 'promo_order_form_ajax_handler',
+                'wrapper' => 'promo-order',
+            ),
+            '#suffix' => '</div>',
+        );
+
+        // вывести итого со скидкой
+        if ($total) {
+            $discount = $total * .1;
+            $form['products']['summary'] = array('#type' => 'fieldset', '#title' => 'Итого', '#attributes' => array('class' => array('summary label-inline')));
+            $form['products']['summary']['discount'] = array(
+                '#type' => 'item',
+                '#title' => 'Экономия',
+                '#markup' => '<span id="discount">' . number_format(($discount), 0, '', ' ') . '</span> руб.',
+            );
+            $form['products']['summary']['total'] = array(
+                '#type' => 'item',
+                '#title' => 'К оплате',
+                '#markup' => '<span id="total">' . number_format(($total - $discount), 0, '', ' ') . '</span> руб.',
+            );
+        }
+//        $form['summary']['discount'] = array(
+//            '#type' => 'item',
+//            '#title' => 'Экономия',
+//            '#markup' =>  '<div class="summary">'
+//                . '    <div class="">Итого, включая скидку 10%</div>'
+//                . '    <div class="total">' . number_format(($total), 0, '', ' ') . ' руб.' . '</div>'
+//                . '</div>',
+//        );
+
+        $form['form-actions']['next'] = array(
+            '#type' => 'button',
+            '#name' => 'next',
+            '#value' => 'Указать контакты',
+            //'#attributes' => array('onclick' => array('return alert(1);')),
+            '#ajax' => array(
+                'callback' => 'promo_order_form_ajax_handler',
+                'wrapper' => 'promo-order',
+            ),
+        );
+
+    }
+
+    if ($step == 3) {
+        $form['thanks'] = array(
+            '#type' => 'fieldset',
+            '#title' => 'Заявка отправлена',
+        );
+        $form['thanks']['message'] = array(
+            '#type' => 'item',
+            '#markup' => '<p>Ваша заявка направлена в отдел продаж и вскоре будет обработана.<br />Менеджеры свяжутся с Вами для уточнения деталей.</p>',
+        );
+        $form['form-actions']['close'] = array(
+            '#type' => 'button',
+            '#name' => 'close',
+            '#value' => 'Закрыть',
+            '#ajax' => array(
+                'callback' => 'promo_order_form_ajax_handler',
+                'wrapper' => 'promo-order',
+            ),
+        );
+    }
+
+    return $form;
+}
+function promo_order_form_ajax_handler($form, $form_state) {
+    return $form;
+}
+function promo_order_form_validate($form, &$form_state) {
+    // сохранение данных с Шага 1
+    if ($form_state['storage']['step'] == 1) {
+        // возможно, количество препарата изменилось, обновить массив Препаратов
+        if (!empty($form_state['storage']['preps_selected'])) {
+            foreach ($form_state['storage']['preps_selected'] as $p_nid => $p_volume) {
+                if (isset($form_state['values']['volume-' . $p_nid])) $form_state['storage']['preps_selected'][$p_nid] = $form_state['values']['volume-' . $p_nid];
+                else unset($form_state['values']['volume-' . $p_nid]);
+            }
+        }
+        // добавить в массив вновь выбранный Препарат
+        if (!empty($form_state['values']['prep'])) {
+            $form_state['storage']['preps_selected'][$form_state['values']['prep']] = 1;
+            unset($form_state['input']['prep']);
+        }
+        // eсли массив препаратов пустой, вывести ошибку
+        if (empty($form_state['storage']['preps_selected'])) {
+            form_set_error('prep', 'Выберите хотя бы один препарат');
+        }
+    }
+
+    // сохранение данных с Шага 2
+    if ($form_state['storage']['step'] == 2) {
+        $form_state['storage']['email'] = $form_state['values']['email'];
+        $form_state['storage']['phone'] = $form_state['values']['phone'];
+        $form_state['storage']['company'] = $form_state['values']['company'];
+        $form_state['storage']['region'] = $form_state['values']['region'];
+        $form_state['storage']['address'] = $form_state['values']['address'];
+        $form_state['storage']['file'] = $form_state['values']['file'];
+    }
+}
+function promo_order_form_submit($form, &$form_state) {
+    $params = array();
+
+    $region = '';
+    if (!empty($form_state['storage']['region'])) {
+        $region = taxonomy_term_load($form_state['storage']['region']);
+    }
+
+    // составить тело письма
+    $total = 0;
+    $message = '<h1 style="font-size: 15px;">На сайте kccc.ru оформлена заявка по Акции -10% на следующие препараты</h1>';
+    $message .= '<ul style="list-style: none; margin-bottom: 20px;">';
+    foreach($form_state['storage']['preps_selected'] as $pid => $value) {
+        $prep = get_product_agro_title($pid);
+        $message .= '<li><div style="display:inline-block; width: 200px;">' . $prep['title'] . ', ' . $prep['formulation'] . '</div>' . $value . ' л./кг.</li>';
+        $total += $prep['price'] * $value;
+    }
+    $message .= '<li>&nbsp;</li>';
+    $message .= '<li><div style="display:inline-block; width: 200px;">Итого (со скидкой):</div></li>' . number_format(($total), 2, ',', ' ') . ' руб.';
+    $message .= '</ul>';
+    $message .= '<h1  style="font-size: 15px;">Контактные данные</h1>';
+    $message .= '<ul style="list-style: none;">';
+    $message .= '<li><div style="display:inline-block; width: 200px;">Организация: </div>' . $form_state['storage']['company'] . '</li>';
+    $message .= '<li><div style="display:inline-block; width: 200px;">Email: </div>'       . $form_state['storage']['email'] . '</li>';
+    $message .= '<li><div style="display:inline-block; width: 200px;">Телефон: </div>'     . $form_state['storage']['phone'] . '</li>';
+    if ($region) $message .= '<li><div style="display:inline-block; width: 200px;">Регион: </div>'      . $region->name . '</li>';
+    if (!empty($form_state['storage']['address'])) $message .= '<li><div style="display:inline-block; width: 200px;">Место поставки: </div>' . $form_state['storage']['address'] . '</div>';
+
+    // приаттачить, если есть файл с реквизитами
+    if (!empty($form_state['storage']['file']) && $file = file_load($form_state['storage']['file'])) {
+        $message .= '<li><div style="display:inline-block; width: 200px;">Реквизиты: </div>во вложении</li>';
+        $params['attachments'] = array($file);
+    }
+
+    // завернуть письмо в Фирменный бланк
+    $brand  = '<table width="100%" style="font-family: ubuntu,Lucida Grande,Lucida Sans,Lucida Sans Unicode,Arial,Helvetica,Verdana,sans-serif; font-size: 15px;">';
+    $brand .= '    <tr><td align="center">';
+    $brand .= '        <table width="700px">';
+    $brand .= '            <tr><td style="border-bottom: 1px solid #ccc;">';
+    $brand .= '               <img src="http://kccc.ru/sites/all/themes/opie/images/logo/logo_mail.png" style="width: 375px;">';
+    $brand .= '            </td></tr>';
+    $brand .= '            <tr><td style="border-bottom: 1px solid #ccc; padding: 20px; height:500px; vertical-align: top;">';
+    $brand .= $message;
+    $brand .= '            </td></tr>';
+    $brand .= '            <tr><td style="padding: 20px;">';
+    $brand .= '                 С уважением, команда ООО ТД "Кирово-Чепецкая Химическая Компания"<br />';
+    $brand .= '                 <span style="color: #ccc; font-size: 13px;">Письмо сформировано автоматически</span>';
+    $brand .= '            </td></tr>';
+    $brand .= '        </table>';
+    $brand .= '    </td></tr>';
+    $brand .= '</table>';
+
+    $params['context'] = array(
+        'subject' => 'Новый запрос на препараты по Акции -10%',
+        'message' => $brand,
+    );
+
+    // отправка заказчику
+    if (valid_email_address($form_state['storage']['email'])) {
+        drupal_mail('system', 'mail', $form_state['storage']['email'], language_default(), $params);
+    }
+
+    // отправка менеджерам
+    drupal_mail('system', 'mail', 'maryse4ka88@mail.ru', language_default(), $params);
+    //drupal_mail('system', 'mail', 'ntym4ek@yandex.ru', language_default(), $params);
+
+    $form_state['rebuild'] = true;
+}

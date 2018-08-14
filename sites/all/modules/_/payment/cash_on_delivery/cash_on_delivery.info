@@ -1,0 +1,4 @@
+name = Payment | Cash On Delivery
+description = Adds new payment way - cash payment on delivery
+package = Jax
+core = 7.x

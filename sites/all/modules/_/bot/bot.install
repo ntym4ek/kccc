@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * Реализация hook_schema()
+ */
+function bot_schema() {
+  $schema['trades'] = array(
+    'fields' => array(
+      'trade_id' => array(
+        'description' => 'Trade ID',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'order_id' => array(
+        'description' => 'Order ID',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'buy_order_id' => array(
+        'description' => 'Buy TRADE ID for sell order',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'type' => array(
+        'description' => 'Buy or sell order type',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'amount' => array(
+        'description' => 'Trade amount',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'not null' => TRUE,
+      ),
+      'price' => array(
+        'description' => 'Coin price',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'not null' => TRUE,
+      ),
+      'coin' => array(
+        'description' => 'Traded coin',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'not null' => TRUE,
+      ),
+      'basecoin' => array(
+        'description' => 'Base coin',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => 'CNY',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'description' => 'Order status',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the bubble was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+       ),
+    ),
+    'primary key' => array('trade_id'),
+    'indexes' => array(
+          'order_id' => array('order_id'),
+          'type' => array('type'),
+          'coin' => array('coin'),
+          'status' => array('status'),
+          'basecoin' => array('basecoin'),
+     ),
+  );
+
+  return $schema;
+}
+
+
+/**
+ * Create the database table if it doesn't exist.
+ */
+function bot_update_7001() {
+  if (!db_table_exists('trades')) {
+    drupal_install_schema('bot');
+  }
+}

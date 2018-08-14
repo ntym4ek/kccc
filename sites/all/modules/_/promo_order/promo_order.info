@@ -1,0 +1,5 @@
+name = F | Promo Order 10% off
+description = Форма заказа Агрохимии со скидкой 10%
+package = Jax
+core = 7.x
+

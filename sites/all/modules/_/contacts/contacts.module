@@ -1,0 +1,384 @@
+<?php
+
+define('CONTACTS_URL', 'info/contacts');
+
+function contacts_menu()
+{
+    $items[CONTACTS_URL] = array(
+        'title' => 'Contacts',
+        'description' => 'Company contacts',
+        'page callback' => 'contacts_main_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function contacts_theme()
+{
+    return array(
+        'contacts_page' => array(
+            'variables' => array('contacts' => NULL),
+            'template' => 'templates/page',
+        ),
+    );
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function contacts_preprocess_page(&$vars)
+{
+    // установить для страницы параметры шапки
+    if ($_GET['q'] == CONTACTS_URL) {
+        $vars['header'] = array(
+            'image' => url('/' . drupal_get_path('module', 'contacts') . '/images/header_image.jpg', array('absolute' => true)),
+            'category_title' => '',
+            'subtitle' => t('You can contact to our departments directly'),
+            'print' => true,
+        );
+    }
+}
+
+// главная страница
+function contacts_main_page()
+{
+    $lang = $GLOBALS['language']->language;
+
+    $contacts = contacts_get_contacts_list();
+
+    // отрендерить карточки контактов
+    foreach($contacts as $key_t => $tabs) {
+        foreach($tabs['departments'] as $key_d => $department) {
+            foreach($department['contacts'] as $key_c => $contact) {
+                $contact['surname']    = $lang == 'ru' ? $contact['surname'] : translit($contact['surname']);
+                $contact['name']       = $lang == 'ru' ? $contact['name'] : translit($contact['name']);
+                $contact['name2']      = $lang == 'ru' ? $contact['name2'] : translit($contact['name2']);
+                $collapse = [];
+                if (!empty($contact['regions'])) {
+                    $collapse['id'] = $key_c;
+                    $collapse['title'] = t('Regions list');
+                    $collapse['content'] = implode(', ', $contact['regions']);
+                }
+                $contacts[$key_t]['departments'][$key_d]['contacts'][$key_c]['contact_html'] = theme('contact_card', array(
+                    'contact' => $contact,
+                    'collapse' => $collapse));
+            }
+        }
+    }
+
+    $html = theme('contacts_page', array('contacts' => $contacts));
+
+    return $html;
+};
+
+function contacts_get_contacts_list() {
+    $module_path = drupal_get_path('module', 'contacts');
+    $no_photo = '/sites/default/files/default_images/no_photo.png';
+
+    return  array(
+        'td' => array(
+            'title' => t('Trade House'),
+            'logo_on' => '/' . $module_path . '/images/logo/td_on.png',
+            'logo_off' => '/' . $module_path . '/images/logo/td_off.png',
+            'departments' => array(
+                'sales' => array(
+                    'title' => t('Sales department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Regional development senior manager'),
+                            'surname' => 'Князев',
+                            'name' => 'Алексей',
+                            'name2' => 'Юрьевич',
+                            'phones' => array('+7 (83361) 9-28-70'),
+                            'emails' => array(email_antibot_encode('td.sale2@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/knyazev.png',
+                            'regions' => array(
+                                71675 => "Архангельская область",
+                                71685 => "Калининградская область",
+                                71686 => "Калужская область",
+                                71658 => "Республика Марий Эл",
+                                71696 => "Москва и Московская область",
+                                71698 => "Нижегородская область",
+                                71699 => "Новгородская область",
+                                71704 => "Пензенская область",
+                                71706 => "Псковская область",
+                                71708 => "Рязанская область",
+                                71693 => "Санкт-Петербург и область",
+                                71713 => "Смоленская область",
+                                71715 => "Тверская область",
+                                71717 => "Тульская область",
+                                71667 => "Чувашская Республика",
+                            ),
+                        ),
+                        array(
+                            'office' => t('Regional development senior manager'),
+                            'surname' => 'Устюжанин',
+                            'name' => 'Данила',
+                            'name2' => 'Игоревич',
+                            'phones' => array('+7 (83361) 5-40-60'),
+                            'emails' => array(email_antibot_encode('td.sale1@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/ustyuzhanin.png',
+                            'regions' => array(
+                                71677 => "Белгородская область",
+                                71678 => "Брянская область",
+                                71682 => "Воронежская область",
+                                71692 => "Курская область",
+                                71694 => "Липецкая область",
+                                71703 => "Орловская область",
+                                71659 => "Республика Мордовия",
+                                71714 => "Тамбовская область",
+                            ),
+                        ),
+                        array(
+                            'office' => t('Regional development senior manager'),
+                            'surname' => 'Казаков',
+                            'name' => 'Артем',
+                            'name2' => 'Сергеевич',
+                            'phones' => array('+7 922 927-99-33'),
+                            'emails' => array(email_antibot_encode('td.sale7@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/kazakov.png',
+                            'regions' => array(
+                                71691 => "Курганская область",
+                                71701 => "Омская область",
+                                71702 => "Оренбургская область",
+                                71648 => "Республика Башкортостан",
+                                71712 => "Свердловская область",
+                                71718 => "Тюменская область",
+                                71720 => "Челябинская область",
+                                71727 => "Ханты-Мансийский АО - Югра",
+                                71729 => "Ямало-Ненецкий АО",
+                            ),
+                        ),
+                        array(
+                            'office' => t('Regional development senior manager'),
+                            'surname' => 'Якимов',
+                            'name' => 'Евгений',
+                            'name2' => 'Леонидович',
+                            'phones' => array('8 (83361) 9-28-70', '+7 922 925-88-84'),
+                            'emails' => array(email_antibot_encode('td.sale11@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/yakimov.png',
+                            'regions' => array(
+                              71668 => "Алтайский край",
+                              71674 => "Амурская область",
+                              71725 => "Еврейская АО",
+                              71721 => "Забайкальский край",
+                              71684 => "Иркутская область",
+                              71687 => "Камчатский край",
+                              71688 => "Кемеровская область",
+                              71670 => "Красноярский край",
+                              71695 => "Магаданская область",
+                              71700 => "Новосибирская область",
+                              71671 => "Приморский край",
+                              71650 => "Республика Алтай",
+                              71649 => "Республика Бурятия",
+                              71663 => "Республика Тыва",
+                              71665 => "Республика Хакасия",
+                              71660 => "Республика Саха (Якутия)",
+                              71711 => "Сахалинская область",
+                              71716 => "Томская область",
+                              71673 => "Хабаровский край",
+                              71728 => "Чукотский АО",
+                            ),
+                        ),
+                    )
+                ),
+                'support' => array(
+                    'title' => t('Control and support department'),
+                    'contacts' => array(
+                        array(
+                          'office' => t('Senior manager'),
+                          'surname' => 'Шуклина',
+                          'name' => 'Наталья',
+                          'name2' => 'Геннадьевна',
+                          'phones' => array('+7 (83361) 5-20-67', '+7 922 936-16-62'),
+                          'emails' => array(email_antibot_encode('td.sale3@kccc.ru')),
+                          'photo' => '/' . $module_path . '/images/photo/shuklina.png',
+                        ),
+                        array(
+                            'office' => t('Manager'),
+                            'surname' => 'Корсакова',
+                            'name' => 'Татьяна',
+                            'name2' => 'Владимировна',
+                            'phones' => array('+7 (83361) 9-28-73'),
+                            'emails' => array(email_antibot_encode('td.sale@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/korsakova.png',
+                        ),
+                        array(
+                            'office' => t('Manager'),
+                            'surname' => 'Перетягина',
+                            'name' => 'Ирина',
+                            'name2' => 'Владимировна',
+                            'phones' => array('+7 922 941-17-00'),
+                            'emails' => array(email_antibot_encode('td.sale9@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/peretyagina.png',
+                        ),
+                    ),
+                ),
+                'supply' => array(
+                    'title' => t('Supply department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Малых',
+                            'name' => 'Максим',
+                            'name2' => 'Анатольевич',
+                            'phones' => array('+7 922 902-54-84'),
+                            'emails' => array(email_antibot_encode('maksim.malyx@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/malykh.png',
+                        ),
+                        array(
+                            'office' => t('Manager'),
+                            'surname' => 'Пислегина',
+                            'name' => 'Любовь',
+                            'name2' => 'Леонидовна',
+                            'phones' => array('+7 (83361) 9-28-40'),
+                            'emails' => array(email_antibot_encode('lyubov.pislegina@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/pislegina.png',
+                        ),
+                        array(
+                            'office' => t('Manager'),
+                            'surname' => 'Хусаинов',
+                            'name' => 'Ирек',
+                            'name2' => 'Ильгизярович',
+                            'phones' => array('+7 (83361) 9-28-40'),
+                            'emails' => array(email_antibot_encode('irek.khusainov@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/husainov.png',
+                        ),
+                    ),
+                ),
+                'marketing' => array(
+                    'title' => t('Marketing and advertising department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Широкова',
+                            'name' => 'Марина',
+                            'name2' => 'Олеговна',
+                            'phones' => array('+7 (83361) 9-28-48'),
+                            'emails' => array(email_antibot_encode('marina.shirokova@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/shirokova.png',
+                        ),
+                    ),
+                ),
+                'personnel' => array(
+                    'title' => t('Personnel department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Personel manager'),
+                            'surname' => 'Жуйкова',
+                            'name' => 'Елена',
+                            'name2' => 'Анатольевна',
+                            'phones' => array('+7 (83361) 9-28-24'),
+                            'emails' => array(email_antibot_encode('elena.zhuykova@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/zhuikova.png',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'strada' => array(
+            'title' => t('Home&Garden'),
+            'logo_on' => '/' . $module_path . '/images/logo/strada_on.png',
+            'logo_off' => '/' . $module_path . '/images/logo/strada_off.png',
+            'departments' => array(
+                'sales' => array(
+                    'title' => t('Sales department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Пиков',
+                            'name' => 'Артём',
+                            'name2' => 'Сергеевич',
+                            'phones' => array('+7 (83361) 5-20-62'),
+                            'emails' => array(email_antibot_encode('artem.pikov@kccc.ru'), email_antibot_encode('strada-kcc@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/pikov.png',
+                        ),
+                    ),
+                ),
+                'supply' => array(
+                    'title' => t('Supply department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Сысольцев',
+                            'name' => 'Константин',
+                            'name2' => 'Викентьевич',
+                            'phones' => array('+7 (83361) 5-09-64'),
+                            'emails' => array(email_antibot_encode('strada.snab@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/sysoltsev.png',
+                        ),
+                    ),
+                ),
+                'marketing' => array(
+                    'title' => t('Marketing and advertising department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Нечаева',
+                            'name' => 'Екатерина',
+                            'name2' => 'Александровна',
+                            'phones' => array('+7 (83361) 9-28-66'),
+                            'emails' => array(email_antibot_encode('ekaterina.nechaeva@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/nechaeva.png',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'finfire' => array(
+            'title' => t('Firefight'),
+            'logo_on' => '/' . $module_path . '/images/logo/finfire_on.png',
+            'logo_off' => '/' . $module_path . '/images/logo/finfire_off.png',
+            'departments' => array(
+                'sales' => array(
+                    'title' => t('Sales department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Head of department'),
+                            'surname' => 'Стародумов',
+                            'name' => 'Антон',
+                            'name2' => 'Геннадьевич',
+                            'phones' => array('+7 982 389-33-02'),
+                            'emails' => array(email_antibot_encode('anton.starodumov@kccc.ru')),
+                            'photo' => '/' . $module_path . '/images/photo/starodumov.png',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    );
+}
+
+
+//71676 => "Астраханская область",
+//71679 => "Владимирская область",
+//71680 => "Волгоградская область",
+//71681 => "Вологодская область",
+//71683 => "Ивановская область",
+//71653 => "Кабардино-Балкарская Республика",
+//71655 => "Карачаево-Черкесская Республика",
+//71689 => "Кировская область",
+//71690 => "Костромская область",
+//71669 => "Краснодарский край",
+//71697 => "Мурманская область",
+//71726 => "Ненецкий АО",
+//71705 => "Пермский край",
+//71647 => "Республика Адыгея",
+//71651 => "Республика Дагестан",
+//71652 => "Республика Ингушетия",
+//71654 => "Республика Калмыкия",
+//71656 => "Республика Карелия",
+//71657 => "Республика Коми",
+//71730 => "Республика Крым",
+//71661 => "Республика Северная Осетия - Алания",
+//71662 => "Республика Татарстан"
+//71707 => "Ростовская область",
+//71709 => "Самарская область",
+//71710 => "Саратовская область",
+//71731 => "Севастополь",
+//71672 => "Ставропольский край",
+//71664 => "Удмуртская Республика",
+//71719 => "Ульяновская область",
+//71666 => "Чеченская республика",
+//71722 => "Ярославская область",

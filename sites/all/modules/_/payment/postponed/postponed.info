@@ -1,0 +1,4 @@
+name = Payment | Postpone Payment
+description = Платеж после согласования и подтверждения менеджером
+package = Jax
+core = 7.x

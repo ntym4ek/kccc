@@ -1,0 +1,20 @@
+Index: sites/all/modules/globalredirect/globalredirect.module
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- sites/all/modules/globalredirect/globalredirect.module	(revision )
++++ sites/all/modules/globalredirect/globalredirect.module	(revision )
+@@ -33,6 +33,12 @@
+     return FALSE;
+   }
+ 
++  // fix: для POST запросов с пустым массивом POST выполняется переадресация, что приводит к ответу 404 от Services
++  // redirect only 'GET' or 'HEAD' requests
++  if (!in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD'))) {
++    return FALSE;
++  }
++
+   // If menu checking is enabled, do the check. Note: Feature disabled by default.
+   if ($settings['menu_check']) {
+     // Check the access on the current path, return FALSE if access not

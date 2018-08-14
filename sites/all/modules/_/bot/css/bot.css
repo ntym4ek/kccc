@@ -1,0 +1,30 @@
+.bot {
+    background: #fff;
+    padding: 20px;
+}
+.bot-table {
+    margin: 0 0 40px 0;
+}
+.bot-table td {
+    padding: 5px 10px;
+    font-size: 12px;
+    text-align: center;
+    height: 24px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+}
+.bot #open-trades {
+    float: left;
+    padding-right: 10px;
+    width: 50%;
+}
+.bot #closed-trades {
+    float:left;
+    padding-left: 10px;
+    width: 50%;
+}
+.bot #bot-messages {
+    float:left;
+    font-size: 12px;
+    padding-left: 10px;
+    width: 50%;
+}

@@ -1,0 +1,5 @@
+name = H | Checkout
+description = Вспомогательный модуль на странице чекаута
+package = Jax
+core = 7.x
+

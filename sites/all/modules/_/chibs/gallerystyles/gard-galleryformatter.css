@@ -1,0 +1,62 @@
+.galleryformatter {
+    overflow: hidden;
+}
+.galleryformatter .gallery-slides {
+    margin-bottom: 47px!important;
+    overflow: visible;
+}
+.gallery-slides .img-title {
+    position: absolute; bottom: -47px; left: 0;
+    width: 100%;
+}
+.gallery-slides .img-title span {
+    display: block;
+    border-bottom: 1px solid #808080;
+    color: #808080; font-size: 13px;
+    padding: 15px 0;
+}
+.galleryformatter .gallery-slide a {
+    position: absolute;
+    height: 100%; width: 100%;
+    opacity: 0;
+}
+.galleryformatter .slide-button {
+    border: 3px solid #fff; border-radius: 20px;
+    height: 40px; width: 40px;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out; -webkit-transition: all 0.2s ease-in-out; -moz-transition: all 0.2s ease-in-out;
+    /*opacity: .5;*/
+}
+.galleryformatter:hover .slide-button {
+    box-shadow: 0 0 8px #777;
+}
+.galleryformatter:hover .slide-button:before {
+    text-shadow: 0 0 8px #333;
+}
+.galleryformatter .prev-slide { left: 30px!important; text-decoration: none; }
+.galleryformatter .next-slide { right: 30px!important; text-decoration: none; }
+.galleryformatter .prev-slide:before,
+.galleryformatter .next-slide:before {
+    font-family: Font Awesome\ 5 Free;
+    color: #fff; font-size: 22px; font-weight: 900; line-height: 34px;
+    vertical-align: middle;
+    transition: all 0.2s ease-in-out; -webkit-transition: all 0.2s ease-in-out; -moz-transition: all 0.2s ease-in-out;
+    /*opacity: .5;*/
+}
+.galleryformatter .next-slide:before {
+    content: "\f054";
+    padding: 0 12px;
+}
+.galleryformatter .prev-slide:before {
+    content: "\f053";
+    padding: 0 9px;
+}
+/*.galleryformatter .slide-button:hover,*/
+/*.galleryformatter .slide-button:hover:before {*/
+    /*opacity: 1;*/
+/*}*/
+
+.arrow.back,
+.arrow.forward {
+    display: none;
+}

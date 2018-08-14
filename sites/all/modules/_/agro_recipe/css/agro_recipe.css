@@ -1,0 +1,59 @@
+.agro-recipe-field-form {
+    background: #fff;
+    min-height: 450px;
+    padding: 20px 30px;
+}
+
+.agro-recipe-field-form .table th,
+.agro-recipe-field-form .table td { border: 1px solid #D4D4D4; }
+.agro-recipe-field-form .list a { color: inherit; }
+.agro-recipe-field-form .table.h-objects { margin-bottom: 0; }
+
+
+.intro { color: #000; font-size: 22px; line-height: 30px; margin-bottom: 10px; width: 100%; }
+.line { margin-bottom: 60px; }
+.row-1 .form-item {  float: left; margin-right: 15px; }
+.row-1 .form-item.form-item-field-culture .chosen-container { width: 345px!important; }
+.row-1 .form-item.form-item-field-period .chosen-container { width: 240px!important; }
+.row-1 .form-item.form-item-field-area input { width: 150px; }
+.row-1 .form-item.form-item-field-seeding { margin: 1em 0; }
+.row-1 .form-item.form-item-field-seeding input { width: 150px; }
+.row-2 .form-item {  width: 100%; }
+.row-2 .chosen-container {  width: 100%!important; }
+.row-3 .chosen-container {  width: 350px!important; }
+.row-3 div { float: left; }
+.row-3 .links { font: 14px/16px open_sansregular; margin-left: 15px; padding: 5px 0; }
+
+.hobjects .description,
+.cure .description,
+.advantages .description { font-size: 17px; margin-bottom: 15px; }
+.options,
+.advantages .form-type-radios { margin: 0 0 15px 15px; }
+.options .form-type-checkbox { margin: .4em 0 .4em 15px; }
+.advantages .form-radios { margin: 5px 0 0 15px; }
+.advantages .form-radios label span { font-weight: 500; }
+
+.advantages .form-type-radios > label {
+    background: #50A72D;
+    color: #fff; font-weight: 400;
+    display: block; padding: 6px 20px; width: 100%;
+}
+.options > label {
+    background: #59A8B5;
+    color: #fff; font-weight: 400;
+    display: block; padding: 6px 20px; width: 100%; margin-bottom: 5px;
+}
+.advantages .form-type-checkbox label { margin-left: 23px; }
+
+.agro-recipe-field-form .asterisk { color: red; }
+.agro-recipe-field-form .table-note { font: 12px/20px open_sanslight; margin: 0 0 20px 47px; }
+.agro-recipe-field-form .cure .intro { float:left; width: 425px; }
+.agro-recipe-field-form .cure .refresh { float:left; margin-bottom: 10px; }
+.agro-recipe-field-form .cure .refresh input[type="submit"] { background: none; border: none; color: #2b8aff; padding: 8px 0; }
+.agro-recipe-field-form .cure .refresh input[type="submit"]:hover { text-decoration: underline; }
+
+.ctools-modal-content fieldset#edit-fungis { width: 600px; }
+.ctools-modal-content fieldset#edit-pests { width: 600px; }
+.ctools-modal-content fieldset[id^=edit-group] { width: 740px; }
+.ctools-modal-content fieldset[id^=edit-group] .fieldset-wrapper>div { width: 50%; }
+.ctools-modal-content fieldset[id^=edit-group] .fieldset-wrapper .chosen-container{ width: 100%!important; }

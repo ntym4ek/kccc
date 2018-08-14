@@ -1,0 +1,5 @@
+name = F | Product_Mix Functions
+description = Функционал работы с типом product_mix
+package = Jax
+core = 7.x
+

@@ -1,0 +1,12 @@
+.arbitr {
+    background: #fff;
+    padding: 20px;
+}
+.arbitr-table {
+
+}
+
+.arbitr-table td {
+    padding: 5px 10px;
+    transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+}

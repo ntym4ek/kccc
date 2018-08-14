@@ -1,0 +1,5 @@
+name = Protection Programs
+description = Программы защиты
+package = Jax
+core = 7.x
+

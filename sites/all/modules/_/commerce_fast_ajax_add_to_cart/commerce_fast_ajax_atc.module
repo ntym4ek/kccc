@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_fast_ajax_atc_menu() {
+    $items = array();
+
+    $items['admin/commerce/config/commerce-fast-ajax-atc'] = array(
+        'title' => 'Commerce Fast Ajax Add to Cart settings',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('commerce_fast_ajax_atc_settings_form'),
+        'access arguments' => array('administer site configuration'),
+        'file' => 'commerce_fast_ajax_atc.admin.inc',
+    );
+
+    return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_fast_ajax_atc_theme() {
+    return array(
+        'atc_confirmation_dialog' => array(
+            'variables' => array(
+                'line_item' => NULL,
+            ),
+            'template' => 'atc-confirmation-dialog',
+        ),
+    );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter(): commerce_cart_add_to_cart_form
+ */
+function commerce_fast_ajax_atc_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+    $form['submit']['#attributes']['class'][] = 'use-ajax-submit';
+
+    $form['#submit'][] = 'commerce_fast_ajax_atc_add_to_cart_form_submit';
+    $form['#validate'][] = 'commerce_fast_ajax_atc_add_to_cart_form_validate';
+
+    $form['#attached']['library'][] = array('system', 'jquery.form');
+    $form['#attached']['library'][] = array('system', 'drupal.ajax');
+
+    if (variable_get('commerce_fast_ajax_atc_use_confirmation_dialog')) {
+        $form['#attached']['library'][] = array('system', 'ui.dialog');
+    }
+}
+
+/**
+ * "Add to cart" form validate callback.
+ */
+function commerce_fast_ajax_atc_add_to_cart_form_validate($form, &$form_state) {
+    if (!commerce_fast_ajax_atc_is_ajax()) {
+        return;
+    }
+
+    if ($form_errors = form_get_errors()) {
+        $result = array(
+            '#type' => 'ajax',
+            '#commands' => array(
+                ajax_command_alert(implode("\n\n", $form_errors)),
+            ),
+        );
+
+        drupal_get_messages();
+        ajax_deliver($result);
+        drupal_exit();
+    }
+}
+
+/**
+ * "Add to cart" button submit callback.
+ */
+function commerce_fast_ajax_atc_add_to_cart_form_submit($form, &$form_state) {
+    if (!commerce_fast_ajax_atc_is_ajax()) {
+        return;
+    }
+
+    // Remove cart block id from drupal_html_id() static cache
+    $drupal_html_ids = &drupal_static('drupal_html_id');
+    unset($drupal_html_ids['block-commerce-cart-cart']);
+
+    // Render cart block
+    $cart_block = block_load('commerce_cart', 'cart');
+    $cart_block_full = _block_render_blocks(array($cart_block));
+    $cart_block_build = _block_get_renderable_array($cart_block_full);
+    $cart_block_html = render($cart_block_build);
+
+    $result = array(
+        '#type' => 'ajax',
+        '#commands' => array(
+            ajax_command_replace('#block-commerce-cart-cart', trim($cart_block_html)),
+        ),
+    );
+
+    if (variable_get('commerce_fast_ajax_atc_use_confirmation_dialog')) {
+        // Show confirmation dialog
+        $dialog_content = theme('atc_confirmation_dialog', array('line_item' =>  $form_state['line_item']));
+        $result['#commands'][] = ajax_command_remove('#atc-confirmation-dialog');
+        $result['#commands'][] = ajax_command_append('body', '<div id="atc-confirmation-dialog" class="element-hidden">' . $dialog_content . '</div>');
+        $result['#commands'][] = ajax_command_invoke('#atc-confirmation-dialog', 'dialog', array(array(
+            'modal' => TRUE,
+            'title' => t('Product added'),
+            'width' => 'auto',
+        )));
+    }
+
+    drupal_alter('commerce_fast_ajax_atc_commands', $result['#commands'], $form_state);
+    drupal_get_messages();
+    ajax_deliver($result);
+    drupal_exit();
+}
+
+/**
+ * Return TRUE if request is AJAX.
+ */
+function commerce_fast_ajax_atc_is_ajax() {
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+}

@@ -1,0 +1,4 @@
+name = F | Commerce Fast Ajax Add to Cart
+description = Fast realization ajaxify Add To Cart form
+core = 7.x
+configure = admin/commerce/config/commerce-fast-ajax-atc

@@ -1,0 +1,1784 @@
+// col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8
+@mixin wrap-content() {
+  @include make-sm-column-offset(1);
+  @include make-sm-column(10);
+  @include make-md-column-offset(2);
+  @include make-md-column(8);
+}
+
+/* ------------------------------------------------- Задний фон для модальных окон ---------------------------------- */
+#modalBackdrop {
+  background: #000000;
+  position: fixed; top: 0; left: 0; z-index: 99;
+  @include square(0);
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* ------------------------------------------------- Главное меню --------------------------------------------------- */
+/*
+    взято https://bootsnipp.com/snippets/featured/admin-side-menu
+
+    --------------------------------------------------------------------------------------------------------------------
+    If you want to make it really neat i suggest you look into an alternative like http://areaaperta.com/nicescroll/
+    This will allow the menu to say fixed on body scoll and scoll on the side bar if it get to large
+*/
+
+.menu-container {
+  position: fixed; left: 0; right: 0; z-index: 5;
+  width: 0; height: 100%;
+  .navbar { border: none; }
+  .side-menu {
+    text-align: left;
+    overflow-y: auto;
+    position: absolute; left: -300px;
+    padding-top: $header-xs-height; padding-bottom: 52px;
+    width: 300px; height: 100%;
+    border-right: 1px solid #e7e7e7;
+    background-color: #f8f8f8;
+    @include transition(all .3s linear);
+    @media #{$tablet} { padding-top: $header-sm-height; }
+    @media #{$wide} { left: 0; }
+    a { color: $text-color; background-color: #fff; }
+    & > .navbar-nav { width: 100%; }
+
+    &.language-selector {
+      bottom: 0;
+      height: 52px;
+      padding: 0;
+    }
+  }
+  &.slide-in .side-menu { left: 0; }
+  .navbar-nav {
+    margin: 0;
+    li {
+      display: block;
+      width: 100%;
+      border-bottom: 1px solid #e7e7e7;
+      a {
+        padding: 15px;
+        @include transition(all 0.2s ease-in-out);
+        &:hover {
+          color: #fff;
+          background-color: $menu-hover-color;
+        }
+      }
+      &:hover .dropdown-link { color: #fff; }
+      &.with-icon > a:first-child {
+        padding-left: 40px;
+        i { position:absolute; left: 15px; top: 19px; }
+      }
+    }
+
+    &.foot {
+      position: absolute; bottom: 0;
+      li {
+        border-top: 1px solid #e7e7e7;
+        border-bottom: 0;
+      }
+    }
+    &.secondary {
+      display: flex;
+      li {
+        border-left: 1px solid #e7e7e7;
+        flex: 0 0 33.3%;
+        text-align: center;
+        justify-content: center;
+        &:first-child {
+          border-left: none;
+          flex-grow: 1;
+        }
+        i { padding-right: 0; }
+      }
+    }
+  }
+
+  #dropdown {
+    border: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    position: relative;
+    > a {
+      border-bottom: 1px solid #e7e7e7;
+    }
+    .dropdown-link {
+      background: transparent;
+      position: absolute; right: 0; top: 0;
+      height: 52px;
+      .dropdown-caret {
+        padding: 0;
+        @include rotate(0);
+        @include transition(all 0.2s ease-in-out);
+      }
+      &:not(.collapsed) .dropdown-caret { @include rotate(180deg); }
+      &:hover { background-color: $menu-hover-color; }
+    }
+    .panel-body {
+      padding: 0;
+      background-color: $gray-lighter;
+      .navbar-nav {
+        width: 100%;
+        li {
+          padding-left: 15px;
+          border-bottom: 1px solid #e7e7e7;
+          &.leaf a {
+            color: #fff;
+            background-color: $menu-level-1-color;
+          }
+          &:last-child { border-bottom: none; }
+          a:hover {
+              background-color: $menu-hover-color;
+          }
+        }
+      }
+      .panel > a:first-child {
+        color: #fff;
+        background-color: $menu-level-1-color;
+      }
+      .dropdown-link { color: #fff; }
+      .panel-body {
+        margin-left: -15px;
+        li.leaf {
+          padding-left: 30px;
+          a {
+            color: #fff;
+            background-color: $menu-level-2-color;
+          }
+          &:last-child { border-bottom: 1px solid #e7e7e7; }
+        }
+      }
+    }
+  }
+
+  // выделить прайсы цветом
+  #dropdown-796-2 ul > li:nth-child(8) a { background-color: rgba(123, 255, 77, 0.15); }
+  #dropdown-797-2 ul > li:nth-child(10) a { background-color: rgba(123, 255, 77, 0.15); }
+
+
+  @media #{$wide} { margin: 0 auto; width: $container-lg; z-index: 0; }
+}
+
+
+/* Dropdown tweek */
+#dropdown .panel-body .navbar-nav {
+  margin: 0;
+}
+
+/* ------------------------------------------------- Меню на странице ----------------------------------------------- */
+.subheader-menu {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  font-size: 12px; line-height: 14px; font-weight: 500;
+  margin-bottom: $grid-gutter-width/2;
+  position: relative;
+
+  .navbar-nav {
+    background-color: darken($brand-info, 20%);
+    float: none;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+
+    -webkit-overflow-scrolling: touch;
+    overflow-x: scroll; overflow-y: hidden;
+    display: -webkit-box; display: -ms-flexbox; display: flex;
+    flex-wrap: nowrap;
+    -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start;
+    @include user-select(none);
+    &::-webkit-scrollbar { display: none; }
+
+    a { color: #fff; white-space: nowrap; }
+    .active a { border-bottom: 2px solid #fff; }
+    & > li:not(.disabled) > a:hover,
+    & > li:not(.disabled) > a:focus {
+      background-color: darken($brand-info, 25%);
+    }
+    & > li.disabled > a {
+      color: #b9b9b9;
+      &:hover,
+      &:focus { color: #b9b9b9; }
+    }
+
+    @media #{$normal} { justify-content: center; }
+  }
+  &::after {
+    content: '';
+    display: block;
+    position: absolute; top: 0; right: 0; z-index: 1;
+    width: 24px; height: 100%;
+    @include gradient-directional(darken($brand-info, 20%), transparent, -90deg);
+  }
+}
+
+
+/* ------------------------------------------------- Контент -------------------------------------------------------- */
+.content-container  {
+  height: 100%;
+  @media #{$wide} {
+    width: $container-lg;
+    margin: 0 auto;
+  }
+  & > .content  {
+    background: url(../images/bkg_px.png);
+    background-repeat: repeat-y;
+    padding-top: $header-xs-height; padding-bottom: 178px;
+    position: relative;
+    min-height: 100%;
+    margin-left: 0;
+    @include transition(all .3s linear);
+    @media #{$tablet} {
+      padding-top: $header-sm-height; padding-bottom: 111px;
+    }
+    @media print {
+      padding-top: 0!important; padding-bottom: 0!important;
+    }
+    &.body-slide-in {
+      @media #{$wide} { margin-left: 300px; }
+    }
+
+  }
+}
+
+
+
+
+/* ------------------------------------------------- Лендинг | Landing - */
+// убрать отступы сверху и снизу
+.landing {
+  .content { padding: 0; }
+  .content-header { display: none; }
+  .content-body {
+    & > .col-sm-10 { @include make-sm-column(12, 0); }
+    & > .col-md-8 { @include make-md-column(12, 0); }
+    & > .col-sm-offset-1 { margin-left: 0; }
+    & > .col-md-offset-2 { margin-left: 0; }
+  }
+
+  // FinFire
+  .finfire-body {
+    @include make-row(0);
+  }
+  .finfire-footer {
+    background: #c1212d;
+    color: #fff;
+    font-size: 20px;
+
+    a { color: #fff; }
+    @include make-row(0);
+    .phone {
+      font-size: 1.1em; font-weight: 700; text-align: center;
+      padding: 20px;
+    }
+    .mail {
+      a:nth-child(2) { text-decoration: underline; }
+      text-align: center;
+      padding: 20px;
+    }
+    .address {
+      font-size: 1em; text-align: center;
+      padding: 20px;
+      span { white-space: nowrap; }
+    }
+    .social {
+      text-align: center;
+      padding: 20px;
+
+      .row {
+        text-align: center;
+        > div {
+          float: none;
+          display: inline-block;
+          a {
+            display: inline-block;
+            padding: 10px 15px;
+            &:hover { opacity: .8; }
+          }
+        }
+      }
+    }
+
+    @media #{$tablet} {
+      font-size: 30px;
+      .phone { padding: 40px 115px; }
+      .mail { padding: 40px 40px; }
+      .address { padding: 0 40px; }
+      .social { padding: 40px; }
+    }
+  }
+}
+
+
+/* ------------------------------------------------- Главная | Hightlighted - */
+// slider
+#bootstrap-slider {
+  border: 0;
+  padding: 0; margin-bottom: 2px;
+
+  .carousel-control {
+    box-shadow: 1px 1px 15px #aaa;
+    .icon-next { top: 10px; right: 17px; }
+    .icon-prev { top: 10px; left: 17px; }
+  }
+  &.carousel .carousel-caption {
+    background: #fff;
+    border-radius: 4px;
+    text-shadow: none; text-align: initial;
+    position: absolute; bottom: 10%; right: 10%; left: initial;
+    padding: 20px 30px 15px 20px;
+    width: 380px;
+
+    p { color: $text-color; text-transform: none; }
+    h2 {
+      color: $brand-blue; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+      margin-top: 0;
+      &:hover { color: $brand-red; }
+      @media #{$normal} { font-size: 30px; }
+    }
+    @media #{$phone} {
+      padding: 15px 32px 10px 15px;
+      width: 280px;
+      font-size: 13px; line-height: 17px;
+    }
+  }
+}
+
+
+
+/* ------------------------------------------------- Главная | Блоки - */
+
+
+// оформление блоков с инфо поверх фото и под фото
+.block-content {
+  margin-bottom: 2px;
+  @include transition(all .3s linear);
+  position: relative;
+  cursor: default;
+  overflow: hidden;
+  img { width: 100%; }
+
+  // используется в главном слайдере, класс "info-over" добавляется к блоку View
+  .info-over & .block-body {
+    background: #fff;
+    border-radius: 4px;
+    font-size: 18px;
+    position: absolute; bottom: 10%; right: 10%;
+    padding: 20px 30px 25px 20px;
+    width: 380px;
+    a.btn {
+      position: absolute; bottom: 50%; right: -25px;
+      color: #fff; font-size: 25px; line-height: 50px;
+      height: 50px; width: 50px;
+      padding: 0 0 0 5px;
+      @include translate(0, 50%);
+    }
+    @media #{$phone} {
+      padding: 15px 32px 10px 15px;
+      width: 280px;
+      font-size: 13px; line-height: 17px;
+    }
+  }
+  &.info-right {
+    display: flex;
+    flex-wrap: wrap;
+    .block-image { flex: 1 0 384px; }
+    .block-body { flex: 1 0 384px; }
+  }
+  a:hover,
+  a:focus { text-decoration: none; }
+}
+.block-body {
+  padding: 15px;
+  a ~ p { margin-top: 20px; }
+  h2 {
+    color: $brand-blue; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+    margin: 0 0 0 0;
+    &:hover,
+    a:focus { color: $brand-red; }
+    @media #{$normal} {
+      font-size: 25px;
+      .row-1 & { font-size: 30px; }
+    }
+  }
+}
+
+
+// настройки блоков
+.front {
+  .row-1 {
+    @include make-row();
+    .block {
+      @include make-sm-column(12, 2px);
+      @media #{$phone} {
+        .block-image {
+          height: 200px;
+          a { height: 100%; }
+          img { height: 100%; width: initial; max-width: initial; }
+        }
+      }
+    }
+  }
+  .row-2 {
+    @include make-row();
+    .block { @include make-sm-column(6, 2px); }
+  }
+  .row-3 {
+    @include make-row();
+    .block { @include make-sm-column(4, 2px); }
+  }
+  .row-4 {
+    @include make-row();
+    .block { @include make-sm-column(12, 2px); }
+    .block-content {
+      color: #fff;
+      margin-bottom: 0;
+      .block-body { background: darken($brand-green, 10%); }
+      h2 {
+        color: #fff;
+        padding: 25px 0 15px 0;
+      }
+      p { margin-bottom: 70px; }
+    }
+  }
+  .row-1, .row-2, .row-3, .row-4  {
+    & .block:first-child { padding-left: 0; }
+    & .block:last-child { padding-right: 0; }
+  }
+  .block-image { overflow: hidden; }
+}
+
+
+/* ------------------------------------------------- Базовые настройки страницы - */
+//#page-header {
+//  position: relative;
+//  height: 160px;
+//  overflow: hidden;
+//}
+.header-image img {
+  height: 100%;
+}
+.category-header {
+  background: #0B99E6;
+  width: 100%; height: 140px;
+  margin-bottom: $grid-gutter-width/2;
+  position: relative;
+  overflow: hidden;
+  .category-title {
+    position: absolute; left: 0; right: 0; bottom: 0; top: initial;
+    h3 {
+      color: #fff; font-family: oswald; font-weight: 100; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      margin-top: 0; margin-bottom: 40px;
+      a {
+        color: #fff;
+        &:hover,
+        &:focus { text-decoration: none; }
+      }
+    }
+  }
+  @media #{$normal} { height: 160px; }
+}
+
+
+
+.content-body {
+  padding-bottom: 20px;
+  .wrapper { padding-top: $grid-gutter-width/2; }
+}
+
+/* ------------------------------------------------- Статья - */
+.article-header {
+  //font-family: oswald;
+  margin-bottom: 20px;
+  h1 {
+    color: $brand-primary;
+    margin-top: 0;
+    @media #{$phone} { font-size: $font-size-h2; line-height: $font-size-h2; }
+  }
+  .header-category {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  .header-social {
+    border-bottom: 1px solid $gray-light;
+    font-size: 16px; font-weight: 500; font-family: oswald;
+    text-align: right;
+    padding-bottom: 5px;
+    button,
+    a {
+      color: $gray;
+      display: inline-block;
+      border-right: 1px solid $gray-light;
+      padding: 0 10px;
+      &:last-child { border-right: 0; padding-right: 0; }
+      span { margin-left: 10px; }
+      &:focus { text-decoration: none; }
+    }
+  }
+  .header-share {
+    border-bottom: 1px solid $gray-light;
+    overflow: hidden;
+    height: 56px;
+    &.closed {
+      border-bottom: none;
+      height: 0;
+    }
+    .social-links {
+      text-align: right;
+      padding: 5px 0; margin-top: 5px;
+    }
+    @include transition(all 0.3s ease-in-out);
+    @media #{$tablet} { height: 61px; }
+  }
+}
+
+
+/* ------------------------------------------------- Страница ноды (Node page) - */
+.node {
+  .node-image {
+    //margin-bottom: 15px;
+    //img { box-shadow: 1px 1px 20px 4px #ddd; }
+    .img-title {
+      margin: 15px 0;
+      span {
+        border: none;
+        display: block;
+        color: $text-muted; font-size: .8em;
+        padding: 0;
+      }
+    }
+  }
+  .node-author   {
+    margin-bottom: 30px;
+    img {
+      float: left;
+      margin-right: 30px;
+    }
+    .author-body {
+      display: table-cell;
+      .author-title {
+        font-size: 1.2em; font-weight: 500;
+        margin: 5px 0 10px 0;
+      }
+      .author-subtitle { color: $text-muted; font-size: .9em; }
+    }
+    @include clearfix;
+  }
+  .node-stuff {
+    color: $text-muted;
+    margin-bottom: $grid-gutter-width;
+    span { margin-right: 15px; }
+    .location, .viewed, .comments { color: $text-muted; }
+  }
+  .node-body {
+    .field {
+      text-align: justify;
+      margin-bottom: 15px;
+    }
+    &.node-body-bordered .field-name-body {
+      border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
+      padding: 15px 0;
+    }
+  }
+  .node-tags {
+    font-size: .8em;
+    a { color: $text-muted; }
+    margin-bottom: 15px; padding-bottom: 15px;
+  }
+  span i { margin-right: 7px; }
+}
+
+/* ------------------------------------------------- Страница препарата - */
+.product-intro {
+  .product-brief {
+    background-color: #eee;
+    border-radius: 10px;
+    padding: 20px 40px;
+
+    .field {
+      @include make-row();
+      margin-bottom: 15px;
+      .field-label { @include make-sm-column(5); }
+      .field-items { @include make-sm-column(7); }
+    }
+
+    .field-name-commerce-price {
+      .field-items { @include make-sm-column(12); }
+      .field-item {
+        background-color: #ccc;
+        border-radius: 5px;
+        font-size: 24px; text-align: center;
+        padding: 5px;
+      }
+    }
+
+    .field-name-field-product {
+      .field-items { @include make-sm-column(12); }
+    }
+
+    .form-horizontal {
+      & > div { @include make-row(); }
+      .control-label        { @include make-sm-column(5); }
+      .form-input-wrapper   { @include make-sm-column(7); }
+      .form-action-wrapper  { @include make-sm-column-offset(5); }
+    }
+
+    .field-name-field-pd-mix-components {
+      .field-item { margin-bottom: 5px; }
+      .ingredients { color: $text-muted; font-size: $font-size-small; }
+    }
+    @media #{$phone} {
+      padding: 20px;
+    }
+  }
+}
+.product-description {
+  padding-top: 60px;
+  div.horizontal-tabs {
+    border: none;
+    .horizontal-tabs-list {
+      background: none;
+      border: none;
+      font-size: 20px; line-height: $font-size-h3; text-transform: uppercase;
+      li {
+        background: none;
+        margin-right: 15px;
+        a {
+          color: $text-color;
+          padding: 0 15px 0 0;
+          &:hover {
+            background: none;
+            color: $brand-blue-hover;
+          }
+        }
+        &:last-child {
+          border: none; margin-right: 0;
+          a { padding-right: 0; }
+        }
+      }
+      .selected strong {
+        color: $brand-blue;
+        &:hover { color: $brand-blue-hover; }
+      }
+    }
+    fieldset.horizontal-tabs-pane {
+      background: none;
+      padding: 15px 0;
+      box-shadow: none;
+      & > .panel-body { padding: 0; }
+    }
+
+    .group-tab-descr {
+      h4 {
+        cursor: pointer;
+        i {
+          margin-left: 5px;
+          font-size: .8em;
+          @include transition(all 0.3s ease-in-out);
+        }
+        &:not(.collapsed) i {
+          @include rotate(-180deg);
+        }
+      }
+      p { text-align: justify; }
+
+      /* ----------------------------------------------- Микроэлементы (Microelements) - */
+      .fc-micronutrients { margin-bottom: 20px; }
+      .fc-micronutrient {
+        background: #f39314;  border-radius: 4px;
+        float: left;
+        color: #fff;
+        height: 100px; width: 100px;
+        margin: 0 15px 15px 0;
+      }
+      .fc-micronutrient,
+      .fc-mn-number,
+      .fc-mn-percent,
+      .fc-mn-element,
+      .fc-mn-name {
+        overflow: hidden;
+        transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+      }
+      .fc-mn-number {
+        font-size: 13px; text-align: right;
+        height: 25%;
+        padding: 5px 10px;
+      }
+      .fc-mn-percent {
+        font-size: 25px; font-weight: 100; text-align: center;
+        height: 65%;
+        overflow: hidden;
+        margin-top: -65%;
+      }
+      .fc-mn-element {
+        font-size: 40px; font-weight: 100; text-align: center;
+        height: 50%;
+      }
+      .fc-mn-name {
+        font-size: 13px; text-align: center;
+        height: 25%;
+        padding: 5px;
+      }
+      .fc-micronutrient:hover { background: #b36500; }
+      .fc-micronutrient:hover .fc-mn-number {
+        opacity: 0;
+        height: 0;
+      }
+      .fc-micronutrient:hover .fc-mn-name { height: 0; }
+      .fc-micronutrient:hover .fc-mn-percent {
+        margin-top: 0;
+        padding-top: 30px;
+      }
+      .fc-micronutrient:hover .fc-mn-element { font-size: 18px; }
+
+      .page-node-6050 .fc-micronutrient       { background: #f39314; }
+      .page-node-6050 .fc-micronutrient:hover { background: #b36500; }
+
+      .page-node-6051 .fc-micronutrient       { background: #c31e49; }
+      .page-node-6051 .fc-micronutrient:hover { background: #a3143a; }
+
+      .page-node-6055 .fc-micronutrient       { background: #ac7e4f; }
+      .page-node-6055 .fc-micronutrient:hover { background: #73512e; }
+
+      .page-node-6056 .fc-micronutrient       { background: #fecc00; }
+      .page-node-6056 .fc-micronutrient:hover { background: #c29b00; }
+
+      .page-node-6057 .fc-micronutrient       { background: #3cba37; }
+      .page-node-6057 .fc-micronutrient:hover { background: #259621; }
+
+      .page-node-6058 .fc-micronutrient       { background: #e85423; }
+      .page-node-6058 .fc-micronutrient:hover { background: #d14c1f; }
+
+    }
+
+    /* спектр активности */
+    .group-tab-activity {
+      .field {
+        .field-collection-view { margin: 0; padding: 0; }
+        .panel {
+          margin-bottom: 15px;
+          .panel-heading {
+            color: #fff;
+            h3 { margin: 0; }
+          }
+          .panel-body {
+            padding: 20px;
+            .act-class h4 { color: $text-color; margin-bottom: 5px; }
+            .act-life-time { margin-bottom: 10px; }
+            .act-life-time h5 {
+              text-decoration: underline;
+              margin-bottom: 2px;
+            }
+          }
+          &.panel-72347 .panel-heading { @include gradient-vertical($start-color: $brand-success, $end-color: darken($brand-success, 5%)); }
+          &.panel-72348 .panel-heading { @include gradient-vertical($start-color: $brand-warning, $end-color: darken($brand-warning, 5%)); }
+          &.panel-72349 .panel-heading { @include gradient-vertical($start-color: $brand-danger, $end-color: darken($brand-danger, 5%)); }
+          &.panel-72350 .panel-heading { @include gradient-vertical($start-color: $brand-danger, $end-color: darken($brand-danger, 5%)); }
+
+          &.panel-72347 { border-color: $brand-success; }
+          &.panel-72348 { border-color: $brand-warning; }
+          &.panel-72349 { border-color: $brand-danger; }
+          &.panel-72350 { border-color: $brand-danger; }
+        }
+      }
+    }
+
+    /* регламенты */
+    .group-tab-reglaments {
+      .field-collection-container {
+        @include make-row();
+        border: none;
+      }
+      .table {
+        th { font-size: .9em; font-weight: 100; text-align: center; }
+        td {
+          font-size: .85em;
+          vertical-align: middle;
+        }
+        h5 { font-size: 1em; }
+        @media #{$phone} {
+          font-size: 6px; line-height: 7px;
+        }
+      }
+      .reg-category div {
+        @include rotate(-90deg);
+        font-size: 1.1em; letter-spacing: 1px;
+        width: 20px;
+        margin-top: 60px;
+      }
+      .reg-text {
+        text-align: justify;
+      }
+      h5 { margin-bottom: 5px; }
+      a { color: $text-color; }
+      .calculation .table {
+        border: none;
+        h3 { margin-bottom: 5px; }
+        th {
+          background: none; border: none;
+          span { color: $text-muted; }
+        }
+      }
+    }
+
+    // Применение
+    .group-tab-app {
+      .classes {
+        padding-bottom: $grid-gutter-width;
+        img {
+          margin: $grid-gutter-width/2 auto;
+          width: 80%;
+        }
+      }
+      .application {
+        font-size: .8em;
+        padding-bottom: $grid-gutter-width;
+        & > div > div { height: 40px; }
+      }
+      .instruction {
+        font-size: .8em;
+        padding-bottom: $grid-gutter-width;
+        img { width: 70%; }
+        & > div > div { padding-top: $grid-gutter-width; }
+      }
+    }
+
+    .group-tab-certificate {
+      .field-name-field-pd-certificate {
+        .field-items { display: flex; }
+        .field-item { flex: 1 0 500px; }
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------- Порошки, применение (Finfire) - */
+.finfire {
+  .classes img { padding: 20px; }
+  .application > div {
+    text-align: left;
+    height: 150px;
+    margin-bottom: 15px;
+  }
+}
+
+
+// кастомизация цвета страниц
+@mixin custom-page($page, $brand-color) {
+  $brand-hover:    darken($brand-color, 10%);
+
+  #{$page} {
+    //.category-header { background-color: $brand-color; }
+    .category-header { @include gradient-directional($brand-hover, $brand-color); }
+    .product-brief {
+      .field-label,
+      .control-label { color: $brand-color; }
+      .form-submit { background-color: $brand-color; border-color: $brand-hover; }
+    }
+    div.horizontal-tabs .horizontal-tabs-list {
+      .selected strong { color: $brand-color; }
+      li a:hover,
+      .selected strong:hover { color: $brand-hover; }
+    }
+    .article-header h1,
+    .product-description h4 { color: $brand-color; }
+    .group-tab-reglaments {
+      .table td { border-color: $brand-color; }
+      .table th,
+      .rate.active,
+      .rate:hover { background-color: $brand-color; color: #fff; }
+      .reg-category,
+      h5 { color: $brand-color; }
+
+      .calculation .table th { color: $brand-color; }
+    }
+    .group-tab-activity {
+      .field-name-field-pd-activity .panel-default { border-color: $brand-color; }
+      .field-name-field-pd-activity .panel-heading { background-color: $brand-color; }
+    }
+    .group-files {
+      .field-type-file {
+        .field-item {
+          border: 1px solid transparentize($brand-color, .8);
+          border-right: 10px solid $brand-color;
+        }
+        .file-info a { color: $brand-color; }
+        .file-download .btn { background-color: $brand-color; border-color: $brand-hover; }
+      }
+    }
+  }
+}
+
+@include custom-page('.page-herbicides', $brand-herbicides);
+@include custom-page('.page-fungicides', $brand-fungicides);
+@include custom-page('.page-insecticides', $brand-insecticides);
+@include custom-page('.page-desiccants', $brand-desiccants);
+@include custom-page('.page-disinfectants', $brand-disinfectants);
+@include custom-page('.page-mineral-fertilizers', $brand-fertilizers);
+@include custom-page('.page-fire-extinguishing-powders', $brand-finfire);
+@include custom-page('.page-mixes', $brand-mixes);
+
+/* ------------------------------------------------- Вакансии (Vacancy) - */
+.node-vacancy {
+  .field .field-label { color: $brand-blue; font-size: 1.1em; }
+  .field-name-field-vacancy-surname .control-label,
+  .field-name-field-vacancy-name-1 .control-label,
+  .field-name-field-vacancy-name-2 .control-label,
+  .field-name-field-vacancy-location .control-label,
+  .field-name-field-contact-email .control-label { display: none; }
+  .field-name-field-vacancy-file { margin: 30px 0; }
+  .form-item-fz152-agreement { font-size: .8em; }
+
+  .field-name-field-vacancy-employer {
+    border-bottom: 1px solid $brand-blue;
+    padding-bottom: 15px;
+  }
+}
+
+/* ------------------------------------------------- Формы ---------------------------------------------------------- */
+.dropbox-entry td { padding: 5px 10px; }
+
+/* ------------------------------------------------- Формы редактирования - */
+.page-node .form-item-language { display: none; }
+
+/* ------------------------------------------------- Форма входа - */
+.toboggan-unified {
+  @include make-sm-column-offset(2);
+  @include make-sm-column(8);
+  @include make-md-column-offset(3);
+  @include make-md-column(6);
+
+  #login-message {
+    text-indent: -9999px;
+    width: 70px; height: 60px;
+    background: url(../../../../default/files/images/logo/logo.svg); background-repeat: no-repeat; background-size: cover;
+    margin: 30px auto 20px;
+  }
+  #login-links {
+    background: $form-background;
+    border-top: 6px solid $brand-info; border-left: 1px solid $gray-lighter; border-right: 1px solid $gray-lighter;
+    font-size: 1em; text-align: right; line-height: inherit;
+    padding: $grid-gutter-width $grid-gutter-width*2;
+    a {
+      background:none; border: none;
+      padding: 0;
+      &.lt-active { display: none; }
+      &:hover { background: none; }
+    }
+  }
+  #register-form,
+  #login-form {
+    background: $form-background;
+    padding: 0 $grid-gutter-width*2 $grid-gutter-width $grid-gutter-width*2;
+    border: 1px solid $gray-lighter; border-top: none;
+    .login-forgot {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .form-group:not(.form-actions) { margin-bottom: $grid-gutter-width; }
+    .btn { padding: 10px; width: 100%; }
+    .g-recaptcha > div { margin: 0 auto; }
+  }
+}
+
+/* ------------------------------------------------- Форма вакансии - */
+.node-vacancy-form {
+  .form-item-title-field-und-0-value label { display: none; }
+  .group-fs2 {
+    .panel-body { @include make-row(); }
+    .field-name-field-vacancy-employer { @include make-md-column(8); }
+    .field-name-field-vacancy-location { @include make-md-column(4); }
+    .field-name-field-region { @include make-md-column(12); }
+  }
+}
+
+
+/* ------------------------------------------------- Поля (Fields) -------------------------------------------------- */
+/* ------------------------------------------------- Скачивание файла (File-link) - */
+.field-type-file {
+  .field-item {
+    border: 1px solid transparentize($brand-info, .8);
+    border-right: 10px solid $brand-info;
+    padding: 0 38px 0 20px; margin: $grid-gutter-width/2 0;
+    .file {
+      background: url('../images/icons/file_sheet.png') 0 13px no-repeat;
+      padding: 15px 0 15px 55px;
+      line-height: 1.2em;
+      display: flex;
+      flex-wrap: wrap;
+      .file-info {
+        flex: 1 1 350px;
+        padding-bottom: 3px;
+        span {
+          display: block;
+          color: $text-muted;
+          margin-top: 4px;
+        }
+      }
+      .file-download {  flex: 0 0 170px; padding-top: 3px; }
+    }
+  }
+}
+
+
+/* ------------------------------------------------- Постраничные настройки ----------------------------------------- */
+
+
+/* ------------------------------------------------- Контакты - */
+
+.contacts {
+  .nav-tabs {
+    margin-bottom: $grid-gutter-width;
+    border: none;
+    & > li {
+      text-align: center;
+      margin-bottom: 10px;
+      & > a {
+        border: none;
+        margin: 0 auto;
+        display: inline-block;
+        .logo-on,
+        .logo-off {
+          position: absolute; top: 0; left: 0;
+          @include transition(all 0.3s ease-in-out);
+        }
+        span { padding-left: 30px; }
+        &.tab-strada span { padding-left: 65px; }
+      }
+      &.active a,
+      & a:hover,
+      & a:focus {
+        background: none;
+        .logo-off { opacity: 0; }
+      }
+      &.active > a ,
+      &.active > a:hover,
+      &.active > a:focus {
+        color: $text-color;
+        background-color: transparent;
+        border: none;
+      }
+      @media #{$tablet} {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .department-title { color: $brand-blue; }
+
+
+}
+
+/* ------------------------------------------------- Entityforms - */
+.entityform {
+  .pre-instructions {
+    color: #2b8aff; font-size: 16px; font-weight: 100; text-align: center;
+    margin-bottom: 15px;
+  }
+}
+/* ------------------------------------------------- Entityform Вакансия (Vacancy) - */
+.entitytype-contact_vacancy-form {
+  background: #eee;
+  padding: 20px 30px;
+  .form-submit { width: 100%; }
+}
+
+/* ------------------------------------------------- Entityform Обратная связь (Contact us) - */
+
+.cu-info a { text-decoration: underline; }
+.cu-info h2 {
+  font-size: 22px; line-height: 28px;
+  margin: .5em 0 2em 0;
+}
+.cu-info .hr { margin: 2em 0; }
+.cu-form {
+  background: $form-background;
+  padding: 20px $grid-gutter-width;
+}
+.cu-form .field-name-field-contact-message { margin-top: 10px; }
+.cu-form .form-actions { margin-bottom: 0; }
+.cu-form .form-submit { width: 100%; }
+.cu-title {
+  color: $brand-blue; font-size: 13px; line-height: 20px;
+  margin-top: 20px;
+}
+.cu-content { line-height: 24px; }
+.cu-content a {
+  float: right; color: $brand-blue; font-size: 13px;
+  width: 110px;
+}
+.cu-content a i {
+  font-size: 16px;
+  padding-right: 8px;
+  vertical-align: middle;
+}
+
+.cu-link {
+  line-height: 25px; margin-bottom: 15px;
+  i { color: $text-muted; margin-right: 15px; }
+}
+.cu-map {
+  float: left;
+  height: 450px; width: 100%;
+}
+.cu-map .ymaps-2-1-45-controls__toolbar_left,
+.cu-map .ymaps-2-1-45-controls__control_toolbar:nth-child(1),
+.cu-map .ymaps-2-1-45-controls__control_toolbar:nth-child(2),
+.cu-map .ymaps-2-1-45-controls__control { display: none; }
+
+
+
+
+
+
+/* ------------------------------------------------- Popup ---------------------------------------------------------- */
+.popup {
+  text-align: left; text-indent: 0; cursor: default;
+  height: auto;
+  background: #fff; border-radius: 4px;
+  position: absolute; z-index: 101;
+  opacity: 0;
+  @include transition(all 0.3s ease-in-out);
+  pointer-events: none;
+  box-shadow: 1px 1px 10px #999;
+}
+.popup .close {
+  color: #fff;
+  font-size: 35px; line-height: 0; font-weight: 100;
+  position: absolute; top: 24px; right: 20px;
+  cursor: pointer;
+}
+.popup-content { padding: 0 10px; }
+.popup:before,
+.popup:after {
+  content: '';
+  position: absolute;
+  margin-left: -9px;
+  @include square(0);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+.popup.popup-top-center:before,
+.popup.popup-top-center:after {
+  top: -10px; left: 50%;
+  border-bottom: 10px solid #fff;
+}
+.popup.popup-top-right:before,
+.popup.popup-top-right:after {
+  top: -10px; right: 20px;
+  border-bottom: 10px solid #fff;
+}
+.popup.popup-bottom-left:before,
+.popup.popup-bottom-left:after {
+  bottom: -10px; left: 11%;
+  border-top: 10px solid #fff;
+}
+.popup.popup-bottom-right:before,
+.popup.popup-bottom-right:after {
+  bottom: -10px; right: 20px;
+  border-top: 10px solid #fff;
+}
+.popup-trigger-js,
+.popup-trigger {
+  position: relative;
+}
+.popup-trigger:hover .popup,
+.popup-trigger-js .popup.pop,
+.popup-trigger .popup.pop {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.btn-header.popup-trigger:hover .popup { bottom : -50px; }
+.btn-header .popup {
+  font-size: 13px; line-height: 20px; white-space: nowrap;
+  bottom: -80px;
+  padding: 3px 20px;
+}
+.btn-s1 .popup { left: -80px; }
+.btn-s2 .popup { left: -35px; }
+.btn-s3 .popup { left: -122px; }
+
+
+/* ------------------------------------------------- Представления (Views)  ----------------------------------------- */
+/* ------------------------------------------------- Список блога - */
+/* ------------------------------------------------- Список новостей - */
+/* ------------------------------------------------- Список препаратов - */
+//.view-blogs-list,
+//.view-shop,
+//.view-news {
+.view-list {
+  @include make-sm-column(12);
+  & > .view-header,
+  & > .view-filters,
+  & > .view-content,
+  & > .view-empty {
+    @include make-row();
+  }
+  & > .view-filters,
+  & > .view-empty,
+  & > .view-content {
+    background-color: $views-list-bg;
+    padding-top: $grid-gutter-width;
+  }
+  & > .view-filters {
+    .views-exposed-form {
+      @include wrap-content();
+    }
+    .views-exposed-widgets {
+      margin-bottom: 0;
+      @include make-row();
+    }
+  }
+  & > .view-empty {
+    min-height: 100px;
+  }
+
+  .view-item {
+    padding-bottom: $grid-gutter-width;
+  }
+
+  /* - страница Отзывов - */
+  /* - страница Блогов - */
+  &.view-reviews,
+  &.view-blog {
+    [class*="views-widget-filter"] { @include make-sm-column(6); }
+    .views-submit-button { float: left; padding-left: $grid-gutter-width/2; }
+    .views-reset-button { float: left; }
+  }
+  &.view-before-after {
+    .views-exposed-form.form-group { margin-bottom: 0; }
+  }
+}
+
+
+/* ------------------------------------------------- Carousel - */
+//
+.carousel-indicators {
+  position: absolute; top: 10px; right: 15px; bottom: initial; left: initial;
+  width: initial;
+  li { box-shadow: 1px 1px 5px #333; }
+}
+.carousel-caption {
+  text-align: left; text-shadow: none;
+  padding: 15px;
+  h3 { font-size: 30px; }
+}
+
+// настройки Ротатора Новинок на Главной
+// убрать кнопки prev и next
+#views-bootstrap-carousel-1 .carousel-control { display: none; }
+
+
+/* ------------------------------------------------- Карточка в списках --------------------------------------------- */
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+
+  header,
+  footer {
+    padding: 5px 15px;
+    & > div > span {
+      color: $text-muted; font-size: .9em;
+      margin-right: 10px;
+      i { margin-right: 7px; }
+      &:last-child { margin-right: 0; }
+    }
+    .left-side { float: left; }
+    .right-side { float: right; }
+    @include clearfix;
+  }
+
+  .card-image { box-shadow: 0 1px 20px rgba(0, 0, 0, 0.2); }
+
+  .card-title {
+    padding: 15px;
+    h4 {
+      height: 40px;
+      overflow: hidden;
+      margin: 0;
+      a:hover,
+      a:focus { color: $brand-danger; text-decoration: none; }
+      // троеточие на обрезанном тексте
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+  }
+}
+
+
+/* ------------------------------------------------- Вертикальная карточка (Product, Field) - */
+.v-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  header, footer {
+    padding: 5px 15px;
+    color: $text-muted; font-size: .9em;
+    min-height: 29px;
+  }
+  .v-card-image, .v-card-content {
+    padding: 15px;
+  }
+
+  header { border-bottom: 1px solid $views-list-bg; }
+  .v-card-content {
+    border-top: 1px solid $views-list-bg;
+    border-bottom: 1px solid $views-list-bg;
+  }
+  .v-card-title { margin-bottom: 3px; }
+
+  .v-card-summary {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 80px;
+    margin-bottom: 10px;
+  }
+  .v-card-subtitle { color: $gray-lighten; margin: 0 0 10px 0; min-height: 17px; }
+  .v-card-more {
+    text-align: left;
+    width: 100%;
+    position: relative;
+    .fa { position: absolute; right: 15px; }
+  }
+  .v-card-btm { font-size: 12px; }
+}
+
+/* ------------------------------------------------- Карточка пользователя ------------------------------------------ */
+.user-card {
+  &.media { margin-top: 0; }
+  padding: 20px;
+  .media-object { margin-right: 20px; width: 71px; }
+  .user-name {
+    font-size: 18px; font-weight: 500; line-height: 24px;
+    margin-top: 8px;
+    span { white-space: nowrap; }
+  }
+  .dep {
+    color: #aaa; font-size: 13px;
+    margin: 5px 0 15px 0;
+  }
+  .emails {
+    float: left;
+    color: #2b8aff; font-size: 13px; line-height: 20px;
+    padding-top: 10px;
+    min-width: 100%;
+  }
+  .phones {
+    float: left;
+    color: #2b8aff; font-size: 13px; line-height: 20px;
+    margin-top: 10px;
+    min-width: 100%;
+  }
+  .phone,
+  .email {
+    float: left;
+    font-size: 16px; line-height: 24px;
+    min-width: 100%;
+    a {
+      display: block;
+      float: right; color: #2b8aff; font-size: 13px;
+      width: 110px;
+      i {
+        font-size: 16px; line-height: 20px; vertical-align: middle;
+        padding-right: 8px;
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------- Карточка контакта- --------------------------------------------- */
+.contact-card {
+  margin-bottom: $grid-gutter-width/2;
+  .media-left {
+    padding-right: 20px;
+    img { width: 80px; }
+  }
+  .contact-dep {
+    color: $text-muted; font-size: .9em; font-weight: 100; line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .contact-collapse {
+    font-size: .8em; font-weight: 100;
+    .collapse-title {
+      margin: .5em 0;
+      i {
+        margin-left: 5px;
+        font-size: .8em;
+        @include transition(all 0.3s ease-in-out);
+      }
+      &:not(.collapsed) i {
+        @include rotate(-180deg);
+      }
+    }
+    .collapse {
+      margin-bottom: .5em;
+    }
+  }
+}
+
+/* ------------------------------------------------- Таксономия Каталог --------------------------------------------- */
+.taxonomy.teaser {
+  padding: 0 22px;
+  h4 {
+    font-weight: 700;
+    position: relative;
+    padding-left: 5px;
+    a { color: $text-color; }
+    .tax-icon {
+      display: block;
+      position: absolute; left: -22px; top: -1px;
+      background-size: 20px;
+      background-repeat:  no-repeat;
+      width: 20px; height: 25px;
+    }
+  }
+  &.tid-15 .tax-icon { background-image: url(../images/icons/catalog/herbicides.png); }
+  &.tid-16 .tax-icon { background-image: url(../images/icons/catalog/fungicides.png); }
+  &.tid-17 .tax-icon { background-image: url(../images/icons/catalog/insecticides.png); }
+  &.tid-71533 .tax-icon { background-image: url(../images/icons/catalog/disinfectants.png); }
+  &.tid-71534 .tax-icon { background-image: url(../images/icons/catalog/desiccants.png); }
+  &.tid-72343 .tax-icon { background-image: url(../images/icons/catalog/mixes.png); }
+  &.tid-72763 .tax-icon { background-image: url(../images/icons/catalog/surfactants.png); }
+  &.tid-71986 .tax-icon { background-image: url(../images/icons/catalog/firepowders.png); }
+  &.tid-72785 .tax-icon { background-image: url(../images/icons/catalog/extinguishers.png); }
+  ul {
+    list-style: none;
+    padding-left: 0;
+    li {
+      font-size: 13px;
+      line-height: $line-height-base;
+      i {
+        color: $brand-info; font-size: 10px;
+        padding-right: 5px;
+      }
+      a { color: $text-color; }
+    }
+  }
+}
+
+/* ------------------------------------------------- Список препаратов (Checkout ) ------------------------------ */
+/* ------------------------------------------------- Оформление списка (Checkout cart) - */
+.checkout-cart {
+  .cc-list {
+    margin: 0 0 $grid-gutter-width 0;
+    .cc-item {
+      border-bottom: 1px solid $legend-border-color;
+      padding: $grid-gutter-width/2 0;
+      display: flex;
+      .cc-image       {
+        flex: 0 0 100px;
+        margin-right: $grid-gutter-width/2;
+      }
+      .cc-product     {
+        flex: 1 0 300px;
+        margin-right: $grid-gutter-width/2;
+        h4 {
+          font-size: 1.4em;
+          margin-top: 0;
+          a {
+            span { color: $text-muted; font-size: .6em; }
+            &:hover,
+            &:focus {
+              color: $brand-danger;
+              text-decoration: none;
+            }
+          }
+        }
+        div { font-size: .8em; }
+        span { color: $text-muted; font-weight: 300; }
+      }
+      .cc-price-group {
+        flex: 1 0 100px;
+        display: flex; flex-wrap: wrap; justify-content: flex-end;
+        text-align: right;
+        padding: 0 $grid-gutter-width/2;
+        & > div { flex: 0 0 100%; }
+        .cc-price {
+          font-size: 1.1em; font-weight: 100;
+          margin-bottom: 5px;
+        }
+        .cc-qty {
+          max-width: 130px;
+          .form-text { text-align: right; }
+        }
+        .cc-total {
+          font-size: 1.4em; line-height: 35px;
+          margin-top: 5px;
+        }
+      }
+      .cc-action {
+        flex: 0 0 35px;
+        margin-left: $grid-gutter-width;
+        button { margin-bottom: $grid-gutter-width/2; }
+      }
+
+      @media #{$phone} {
+        font-size: .8em;
+        flex-wrap: wrap;
+        .cc-image { flex: 0 0 60px; }
+        .cc-product     {
+          flex: 1 0 150px;
+          margin-right: 5px;
+          div span { display: none; }
+        }
+        .cc-price-group {
+          flex: 0 0 100%;
+          order: 4;
+          padding: 0; margin-top: 15px;
+          .cc-price {
+            flex: 1 0 150px; order: 2;
+            line-height: 1.4;
+            margin: 0; padding-top: 10px;
+          }
+          .cc-qty { flex: 0 0 130px; order: 1; }
+          .cc-total {
+            flex: 0 0 100%; order: 3;
+            line-height: 1.4;
+            margin: 0;
+          }
+        }
+        .cc-action { margin: 0; }
+      }
+    }
+  }
+  .cc-summary {
+    display: flex;
+    .cc-physical {
+      flex: 1 0 200px;
+      span:not(.sup) { color: $text-muted; font-weight: 300; }
+    }
+    .cc-total {
+      flex: 1 0 100px;
+      font-size: 1.4em; text-align: right;
+      padding: 0 $grid-gutter-width/2;
+    }
+    .cc-refresh {
+      flex: 0 0 35px;
+      margin-left: $grid-gutter-width;
+    }
+  }
+}
+/* ------------------------------------------------- Данные пользователя (Checkout) - */
+.checkout-contact {
+  .cc-request {
+    margin: $grid-gutter-width 0 0 0;
+    .cc-forma {
+      background: $form-background;
+      margin-bottom: 0; padding: $grid-gutter-width;
+    }
+  }
+}
+
+.checkout-buttons {
+  text-align: right;
+}
+
+/* ------------------------------------------------- Страница завершения оформления (Checkout complete) - */
+.checkout-complete {
+  h4 { margin-bottom: $grid-gutter-width; }
+  dl > dd { margin-bottom: $grid-gutter-width/2; }
+  .contact-card { margin-top: 5px; }
+}
+
+/* ------------------------------------------------- Временные стили ------------------------------------------------ */
+// страница /expo
+.expo {
+  padding-bottom: 40px;
+  > img {
+    width: 100%;
+    padding: 50px 20%;
+  }
+  > div {
+    text-align: center;
+    padding-bottom: 30px;
+    img { max-width: 100%; }
+  }
+}
+
+/* ------------------------------------------------- Вспомогательные стили ------------------------------------------ */
+// выровнять изображение по центру блока
+// применяется к блоку
+.image-valign-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //height: 400px;
+}
+
+.captcha { margin: 10px 0; }
+
+.sup { font-size: 10px; line-height: 10px; font-weight: 100; vertical-align: super; }
+
+// убрать отступы по краям
+// применяется к row
+//.no-gutters {
+//  margin-right: -15px !important;
+//  margin-left: -15px !important;
+//}
+
+/* ------------------------------------------------- MagicLine Menu ------------------------------------------------- */
+// https://css-tricks.com/jquery-magicline-navigation/
+.magic-line-menu { position: relative; }
+#magic-line {
+  background: $brand-blue;
+  position: absolute; bottom: -5px; left: 0;
+  width: 100px; height: 2px;
+}
+
+
+/* ------------------------------------------------- Ввод диапазона дат (field_period) ------------------------------ */
+.date-form-element-content-multiline {
+  border: none;
+  padding: 0;
+  @include make-row();
+  .start-date-wrapper.container-inline-date,
+  .end-date-wrapper.container-inline-date {
+    @include make-sm-column(6);
+    clear: none;
+    & > .end-date-wrapper > .control-label { float: left; }
+    .help-block { display: none; }
+  }
+  .start-date-wrapper.container-inline-date {
+    @include make-sm-column(3);
+  }
+}
+
+/* ------------------------------------------------- Страница для печати (Print) ------------------------------------ */
+@media print {
+  .do-not-print { display: none; }
+}
+
+
+/* ------------------------------------------------- Эффект тряски -------------------------------------------------- */
+/* ------------------------------------------------- Используется для блока корзины - */
+/*! * * * * * * * * * * * * * * * * * * * *\
+  CSShake :: shake
+  v1.5.0
+  CSS classes to move your DOM
+  (c) 2015 @elrumordelaluz
+  http://elrumordelaluz.github.io/csshake/
+  Licensed under MIT
+\* * * * * * * * * * * * * * * * * * * * */
+.shake {
+  display: inline-block;
+  transform-origin: center center; }
+
+.shake-freeze,
+.shake-constant.shake-constant--hover:hover,
+.shake-trigger:hover .shake-constant.shake-constant--hover {
+  animation-play-state: paused; }
+
+.shake-freeze:hover,
+.shake-trigger:hover .shake-freeze, .shake:hover,
+.shake-trigger:hover .shake {
+  animation-play-state: running; }
+
+@keyframes shake {
+  2% {
+    transform: translate(0.5px, 0.5px) rotate(-0.5deg); }
+  4% {
+    transform: translate(0.5px, 2.5px) rotate(1.5deg); }
+  6% {
+    transform: translate(-0.5px, 1.5px) rotate(0.5deg); }
+  8% {
+    transform: translate(2.5px, 1.5px) rotate(-0.5deg); }
+  10% {
+    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
+  12% {
+    transform: translate(2.5px, -1.5px) rotate(-0.5deg); }
+  14% {
+    transform: translate(0.5px, -0.5px) rotate(1.5deg); }
+  16% {
+    transform: translate(1.5px, 1.5px) rotate(-0.5deg); }
+  18% {
+    transform: translate(-0.5px, 0.5px) rotate(0.5deg); }
+  20% {
+    transform: translate(-0.5px, -0.5px) rotate(-0.5deg); }
+  22% {
+    transform: translate(-1.5px, -1.5px) rotate(-0.5deg); }
+  24% {
+    transform: translate(1.5px, -0.5px) rotate(1.5deg); }
+  26% {
+    transform: translate(1.5px, 1.5px) rotate(0.5deg); }
+  28% {
+    transform: translate(2.5px, 1.5px) rotate(0.5deg); }
+  30% {
+    transform: translate(2.5px, 0.5px) rotate(1.5deg); }
+  32% {
+    transform: translate(-0.5px, -0.5px) rotate(0.5deg); }
+  34% {
+    transform: translate(-1.5px, -0.5px) rotate(-0.5deg); }
+  36% {
+    transform: translate(-1.5px, 2.5px) rotate(0.5deg); }
+  38% {
+    transform: translate(2.5px, 2.5px) rotate(0.5deg); }
+  40% {
+    transform: translate(2.5px, 0.5px) rotate(0.5deg); }
+  42% {
+    transform: translate(1.5px, 2.5px) rotate(-0.5deg); }
+  44% {
+    transform: translate(0.5px, -1.5px) rotate(1.5deg); }
+  46% {
+    transform: translate(2.5px, 0.5px) rotate(1.5deg); }
+  48% {
+    transform: translate(-0.5px, -0.5px) rotate(1.5deg); }
+  50% {
+    transform: translate(2.5px, 1.5px) rotate(1.5deg); }
+  52% {
+    transform: translate(0.5px, 0.5px) rotate(0.5deg); }
+  54% {
+    transform: translate(-0.5px, -1.5px) rotate(-0.5deg); }
+  56% {
+    transform: translate(0.5px, 1.5px) rotate(0.5deg); }
+  58% {
+    transform: translate(2.5px, 0.5px) rotate(0.5deg); }
+  60% {
+    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
+  62% {
+    transform: translate(0.5px, 1.5px) rotate(0.5deg); }
+  64% {
+    transform: translate(-0.5px, 0.5px) rotate(-0.5deg); }
+  66% {
+    transform: translate(0.5px, 0.5px) rotate(0.5deg); }
+  68% {
+    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
+  70% {
+    transform: translate(-0.5px, 2.5px) rotate(1.5deg); }
+  72% {
+    transform: translate(-0.5px, 0.5px) rotate(0.5deg); }
+  74% {
+    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
+  76% {
+    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
+  78% {
+    transform: translate(-0.5px, 2.5px) rotate(1.5deg); }
+  80% {
+    transform: translate(-1.5px, 1.5px) rotate(-0.5deg); }
+  82% {
+    transform: translate(1.5px, 1.5px) rotate(-0.5deg); }
+  84% {
+    transform: translate(0.5px, -0.5px) rotate(1.5deg); }
+  86% {
+    transform: translate(0.5px, -1.5px) rotate(-0.5deg); }
+  88% {
+    transform: translate(1.5px, 1.5px) rotate(0.5deg); }
+  90% {
+    transform: translate(2.5px, 0.5px) rotate(-0.5deg); }
+  92% {
+    transform: translate(2.5px, -0.5px) rotate(-0.5deg); }
+  94% {
+    transform: translate(-1.5px, 1.5px) rotate(0.5deg); }
+  96% {
+    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
+  98% {
+    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
+  0%, 100% {
+    transform: translate(0, 0) rotate(0); } }
+
+.shake.shake-on {
+  animation-name: shake;
+  animation-duration: 100ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+

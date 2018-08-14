@@ -1,0 +1,24 @@
+
+input.check-button {
+  float: right;
+  margin: -1.9em 0 .2em 0 !important;
+  padding: 0em .7em .2em .7em !important;
+  font-size: .85em !important;
+}
+
+#parser-dialog {
+  font-family: Consolas, Courier New, monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+
+.CodeMirror {
+  border: 1px solid #CCCCCC;
+  border-top-color: #999999;
+  line-height: 140%;
+}
+
+.CodeMirror-scroll {
+  height: auto;
+  min-height: 5em;
+}

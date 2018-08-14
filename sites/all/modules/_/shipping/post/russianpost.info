@@ -1,0 +1,8 @@
+name = Shipping | RussianPost
+description = Shipping by RussianPost with cash on delivery option
+package = Jax
+dependencies[] = commerce
+dependencies[] = commerce_shipping
+core = 7.x
+
+

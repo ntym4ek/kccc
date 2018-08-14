@@ -1,0 +1,236 @@
+<?php
+
+include 'includes/before_after.page.inc';
+include 'includes/before_after.field.inc';
+include 'includes/before_after.season.inc';
+include 'includes/before_after.processing.inc';
+include 'includes/before_after.measurement.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function before_after_menu() {
+    // страница списка
+    $items['before-after'] = array(
+        'title' => t('Before & After'),
+        'page callback' => 'before_after_list_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['before-after/%'] = array(
+        'title' => t('Before & After'),
+        'page callback' => 'before_after_page',
+        'page arguments' => array(1),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    // интерфейс представителей
+        // поле
+    $items['fields/%'] = array(
+        'title' => t('Before & After'),
+        'page callback' => 'before_after_field_callback',
+        'page arguments' => array(1, 2),
+        'access arguments' => array('access before_after edit'),
+        'type' => MENU_CALLBACK,
+    );
+        // сезон
+    $items['field/%/season/%'] = array(
+        'title' => t('Before & After'),
+        'page callback' => 'before_after_season_callback',
+        'page arguments' => array(1, 3, 4),
+        'access arguments' => array('access before_after edit'),
+        'type' => MENU_CALLBACK,
+    );
+
+        // Обработки и Замеры
+    $items['season/%/%/%'] = array(
+        'title' => t('Before & After'),
+        'page callback' => 'before_after_processing_callback',
+        'page arguments' => array(1, 2, 3, 4),
+        'access arguments' => array('access before_after edit'),
+        'type' => MENU_CALLBACK,
+    );
+
+        // источник данных для мобильного приложения
+    $items['source/atfield.json'] = array(
+        'page callback' => 'before_after_atfield_source',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+
+    return $items;
+}
+
+function before_after_permission() {
+    return array(
+        'access before_after edit' => array(
+            'title' => t('Access Before&After'),
+            'description' => t('Access Before&After add and edit'),
+        )
+    );
+}
+
+function before_after_theme() {
+    return array(
+        'before_after_user' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/before-after',
+        ),
+        'before_after_item' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/before-after-item',
+        ),
+        'before_after_page' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/before-after-page',
+        ),
+    );
+}
+
+
+
+/**
+ * удаление ЛЮБЫХ объектов
+ *
+ */
+function before_after_del_show_modal($type, $id, $js) {
+    if (!$js) {
+        return drupal_get_form('before_after_del_form', $type, $id);
+    }
+
+    ctools_include('modal'); ctools_include('ajax');
+    $form_state = array(
+        'title' => 'Удаление записи',
+        'ajax' => TRUE,
+    );
+    $form_state['build_info']['args'] = array('type' => $type, 'id' => $id);
+
+    $output = ctools_modal_form_wrapper('before_after_del_form', $form_state);
+
+    if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+
+    print ajax_render($output);
+    exit;
+}
+
+
+function before_after_del_form($form, &$form_state, $type, $parent_id, $id) {
+    $form_state['type'] = $type;
+    $form_state['id'] = $id;
+
+    if ($type == 'field')         $form_state['redirect_uri'] = 'fields/list';
+    if ($type == 'season')        $form_state['redirect_uri'] = 'field/' . $parent_id . '/season/list';
+    if ($type == 'processing')    $form_state['redirect_uri'] = 'season/' . $parent_id . '/processing/list';
+    if ($type == 'measurement')   $form_state['redirect_uri'] = 'season/' . $parent_id . '/processing/list';
+
+    $form = array('#attributes' => array('class' => array('delete-form')));
+
+    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Подтвердите действие');
+    $form['fs1']['qwestion'] = array(
+        '#markup' => 'Удалить запись?',
+    );
+
+    $form['fs2'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+    $form['fs2']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Да',
+        '#attributes' => array('class' => array('btn-danger', 'pull-right')),
+    );
+    $form['fs2']['cancel'] = array(
+        '#markup' => '<a href="/' . $form_state['redirect_uri'] . '" class="btn btn-link pull-right">Отменить</a>',
+        '#attributes' => array('class' => array('btn-link', 'pull-right')),
+    );
+
+
+    return $form;
+}
+
+function before_after_del_form_submit($form, &$form_state)
+{
+    switch($form_state['type']) {
+        case 'field':
+            node_delete($form_state['id']);
+            break;
+
+        case 'season':
+        case 'processing':
+        case 'measurement':
+            if ($item = field_collection_item_load($form_state['id'])) $item->delete();
+            break;
+    }
+
+    $form_state['redirect'] = $form_state['redirect_uri'];
+}
+
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function before_after_preprocess_page(&$vars) {
+    // отключить обёртку col- для списка
+    if ($_GET['q'] == 'before-after') {
+        $vars['wrapper_off'] = true;
+
+    }
+    if (arg(0) == 'before-after' && arg(1)) {
+        $vars['header']['category_title'] = '<a href="/before-after" >'. 'Препараты в полях' . '</a>';
+    }
+
+    if (in_array(arg(0), array('field', 'fields', 'season', 'seasons'))) {
+        // отключить заголовок на странице
+        if (((isset($vars['page']['content']['system_main']['#type']) && $vars['page']['content']['system_main']['#type'] != 'form')
+            || !isset($vars['page']['content']['system_main']['#type']))) {
+                $vars['header']['title_off'] = true;
+        }
+        $vars['header']['category_title'] = '<a href="/before-after" >'. 'Препараты в полях' . '</a>';
+        // установить изображение
+        $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
+    }
+}
+
+
+/**
+ * hook_field_collection_item_delete()
+ * удалить файлы изображений при удалении field_collection_item
+ */
+function before_after_field_collection_item_delete($item)
+{
+    $photos = array();
+    $item_wrapper = entity_metadata_wrapper('field_collection_item', $item);
+
+    // processing
+    if (!empty($item->field_f_s_p_photo['und'])) {
+        $photos[] = $item_wrapper->field_f_s_p_photo->value();
+    }
+
+    // measurement
+    if (!empty($item->field_f_s_m_foto_field['und'])) {
+        $photos[] = $item_wrapper->field_f_s_m_foto_field->value();
+        $photos[] = $item_wrapper->field_f_s_m_foto_culture->value();
+    }
+
+    // hobject
+    if (!empty($item->field_f_s_m_c_foto['und'])) {
+        $photos[] = $item_wrapper->field_f_s_m_c_foto->value();
+    }
+
+    if ($photos) {
+        foreach ($photos as $photo) {
+            if ($old_file = file_load($photo)) {
+                file_usage_delete($old_file, 'before_after');
+                file_delete($old_file);
+            }
+        }
+    }
+}
+
+/**
+ * callback function
+ * источник данных о сезонах для мобильного приложения
+ */
+function before_after_atfield_source() {
+    $results = before_after_get_atfield_list();
+    drupal_json_output(['atfield' => $results]);
+    drupal_exit();
+}

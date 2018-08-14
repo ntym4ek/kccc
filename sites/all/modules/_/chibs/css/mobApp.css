@@ -1,0 +1,33 @@
+.mobApp {
+    background-color: #2b8aff;
+    color: #fff;
+    height: 0; width: 1003px;
+    padding: 0 40px 0 20px;
+    transition: all 0.5s ease-in-out; -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out;
+    overflow: hidden;
+    text-align: center;
+    position: absolute; top: 0;
+    z-index: 9999;
+}
+.mobApp.pop {
+    height: 53px;
+    padding: 0 40px 0 20px;
+    margin-bottom: 10px;
+}
+.mobApp .close {
+    font-size: 35px; line-height: 0; font-weight: 100; color: #fff;
+    position: absolute; top: 29px; right: 19px;
+    cursor: pointer;
+}
+.mobApp .appstore {
+    width: 135px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0 0 10px;
+}
+.mobApp .googleplay {
+    width: 152px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: -3px 0 0 5px;
+}

@@ -1,0 +1,4 @@
+
+.icon-mobile:before { content: '\e800'; } /* '' */
+.icon-comment:before { content: '\e801'; } /* '' */
+.icon-search:before { content: '\e802'; } /* '' */

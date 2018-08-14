@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function commerce_fast_ajax_atc_install() {
+    db_update('system')
+        ->fields(array('weight' => 1000))
+        ->condition('name', 'commerce_fast_ajax_atc')
+        ->execute();
+}

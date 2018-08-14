@@ -1,0 +1,29 @@
+diff --git a/js/modal.js b/js/modal.js
+index 879d018..b0c7dac 100644
+--- a/js/modal.js
++++ b/js/modal.js
+@@ -490,7 +490,7 @@
+       }
+     };
+ 
+-    // Keyboard and focus event handler ensures focus stays on modal elements only
++    // Keyboard and focus event handler ensures only modal elements gain focus.
+     modalEventHandler = function( event ) {
+       target = null;
+       if ( event ) { //Mozilla
+@@ -627,11 +627,10 @@
+       if ( animation == 'show' ) animation = 'hide';
+ 
+       // Close the content
+-      modalContent.hide()[animation](speed);
+-
+-      // Remove the content
+-      $('#modalContent').remove();
+-      $('#modalBackdrop').remove();
++      $('#modalContent').hide()[animation](speed, function() {
++        $(this).remove();
++        $('#modalBackdrop').remove();
++      });
+ 
+       // Restore focus to where it was before opening the dialog
+       $(oldFocus).focus();
