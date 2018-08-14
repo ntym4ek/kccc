@@ -47,6 +47,83 @@ function person_entity_info() {
   );
 }
 
+
+/**
+ * список bubble в админке
+ * на основе http://www.drupaler.by/lessons/kak-sozdat-sushchnost-v-drupal
+ */
+function person_admin_bubbles_list()
+{
+    // Формируем сортируемую шапку для таблицы.
+    $header = array(
+        'recipient' => t('Recipient'),
+        'email' => t('Email'),
+        'level' => array('data' => t('Level'), 'field' => 'b.level'),
+        'section' => array('data' => t('Section'), 'field' => 'b.section'),
+        'subject' => array('data' => t('Subject'), 'field' => 'b.subject'),
+        'aux' => array('data' => t('Aux'), 'field' => 'b.aux'),
+        'created' => array('data' => t('Created'), 'field' => 'b.created', 'sort' => 'desc'),
+        'operations' => array('data' => t('Operations')),
+    );
+
+    $query = db_select('bubbles', 'b')->extend('PagerDefault')->extend('TableSort');
+    $bubble_ids = $query->fields('b', array('bid'))
+        ->limit(50)
+        ->orderByHeader($header)
+        ->execute()
+        ->fetchCol();
+
+    $bubbles = bubble_load_multiple($bubble_ids);
+
+    // Подготавливаем список продуктов.
+    $destination = drupal_get_destination();
+    $rows = array();
+    foreach ($bubbles as $bubble) {
+        $user = person_get_user_array($bubble->uid);
+        $rows[$bubble->bid] = array(
+            'recipient' => $user['full_name'],
+            'email' => $user['email'],
+            'level' => $bubble->level,
+            'section' => $bubble->section,
+            'subject' => $bubble->subject,
+            'aux' => $bubble->aux,
+            'created' => format_date($bubble->created, 'date'),
+        );
+
+        // Формируем список доступных операций над текущим продуктом.
+        $operations = array();
+        $operations['delete'] = array(
+            'title' => t('delete'),
+            'href' => 'admin/structure/bubbles/manage/' . $bubble->bid . '/delete',
+            'query' => $destination,
+        );
+
+        if (!empty($operations)) {
+            // Выводим первую и единственную операцию.
+            $link = reset($operations);
+            $rows[$bubble->bid]['operations'] = array(
+                'data' => array(
+                    '#type' => 'link',
+                    '#title' => $link['title'],
+                    '#href' => $link['href'],
+                    '#options' => array('query' => $link['query']),
+                ),
+            );
+        }
+    }
+
+    $page = array();
+    $page['bubbles'] = array(
+        '#theme' => 'table',
+        '#header' => $header,
+        '#rows' => $rows,
+        '#empty' => t('No bubbles available.'),
+    );
+
+    $page['pager'] = array('#markup' => theme('pager'));
+    return $page;
+}
+
 /**
  * Проверка прав доступа
  */
@@ -177,6 +254,7 @@ function person_before_after_measurement_save_alter($data) {
 function person_page_alter($vars) {
     global $user;
 
+    // todo удаление bubbles при удалении сущности к которой он привязан
     $path_alias = drupal_get_path_alias($_GET['q']);
 
     // сбросить bubbles для открываемой страницы блогов

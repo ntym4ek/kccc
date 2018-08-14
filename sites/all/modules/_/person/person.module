@@ -95,6 +95,15 @@ function person_menu() {
         'access arguments' => array(1),
         'type' => MENU_CALLBACK,
     );
+
+    $items['admin/structure/bubbles'] = array(
+        'title' => 'Bubbles',
+        'description' => 'List of bubbles',
+        'page callback' => 'person_admin_bubbles_list',
+        'access arguments' => array('administer products'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
     return $items;
 }
 
