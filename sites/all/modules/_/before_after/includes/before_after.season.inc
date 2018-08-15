@@ -253,6 +253,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
                 '#type' => 'select',
                 '#options' => $options_ho,
                 '#chosen' => true,
+                '#size' => 5,
                 '#default_value' => $value['nid'],
                 '#wrapper_attributes' => array('class' => array('col-sm-5')),
             );
@@ -292,6 +293,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
             '#type' => 'select',
             '#options' => $options_ho,
             '#chosen' => true,
+            '#size' => 5,
             '#wrapper_attributes' => array('class' => array('col-sm-5')),
         );
         $form['fs3']['cnt-' . $counter]['phase-' . $counter] = array(

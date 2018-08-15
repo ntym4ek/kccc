@@ -85,7 +85,9 @@ function before_after_processing_callback($sid = 0, $type = 'processing', $op = 
                 if ($procs) {
                     ksort($procs);
                     $output['items'] = $procs;
-                    $menu[] = array('data' => l(t('View result'), "/before-after/$sid"));
+                    $menu[] = array(
+                        'data' => l(t('View result'), "/before-after/$sid", ['attributes' => ['target' => '_blank']])
+                    );
                 }
                 $output['menu'] = theme('item_list', array('items' => $menu, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
                 $output = theme('before_after_user', array('content' => $output));
