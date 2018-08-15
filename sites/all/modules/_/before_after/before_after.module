@@ -88,7 +88,17 @@ function before_after_theme() {
     );
 }
 
-
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function before_after_ctools_plugin_api($owner, $api) {
+    if ($owner == 'services' && $api == 'services') {
+        return array(
+            'version' => 3,
+            'file' => 'includes/before_after.services.inc'
+        );
+    }
+}
 
 /**
  * удаление ЛЮБЫХ объектов

@@ -421,6 +421,24 @@ function before_after_exposed_filters_form_submit($form, &$form_state)
  */
 function before_after_page($sid)
 {
+    $season = before_after_get_atfield($sid);
+
+    drupal_set_title($season['culture']);
+    drupal_set_subtitle($season['farm'] . ', ' . $season['region']);
+
+    drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
+    drupal_add_js(drupal_get_path('module', 'before_after') . '/js/before_after.js');
+
+    return theme('before_after_page', array('content' => $season));
+}
+
+/**
+ * возвращает массив с информацией о Сезоне
+ * @param $sid
+ * @return mixed
+ */
+function before_after_get_atfield($sid)
+{
     $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
     $season = $season_wrapper->value();
 
@@ -432,10 +450,10 @@ function before_after_page($sid)
     $user_wrapper = entity_metadata_wrapper('user', $uid);
     $user = $user_wrapper->value();
 
-    $a = $field_wrapper->field_f_farm->value();
-    drupal_set_title($season_wrapper->field_f_s_culture->title->value());
-    drupal_set_subtitle($field_wrapper->field_f_farm->value() . ', ' . $field_wrapper->field_f_region->name->value());
-    $output['author'] = person_get_user_array($user);
+    $output['farm']     = $field_wrapper->field_f_farm->value();
+    $output['culture']  = $season_wrapper->field_f_s_culture->title->value();
+    $output['region']   = $field_wrapper->field_f_region->name->value();
+    $output['author']   = person_get_user_array($user);
 
     // user
     $img = 'default_images/ru-default-thickbox_default.jpg';
@@ -634,9 +652,5 @@ function before_after_page($sid)
         $output['processings'] = $processings;
     }
 
-    drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
-    drupal_add_js(drupal_get_path('module', 'before_after') . '/js/before_after.js');
-
-    return theme('before_after_page', array('content' => $output));
-
+    return $output;
 }

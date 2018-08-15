@@ -3,3 +3,6 @@ description = Функционал ДоПосле
 version = 7.x-1.0
 core = 7.x
 package = Jax
+
+dependencies[] = services
+dependencies[] = rest_server
