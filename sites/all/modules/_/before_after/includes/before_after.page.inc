@@ -274,7 +274,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
 
                         // количество дней после предыдущего процесса
                         if ($count_processes == 1) {
-                            $footer = 'Cостояние культуры перед обработкой';
+                            $footer = 'Культура перед обработкой';
                         } else {
                             $diff = _seconds2times($processes[$count_processes - 1]['date'] - $processes[$count_processes - 2]['date']);
                             $footer = $diff['3'] . ' дней после';
@@ -567,10 +567,7 @@ function before_after_get_atfield($sid)
                 $comment = mb_ucfirst(trim($measurement_wrapper->field_f_s_m_comment->value()));
                 $comment_short = _cropStr($comment, 150, '... <span class="s1">развернуть</span>');
                 $measurements[$key_m]['comment'] = $comment;
-                if ($comment != $comment_short) {
-                    $measurements[$key_m]['comment_short'] = $comment_short;
-                    $measurements[$key_m]['comment'] .= ' <span class="s1">свернуть</span>';
-                }
+                $measurements[$key_m]['comment_short'] = $comment_short;
 
                 if ($date_first_processing && $key_m) {
                     $diff = _seconds2times($measurement_wrapper->field_f_s_m_date->value() - $date_first_processing);
@@ -624,6 +621,7 @@ function before_after_get_atfield($sid)
                 $processings[$key_p]['preparation'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
                 $processings[$key_p]['ingredients'] = $title_arr['ingredients'];
                 $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());
+                $processings[$key_p]['prep_nid'] = $preparation_wr->nid->value();
 
                 $image_prep = $processing_wrapper->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
                 $processings[$key_p]['image_prep_thumb'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
@@ -638,6 +636,7 @@ function before_after_get_atfield($sid)
                     $processings[$key_p]['preparation2'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
                     $processings[$key_p]['ingredients2'] = $title_arr['ingredients'];
                     $processings[$key_p]['prep_link2'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());
+                    $processings[$key_p]['prep_nid2'] = $preparation_wr->nid->value();
 
                     $image_prep = $processing_wrapper->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
                     $processings[$key_p]['image_prep_thumb2'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
