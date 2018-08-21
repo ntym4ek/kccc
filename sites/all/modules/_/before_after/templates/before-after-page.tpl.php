@@ -179,7 +179,7 @@
                             <div class="text c1">
                                 <? if (!empty($measurement['comment_short'])): ?>
                                     <div class="cc1"><? print $measurement['comment_short']; ?></div>
-                                    <div class="cc2"><? print $measurement['comment']; ?></div>
+                                    <div class="cc2"><? print $measurement['comment']; ?><span class="s1">свернуть</span></div>
                                 <? else: ?>
                                     <div class="cc1"><? print $measurement['comment']; ?></div>
                                 <? endif; ?>
