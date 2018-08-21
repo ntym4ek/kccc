@@ -169,11 +169,12 @@
             display: flex; flex-wrap: wrap;
         }
         .image {
-          flex: 1 1 150px;
+          flex: 1 1 220px;
+          padding-right: 20px;
           .date { padding: 10px 0; }
         }
-        dl.text {
-          flex: 1 0 150px; padding-left: 20px;
+        .text {
+          flex: 1 0 200px;
           @supports (display: grid) {  /* если браузер поддерживает Гриды */
             display: grid;
             grid-template-columns: auto 1fr;  /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
@@ -186,7 +187,7 @@
           }
         }
         .preparation {
-            flex: 1 1 150px;
+            flex: 1 1 200px;
             text-align: center;
             span { color: $text-muted; font-size: 10px; }
           .pr-images {
@@ -208,8 +209,7 @@
         }
         .after { flex: 1 0 100%; }
         .processings {
-            .image { flex: 1 0 100%; }
-            .text { flex: 1 0 100%; }
+          .preparation .pr-images { margin-top: 0; }
         }
         .before, .after, .processings {
             .block { padding: 15px 0; }
