@@ -28,7 +28,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
     $calc_volume_title = 'Вес обрабатываемых семян (т)';
     $volume = 'вес семян';
 } else {
-    $calc_volume_title = 'Посевная площадь (га)';
+    $calc_volume_title = 'Посевная площадь ';
     $volume = 'посевную площадь';
 }
 
@@ -296,7 +296,12 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
             </th>
         </tr>
         <tr>
-            <td width="50%"><?php print $calc_volume_title; ?></td>
+            <td width="50%"><?php print $calc_volume_title; ?>
+                <select name="units">
+                    <option value="ga">га
+                    <option value="sot">сотка
+                </select>
+            </td>
             <td width="50%" class="area">
                 <input id="area" type="text" value="100"/>
                 <? foreach($prices as $p_key => $price): ?>
@@ -305,7 +310,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
             </td>
         </tr>
         <tr>
-            <td>Необходимый объём препарата (<? print $units; ?>)</td>
+            <td>Необходимый объём препарата (<span id="units" data-unit-volume="<? print $unit_arr['short_unit']; ?>"><? print $units; ?></span>)</td>
             <td class="calc-volume"></td>
         </tr>
         <tr>
