@@ -1046,17 +1046,6 @@ function is_child_of_term($child_tid, $parent_tid = 0) {
 }
 
 
-// вернуть tid верхнего родителя в иерархии
-function _get_top_parent_tid($term_id) {
-    do {
-        $tid = empty($tid) ? $term_id : key($pid);
-        $pid = taxonomy_get_parents($tid);
-    } while ($pid);
-
-    return $tid;
-}
-
-
 function _get_product_display_by_product_id($product_id, $only_id = true) {
     $product_display_nid = db_select('field_data_field_product', 'f')
         ->fields('f', array('entity_id'))
@@ -1130,35 +1119,35 @@ function mb_ucfirst($str) {
  * Implements hook_block_list_alter().
  */
 function chibs_block_list_alter(&$blocks) {
-  $GLOBALS['block_build_microtime'] = microtime(TRUE);
+//  $GLOBALS['block_build_microtime'] = microtime(TRUE);
 }
 
 /**
  * Implements hook_block_view_alter().
  */
-function chibs_block_view_alter(&$data, $block) {
-  $block->build_time = microtime(TRUE) - $GLOBALS['block_build_microtime'];
-  $GLOBALS['block_build_microtime'] = microtime(TRUE);
-}
+//function chibs_block_view_alter(&$data, $block) {
+//  $block->build_time = microtime(TRUE) - $GLOBALS['block_build_microtime'];
+//  $GLOBALS['block_build_microtime'] = microtime(TRUE);
+//}
 
 /**
  * Preprocess function for block.tpl.php.
  */
-function chibs_preprocess_block(&$vars) {
-  if (isset($vars['block']->build_time)) {
-    $build_time = intval($vars['block']->build_time * 100000) / 100;
-    $vars['content'] .= "\n<!-- Block build time: $build_time ms -->\n";
-  }
-}
+//function chibs_preprocess_block(&$vars) {
+//  if (isset($vars['block']->build_time)) {
+//    $build_time = intval($vars['block']->build_time * 100000) / 100;
+//    $vars['content'] .= "\n<!-- Block build time: $build_time ms -->\n";
+//  }
+//}
 /**
  * http://xandeadx.ru/blog/drupal/848
  * Implements hook_views_post_render().
  */
-function chibs_views_post_render(&$view, &$output, &$cache) {
-  $execute_time = intval($view->execute_time * 100000) / 100;
-  $render_time = intval($view->render_time * 100000) / 100;
-  $output .= "\n<!-- Query time: $execute_time ms, Render time: $render_time ms -->";
-}
+//function chibs_views_post_render(&$view, &$output, &$cache) {
+//  $execute_time = intval($view->execute_time * 100000) / 100;
+//  $render_time = intval($view->render_time * 100000) / 100;
+//  $output .= "\n<!-- Query time: $execute_time ms, Render time: $render_time ms -->";
+//}
 /**
  * --------------------------------- Заглушка вместо отсутствующих картинок --------------------------------------------
  * http://xandeadx.ru/blog/drupal/854
