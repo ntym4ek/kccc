@@ -107,6 +107,14 @@ function person_menu() {
     return $items;
 }
 
+function person_permission() {
+    return array(
+        'access product_reglaments actions' => array(
+            'title' => t('Access Product Reglaments'),
+            'description' => t('Access Product Reglaments actions'),
+        )
+    );
+}
 
 // callback проверки прав на редактирование профиля
 function person_account_edit_access($acid) {
