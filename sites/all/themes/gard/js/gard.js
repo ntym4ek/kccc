@@ -16,12 +16,6 @@
             });
 
             /* ------------------------------------------  swipe events init ---------------------------------------- */
-            var $content = $('.content-container > .content');
-            var $menu = $('.side-menu');
-
-            $content.touch();
-            $menu.touch();
-
             function toggleMenu() {
                 $('#navbar').toggleClass('slide-in');
                 $('.menu-container').toggleClass('slide-in');
@@ -31,8 +25,20 @@
             $('body', context).once(function () {
                 /* -----------------------------------  slide меню -------------------------------------------------- */
                 $('.btn-s4').click(function () { toggleMenu(); });
-                $menu.on('swipeLeft', function() { toggleMenu(); });
-                $content.on('swipeRight', function() { toggleMenu(); });
+
+                if (!device.desktop()) {
+                    var $content = $('.content-container > .content');
+                    var $menu = $('.side-menu');
+                    var $tabs = $('.horizontal-tabs-list');
+
+                    $content.touch();
+                    $menu.touch();
+                    $tabs.touch();
+
+                    $menu.on('swipeLeft', function() { toggleMenu(); });
+                    $content.on('swipeRight', function() { toggleMenu(); });
+                    $tabs.on('swipeRight', function(e) { e.stopPropagation(); });
+                }
 
                 /* ------------------------------------ панель поиска, Search --------------------------------------- */
                 $('.sp3, .btn-s3').on('click', function () {
