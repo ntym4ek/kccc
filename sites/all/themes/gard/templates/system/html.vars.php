@@ -34,6 +34,38 @@ function gard_preprocess_html(&$vars)
             }
         }
     }
+
+    /** -------------------------- добавление класса в зависимости от категории
+     */
+    $color = '';
+    $path_array = explode('/', $_GET['q']);
+    if ($path_array[0] == 'taxonomy' && is_numeric($path_array[2]) && $term = taxonomy_term_load($path_array[2])) {
+        if (isset($term->name_field['en'][0]['value'])) {
+            $color = drupal_strtolower($term->name_field['en'][0]['value']);
+            $color = str_replace(' ', '-', $color);
+        }
+    }
+    /** -------------------------- добавление класса в зависимости от категории выводимого препарата
+     */
+    if ($path_array[0] == 'node' && is_numeric($path_array[1]) && isset($vars['page']['content']['system_main']['nodes'][$path_array[1]])) {
+
+        $node = $vars['page']['content']['system_main']['nodes'][$path_array[1]];
+        // определить категорию
+        $tid = empty($node['#node']->field_pd_category['und'][0]['tid']) ? 0 : $node['#node']->field_pd_category['und'][0]['tid'];
+        if (!empty($_GET['cat'])) $tid = $_GET['cat'];
+
+        if ($term = taxonomy_term_load($tid)) {
+            if (isset($term->name_field['en'][0]['value'])) {
+                $color = drupal_strtolower($term->name_field['en'][0]['value']);
+                $color = str_replace(' ', '-', $color);
+            }
+        }
+    }
+    if ($color) $vars['classes_array'][] = 'page-'. $color;
+
+    /** --------------------------  подключить FontAwesome 5 -
+     */
+    drupal_add_css('https://use.fontawesome.com/releases/v5.0.6/css/all.css', array('type' => 'external'));
 }
 
 /**

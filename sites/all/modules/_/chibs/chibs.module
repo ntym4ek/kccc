@@ -159,106 +159,29 @@ function chibs_js_alter(&$js) {
 }
 
 
-/**
- * Implements hook_preprocess_html().
- */
-function chibs_preprocess_html(&$vars)
-{
-    $color = '';
-    $path_array = explode('/', $_GET['q']);
-    // класс в зависимости от категории
-    if ($path_array[0] == 'taxonomy' && is_numeric($path_array[2]) && $term = taxonomy_term_load($path_array[2])) {
-        if (isset($term->name_field['en'][0]['value'])) {
-            $color = drupal_strtolower($term->name_field['en'][0]['value']);
-            $color = str_replace(' ', '-', $color);
-        }
-    }
-
-    // добавить цветовой класс в зависимости от категории выводимого препарата
-    if ($path_array[0] == 'node' && is_numeric($path_array[1]) && isset($vars['page']['content']['system_main']['nodes'][$path_array[1]])) {
-
-        $node = $vars['page']['content']['system_main']['nodes'][$path_array[1]];
-        // определить категорию
-        $tid = empty($node['#node']->field_pd_category['und'][0]['tid']) ? 0 : $node['#node']->field_pd_category['und'][0]['tid'];
-        if (!empty($_GET['cat'])) $tid = $_GET['cat'];
-
-        if ($term = taxonomy_term_load($tid)) {
-            if (isset($term->name_field['en'][0]['value'])) {
-                $color = drupal_strtolower($term->name_field['en'][0]['value']);
-                $color = str_replace(' ', '-', $color);
-            }
-        }
-    }
-
-    if ($color) $vars['classes_array'][] = 'page-'. $color;
-
-    // подключить FontAwesome 5
-    drupal_add_css('https://use.fontawesome.com/releases/v5.0.6/css/all.css', array('type' => 'external'));
-}
-
-/**
- * Implements hook_preprocess_page().
- */
-function chibs_preprocess_page(&$vars) {
-
-    // подключить скрипт определения устройства и вывода строки со ссылкой на скачивание мобильного приложения
-    // только на главной
-    $path = drupal_get_path_alias($_GET['q']);
-    if (drupal_is_front_page() || strpos($path, 'catalog/joy') === 0) {
-        drupal_add_library('system', 'jquery.cookie');
-        drupal_add_js(drupal_get_path('module', 'chibs') . '/js/device.js');
-        drupal_add_js(drupal_get_path('module', 'chibs') . '/js/mobApp.js');
-        drupal_add_css(drupal_get_path('module', 'chibs') . '/css/mobApp.css');
-    }
-}
-
 
 
 /**
  * ------------------------------------------ Path Breadcrumbs -------------------------------------------
  * динамически формируем Крошку на описание товара
  */
-function chibs_path_breadcrumbs_view_alter(&$breadcrumbs, $path_breadcrumbs, $contexts)
-{
-    // перевести пункт Home
-    if ($path_breadcrumbs->home == 1) $breadcrumbs[0] = '<a href="/">' . t('Home', array(), array('context' => 'Path Breadcrumbs Home link')) . '</a>';
-
-    // для Описания товара
-    // определить текущую категорию товара
-    if ($path_breadcrumbs->machine_name == 'product' && isset($_GET['cat'])) {
-        $tid = $_GET['cat'];
-        $term = taxonomy_term_load($tid);
-        // ссылки на категории
-        $tid_url = drupal_get_path_alias('taxonomy/term/' . $tid);
-        // название
-        $breadcrumbs[3] = '<a href="/' . $tid_url . '">' . $term->name . '</a>';
-    }
-}
-
-/**
- * --------------------------------------------- Views -----------------------------------------------------------------
- *
- */
-
-
-
-/**
- * --------------------------------------------- раздел Вакансий -------------------------------------------------------
- *
- */
-//function chibs_views_query_alter(&$view, &$query) {
-//  // если организация Агрохимикат - не учитывать фильтр по регионам
-////  if ($view->name == 'vacancies') {
-////    if ($view->exposed_data['employer'] == 'ag') {
-////      foreach( $query->where['1']['conditions'] as $key=>$condition ) {
-////        if (is_string($condition['field']) && $condition['field'] == 'field_data_field_region.field_region_value' ) {
-////          unset( $query->where['1']['conditions'][$key] );
-////        }
-////      }
-////    }
-////  }
-//}
+//function chibs_path_breadcrumbs_view_alter(&$breadcrumbs, $path_breadcrumbs, $contexts)
+//{
+//    // перевести пункт Home
+//    if ($path_breadcrumbs->home == 1) $breadcrumbs[0] = '<a href="/">' . t('Home', array(), array('context' => 'Path Breadcrumbs Home link')) . '</a>';
 //
+//    // для Описания товара
+//    // определить текущую категорию товара
+//    if ($path_breadcrumbs->machine_name == 'product' && isset($_GET['cat'])) {
+//        $tid = $_GET['cat'];
+//        $term = taxonomy_term_load($tid);
+//        // ссылки на категории
+//        $tid_url = drupal_get_path_alias('taxonomy/term/' . $tid);
+//        // название
+//        $breadcrumbs[3] = '<a href="/' . $tid_url . '">' . $term->name . '</a>';
+//    }
+//}
+
 
 
 
