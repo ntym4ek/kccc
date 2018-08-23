@@ -46,55 +46,61 @@ function person_init() {
 function person_menu() {
     $items['person'] = array(
         'page callback' => 'person_account_callback',
-        'page arguments' => array(null, null, null, null),
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
-    $items['person/%/%'] = array(
-        'page callback' => 'person_account_callback',
-        'page arguments' => array(1, 2, null, null),
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-    );
-    $items['person/%/%/list'] = array(
-        'title' => t('User account'),
-        'page callback' => 'person_account_callback',
-        'page arguments' => array(1, 2, 3, null),
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-    );
-    $items['person/%/%/edit'] = array(
-        'title' => t('User account'),
-        'page callback' => 'person_account_callback',
-        'page arguments' => array(1, 2, 3, null),
-        'access callback' => 'person_account_edit_access',
-        'access arguments' => array(1),
-        'type' => MENU_CALLBACK,
-    );
-    $items['person/%/%/delete'] = array(
-        'title' => t('Delete'),
-        'page callback' => 'person_delete_confirm_callback',
-        'page arguments' => array(1, 2),
-        'access callback' => 'person_account_edit_access',
-        'access arguments' => array(1),
-        'type' => MENU_CALLBACK,
-    );
-    $items['person/%/%/view/%'] = array(
-        'title' => t('User account'),
+    $items['person/%'] = array(
         'page callback' => 'person_account_callback',
         'page arguments' => array(1, 2, 3, 4),
         'access callback' => 'person_account_edit_access',
-        'access arguments' => array(1),
+        'access arguments' => array(1, 3),
         'type' => MENU_CALLBACK,
     );
-    $items['person/%/company/staff/%/%'] = array(
-        'title' => t('User account'),
-        'page callback' => 'person_company_staff_confirm_callback',
-        'page arguments' => array(1, 4, 5),
-        'access callback' => 'person_account_edit_access',
-        'access arguments' => array(1),
-        'type' => MENU_CALLBACK,
-    );
+//    $items['person/%/%'] = array(
+//        'page callback' => 'person_account_callback',
+//        'page arguments' => array(1, 2, null, null),
+//        'access arguments' => array('access content'),
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['person/%/%/list'] = array(
+//        'title' => t('User account'),
+//        'page callback' => 'person_account_callback',
+//        'page arguments' => array(1, 2, 3, null),
+//        'access arguments' => array('access content'),
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['person/%/%/edit'] = array(
+//        'title' => t('User account'),
+//        'page callback' => 'person_account_callback',
+//        'page arguments' => array(1, 2, 3, null),
+//        'access callback' => 'person_account_edit_access',
+//        'access arguments' => array(1),
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['person/%/%/delete'] = array(
+//        'title' => t('Delete'),
+//        'page callback' => 'person_delete_confirm_callback',
+//        'page arguments' => array(1, 2),
+//        'access callback' => 'person_account_edit_access',
+//        'access arguments' => array(1),
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['person/%/%/view/%'] = array(
+//        'title' => t('User account'),
+//        'page callback' => 'person_account_callback',
+//        'page arguments' => array(1, 2, 3, 4),
+//        'access callback' => 'person_account_edit_access',
+//        'access arguments' => array(1),
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['person/%/company/staff/%/%'] = array(
+//        'title' => t('User account'),
+//        'page callback' => 'person_company_staff_confirm_callback',
+//        'page arguments' => array(1, 4, 5),
+//        'access callback' => 'person_account_edit_access',
+//        'access arguments' => array(1),
+//        'type' => MENU_CALLBACK,
+//    );
 
     $items['admin/structure/bubbles'] = array(
         'title' => 'Bubbles',
@@ -117,23 +123,31 @@ function person_permission() {
 }
 
 // callback проверки прав на редактирование профиля
-function person_account_edit_access($acid) {
+function person_account_edit_access($acid, $op)
+{
     global $user;
 
-    if (($acid && $user->uid == $acid) || $user->uid == 1)  return true;
+    // можно админу
+    if ($user->uid == 1) return true;
+    // можно владельцу
+    if ($acid && $user->uid == $acid ) return true;
+    // можно, если не редактирование и проч
+    if (!in_array($op, ['edit', 'delete', 'view'])) return true;
 
     return false;
 }
 
-function person_account_callback($acid, $section, $op = '', $item_id = '', $mode = NULL) {
-  global $user;
+function person_account_callback($acid = NULL, $section = 'summary', $op = '', $item_id = '', $mode = NULL)
+{
+    global $user;
 
   if ($acid && $account = user_load($acid)) {
     $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
 
-
     if ($is_own_account) drupal_set_title(t('User account'));
     else                 drupal_set_title(person_get_user_name($acid));
+
+    $section = $section ? $section : 'summary';
 
     // определить контент
     $function = 'person_' . str_replace('-', '_', $section);
@@ -151,7 +165,7 @@ function person_account_callback($acid, $section, $op = '', $item_id = '', $mode
         'menu' => $menu,
         'body' => $body,
         'account' => person_get_user_array($acid),
-        'edit_link' => $is_own_account ? '<a href="/person/' . $acid . '/main/edit/nojs" class="use-ajax"><i class="fas fa-pencil-alt"></i></a>' : '',
+        'edit_link' => $is_own_account ? '<a href="/person/' . $acid . '/main/edit"><i class="fas fa-pencil-alt"></i></a>' : '',
         'class' => $section,
         'message' => $message ? $message : '',
     )));
@@ -200,7 +214,7 @@ function person_summary($acid) {
         // имя
         $content['name'] = person_get_user_name($account->uid);
         if (strpos($content['name'], 'User') === 0) {
-            $link = l(t('add name'), '/person/' . $acid . '/main/edit/nojs', array('attributes' => array('class' => array('use-ajax'))));
+            $link = l(t('add name'), '/person/' . $acid . '/main/edit');
             $content['name'] = $content['name'] . ' <span>(' . $link . ')</span>';
         }
 
@@ -208,7 +222,7 @@ function person_summary($acid) {
 
         // фото
         $content['photo'] = '/' . drupal_get_path('theme', 'opie') . '/images/other/no_photo.png';
-        $content['add_photo_link'] = l(t('add photo'), '/person/' . $acid . '/main/edit/nojs', array('attributes' => array('class' => array('use-ajax'))));
+        $content['add_photo_link'] = l(t('add photo'), '/person/' . $acid . '/main/edit');
 
         $profile2 = profile2_load_by_user($acid);
         if (!empty($profile2['main']->pid)) {
@@ -280,8 +294,7 @@ function person_summary($acid) {
             $content['counts'][] = array(
                 'title' => t('Orders'),
                 'amount' => person_orders_count($acid),
-                'link' => "/person/$acid/orders/list/nojs",
-                'class' => array('use-ajax'),
+                'link' => "/person/$acid/orders/list",
             );
             // баллы
 //            $content['counts'][] = array(
@@ -314,7 +327,7 @@ function _person_actions($acid, $section) {
 
     // страница обзора информации о пользователе
     $user_actions[] = array(
-        'data' => l(t('Review account'), "person/$acid/summary/nojs", array('attributes' => array('class' => array('use-ajax')))),
+        'data' => l(t('Review account'), "person/$acid/summary"),
         'class' => array($section == 'summary' ? 'active' : NULL),
     );
 
@@ -332,7 +345,7 @@ function _person_actions($acid, $section) {
         if (user_access('create blog content')) {
           $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_BLOG)) : '';
           $user_actions[] = array(
-              'data' => l(t('Blog'), "/person/$acid/blog/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+              'data' => l(t('Blog'), "/person/$acid/blog") . $bubble,
               'class' => array($section == 'blog' ? 'active' : NULL),
           );
         }
@@ -340,7 +353,7 @@ function _person_actions($acid, $section) {
         // Отзывы пользователя
       $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_REVIEWS)) : '';
       $user_actions[] = array(
-          'data' => l(t('Reviews'), "/person/$acid/reviews/list/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+          'data' => l(t('Reviews'), "/person/$acid/reviews/list") . $bubble,
           'class' => array($section == 'reviews' ? 'active' : NULL),
       );
 
@@ -348,7 +361,7 @@ function _person_actions($acid, $section) {
       if (user_access('create agenda content')) {
         $bubble = '';
         $user_actions[] = array(
-          'data' => l(t('Agenda'), "/person/$acid/agenda/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+          'data' => l(t('Agenda'), "/person/$acid/agenda") . $bubble,
           'class' => array($section == 'agenda' ? 'active' : NULL),
         );
       }
@@ -376,7 +389,7 @@ function _person_actions($acid, $section) {
             $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_COMPANY)) : '';
             $company_menu = isset($profile2['company']) ? t('My company') : t('Add company');
             $user_actions[] = array(
-                'data' => l($company_menu, "person/$acid/company/edit/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+                'data' => l($company_menu, "person/$acid/company/edit") . $bubble,
                 'class' => array($section == 'company' ? 'active' : NULL),
             );
         }
