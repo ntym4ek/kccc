@@ -212,6 +212,8 @@
 }
 
 
+
+
 /* ------------------------------------------------- Контент -------------------------------------------------------- */
 .content-container  {
   height: 100%;
@@ -631,6 +633,26 @@
     }
   }
 }
+
+.product-description {
+    .horizontal-tabs {
+        position: relative;
+
+        ul {
+
+
+        }
+        &::after {
+            content: '';
+            display: block;
+            position: absolute; top: 0; right: 0; z-index: 1;
+            width: 30px; height: 27px;
+            visibility: visible;
+            @include gradient-directional(#fff, transparent, -90deg);
+        }
+    }
+}
+
 .product-description {
   padding-top: 60px;
   div.horizontal-tabs {
@@ -639,11 +661,21 @@
       background: none;
       border: none;
       font-size: 20px; line-height: $font-size-h3; text-transform: uppercase;
+
+      display: -webkit-box; display: -ms-flexbox; display: flex;
+      flex-wrap: nowrap;
+      -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start;
+      overflow-x: scroll; overflow-y: hidden;
+      @include user-select(none);
+      &::-webkit-scrollbar { display: none; }
       li {
         background: none;
-        margin-right: 15px;
+        border: none;
+        min-width: initial;
+        padding: 0;
         a {
           color: $text-color;
+          white-space: nowrap;
           padding: 0 15px 0 0;
           &:hover {
             background: none;
