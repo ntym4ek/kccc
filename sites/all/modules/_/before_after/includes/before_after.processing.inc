@@ -187,9 +187,11 @@ function before_after_processing_form($form, &$form_state, $sid, $pid = '') {
         $form_state['pid'] = $pid;
         $processing_wrapper = entity_metadata_wrapper('field_collection_item', $pid);
         $preparation = $processing_wrapper->field_f_s_p_preparation->nid->value();
-        if ($processing_wrapper->field_f_s_p_preparation2->value()) $preparation2 = $processing_wrapper->field_f_s_p_preparation2->nid->value();
+        if (isset($processing_wrapper->field_f_s_p_preparation2)
+            && $processing_wrapper->field_f_s_p_preparation2->value()) $preparation2 = $processing_wrapper->field_f_s_p_preparation2->nid->value();
         $consumption = $processing_wrapper->field_f_s_p_consumption->value();
-        if ($processing_wrapper->field_f_s_p_consumption2->value()) $consumption2 = $processing_wrapper->field_f_s_p_consumption2->value();
+        if (isset($processing_wrapper->field_f_s_p_consumption2)
+            && $processing_wrapper->field_f_s_p_consumption2->value()) $consumption2 = $processing_wrapper->field_f_s_p_consumption2->value();
         $date = date('d.m.Y', $processing_wrapper->field_f_s_p_date->value());
         $time = $processing_wrapper->field_f_s_p_time->value();
         $precipitation = $processing_wrapper->field_f_s_p_precipitation->value();
