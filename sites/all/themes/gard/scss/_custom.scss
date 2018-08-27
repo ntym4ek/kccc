@@ -635,29 +635,20 @@
 }
 
 .product-description {
-    .horizontal-tabs {
-        position: relative;
-
-        ul {
-
-
-        }
-        &::after {
-            content: '';
-            display: block;
-            position: absolute; top: 0; right: 0; z-index: 1;
-            width: 30px; height: 27px;
-            visibility: visible;
-            @include gradient-directional(#fff, transparent, -90deg);
-        }
-    }
-}
-
-.product-description {
   padding-top: 60px;
   div.horizontal-tabs {
     border: none;
-    .horizontal-tabs-list {
+    position: relative;
+      &::after {
+          content: '';
+          display: block;
+          position: absolute; top: 0; right: 0; z-index: 1;
+          width: 30px; height: 27px;
+          visibility: visible;
+          @include gradient-directional(#fff, transparent, -90deg);
+      }
+
+      .horizontal-tabs-list {
       background: none;
       border: none;
       font-size: 20px; line-height: $font-size-h3; text-transform: uppercase;
@@ -1266,16 +1257,15 @@
 
   .view-item {
     padding-bottom: $grid-gutter-width;
+      @media #{$phone} {
+          padding-bottom: $grid-gutter-width/2;
+      }
   }
 
-  /* - страница Отзывов - */
-  /* - страница Блогов - */
-  &.view-reviews,
-  &.view-blog {
+
     [class*="views-widget-filter"] { @include make-sm-column(6); }
     .views-submit-button { float: left; padding-left: $grid-gutter-width/2; }
     .views-reset-button { float: left; }
-  }
   &.view-before-after {
     .views-exposed-form.form-group { margin-bottom: 0; }
   }
