@@ -1,0 +1,11 @@
+<?
+
+function linker_node_presave($node)
+{
+    $lang = $GLOBALS['language']->language;
+
+    // полный текст для проверки
+    $text = $node->body[$lang][0]['value'];
+
+    //
+}
