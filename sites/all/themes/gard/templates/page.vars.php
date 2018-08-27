@@ -162,7 +162,7 @@ function gard_preprocess_page(&$vars)
             $subtitle = t('Exhibitions with Trade House participation');
             break;
         case 'blogs':
-            $subtitle = t('Our users posts');
+            $subtitle = t('Our representatives and staff posts');
             break;
         case 'reviews':
             $subtitle = t('Feedback from Trade House customers');
