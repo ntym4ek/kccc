@@ -543,6 +543,11 @@ function chibs_restore_cache_page() {
 }
 
 /**
+ * ----------------------------------------------- Views ---------------------------------------------------------------
+ *
+ */
+
+/**
  * Implements hook_views_data_alter().
  * твик производительности
  * добавляет во Views Fields сырые (raw) значение из БД
@@ -557,6 +562,19 @@ function chibs_views_data_alter(&$data) {
                 $data[$table_name][$field_name . '_raw'] = $field_info;
             }
         }
+    }
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter()
+ * сортировка значений в раскрытых фильтрах
+ */
+function chibs_form_views_exposed_form_alter(&$form, $form_state, $form_id)
+{
+    global $user;
+
+    if ($form_id == 'views_exposed_form') {
+        if (isset($form['culture']['#options'])) asort($form['culture']['#options']);
     }
 }
 
