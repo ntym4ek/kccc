@@ -5,7 +5,7 @@
     <div class="media-body">
         <h4 class="media-heading"><? print $contact['surname']; ?><br /><? print $contact['name'] . ' ' . $contact['name2'] ; ?></h4>
         <div class="contact-dep"><? print $contact['office']; ?></div>
-        <? if (!empty($collapse)): ?>
+        <? if (!empty($collapse['content'])): ?>
             <div class="contact-collapse">
                 <div data-toggle="collapse" data-target="#collapse-<? print $collapse['id']; ?>" aria-expanded="true" aria-controls="collapse-<? print $collapse['id']; ?>" class="collapse-title collapsed"><? print $collapse['title']; ?><i class="fa fa-caret-down" aria-hidden="true"></i></div>
                 <div class="collapse" id="collapse-<? print $collapse['id']; ?>"><? print $collapse['content']; ?></div>
@@ -23,7 +23,7 @@
         <? if (!empty($contact['emails'])): ?>
         <div class="contact-emails">
             <?php foreach ($contact['emails'] as $email): ?>
-                <div class="contact-email eAddr-encoded"><a href="e(<? print $email; ?>)" class="eAddr-encoded" rel="nofollow">e(<? print $email; ?>)</a></div>
+                <div class="contact-email eAddr-encoded"><a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded" rel="nofollow">e(<? print email_antibot_encode($email); ?>)</a></div>
             <?php endforeach; ?>
         </div>
         <? endif; ?>
