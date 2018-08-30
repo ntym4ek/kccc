@@ -221,7 +221,7 @@ function person_summary($acid) {
         $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
 
         // фото
-        $content['photo'] = '/' . drupal_get_path('theme', 'opie') . '/images/other/no_photo.png';
+        $content['photo'] = '/sites/default/files/default_images/no_photo.png';
         $content['add_photo_link'] = l(t('add photo'), '/person/' . $acid . '/main/edit');
 
         $profile2 = profile2_load_by_user($acid);

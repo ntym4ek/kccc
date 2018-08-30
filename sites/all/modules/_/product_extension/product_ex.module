@@ -557,6 +557,7 @@ function get_product_main_cultures($nid) {
     return $main_cultures;
 }
 
+
 /**
  * --------------------------------- Сделать текст под заголовками h4 сворачиваемым (в поле body)-----------------------
  * Implements hook_node_view_alter().

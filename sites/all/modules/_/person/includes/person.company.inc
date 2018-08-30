@@ -757,7 +757,7 @@ function person_get_user_company_array($user){
     else $account = $user;
 
     $name = $opf = '';
-    $photo_url = '/' . drupal_get_path('theme', 'opie') . '/images/other/no_photo.png';
+    $photo_url = '/sites/default/files/default_images/no_photo.png';
     if (!empty($account->uid) && $company = profile2_load_by_user($account, 'company')) {
         $company_wrapper = entity_metadata_wrapper('profile2', $company);
         $opf  = $company_wrapper->field_profile_company_type->value() ? $company_wrapper->field_profile_company_type->name->value() : '';
