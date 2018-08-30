@@ -232,7 +232,7 @@
                 <?php if (!$header['title_off']): ?>
                 <div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
                     <div class="article-header">
-                        <h1><?php print $header['title']; ?></h1>
+                        <h1><?php print $header['title']; ?></h1><? if (!empty($header['title_suffix'])) print '<h3>' . $header['title_suffix'] . '</h3>'; ?>
                         <?php if (!empty($header['subtitle'])): ?>
                             <div class="header-category"><?php print $header['subtitle']; ?></div>
                         <? endif; ?>

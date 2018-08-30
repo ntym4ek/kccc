@@ -93,6 +93,12 @@ function gard_preprocess_page(&$vars)
     if (isset($vars['node'])) {
         $node_wrapper = entity_metadata_wrapper('node', $vars['node']);
 
+        // разложить title для агроминералов
+        if ($vars['node']->type == 'product_fert') {
+            $title = explode('|', $vars['node']->title)[0];
+            $title_suffix = explode('|', $vars['node']->title)[1];
+        }
+
         // нужно ли показывать заголовок
         if (!empty($vars['node']->field_show_header['und'][0]['value'])) {
             $title_off = true;
@@ -201,6 +207,7 @@ function gard_preprocess_page(&$vars)
         'image' => $image,
         'category_title' => $category_title,
         'title' => $title,
+        'title_suffix' => isset($title_suffix) ? $title_suffix : '',
         'title_off' => $title_off,
         'subtitle' => $subtitle,
         'print' => $print,
