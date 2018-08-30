@@ -22,31 +22,16 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                 <? endif; ?>
             </div>
         </div>
-        <? foreach ($rep01 as $rep): ?>
-        <div class="media user-card col-sm-6">
-            <div class="media-left">
-                <img class="media-object" src="<? print $rep['photo']; ?>" alt="">
-            </div>
-            <div class="media-body">
-                <h4 class="user-name"><? print $rep['surname']; ?> <span><? print $rep['name'] . ' ' . $rep['name2'] ; ?></span></span></h4>
-                <div class="dep"><? print $rep['office']; ?></div>
-            </div>
-            <div class="media-bottom">
-                <? if (!empty($rep['phones'])): ?>
-                    <div class="phones">Телефон</div>
-                    <? foreach ($rep['phones'] as $phone): ?>
-                        <? $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-                        <div class="phone"><? print $phone; ?><a href="tel:<? print $phone_raw; ?>" rel="nofollow"><i class="icon-phone"></i>Позвонить</a></div>
-                    <? endforeach; ?>
-                <? endif; ?>
-                <? if (!empty($rep['emails'])): ?>
-                    <div class="emails">Электронная почта</div>
-                    <? foreach ($rep['emails'] as $email): ?>
-                        <div class="email eAddr-encoded">e(<? print email_antibot_encode($email); ?>)<a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>
-                    <? endforeach; ?>
-                <? endif; ?>
-            </div>
-        </div>
+        <? foreach ($rep01 as $key_c => $rep): ?>
+        <? $collapse = [];
+            if (isset($rep['regions'])) {
+                $collapse['id'] = $key_c;
+                $collapse['title'] = t('Regions list');
+                $collapse['content'] = implode(', ', $rep['regions']);
+            }
+           print theme('contact_card', array(
+                'contact' => $rep,
+                'collapse' => $collapse)); ?>
         <? endforeach; ?>
 
         <div class="map col-xs-12">
@@ -82,7 +67,7 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                                         <? if (!empty($rep['emails'])): ?>
                                             <div class="emails">Электронная почта</div>
                                             <? foreach ($rep['emails'] as $email): ?>
-                                                <div class="email eAddr-encoded">e(<? print email_antibot_encode($email); ?>)<a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>
+                                                <div class="email eAddr-encoded">e(<? print $email; ?>)<a href="e(<? print $email; ?>)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>
                                             <? endforeach; ?>
                                         <? endif; ?>
                                     </div>
@@ -122,7 +107,7 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                             <? endif; ?>
                             <? if (!empty($rep['emails'])): ?>
                                 <? foreach ($rep['emails'] as $email): ?>
-                                    <div class="email"><a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded" rel="nofollow"><span class="eAddr-encoded">e(<? print email_antibot_encode($email); ?>)</span></a></div>
+                                    <div class="email"><a href="e(<? print $email; ?>)" class="eAddr-encoded" rel="nofollow"><span class="eAddr-encoded">e(<? print $email; ?>)</span></a></div>
                                 <? endforeach; ?>
                             <? endif; ?>
                         </div>
