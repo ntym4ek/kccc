@@ -126,7 +126,7 @@ function forms_ex_theme() {
         'ad_node_form' => array(
             'render element' => 'form',
             'template' => 'templates/forms/ad-node-form',
-            'path' => drupal_get_path('theme', 'opie')
+            'path' => drupal_get_path('theme', 'gard')
         ),
     );
 }
