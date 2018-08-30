@@ -9,7 +9,6 @@ function gard_file_link($variables) {
     $file_extension = drupal_strtoupper(pathinfo($file->filename, PATHINFO_EXTENSION));
     $file_description = !empty($file->description) ? $file->description : str_replace('.' .$file_extension, '', $file->filename);
     $icon_directory = $variables['icon_directory'];
-    //$icon_directory = drupal_get_path('theme', 'opie') . 'images/file-icons';
 
     $url = file_create_url($file->uri);
 
