@@ -489,13 +489,18 @@
 
 /* ------------------------------------------------- Статья - */
 .article-header {
-  //font-family: oswald;
   margin-bottom: 20px;
   h1 {
-    color: $brand-primary;
-    margin-top: 0;
-    @media #{$phone} { font-size: $font-size-h2; line-height: $font-size-h2; }
+      color: $brand-primary;
+      display: inline-block;
+      margin-top: 0; margin-right: 15px;
+      @media #{$phone} { font-size: $font-size-h2; line-height: $font-size-h2; margin-bottom: 0; }
   }
+    h3 {
+        font-weight: 100;
+        display: inline-block;
+        margin-top: 0;
+    }
   .header-category {
     font-size: 16px;
     margin-bottom: 15px;
@@ -636,6 +641,19 @@
 
 .product-description {
   padding-top: 60px;
+
+    .table {
+        th { font-size: .9em; font-weight: 100; text-align: center; }
+        td {
+            font-size: .85em;
+            vertical-align: middle;
+        }
+        h5 { font-size: 1em; }
+        @media #{$phone} {
+            font-size: 6px; line-height: 7px;
+        }
+    }
+
   div.horizontal-tabs {
     border: none;
     position: relative;
@@ -811,20 +829,9 @@
         @include make-row();
         border: none;
       }
-      .table {
-        th { font-size: .9em; font-weight: 100; text-align: center; }
-        td {
-          font-size: .85em;
-          vertical-align: middle;
-        }
-        h5 { font-size: 1em; }
-        @media #{$phone} {
-          font-size: 6px; line-height: 7px;
-        }
-      }
       .reg-category div {
         @include rotate(-90deg);
-        font-size: 1.1em; letter-spacing: 1px;
+        font-size: 1.1em; letter-spacing: 1px; line-height: 1em;
         width: 20px;
         margin-top: 60px;
       }
@@ -904,16 +911,16 @@
     }
     .article-header h1,
     .product-description h4 { color: $brand-color; }
-    .group-tab-reglaments {
       .table td { border-color: $brand-color; }
-      .table th,
-      .rate.active,
-      .rate:hover { background-color: $brand-color; color: #fff; }
-      .reg-category,
-      h5 { color: $brand-color; }
+      .table th { background-color: $brand-color; color: #fff; }
 
-      .calculation .table th { color: $brand-color; }
-    }
+      .group-tab-reglaments {
+          .rate.active,
+          .rate:hover { background-color: $brand-color; color: #fff; }
+          .reg-category,
+          h5 { color: $brand-color; }
+          .calculation .table th { color: $brand-color; }
+        }
     .group-tab-activity {
       .field-name-field-pd-activity .panel-default { border-color: $brand-color; }
       .field-name-field-pd-activity .panel-heading { background-color: $brand-color; }
