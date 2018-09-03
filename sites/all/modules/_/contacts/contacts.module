@@ -338,27 +338,27 @@ function contacts_get_contacts_list() {
                 ),
             ),
         ),
-        'finfire' => array(
-            'title' => t('Firefight'),
-            'logo_on' => '/' . $module_path . '/images/logo/finfire_on.png',
-            'logo_off' => '/' . $module_path . '/images/logo/finfire_off.png',
-            'departments' => array(
-                'sales' => array(
-                    'title' => t('Sales department'),
-                    'contacts' => array(
-                        array(
-                            'office' => t('Head of department'),
-                            'surname' => 'Стародумов',
-                            'name' => 'Антон',
-                            'name2' => 'Геннадьевич',
-                            'phones' => array('+7 982 389-33-02'),
-                            'emails' => array('anton.starodumov@kccc.ru'),
-                            'photo' => '/' . $module_path . '/images/photo/starodumov.png',
-                        ),
-                    ),
-                ),
-            ),
-        ),
+//        'finfire' => array(
+//            'title' => t('Firefight'),
+//            'logo_on' => '/' . $module_path . '/images/logo/finfire_on.png',
+//            'logo_off' => '/' . $module_path . '/images/logo/finfire_off.png',
+//            'departments' => array(
+//                'sales' => array(
+//                    'title' => t('Sales department'),
+//                    'contacts' => array(
+//                        array(
+//                            'office' => t('Head of department'),
+//                            'surname' => 'Стародумов',
+//                            'name' => 'Антон',
+//                            'name2' => 'Геннадьевич',
+//                            'phones' => array('+7 982 389-33-02'),
+//                            'emails' => array('anton.starodumov@kccc.ru'),
+//                            'photo' => '/' . $module_path . '/images/photo/starodumov.png',
+//                        ),
+//                    ),
+//                ),
+//            ),
+//        ),
     );
 }
 
