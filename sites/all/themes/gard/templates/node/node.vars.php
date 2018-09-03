@@ -172,10 +172,16 @@ function gard_preprocess_node(&$vars) {
             /** - Все остальные - */
         } else {
             $product_info = get_product_agro_title($vars['node']->nid);
-            $vars['title'] = empty($product_info['formulation']) ? $vars['title'] : $product_info['title'] . ', ' . $product_info['formulation'];
+            if ($vars['type'] == 'product_fert') {
+                $vars['title'] = explode('|', $product_info['title'])[0];
+                $vars['subtitle'] = explode('|', $product_info['title'])[1];
+            }
+            else {
+                $vars['title'] = empty($product_info['formulation']) ? $vars['title'] : $product_info['title'] . ', ' . $product_info['formulation'];
+                $vars['subtitle'] = $product_info['ingredients'];
+                $vars['ingredients_arr'] = $product_info['ingredients_arr'];
+            }
             $vars['formulation_full'] = $product_info['formulation_full'];
-            $vars['ingredients'] = $product_info['ingredients'];
-            $vars['ingredients_arr'] = $product_info['ingredients_arr'];
             $vars['unit'] = $product_info['unit_short'];
         }
     }
