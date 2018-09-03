@@ -90,6 +90,7 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
         $form['submit']['#prefix'] = '<div class="form-item form-action-wrapper">';
         $form['submit']['#suffix'] = '</div>';
         $form['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('add_to_cart'); return true;";
+        $form['submit']['#attributes']['class'][] = "btn-info";
 
         // если установлен в товаре флаг Out_of_stock, сделать Добавление в корзину неактивным
         $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
