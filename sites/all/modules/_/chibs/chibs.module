@@ -8,6 +8,7 @@ const AGRO_CATEGORY_FUNGICIDES_TID      = 16;           // tid термина к
 const AGRO_CATEGORY_INCECTICIDES_TID    = 17;           // tid термина категории Инсектициды
 const AGRO_CATEGORY_FERT_TID            = 93;           // tid термина категории Удобрения
 const AGRO_CATEGORY_MIX_TID             = 72343;        // tid термина категории Баковые смеси
+const AGRO_CATEGORY_SURFACTANTS_TID     = 72763;        // tid термина категории ПАВ
 const AGRO_FIELD_MEASURE                = 'ha';         // ед. измерения площади поля (гектар)
 const AGRO_SEED_MEASURE                 = 't';          // ед. измерения веса семян (тонна)
 
