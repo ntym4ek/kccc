@@ -495,13 +495,17 @@ function get_product_agro_title($nid) {
     }
 
     return array(
+        'id' => $nid,
         'title' => $prep_wrapper->title_field->value(),
         'formulation' => $form_short,
         'formulation_full' => $formulation_full,
         'ingredients' => $ingredients,
         'ingredients_arr' => empty($arr_ingredients) ? array() : $arr_ingredients,
         'price' => $price,
+        'unit' => $unit['unit'],
         'unit_short' => $unit_short,
+        'unit_field' => $unit['field_unit'],
+        'unit_cons' => $unit['cons_unit'],
     );
 }
 
