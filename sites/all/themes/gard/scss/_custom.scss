@@ -728,7 +728,7 @@
         background: #f39314;  border-radius: 4px;
         float: left;
         color: #fff;
-        height: 100px; width: 100px;
+        height: 80px; width: 80px;
         margin: 0 15px 15px 0;
       }
       .fc-micronutrient,
@@ -736,28 +736,29 @@
       .fc-mn-percent,
       .fc-mn-element,
       .fc-mn-name {
+          text-align: center;
         overflow: hidden;
         transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
       }
       .fc-mn-number {
-        font-size: 13px; text-align: right;
-        height: 25%;
-        padding: 5px 10px;
+          font-size: 11px; text-align: right;
+          height: 25%;
+          padding: 3px 10px;
       }
       .fc-mn-percent {
-        font-size: 25px; font-weight: 100; text-align: center;
-        height: 65%;
-        overflow: hidden;
-        margin-top: -65%;
+          font-size: 17px; font-weight: 100;
+          height: 60%;
+          overflow: hidden;
+          margin-top: -60%;
       }
       .fc-mn-element {
-        font-size: 40px; font-weight: 100; text-align: center;
-        height: 50%;
+          font-size: 28px; font-weight: 100;
+          height: 50%;
       }
       .fc-mn-name {
-        font-size: 13px; text-align: center;
-        height: 25%;
-        padding: 5px;
+          font-size: 11px;
+          height: 25%;
+          padding: 3px 5px;
       }
       .fc-micronutrient:hover { background: #b36500; }
       .fc-micronutrient:hover .fc-mn-number {
