@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function reglaments_menu()
+{
+    $items['source/reglaments/programs'] = array(
+        'title' => t('reglaments source'),
+        'page callback' => '_reglaments_programs_source',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function reglaments_ctools_plugin_api($owner, $api) {
+    if ($owner == 'services' && $api == 'services') {
+        return array(
+            'version' => 3,
+            'file' => 'includes/reglaments.services.inc'
+        );
+    }
+}
+
+function _reglaments_programs_source()
+{
+    $results = [];
+
+    $programs = db_select('node', 'n')
+        ->fields('n', array('nid', 'title'))
+        ->condition('n.type', 'page')
+        ->condition('n.uid', 1)
+        ->execute()
+        ->fetchAll();
+
+    drupal_json_output(['programs' => $results]);
+    drupal_exit();
+}
