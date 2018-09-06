@@ -332,7 +332,7 @@ function pp_stage_form($form, $form_state, $ppid, $sid = '') {
     );
 
     // периоды применения
-    $options_p = _get_processing_periods($culture_wrapper->field_mc_periods->value());
+    $options_p = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
 
     $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Фазы применения препарата', '#attributes' => array('class' => array('form-items-inline')));
     $form['fs1']['p_start'] = array(
@@ -751,7 +751,7 @@ function get_protection_program($ppid, $data = array()) {
 
         // периоды роста растения
             // если задан начальный период, список составляется начиная с него
-        $periods = _get_processing_periods($culture_wrapper->field_mc_periods->value());
+        $periods = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
         if (empty($data['period'])) {
             $keys = array_keys($periods);
             $start_period = $keys[0];
@@ -1388,7 +1388,7 @@ function check_reglament($data, &$hobjects) {
 }
 
 /**
- * @param $periods_list - массив объектов taxonomy_term (поле field_mc_periods Культуры)
+ * @param $periods_list - массив объектов taxonomy_term (поле field_growth_stages_set->field_mc_periods Культуры)
  *
  * @return array
  * отсортированный по весу массив tid и name

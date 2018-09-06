@@ -12,7 +12,7 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
     // список фаз культуры
     $season_wrapper = entity_metadata_wrapper('field_collection_item', $season);
     $culture_wrapper = $season_wrapper->field_f_s_culture;
-    $periods = $culture_wrapper->field_mc_periods->value();
+    $periods = $culture_wrapper->field_growth_stages_set->field_mc_periods->value();
     $options_p = [];
     if ($periods) {
         foreach ($periods as $period) {

@@ -318,7 +318,7 @@ function agro_recipe_field_form($form, &$form_state, $op) {
     $options_p = array();
     if ($culture) {
         $culture_wrapper = entity_metadata_wrapper('node', $culture);
-        $options_p = _get_processing_periods($culture_wrapper->field_mc_periods->value());
+        $options_p = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
     }
     if (!$period && $options_p) {
         $keys = array_keys($options_p);

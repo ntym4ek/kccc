@@ -77,13 +77,12 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
         unset($form_state['input']['hobject-' . $id]); unset($form_state['input']['dominant-' . $id]); unset($form_state['input']['phase-' . $id]); unset($form_state['input']['del-' . $id]);
     }
 
-    // список всех Культур, для которых заданы Фазы развития
+    // список всех Культур, для которых задан Набор этапов развития
     // только для тех периоды, для которых есть термины (т.к. есть удалённые и прописанные в сезонах)
     $query = db_select('node', 'n');
     $query->condition('n.type', 'main_cultures');
-    $query->innerJoin('field_data_field_mc_periods', 'fp', 'n.nid = fp.entity_id');
-    $query->innerJoin('taxonomy_term_data', 't', 't.tid = fp.field_mc_periods_tid');
-    $query->condition('fp.field_mc_periods_tid', 0, '!=');
+    $query->innerJoin('field_data_field_growth_stages_set', 'fp', 'n.nid = fp.entity_id');
+    $query->condition('fp.field_growth_stages_set_tid', 0, '!=');
     $query->fields('n', array('nid', 'title'));
     $query->distinct()->orderBy('title', 'asc');
     $result_c = $query->execute()->fetchAll();
