@@ -71,14 +71,6 @@ function chibs_menu() {
 //        'type' => MENU_CALLBACK,
 //    );
 
-  // путь для автокомплита Основных культур
-  // используется в приложении, модуль Agrohelp
-  $items['autocomplete-culture'] = array(
-    'page callback' => '_chibs_autocomplete_culture',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK
-  );
-
     $items['admin/config/administration/manager'] = array(
         'title' => 'Настройки страниц',
         'page callback' => 'drupal_get_form',
@@ -1138,25 +1130,5 @@ function chibs_page_delivery_callback_alter(&$delivery_callback) {
     //default behavior
     variable_set('x_frame_options', 'SAMEORIGIN');
   }
-}
-
-/**
- * --------------------------------- Автокомплиты ----------------------------------------------------------------------------
- */
-function _chibs_autocomplete_culture()
-{
-  $max = 10;
-  $title = $_GET['title'];
-  $limit = isset($_GET['limit']) ? $_GET['limit'] : $max;
-  if ($limit > $max) { $limit = $max; }
-  $results = db_select('node', 'n')
-    ->fields('n', array('nid', 'title'))
-    ->condition('title', '%' . db_like($title) . '%', 'LIKE')
-    ->condition('type', 'main_cultures')
-    ->range(0, $limit)
-    ->execute()
-    ->fetchAll();
-  drupal_json_output($results);
-  drupal_exit();
 }
 
