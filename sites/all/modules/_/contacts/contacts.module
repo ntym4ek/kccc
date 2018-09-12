@@ -277,7 +277,7 @@ function contacts_get_contacts_list() {
                     'title' => t('Personnel department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Personel manager'),
+                            'office' => t('Head of department'),
                             'surname' => 'Жуйкова',
                             'name' => 'Елена',
                             'name2' => 'Анатольевна',
