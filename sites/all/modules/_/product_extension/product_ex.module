@@ -506,6 +506,7 @@ function get_product_agro_title($nid) {
         'unit_short' => $unit_short,
         'unit_field' => $unit['field_unit'],
         'unit_cons' => $unit['cons_unit'],
+        'status' => (bool)$prep_wrapper->status->value(),
     );
 }
 
