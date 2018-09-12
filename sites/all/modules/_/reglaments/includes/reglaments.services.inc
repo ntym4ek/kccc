@@ -17,13 +17,6 @@ function reglaments_services_resources()
                             'type' => 'int',
                             'description' => 'id программы защиты',
                         ),
-                        array(
-                            'name' => 'fid',
-                            'optional' => TRUE,
-                            'source' => array('path' => 1),
-                            'type' => 'int',
-                            'description' => 'id категории препаратов',
-                        ),
                     ),
                     'access callback' => '_drupalgap_resource_access',
                     'access callback file' => array(
@@ -41,7 +34,7 @@ function reglaments_services_resources()
     return $resources;
 }
 
-function _reglaments_resource_retrieve($pid, $fid = NULL)
+function _reglaments_resource_retrieve($pid)
 {
     $result = [];
     // в зависимости от наличия fid выдать список категорий ПЗ или список препаратов заданной категории
@@ -86,18 +79,9 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
                 foreach($reglaments_ids as $reglament_id) {
                     $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
 
-                    // список категорий
+
                     $weight = $reglament_wr->field_pd_r_function->weight->value();
                     $tid = $reglament_wr->field_pd_r_function->tid->value();
-                    if (!isset($result['categories'][$weight])) {
-                        $result['categories'][$weight] = array(
-                            'tid' => $tid,
-                            'weight' => $weight,
-                            'name' => $reglament_wr->field_pd_r_function->name->value(),
-                            'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
-                            'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
-                        );
-                    }
 
                     // просматриваем регламенты
                     $preparation_id = $reglament_wr->value()->hostEntity()->nid;
@@ -112,51 +96,65 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
                     // ключом элемента будет порядковый номер этапа роста (установит порядок регламентов)
                     $stage_key = $preparation_id . '-' . $tid;
 
-                    $regl_new = array(
-                        'period' => array(
-                            'start' => array(
-                                'tid' => $reglament_wr->field_pd_rn_period_start->tid->value(),
-                                'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_start->name->value()),
-                            ),
-                            'end' => array(
-                                'tid' => $reglament_wr->field_pd_rn_period_end->tid->value(),
-                                'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_end->name->value()),
-                            ),
-                        ),
-                        'preparation' => array(
-                            'id' => $preparation_id,
-                            'title' => empty($prep_info['formulation']) ? $prep_info['title'] : $prep_info['title'] . ', ' . $prep_info['formulation'],
-                            'ingredients' => $prep_info['ingredients'],
-                            'rate' => array(
-                                'from' => (float)$reglament_wr->field_pd_r_prep_rate[0]->from->value(),
-                                'to' => (float)$reglament_wr->field_pd_r_prep_rate[0]->to->value(),
-                                'unit' => $prep_info['unit_cons'],
-                            ),
-                            'photo' => image_style_url('thumbnail', $preparation_wr->field_product[0]->field_p_images[0]->value()['uri']),
-                            'icon' => $preparation_wr->field_icon->file->url->value(),
-                        ),
-//                        'description' => $reglament_wr->field_pd_r_processing->value(),
-                    );
+                    if ($prep_info['status'] && $reglament_wr->field_pd_rn_period_start->value() && $reglament_wr->field_pd_rn_period_end->value()) {
+                        // список категорий
+                        if (!isset($result['categories'][$weight])) {
+                            $result['categories'][$weight] = array(
+                                'tid' => $tid,
+                                'weight' => $weight,
+                                'name' => $reglament_wr->field_pd_r_function->name->value(),
+                                'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
+                                'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
+                            );
+                        }
 
-                    // проверить на наличие регламентов на этом этапе ПЗ
-                    // и склеить старый и новый регламенты при наличии пересечения.
-                    // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
-                    if (!empty($reglaments[$tid]['stages'][$stage_key])) {
-                        foreach($reglaments[$tid]['stages'][$stage_key] as $key =>$regl_old) {
-                            if (_reglaments_merge_crossing_periods($stages_arr,$regl_new, $regl_old)) {
-                                unset($reglaments[$tid]['stages'][$stage_key][$key]);
+                        // заполняем запись нового регламента
+                        $regl_new = array(
+                            'period' => array(
+                                'start' => array(
+                                    'tid' => $reglament_wr->field_pd_rn_period_start->tid->value(),
+                                    'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_start->name->value()),
+                                ),
+                                'end' => array(
+                                    'tid' => $reglament_wr->field_pd_rn_period_end->tid->value(),
+                                    'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_end->name->value()),
+                                ),
+                            ),
+                            'preparation' => array(
+                                'id' => $preparation_id,
+                                'title' => empty($prep_info['formulation']) ? $prep_info['title'] : $prep_info['title'] . ', ' . $prep_info['formulation'],
+                                'ingredients' => $prep_info['ingredients'],
+                                'rate' => array(
+                                    'from' => (float)$reglament_wr->field_pd_r_prep_rate[0]->from->value(),
+                                    'to' => (float)$reglament_wr->field_pd_r_prep_rate[0]->to->value(),
+                                    'unit' => $prep_info['unit_cons'],
+                                ),
+                                'photo' => image_style_url('thumbnail', $preparation_wr->field_product[0]->field_p_images[0]->value()['uri']),
+                                'icon' => $preparation_wr->field_icon->file->url->value(),
+                            ),
+//                        'description' => $reglament_wr->field_pd_r_processing->value(),
+                        );
+
+                        // проверить на наличие регламентов на этом этапе ПЗ
+                        // и склеить старый и новый регламенты при наличии пересечения.
+                        // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
+                        if (!empty($reglaments[$tid]['stages'][$stage_key])) {
+                            foreach ($reglaments[$tid]['stages'][$stage_key] as $key => $regl_old) {
+                                if (_reglaments_merge_crossing_periods($stages_arr, $regl_new, $regl_old)) {
+                                    unset($reglaments[$tid]['stages'][$stage_key][$key]);
+                                }
                             }
                         }
+
+                        // вычислить длительность периода регламента
+                        $regl_new['period']['duration'] = $stages_arr[$regl_new['period']['end']['tid']] - $stages_arr[$regl_new['period']['start']['tid']] + 1;
+
+                        // ключ регламента в массиве этапа ПЗ
+                        $regl_key = $stages_arr[$regl_new['period']['start']['tid']];
+
+                        // записываем регламент в этап ПЗ
+                        $reglaments[$tid]['stages'][$stage_key][$regl_key] = $regl_new;
                     }
-
-                    // вычислить длительность периода регламента
-                    $regl_new['period']['duration'] = $stages_arr[$regl_new['period']['end']['tid']] - $stages_arr[$regl_new['period']['start']['tid']] + 1;
-
-                    // ключ регламента в массиве этапа ПЗ
-                    $regl_key = $stages_arr[$regl_new['period']['start']['tid']];
-
-                    // записываем регламент в этап ПЗ
-                    $reglaments[$tid]['stages'][$stage_key][$regl_key] = $regl_new;
                 }
             }
         }
@@ -209,8 +207,8 @@ function _reglaments_merge_crossing_periods($stages_arr, &$regl1, $regl2)
     if ($r1_end_num + 1 >= $r2_start_num && $r1_start_num - 1 <= $r2_end_num) {
         if ($r2_end_num > $r1_end_num) $regl1['period']['end']['tid'] = $regl2['period']['end']['tid'];
         if ($r2_start_num < $r1_start_num) $regl1['period']['start']['tid'] = $regl2['period']['start']['tid'];
-        if ($regl2['preparation']['rates']['from'] < $regl1['preparation']['rates']['from']) $regl1['preparation']['rates']['from'] = $regl2['preparation']['rates']['from'];
-        if ($regl2['preparation']['rates']['to'] > $regl1['preparation']['rates']['to']) $regl1['preparation']['rates']['to'] = $regl2['preparation']['rates']['to'];
+        if ($regl2['preparation']['rate']['from'] < $regl1['preparation']['rate']['from']) $regl1['preparation']['rate']['from'] = $regl2['preparation']['rate']['from'];
+        if ($regl2['preparation']['rate']['to'] > $regl1['preparation']['rate']['to']) $regl1['preparation']['rate']['to'] = $regl2['preparation']['rate']['to'];
 
         return true;
     }
