@@ -87,10 +87,12 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
                     $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
 
                     // список категорий
+                    $weight = $reglament_wr->field_pd_r_function->weight->value();
                     $tid = $reglament_wr->field_pd_r_function->tid->value();
-                    if (!isset($result['categories'][$tid])) {
-                        $result['categories'][$tid] = array(
-                            'weight' => $reglament_wr->field_pd_r_function->weight->value(),
+                    if (!isset($result['categories'][$weight])) {
+                        $result['categories'][$weight] = array(
+                            'tid' => $tid,
+                            'weight' => $weight,
                             'name' => $reglament_wr->field_pd_r_function->name->value(),
                             'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
                             'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
@@ -98,7 +100,6 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
                     }
 
                     // просматриваем регламенты
-
                     $preparation_id = $reglament_wr->value()->hostEntity()->nid;
                     $preparation_wr = entity_metadata_wrapper('node', $preparation_id);
                     $prep_info = get_product_agro_title($preparation_id);
@@ -134,7 +135,7 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
                             'photo' => image_style_url('thumbnail', $preparation_wr->field_product[0]->field_p_images[0]->value()['uri']),
                             'icon' => $preparation_wr->field_icon->file->url->value(),
                         ),
-                        'description' => $reglament_wr->field_pd_r_processing->value(),
+//                        'description' => $reglament_wr->field_pd_r_processing->value(),
                     );
 
                     // проверить на наличие регламентов на этом этапе ПЗ
@@ -165,13 +166,13 @@ function _reglaments_resource_retrieve($pid, $fid = NULL)
     // массив поделен на категории
     // в категориях этапы содержат элементы с ключами:
     // stages[номер начального этапа роста][длительность этапа роста]
-    foreach($result['categories'] as $tid => $value) {
-        foreach($reglaments[$tid]['stages'] as $key_s => $stage) {
+    foreach($result['categories'] as $weight => $value) {
+        foreach($reglaments[$value['tid']]['stages'] as $key_s => $stage) {
             foreach($stage as $start => $regl) {
-                $result['categories'][$tid]['stages'][$start][$stage[$start]['period']['duration']][$key_s] = $regl;
+                $result['categories'][$weight]['stages'][$start][$stage[$start]['period']['duration']][$key_s] = $regl;
             }
         }
-        ksort($result['categories'][$tid]['stages']);
+        ksort($result['categories'][$weight]['stages']);
     }
 
 
