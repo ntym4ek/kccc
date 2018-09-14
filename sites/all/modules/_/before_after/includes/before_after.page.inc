@@ -131,12 +131,12 @@ function before_after_get_atfield_list($region = null, $culture = null)
                 $preps = $preps_w_links = array();
                 foreach ($processes as $item_p) {
                     if ($item_p['type'] == 'processing') {
-                        $processing_wrapper = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-                        $preparation = $processing_wrapper->field_f_s_p_preparation->title->value();
-                        $prep_form = $processing_wrapper->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
-                        $nid = $processing_wrapper->field_f_s_p_preparation->nid->value();
+                        $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
+                        $preparation = $processing_wr->field_f_s_p_preparation->title->value();
+                        $prep_form = $processing_wr->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
+                        $nid = $processing_wr->field_f_s_p_preparation->nid->value();
                         $preps[$nid] = $preparation . ', ' . $prep_form;
-                        $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wrapper->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
+                        $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wr->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
                     }
                 }
                 $output['preps_title'] = 'Обработка препаратами: ';
@@ -161,8 +161,8 @@ function before_after_get_atfield_list($region = null, $culture = null)
                     case 'processing':
                         $output['culture'] = $season_wrapper->field_f_s_culture->title->value();
 
-                        $processing_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
-                        $category_tid = $processing_wrapper->field_f_s_p_preparation->field_pd_category[0]->tid->value();
+                        $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
+                        $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
                         $category = 'препаратом';
                         if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
                         if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
@@ -170,45 +170,43 @@ function before_after_get_atfield_list($region = null, $culture = null)
 
                         // фото поля
                         $output['image_thumb'] = $output['image_full'] = '';
-                        $image_fid = $processing_wrapper->field_f_s_p_photo->value();
+                        $image_fid = $processing_wr->field_f_s_p_photo->value();
                         if ($image_fid && $image = file_load($image_fid)) {
                             $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
                             $output['image_full'] = file_create_url($image->uri);
                         }
 
                         // содержимое
-                        $output['date'] = date('d.m.Y', $processing_wrapper->field_f_s_p_date->value());
-                        $output['time'] = $processing_wrapper->field_f_s_p_time->value();
-                        $output['mechanism'] = $processing_wrapper->field_f_s_p_mechanism->value();
-                        $output['consumption'] = $processing_wrapper->field_f_s_p_consumption->value();
-                        $output['precipitation'] = drupal_strtolower($processing_wrapper->field_f_s_p_precipitation->value());
-                        $output['wind'] = $processing_wrapper->field_f_s_p_wind_speed->value();
-                        $output['t_day'] = $processing_wrapper->field_f_s_p_temp_day->value();
-                        $output['t_night'] = $processing_wrapper->field_f_s_p_temp_night->value();
-                        $output['acidity'] = drupal_strtolower($processing_wrapper->field_f_s_p_acidity->name->value());
-                        $output['humidity'] = $processing_wrapper->field_f_s_p_humidity->value();
+                        $output['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
+                        $output['time'] = $processing_wr->field_f_s_p_time->value();
+                        $output['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
+                        $output['consumption'] = $processing_wr->field_f_s_p_consumption->value();
+                        $output['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
+                        $output['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
+                        $output['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
+                        $output['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
+                        $output['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
+                        $output['humidity'] = $processing_wr->field_f_s_p_humidity->value();
 
                         // препарат
-                        $preparation_wr = $processing_wrapper->field_f_s_p_preparation;
-                        $title_arr = get_product_agro_title($preparation_wr->nid->value());
-                        $output['preparation'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
-                        $output['ingredients'] = $title_arr['ingredients'];
-                        $output['prep_link'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());;
+                        $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
+                        $output['preparation'] = $preparation['title'] . ', ' . $preparation['form_short'];
+                        $output['ingredients'] = implode(' + ', $preparation['ingredients']);
+                        $output['prep_link'] = drupal_get_path_alias('node/' . $preparation['id']);
 
-                        $image_prep = $processing_wrapper->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
+                        $image_prep = $processing_wr->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
                         $output['image_prep_thumb'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
                         $output['image_prep_full'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
 
                         // препарат2
                         $output['preparation2'] = '';
-                        if ($processing_wrapper->field_f_s_p_preparation2->value()) {
-                            $preparation_wr = $processing_wrapper->field_f_s_p_preparation2;
-                            $title_arr = get_product_agro_title($preparation_wr->nid->value());
-                            $output['preparation2'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
-                            $output['ingredients2'] = $title_arr['ingredients'];
-                            $output['prep_link2'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());;
+                        if ($processing_wr->field_f_s_p_preparation2->value()) {
+                            $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
+                            $output['preparation2'] = $preparation['title'] . ', ' . $preparation['form_short'];
+                            $output['ingredients2'] = implode(' + ', $preparation['ingredients']);
+                            $output['prep_link2'] = drupal_get_path_alias('node/' . $preparation['id']);
 
-                            $image_prep = $processing_wrapper->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
+                            $image_prep = $processing_wr->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
                             $output['image_prep_thumb2'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
                             $output['image_prep_full2'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
                         }
@@ -595,50 +593,47 @@ function before_after_get_atfield($sid)
 
                 $key_m++;
             } else {
-                $processing_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
-                $processings[$key_p]['date'] = date('d.m.Y', $processing_wrapper->field_f_s_p_date->value());
-                $processings[$key_p]['time'] = $processing_wrapper->field_f_s_p_time->value();
-                $processings[$key_p]['mechanism'] = $processing_wrapper->field_f_s_p_mechanism->value();
-                $processings[$key_p]['consumption'] = $processing_wrapper->field_f_s_p_consumption->value();
-                if ($processing_wrapper->field_f_s_p_preparation2->value()) {
-                    $processings[$key_p]['consumption2'] = $processing_wrapper->field_f_s_p_consumption2->value();
+                $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
+                $processings[$key_p]['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
+                $processings[$key_p]['time'] = $processing_wr->field_f_s_p_time->value();
+                $processings[$key_p]['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
+                $processings[$key_p]['consumption'] = $processing_wr->field_f_s_p_consumption->value();
+                if ($processing_wr->field_f_s_p_preparation2->value()) {
+                    $processings[$key_p]['consumption2'] = $processing_wr->field_f_s_p_consumption2->value();
                 }
-                $processings[$key_p]['precipitation'] = drupal_strtolower($processing_wrapper->field_f_s_p_precipitation->value());
-                $processings[$key_p]['wind'] = $processing_wrapper->field_f_s_p_wind_speed->value();
-                $processings[$key_p]['t_day'] = $processing_wrapper->field_f_s_p_temp_day->value();
-                $processings[$key_p]['t_night'] = $processing_wrapper->field_f_s_p_temp_night->value();
-                $processings[$key_p]['acidity'] = drupal_strtolower($processing_wrapper->field_f_s_p_acidity->name->value());
-                $processings[$key_p]['humidity'] = $processing_wrapper->field_f_s_p_humidity->value();
+                $processings[$key_p]['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
+                $processings[$key_p]['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
+                $processings[$key_p]['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
+                $processings[$key_p]['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
+                $processings[$key_p]['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
+                $processings[$key_p]['humidity'] = $processing_wr->field_f_s_p_humidity->value();
 
-                $image_fid = $processing_wrapper->field_f_s_p_photo->value();
+                $image_fid = $processing_wr->field_f_s_p_photo->value();
                 $image = file_load($image_fid);
                 $processings[$key_p]['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
                 $processings[$key_p]['image_full'] = $image ? file_create_url($image->uri) : '';
 
                 // препарат
-                $preparation_wr = $processing_wrapper->field_f_s_p_preparation;
-                $title_arr = get_product_agro_title($preparation_wr->nid->value());
-                $processings[$key_p]['preparation'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
-                $processings[$key_p]['ingredients'] = $title_arr['ingredients'];
-                $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());
-                $processings[$key_p]['prep_nid'] = $preparation_wr->nid->value();
+                $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
+                $processings[$key_p]['preparation'] = $preparation['title'] . ', ' . $preparation['form_short'];
+                $processings[$key_p]['ingredients'] = implode(' + ', $preparation['ingredients']);
+                $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation['id']);
+                $processings[$key_p]['prep_nid'] = $preparation['id'];
 
-                $image_prep = $processing_wrapper->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
+                $image_prep = $processing_wr->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
                 $processings[$key_p]['image_prep_thumb'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
                 $processings[$key_p]['image_prep_full'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
 
-
                 // препарат2
                 $processings[$key_p]['preparation2'] = '';
-                if ($processing_wrapper->field_f_s_p_preparation2->value()) {
-                    $preparation_wr = $processing_wrapper->field_f_s_p_preparation2;
-                    $title_arr = get_product_agro_title($preparation_wr->nid->value());
-                    $processings[$key_p]['preparation2'] = $title_arr['title'] . ', ' . $title_arr['formulation'];
-                    $processings[$key_p]['ingredients2'] = $title_arr['ingredients'];
-                    $processings[$key_p]['prep_link2'] = drupal_get_path_alias('node/' . $preparation_wr->nid->value());
-                    $processings[$key_p]['prep_nid2'] = $preparation_wr->nid->value();
+                if ($processing_wr->field_f_s_p_preparation2->value()) {
+                    $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
+                    $processings[$key_p]['preparation2'] = $preparation['title'] . ', ' . $preparation['form_short'];
+                    $processings[$key_p]['ingredients2'] = implode(' + ', $preparation['ingredients']);
+                    $processings[$key_p]['prep_link2'] = drupal_get_path_alias('node/' . $preparation['id']);
+                    $processings[$key_p]['prep_nid2'] = $preparation['id'];
 
-                    $image_prep = $processing_wrapper->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
+                    $image_prep = $processing_wr->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
                     $processings[$key_p]['image_prep_thumb2'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
                     $processings[$key_p]['image_prep_full2'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
                 }

@@ -64,8 +64,7 @@ function checkout_cart_pane_checkout_form($form, &$form_state, $checkout_pane, $
             $tare_qty = $commerce_product_wrapper->field_p_qty->value();
 
             $nid = _get_product_display_by_product_id($pid);
-            $prep_info = get_product_agro_title($nid);
-            $prep_units = get_product_units($nid);
+            $prep_info = array_shift(get_product_info($nid)['items']);
             $package = $tare ? drupal_strtolower($tare) : '';
 
             $checkout_form['list']['item-' . $lid] = array(
@@ -91,9 +90,9 @@ function checkout_cart_pane_checkout_form($form, &$form_state, $checkout_pane, $
 
             // характеристики препарата
             $properties = array();
-            $properties['Quantity'] = $tare_qty . ' ' . $prep_units['short_unit'] . ' ' . t('of preparation');
-            $properties['Preparation form'] = $prep_info['formulation_full'] ? $prep_info['formulation_full'] : '';
-            $properties['Active ingredients'] = $prep_info['ingredients'] ? $prep_info['ingredients'] : '';
+            $properties['Quantity'] = $tare_qty . ' ' . $prep_info['unit_short'] . ' ' . t('of preparation');
+            $properties['Preparation form'] = $prep_info['form_full'] ? $prep_info['form_full'] : '';
+            $properties['Active ingredients'] = $prep_info['ingredients'] ? implode(' + ', $prep_info['ingredients']) : '';
 
             $prop_text = '';
             foreach ($properties as $label => $value) {

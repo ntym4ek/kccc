@@ -255,7 +255,7 @@ function checkout_get_checkout_complete_email_text($data, $recipient = 'manager'
             $pid = $item_wrapper->commerce_product->product_id->value();
             $nid = _get_product_display_by_product_id($pid);
             $tare = $item_wrapper->commerce_product->field_p_tare->name->value();
-            $prep_info = get_product_agro_title($nid);
+            $prep_info = array_shift(get_product_info($nid)['items']);
 
             $table['rows'][] = array(
                 array('data' => $prep_info['title'], 'style' => $td),

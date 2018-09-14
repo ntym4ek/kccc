@@ -502,12 +502,125 @@ function get_product_agro_title($nid) {
         'ingredients' => $ingredients,
         'ingredients_arr' => empty($arr_ingredients) ? array() : $arr_ingredients,
         'price' => $price,
-        'unit' => $unit['unit'],
+        'unit' => empty($unit['unit']) ? '' : $unit['unit'],
         'unit_short' => $unit_short,
-        'unit_field' => $unit['field_unit'],
-        'unit_cons' => $unit['cons_unit'],
+        'unit_field' => empty($unit['field_unit']) ? '' : $unit['field_unit'],
+        'unit_cons' => empty($unit['cons_unit']) ? '' : $unit['cons_unit'],
         'status' => (bool)$prep_wrapper->status->value(),
     );
+}
+
+/**
+ * Вернуть полную информацию о продукте
+ * @param $node
+ * @return array с массивом препаратов заголовком, формуляцией и ингредиентами
+ */
+function get_product_info($node)
+{
+    $result = &drupal_static(__FUNCTION__);
+    if (is_numeric($node) && isset($result[$node])) return $result[$node];
+    if (isset($node->nid) && isset($result[$node->nid])) return $result[$node->nid];
+
+    $lang = $GLOBALS['language']->language;
+
+    $preparation_wr = entity_metadata_wrapper('node', $node)->language($lang);
+
+    // составить массив препаратов
+    // один препарат для химии, два препарата для смесей
+    $preparations = [];
+    if ($preparation_wr->value()->type == 'product_mix') {
+        foreach($preparation_wr->field_pd_mix_components as $key => $wrapper) {
+            // баковые смеси нужно расположить в определенном порядке
+            // будем сортировать в зависимости от препаративной формы (костыль)
+            // 71552 ВДГ, 71590 СП, 71555 ВР
+            if (in_array($wrapper->field_pd_formulation->tid->value(), ["71552", "71590", "71555"]))
+                array_push($preparations, array(
+                        'order' => $key,
+                        'item' => $wrapper,
+                    )
+                );
+            else array_unshift($preparations, array(
+                    'order' => $key,
+                    'item' => $wrapper,
+                )
+            );
+
+        }
+    } else {
+        $preparations[] = array(
+            'order' => 0,
+            'item' => $preparation_wr,
+        );
+    }
+
+    // формируем результирующий массив
+    $preparation = array(
+        'nid'    => $preparation_wr->nid->value(),
+        'type'   => $preparation_wr->value()->type,
+        'status' => $preparation_wr->status->value(),
+        'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
+    );
+    foreach($preparations as $item) {
+        $preparation_wr = $item['item'];
+        $id = $preparation_wr->nid->value();
+
+        // препаративная форма
+        $form_short = $form_full = '';
+        if (isset($preparation_wr->field_pd_formulation) && $preparation_wr->field_pd_formulation->value()) {
+            $form_short = $preparation_wr->field_pd_formulation->language($lang)->field_tax_short_name->value();
+            $form_full = $preparation_wr->field_pd_formulation->language($lang)->name->value();
+        }
+
+        // единицы измерения препарата
+        $unit_wr = $preparation_wr->field_pd_units->language($lang);
+
+        // ДВ
+        $ingredients = [];
+        if (isset($preparation_wr->field_pd_active_ingredients) && $preparation_wr->field_pd_active_ingredients->value()) {
+            foreach ($preparation_wr->field_pd_active_ingredients as $ingredient_wr) {
+                if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {
+                    $ingredient_wr = $ingredient_wr->language($lang);
+                    $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->name->value() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
+                    $ingr_dose = $ingredient_wr->field_pd_ai_concentration->value();
+                    $cons_unit = t('l');
+                    if (in_array($unit_wr->field_tax_short_name->value(), array('кг', 'г', 'kg', 'g'))) $cons_unit = t('kg');
+                    if (in_array($unit_wr->field_tax_short_name->value(), array('л', 'мл', 'l', 'ml'))) $cons_unit = t('l');
+                    $ingredients[] = $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit;
+                }
+            }
+        }
+
+        // определить по категории ед. изм. применения препарата (га или т)
+        // и занести в массив, т.к. неизвестно, какие из них будут использованы
+        $unit_field = [];
+        foreach ($preparation_wr->field_pd_category as $cat_wrapper) {
+            $tid = $cat_wrapper->tid->value();
+            $unit_field[$tid] = $tid == AGRO_CATEGORY_DISINFECTANTS_TID ? t(AGRO_SEED_MEASURE) : t(AGRO_FIELD_MEASURE);
+        }
+
+        // фото
+        $photo_url = $preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '';
+
+        $preparation['items'][$id] = array(
+            'id'            => $id,
+            'title'         => $preparation_wr->title_field->value(),
+            'form_short'    => $form_short,
+            'form_full'     => $form_full,
+            'ingredients'   => $ingredients,
+            'price'         => $preparation_wr->field_pd_price_per_unit->amount->value()/100,
+            'unit'          => $unit_wr->name->value(),
+            'unit_short'    => $unit_wr->field_tax_short_name->value(),
+            'unit_field'    => $unit_field,
+            'photo_url'     => $photo_url,
+            // порядковый номер в списке препаратов баковой смеси (БС)
+            // используется для связи с нормой расхода в регламенте БС
+            'order'         => $item['order'],
+        );
+    }
+
+    $result[$preparation['nid']] = $preparation;
+
+    return $preparation;
 }
 
 /**
