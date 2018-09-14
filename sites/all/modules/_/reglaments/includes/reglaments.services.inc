@@ -62,31 +62,31 @@ function _reglaments_resource_retrieve($pid)
             // массив id регламентов
             $reglaments_ids = [];
             foreach ($cultures_ids as $culture_id) {
-                $query = db_select('field_data_field_pd_r_cultures', 'fc')
-                    ->fields('fc', array('entity_id'))
-                    ->condition('fc.bundle', 'field_pd_reglaments')
-                    ->condition('fc.field_pd_r_cultures_target_id', $culture_id)
-                    ->distinct()
-                    ->execute();
-                $reglaments_ids = array_merge($reglaments_ids, $query->fetchCol());
+                $query = db_select('field_data_field_pd_r_cultures', 'fc');
+                $query->fields('fc', array('entity_id'));
+                $query->condition('fc.bundle', 'field_pd_reglaments');
+                $query->condition('fc.field_pd_r_cultures_target_id', $culture_id);
+                $query->leftJoin('field_data_field_pd_reglaments', 'fr', 'fr.field_pd_reglaments_value = fc.entity_id');
+                $query->fields('fr', array('entity_id'));
+                foreach($query->execute()->fetchAllKeyed() as $rid => $nid) {
+                    $reglaments_ids[$rid] = $nid;
+                }
             }
 
+            $time[] = microtime(true);
             if ($reglaments_ids) {
                 // массив этапов роста
                 // выстроить по порядку и поменять местами значения с ключами
                 $stages_arr = array_flip(_get_stages_ordered($program_wr->field_pp_cultures[0]->field_growth_stages_set->field_mc_periods->value()));
 
-                foreach($reglaments_ids as $reglament_id) {
+                foreach($reglaments_ids as $reglament_id => $preparation_id) {
                     $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
-
 
                     $weight = $reglament_wr->field_pd_r_function->weight->value();
                     $tid = $reglament_wr->field_pd_r_function->tid->value();
-
                     // просматриваем регламенты
-                    $preparation_id = $reglament_wr->value()->hostEntity()->nid;
-                    $preparation_wr = entity_metadata_wrapper('node', $preparation_id);
-                    $prep_info = get_product_agro_title($preparation_id);
+                    $prep_info = get_product_info($preparation_id);
+
 
                     // уникальный ключ этапа Программы защиты - сочетание id препарата и id функции
                     // по этому ключу будет располагаться массив, элементами которого могут быть:
@@ -109,6 +109,15 @@ function _reglaments_resource_retrieve($pid)
                         }
 
                         // заполняем запись нового регламента
+                        // инфо о препарате/смеси
+                        $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = [];
+                        foreach($prep_info['items'] as $prep_item) {
+                            $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
+                            $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
+                            $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
+                            $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_url']);
+                        }
+
                         $regl_new = array(
                             'period' => array(
                                 'start' => array(
@@ -122,19 +131,33 @@ function _reglaments_resource_retrieve($pid)
                             ),
                             'preparation' => array(
                                 'id' => $preparation_id,
-                                'title' => empty($prep_info['formulation']) ? $prep_info['title'] : $prep_info['title'] . ', ' . $prep_info['formulation'],
-                                'ingredients' => $prep_info['ingredients'],
-                                'rate' => array(
-                                    'from' => (float)$reglament_wr->field_pd_r_prep_rate[0]->from->value(),
-                                    'to' => (float)$reglament_wr->field_pd_r_prep_rate[0]->to->value(),
-                                    'unit' => $prep_info['unit_cons'],
-                                ),
-                                'photo' => image_style_url('thumbnail', $preparation_wr->field_product[0]->field_p_images[0]->value()['uri']),
-                                'icon' => $preparation_wr->field_icon->file->url->value(),
+                                'title' => implode(' + ', $title_arr),
+                                'type'  => $prep_info['type'],
+                                'ingredients' => implode(' + ', $ingredients_arr),
+                                'photo' => $photo_arr,
+                                'icon' => $prep_info['icon'],
                             ),
 //                        'description' => $reglament_wr->field_pd_r_processing->value(),
                         );
 
+                        // так как норма расхода связана с препаратом в БС порядковым номером
+                        // а get_product_info возвращает БС в определенном порядке (не по порядковому номеру)
+                        // связать нормы с препаратом по полю order
+                        foreach($reglament_wr->field_pd_r_prep_rate as $key_r => $rate_wr) {
+                            $key = 0;
+                            foreach($prep_info['items'] as $prep_item) {
+                                if ($prep_item['order'] == $key_r) {
+                                    $regl_new['preparation']['rates'][$key] = array(
+                                        'from'  => (float)$rate_wr->from->value(),
+                                        'to'    => (float)$rate_wr->to->value(),
+                                        'unit'  => $units_arr[$key_r],
+                                    );
+                                }
+                                $key++;
+                            }
+                        }
+
+                        // для препаратов кроме смесей
                         // проверить на наличие регламентов на этом этапе ПЗ
                         // и склеить старый и новый регламенты при наличии пересечения.
                         // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
@@ -173,7 +196,7 @@ function _reglaments_resource_retrieve($pid)
         ksort($result['categories'][$weight]['stages']);
     }
 
-
+    $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
 }
 
@@ -207,8 +230,10 @@ function _reglaments_merge_crossing_periods($stages_arr, &$regl1, $regl2)
     if ($r1_end_num + 1 >= $r2_start_num && $r1_start_num - 1 <= $r2_end_num) {
         if ($r2_end_num > $r1_end_num) $regl1['period']['end']['tid'] = $regl2['period']['end']['tid'];
         if ($r2_start_num < $r1_start_num) $regl1['period']['start']['tid'] = $regl2['period']['start']['tid'];
-        if ($regl2['preparation']['rate']['from'] < $regl1['preparation']['rate']['from']) $regl1['preparation']['rate']['from'] = $regl2['preparation']['rate']['from'];
-        if ($regl2['preparation']['rate']['to'] > $regl1['preparation']['rate']['to']) $regl1['preparation']['rate']['to'] = $regl2['preparation']['rate']['to'];
+        foreach($regl1['preparation']['rates'] as $key => $item) {
+            if ($regl2['preparation']['rates'][$key]['from'] < $regl1['preparation']['rates'][$key]['from']) $regl1['preparation']['rates'][$key]['from'] = $regl2['preparation']['rates'][$key]['from'];
+            if ($regl2['preparation']['rates'][$key]['to'] > $regl1['preparation']['rates'][$key]['to']) $regl1['preparation']['rates'][$key]['to'] = $regl2['preparation']['rates'][$key]['to'];
+        }
 
         return true;
     }
