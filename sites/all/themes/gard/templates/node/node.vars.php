@@ -149,6 +149,7 @@ function gard_preprocess_node(&$vars) {
             $products = $preps_arr = $units_arr = $prices_arr = $ingr_arr = array();
             foreach ($node_wrapper->field_pd_mix_components->getIterator() as $key => $value) {
                 // препараты
+                // todo устарело, заменить на использование get_product_info
                 $prep = get_product_agro_title($value->nid->value());
                 $prep_url = url('node/' . $value->nid->value());
                 $vars['preps_arr'][] = '<a href="' . $prep_url . '" target="_blank">' . $prep['title'] . ', ' . $prep['formulation'] . '</a><br /><span class="ingredients">(' . drupal_strtolower($prep['ingredients']) . ')</span>';
@@ -171,6 +172,7 @@ function gard_preprocess_node(&$vars) {
 
             /** - Все остальные - */
         } else {
+            // todo устарело, заменить на использование get_product_info
             $product_info = get_product_agro_title($vars['node']->nid);
             if ($vars['type'] == 'product_fert') {
                 $vars['title'] = explode('|', $product_info['title'])[0];
