@@ -331,7 +331,7 @@ function representatives_get_representatives_list()
         'office' => 'Представитель',
         'surname' => 'Плешков', 'name' => 'Владимир', 'name2' => 'Геннадьевич',
         'phones' => array('+7 (922) 908-41-44'),
-        'emails' => array('lipetsk2@kccc.ru'),
+        'emails' => array('lipetsk@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/pleshkov.png',
         'regions' => array(
             71694 => "Липецкая область",
