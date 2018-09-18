@@ -60,6 +60,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
     if (!empty($culture) && $culture != 'All') {
         $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = s.field_f_sowing_value');
         $query->condition('fc.field_f_s_culture_target_id', $culture);
+        $query->condition('fc.bundle', 'field_f_sowing');
     }
     $query->fields('s', array('field_f_sowing_value'));
     $query->orderBy('s.field_f_sowing_value', 'DESC');
@@ -357,6 +358,7 @@ function before_after_exposed_filters_form($form, &$form_state)
     $query->condition('n.type', 'main_cultures');
     $query->distinct();
     $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
+    $query->condition('fc.bundle', 'field_f_sowing');
 
     // если уже выбран регион, добавить его в условия
     $region_selected = '';
