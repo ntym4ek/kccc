@@ -4,7 +4,7 @@
 
 <div class="row contact-us">
     <div class="cu-info col-md-7">
-        <h2><? print t('ООО Trade House') .' <span class="text-nowrap">'. t('"Kirovo-Chepetsk Chemical Company"') . '</span>';?></h2>
+        <h2><? print t('ООО Trade House') . '<br />' . t('"Kirovo-Chepetsk Chemical Company"');?></h2>
         <div class="cu-title"><? print t('Address'); ?></div>
         <div class="cu-content"><? print t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya, 6'); ?></div>
         <div class="cu-title"><? print t('Phone'); ?></div>

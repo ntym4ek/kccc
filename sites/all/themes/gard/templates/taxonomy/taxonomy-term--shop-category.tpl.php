@@ -16,6 +16,7 @@
     <ul>
         <?php foreach($preps as $prep): ?>
             <?php
+            // todo перейти на использование get_product_info
             $product_info = get_product_agro_title($prep->nid);
             $product_title = $product_info['formulation'] ? $product_info['title'] . ', ' . $product_info['formulation'] : $product_info['title'];
             ?>

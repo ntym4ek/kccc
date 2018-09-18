@@ -225,7 +225,6 @@ function product_ex_rating_add_form_ajax($form, &$form_state) {
     return $form;
 }
 
-
 function product_ex_form_field_collection_item_form_alter(&$form, &$form_state, $form_name) {
 
     // для Регламентов
@@ -459,12 +458,12 @@ function get_product_agro_title($nid) {
     $prep_wrapper = entity_metadata_wrapper('node', $nid);
 
     $ingredients = $form_short = $formulation_full = $price = $unit_short = '';
-    if (in_array($prep_wrapper->type->value(), array('product_agro', 'product_fert', 'product_chem'))) {
+    if (in_array($prep_wrapper->value()->type, array('product_agro', 'product_fert', 'product_chem'))) {
         $unit = get_product_units($nid);
         $unit_short = isset($unit['short_unit']) ? $unit['short_unit'] : '';
     }
 
-    if (in_array($prep_wrapper->type->value(), array('product_agro'))) {
+    if (in_array($prep_wrapper->value()->type, array('product_agro'))) {
 
         $prep_wrapper = $prep_wrapper->language($GLOBALS['language']->language);
         if ($prep_wrapper->field_pd_formulation->value()) {
@@ -490,7 +489,7 @@ function get_product_agro_title($nid) {
         }
     }
 
-    if ($prep_wrapper->type->value() != 'product_mix') {
+    if ($prep_wrapper->value()->type != 'product_mix') {
         $price = $prep_wrapper->field_pd_price_per_unit->amount->value()/100;
     }
 
