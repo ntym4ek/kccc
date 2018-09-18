@@ -494,7 +494,10 @@
       color: $brand-primary;
       display: inline-block;
       margin-top: 0; margin-right: 15px;
-      @media #{$phone} { font-size: $font-size-h2; line-height: $font-size-h2; margin-bottom: 0; }
+      @media #{$phone} {
+          font-size: $font-size-h2; line-height: $font-size-h2;
+          //margin-bottom: 0;
+      }
   }
     h3 {
         font-weight: 100;
@@ -578,9 +581,11 @@
   }
   .node-body {
     .field {
-      text-align: justify;
       margin-bottom: 15px;
+        overflow: hidden;
+        span { display: inline-block; }
     }
+      p { text-align: justify; }
     &.node-body-bordered .field-name-body {
       border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
       padding: 15px 0;
@@ -633,6 +638,8 @@
       .field-item { margin-bottom: 5px; }
       .ingredients { color: $text-muted; font-size: $font-size-small; }
     }
+    #edit-line-item-fields { display: none; }
+
     @media #{$phone} {
       padding: 20px;
     }
@@ -641,6 +648,7 @@
 
 .product-description {
   padding-top: 60px;
+  overflow: hidden;
 
     .table {
         th { font-size: .9em; font-weight: 100; text-align: center; }
@@ -1241,12 +1249,14 @@
   & > .view-header,
   & > .view-filters,
   & > .view-content,
-  & > .view-empty {
+  & > .view-empty,
+  & > .attachment {
     @include make-row();
   }
   & > .view-filters,
   & > .view-empty,
-  & > .view-content {
+  & > .view-content,
+  & > .attachment {
     background-color: $views-list-bg;
     padding-top: $grid-gutter-width;
   }
@@ -1257,10 +1267,18 @@
     .views-exposed-widgets {
       margin-bottom: 0;
       @include make-row();
+      .views-exposed-widget {
+          padding-top: 0;
+      }
     }
   }
   & > .view-empty {
     min-height: 100px;
+  }
+  & > .attachment {
+      .view {
+          @include wrap-content();
+      }
   }
 
   .view-item {
@@ -1270,6 +1288,20 @@
       }
   }
 
+    .view-glossary {
+        .views-summary {
+            border-bottom: 1px dotted #2b8aff;
+            list-style: none;
+            padding: 0; margin: 0;
+            li {
+                font-size: 24px; line-height: 24px;
+                display: inline-block;
+                padding: 5px;
+                transition: all 0.2s ease-in-out;
+                &:hover { transform: scale(1.2); }
+            }
+        }
+    }
 
     [class*="views-widget-filter"] { @include make-sm-column(6); }
     .views-submit-button { float: left; padding-left: $grid-gutter-width/2; }
