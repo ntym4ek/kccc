@@ -27,17 +27,20 @@
                 $('.btn-s4').click(function () { toggleMenu(); });
 
                 if (!device.desktop()) {
-                    var $content = $('.content-container > .content');
-                    var $menu = $('.side-menu');
-                    var $tabs = $('.horizontal-tabs-list');
-
-                    $content.touch();
-                    $menu.touch();
-                    $tabs.touch();
-
-                    $menu.on('swipeLeft', function() { toggleMenu(); });
-                    $content.on('swipeRight', function() { toggleMenu(); });
-                    $tabs.on('swipeRight', function(e) { e.stopPropagation(); });
+                    // свайп реализован на основе jquery.touchSwipe.min.js
+                    // http://labs.rampinteractive.co.uk/touchSwipe/docs/index.html
+                    $('.content-container > .content').swipe( {
+                        threshold: Math.min($(document).width() / 2, 160),
+                        swipeRight:function() {
+                            toggleMenu();
+                        },
+                        excludedElements:$.fn.swipe.defaults.excludedElements+", .horizontal-tabs-list"
+                    });
+                    $('.side-menu').swipe( {
+                        swipeLeft:function() {
+                            toggleMenu();
+                        },
+                    });
                 }
 
                 /* ------------------------------------ панель поиска, Search --------------------------------------- */
@@ -49,18 +52,17 @@
                 $('.disabled').click(function(event){
                     event.preventDefault();
                 });
-            });
 
-            /* ------------------------------------ Слайдер - */
-            // var $slider = $('#bootstrap-slider');
-            // $slider.touch();
-            // $slider.on('swipeLeft', function() { $('.carousel').carousel('next'); });
-            // $slider.on('swipeRight', function() { $('.carousel').carousel('prev').preventDefault(); });
-
-            $('#bootstrap-slider, [id^=views-bootstrap-carousel]').each(function(){
-                $(this).touch();
-                $(this).on('swipeLeft', function() { $('.carousel').carousel('next'); });
-                $(this).on('swipeRight', function() { $('.carousel').carousel('prev').preventDefault(); });
+                /* ------------------------------------ Слайдер - */
+                $('#bootstrap-slider, [id^=views-bootstrap-carousel]').each(function(){
+                    $(this).swipe( {
+                        swipeLeft:function() { $('.carousel').carousel('next'); },
+                        swipeRight:function(event) {
+                            $('.carousel').carousel('prev');
+                            event.stopPropagation();
+                        },
+                    });
+                });
             });
 
             /* ------------------------------------ popup ----------------------------------------------------------- */

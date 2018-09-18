@@ -47,7 +47,7 @@ scripts[] = 'bootstrap/assets/javascripts/bootstrap/tab.js'
 scripts[] = 'bootstrap/assets/javascripts/bootstrap/transition.js'
 
 scripts[] = 'js/gard.js'
-scripts[] = 'js/jquery.touch.min.js'
+scripts[] = 'js/jquery.touchSwipe.min.js'
 scripts[] = 'js/device.min.js'
 
 
