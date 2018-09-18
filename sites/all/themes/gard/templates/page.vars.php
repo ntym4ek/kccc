@@ -57,13 +57,15 @@ function gard_preprocess_page(&$vars)
         if (file_exists($hi_path)) {
             $image = file_create_url($hi_path); break;
         }
-        // посмотреть на один уровень выше
+        // посмотреть на уровнях выше
         $url_array = explode('/', $path_alias_wo_lang);
-        array_pop($url_array);
-        if (count($url_array) > 1) {
-            $hi_path = 'public://images/header_images' . implode('/', $url_array) . '/header_image.' . $ext;
-            if (file_exists($hi_path)) {
-                $image = file_create_url($hi_path); break;
+        while (array_pop($url_array)) {
+            if (count($url_array) > 1) {
+                $hi_path = 'public://images/header_images' . implode('/', $url_array) . '/header_image.' . $ext;
+                if (file_exists($hi_path)) {
+                    $image = file_create_url($hi_path);
+                    break;
+                }
             }
         }
     }
@@ -80,6 +82,46 @@ function gard_preprocess_page(&$vars)
         if ($parent_term = current(taxonomy_get_parents($term->tid))) {
             $category_title = '<a href="' . url('taxonomy/term/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
         }
+    }
+
+    /** -------------------------------------------- для прочих страниц -
+     * на случай более длинных путей (фильтры добавляют аргументы) проверяем первые два аргумента
+     * проверять раньше нод, чтобы можно было переписать
+     */
+
+    switch (arg(0) . (arg(1) ? '/' . arg(1) : '')) {
+        case 'agenda':
+            $subtitle = t('Exhibitions with Trade House participation');
+            break;
+        case 'blogs':
+            $subtitle = t('Our representatives and staff posts');
+            break;
+        case 'reviews':
+            $subtitle = t('Feedback from Trade House customers');
+            break;
+        case 'info/job':
+            $subtitle = t('Careers in Trade House');
+            break;
+        case 'handbook/protection-programs':
+            $subtitle = t('Protection programs using products of Trade House');
+            $category_title = t('Handbooks');
+            break;
+        case 'handbook/cultures':
+            $subtitle = t('Handbook of cultivated plants');
+            $category_title = t('Handbooks');
+            break;
+        case 'handbook/diseases':
+            $subtitle = t('Handbook of plants diseases');
+            $category_title = t('Handbooks');
+            break;
+        case 'handbook/weeds':
+            $subtitle = t('Handbook of weeds');
+            $category_title = t('Handbooks');
+            break;
+        case 'handbook/pests':
+            $subtitle = t('Handbook of pests');
+            $category_title = t('Handbooks');
+            break;
     }
 
     /** -------------------------------------------- для entityform_type - */
@@ -160,42 +202,6 @@ function gard_preprocess_page(&$vars)
             // для Болезней
             if ($vars['node']->type == 'disease') { $category_title = '<a href="' . '/handbook/diseases' . '">' . t('Deseases of plants') . '</a>'; }
         }
-    }
-
-    /** -------------------------------------------- для прочих страниц - */
-    switch ($_GET['q']) {
-        case 'agenda':
-            $subtitle = t('Exhibitions with Trade House participation');
-            break;
-        case 'blogs':
-            $subtitle = t('Our representatives and staff posts');
-            break;
-        case 'reviews':
-            $subtitle = t('Feedback from Trade House customers');
-            break;
-        case 'info/job':
-            $subtitle = t('Careers in Trade House');
-            break;
-        case 'handbook/protection-programs':
-            $subtitle = t('Protection programs using products of Trade House');
-            $category_title = t('Handbooks');
-            break;
-        case 'handbook/cultures':
-            $subtitle = t('Handbook of cultivated plants');
-            $category_title = t('Handbooks');
-            break;
-        case 'handbook/diseases':
-            $subtitle = t('Handbook of plants diseases');
-            $category_title = t('Handbooks');
-            break;
-        case 'handbook/weeds':
-            $subtitle = t('Handbook of weeds');
-            $category_title = t('Handbooks');
-            break;
-        case 'handbook/pests':
-            $subtitle = t('Handbook of pests');
-            $category_title = t('Handbooks');
-            break;
     }
 
     // если нет изображения и собственного заголовка Категории, присвоить Заголовок страницы
