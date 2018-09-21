@@ -359,6 +359,8 @@ function before_after_exposed_filters_form($form, &$form_state)
     $query->distinct();
     $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
     $query->condition('fc.bundle', 'field_f_sowing');
+    $query->orderBy('n.title', 'ASC');
+    $query->fields('n', array('nid', 'title'));
 
     // если уже выбран регион, добавить его в условия
     $region_selected = '';
@@ -374,13 +376,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         $query->innerJoin('field_data_field_f_region', 'fr', 'fr.entity_id = nf.nid');
         $query->condition('fr.field_f_region_tid', $region_selected);
     }
-    $query->fields('n', array('nid', 'title'));
-    if ($cultures = $query->execute()->fetchAll()) {
-        foreach ($cultures as $culture) {
-            $culture_options[$culture->nid] = $culture->title;
-        }
-        asort($culture_options);
-    }
+    $culture_options = $query->execute()->fetchAllKeyed();
     $culture_options = array('All' => '- Любая -') + $culture_options;
 
     $form['c']['c1']['culture'] = array(
