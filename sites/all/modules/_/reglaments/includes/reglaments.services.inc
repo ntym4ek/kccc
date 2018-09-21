@@ -3,19 +3,19 @@
 function reglaments_services_resources()
 {
     $resources = array(
-        'protection-program' => array(
-            'operations' => array(
-                'retrieve' => array(
+        'reglaments' => array(
+            'actions' => array(
+                'get_protection_system' => array(
                     'help' => 'Retrieve a protection program',
-                    'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'before_after.services.inc'),
-                    'callback' => '_reglaments_resource_retrieve',
+                    'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'reglaments.services.inc'),
+                    'callback' => '_reglaments_get_protection_system',
                     'args' => array(
                         array(
-                            'name' => 'pid',
+                            'name' => 'parameters',
                             'optional' => FALSE,
-                            'source' => array('path' => 0),
-                            'type' => 'int',
-                            'description' => 'id программы защиты',
+                            'source' => array('data' => 'parameters'),
+                            'type' => 'array',
+                            'description' => 'Массив параметров программы защиты',
                         ),
                     ),
                     'access callback' => '_drupalgap_resource_access',
@@ -34,150 +34,212 @@ function reglaments_services_resources()
     return $resources;
 }
 
-function _reglaments_resource_retrieve($pid)
+/**
+ * составляем программу защиты для заданной культуры или списка культур
+ * в зависимости от заданных параметров:
+ * $parameters['program_id'] или $parameters['culture_id'] - список культур из программы или явно заданная культура
+ * $parameters['phase_id'] - фильтр по фазе культуры
+ * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
+ * $parameters['dessicants'] - добавить десиканты
+ * $parameters['fertilizers'] - добавить удобрения
+ *
+ * @return array
+ *
+ * // todo осталось прикрутить фильтр по фазе роста
+ */
+function _reglaments_get_protection_system($parameters)
 {
     $result = [];
     // в зависимости от наличия fid выдать список категорий ПЗ или список препаратов заданной категории
 
     $cultures_ids = [];
-    $program_wr = entity_metadata_wrapper('node', $pid);
+    if ($parameters['program_id']) {
+        $program_wr = entity_metadata_wrapper('node', $parameters['program_id']);
 
-    // описание программы и ссылка на pdf
-    $result['header'] = array(
-        'title' => $program_wr->field_pp_cultures[0]->field_growth_stages_set->name->value(),
-        'description' => trim(strip_tags($program_wr->body->value->value())),
-        'pdf' => $program_wr->field_file_attachments[0]->file->url->value(),
-    );
+        if (isset($program_wr->field_pp_cultures)) {
+            // массив id культур, для которых берем регламенты
+            foreach ($program_wr->field_pp_cultures->raw() as $culture) {
+                $cultures_ids[] = $culture;
+            }
+        }
+    } else {
+        $cultures_ids[] = $parameters['culture_id'];
+    }
 
-    if (isset($program_wr->field_pp_cultures)) {
-        // массив id культур, для которых берем регламенты
-        foreach($program_wr->field_pp_cultures->raw() as $culture) {
-            $cultures_ids[] = $culture;
+    // составляем список регламентов для заданных культур
+    if ($cultures_ids) {
+        $reglaments = [];
+
+        $culture_wr = entity_metadata_wrapper('node', $cultures_ids[0]);
+
+        $phase_name = '';
+        if ($parameters['phase_id']) {
+            $phase_wr = entity_metadata_wrapper('taxonomy_term', $parameters['phase_id']);
+            $phase_name = $phase_wr->name->value();
         }
 
-        // список регламентов для заданных культур
-        if ($cultures_ids) {
-            $reglaments = [];
+        // если ВО не заданы, показать всю программу
+        $show_full_program = empty($parameters['weeds_arr']) && empty($parameters['pests_arr']) && empty($parameters['diseases_arr']) && empty($parameters['dessicants']) && empty($parameters['fertilizers']);
 
-            // массив id регламентов
-            $reglaments_ids = [];
-            foreach ($cultures_ids as $culture_id) {
-                $query = db_select('field_data_field_pd_r_cultures', 'fc');
-                $query->fields('fc', array('entity_id'));
-                $query->condition('fc.bundle', 'field_pd_reglaments');
-                $query->condition('fc.field_pd_r_cultures_target_id', $culture_id);
-                $query->leftJoin('field_data_field_pd_reglaments', 'fr', 'fr.field_pd_reglaments_value = fc.entity_id');
-                $query->fields('fr', array('entity_id'));
-                foreach($query->execute()->fetchAllKeyed() as $rid => $nid) {
-                    $reglaments_ids[$rid] = $nid;
-                }
+        // описание программы и ссылка на pdf
+        $result['header'] = array(
+            'title' => empty($parameters['program_id']) ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
+            'description' => empty($parameters['program_id']) ? 'Комплексная программа защиты и увеличения урожайности культуры' : trim(strip_tags($program_wr->body->value->value())),
+            'phase' => $phase_name,
+            'pdf' => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+        );
+
+        // массив этапов роста
+        // выстроить по порядку и поменять местами значения с ключами
+        $stages_arr = array_flip(_get_stages_ordered($culture_wr->field_growth_stages_set->field_mc_periods->value()));
+
+        // массив id регламентов
+        $reglaments_ids = [];
+        foreach ($cultures_ids as $culture_id) {
+            $query = db_select('field_data_field_pd_r_cultures', 'fc');
+            $query->fields('fc', array('entity_id'));
+            $query->condition('fc.bundle', 'field_pd_reglaments');
+            $query->condition('fc.field_pd_r_cultures_target_id', $culture_id);
+            $query->leftJoin('field_data_field_pd_reglaments', 'fr', 'fr.field_pd_reglaments_value = fc.entity_id');
+            $query->fields('fr', array('entity_id'));
+            foreach($query->execute()->fetchAllKeyed() as $rid => $nid) {
+                $reglaments_ids[$rid] = $nid;
             }
+        }
 
-            $time[] = microtime(true);
-            if ($reglaments_ids) {
-                // массив этапов роста
-                // выстроить по порядку и поменять местами значения с ключами
-                $stages_arr = array_flip(_get_stages_ordered($program_wr->field_pp_cultures[0]->field_growth_stages_set->field_mc_periods->value()));
+        $time[] = microtime(true);
+        if ($reglaments_ids) {
+            foreach($reglaments_ids as $reglament_id => $preparation_id) {
+                $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
 
-                foreach($reglaments_ids as $reglament_id => $preparation_id) {
-                    $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
-
-                    $weight = $reglament_wr->field_pd_r_function->weight->value();
-                    $tid = $reglament_wr->field_pd_r_function->tid->value();
-                    // просматриваем регламенты
-                    $prep_info = get_product_info($preparation_id);
+                $weight = $reglament_wr->field_pd_r_function->weight->value();
+                $tid = $reglament_wr->field_pd_r_function->tid->value();
+                // просматриваем регламенты
+                $prep_info = get_product_info($preparation_id);
 
 
-                    // уникальный ключ этапа Программы защиты - сочетание id препарата и id функции
-                    // по этому ключу будет располагаться массив, элементами которого могут быть:
-                    // 1. один регламент
-                    // 2. один регламент склеенный из нескольких (пересечение этапов применения)
-                    // 3. несколько отдельных регламентов (этапы применения не пересекаются)
-                    // ключом элемента будет порядковый номер этапа роста (установит порядок регламентов)
-                    $stage_key = $preparation_id . '-' . $tid;
+                // уникальный ключ этапа Программы защиты - сочетание id препарата и id функции
+                // по этому ключу будет располагаться массив, элементами которого могут быть:
+                // 1. один регламент
+                // 2. один регламент склеенный из нескольких (пересечение этапов применения)
+                // 3. несколько отдельных регламентов (этапы применения не пересекаются)
+                // ключом элемента будет порядковый номер этапа роста (установит порядок регламентов)
+                $stage_key = $preparation_id . '-' . $tid;
 
-                    if ($prep_info['status'] && $reglament_wr->field_pd_rn_period_start->value() && $reglament_wr->field_pd_rn_period_end->value()) {
-                        // список категорий
-                        if (!isset($result['categories'][$weight])) {
-                            $result['categories'][$weight] = array(
-                                'tid' => $tid,
-                                'weight' => $weight,
-                                'name' => $reglament_wr->field_pd_r_function->name->value(),
-                                'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
-                                'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
-                            );
-                        }
+                if ($prep_info['status'] && $reglament_wr->field_pd_rn_period_start->value() && $reglament_wr->field_pd_rn_period_end->value()) {
+                    // если заданы ВО, проверить регламенты на соответствие
+                    $hobjects = array();
 
-                        // заполняем запись нового регламента
-                        // инфо о препарате/смеси
-                        $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = [];
-                        foreach($prep_info['items'] as $prep_item) {
-                            $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
-                            $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
-                            $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
-                            $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_url']);
-                        }
-
-                        $regl_new = array(
-                            'period' => array(
-                                'start' => array(
-                                    'tid' => $reglament_wr->field_pd_rn_period_start->tid->value(),
-                                    'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_start->name->value()),
-                                ),
-                                'end' => array(
-                                    'tid' => $reglament_wr->field_pd_rn_period_end->tid->value(),
-                                    'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_end->name->value()),
-                                ),
-                            ),
-                            'preparation' => array(
-                                'id' => $preparation_id,
-                                'title' => implode(' + ', $title_arr),
-                                'type'  => $prep_info['type'],
-                                'ingredients' => implode(' + ', $ingredients_arr),
-                                'photo' => $photo_arr,
-                                'icon' => $prep_info['icon'],
-                            ),
-//                        'description' => $reglament_wr->field_pd_r_processing->value(),
-                        );
-
-                        // так как норма расхода связана с препаратом в БС порядковым номером
-                        // а get_product_info возвращает БС в определенном порядке (не по порядковому номеру)
-                        // связать нормы с препаратом по полю order
-                        foreach($reglament_wr->field_pd_r_prep_rate as $key_r => $rate_wr) {
-                            $key = 0;
-                            foreach($prep_info['items'] as $prep_item) {
-                                if ($prep_item['order'] == $key_r) {
-                                    $regl_new['preparation']['rates'][$key] = array(
-                                        'from'  => (float)$rate_wr->from->value(),
-                                        'to'    => (float)$rate_wr->to->value(),
-                                        'unit'  => $units_arr[$key_r],
-                                    );
-                                }
-                                $key++;
-                            }
-                        }
-
-                        // для препаратов кроме смесей
-                        // проверить на наличие регламентов на этом этапе ПЗ
-                        // и склеить старый и новый регламенты при наличии пересечения.
-                        // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
-                        if (!empty($reglaments[$tid]['stages'][$stage_key])) {
-                            foreach ($reglaments[$tid]['stages'][$stage_key] as $key => $regl_old) {
-                                if (_reglaments_merge_crossing_periods($stages_arr, $regl_new, $regl_old)) {
-                                    unset($reglaments[$tid]['stages'][$stage_key][$key]);
-                                }
-                            }
-                        }
-
-                        // вычислить длительность периода регламента
-                        $regl_new['period']['duration'] = $stages_arr[$regl_new['period']['end']['tid']] - $stages_arr[$regl_new['period']['start']['tid']] + 1;
-
-                        // ключ регламента в массиве этапа ПЗ
-                        $regl_key = $stages_arr[$regl_new['period']['start']['tid']];
-
-                        // записываем регламент в этап ПЗ
-                        $reglaments[$tid]['stages'][$stage_key][$regl_key] = $regl_new;
+                    $show_category = true;
+                    switch($reglament_wr->field_pd_r_function->tid->value()) {
+                        case AGRO_CATEGORY_HERBICIDES_TID:
+                            if (!$show_full_program && empty($parameters['weeds_arr'])) $show_category = false;
+                            $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['weeds_arr'], 'weeds');
+                            break;
+                        case AGRO_CATEGORY_INCECTICIDES_TID:
+                            if (!$show_full_program && empty($parameters['pests_arr'])) $show_category = false;
+                            $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['pests_arr'], 'pests');
+                            break;
+                        case AGRO_CATEGORY_FUNGICIDES_TID:
+                        case AGRO_CATEGORY_DISINFECTANTS_TID:
+                            if (!$show_full_program && empty($parameters['diseases_arr'])) $show_category = false;
+                            $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['diseases_arr'], 'diseases');
+                            break;
+                        case AGRO_CATEGORY_DESSICANTS_TID:
+                            if (!$show_full_program && empty($parameters['dessicants'])) $show_category = false;
+                            break;
+                        case AGRO_CATEGORY_FERT_TID:
+                            if (!$show_full_program && empty($parameters['fertilizers'])) $show_category = false;
+                            break;
                     }
+
+                    if (!$show_category) continue;
+
+                    // список категорий
+                    // категория может быть показана, даже если нет регламентов
+                    // чтобы вывести сообщение, что для заданного ВО у нас пока нет препаратов
+                    if (!isset($result['categories'][$weight])) {
+                        $result['categories'][$weight] = array(
+                            'tid' => $tid,
+                            'weight' => $weight,
+                            'name' => $reglament_wr->field_pd_r_function->name->value(),
+                            'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
+                            'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
+                        );
+                    }
+
+                    if (!$show_full_program && !$hobjects) continue;
+
+                    // заполняем запись нового регламента
+                    // инфо о препарате/смеси
+                    $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = [];
+                    foreach($prep_info['items'] as $prep_item) {
+                        $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
+                        $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
+                        $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
+                        $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_url']);
+                    }
+
+                    $regl_new = array(
+                        'period' => array(
+                            'start' => array(
+                                'tid' => $reglament_wr->field_pd_rn_period_start->tid->value(),
+                                'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_start->name->value()),
+                            ),
+                            'end' => array(
+                                'tid' => $reglament_wr->field_pd_rn_period_end->tid->value(),
+                                'name' => drupal_strtolower($reglament_wr->field_pd_rn_period_end->name->value()),
+                            ),
+                        ),
+                        'preparation' => array(
+                            'id' => $preparation_id,
+                            'title' => implode(' + ', $title_arr),
+                            'type'  => $prep_info['type'],
+                            'ingredients' => implode(' + ', $ingredients_arr),
+                            'photo' => $photo_arr,
+                            'icon' => $prep_info['icon'],
+                        ),
+                        'hobjects' => implode(', ', array_values($hobjects)),
+//                        'description' => $reglament_wr->field_pd_r_processing->value(),
+                    );
+
+                    // так как норма расхода связана с препаратом в БС порядковым номером
+                    // а get_product_info возвращает БС в определенном порядке (не по порядковому номеру)
+                    // связать нормы с препаратом по полю order
+                    foreach($reglament_wr->field_pd_r_prep_rate as $key_r => $rate_wr) {
+                        $key = 0;
+                        foreach($prep_info['items'] as $prep_item) {
+                            if ($prep_item['order'] == $key_r) {
+                                $regl_new['preparation']['rates'][$key] = array(
+                                    'from'  => (float)$rate_wr->from->value(),
+                                    'to'    => (float)$rate_wr->to->value(),
+                                    'unit'  => $units_arr[$key_r],
+                                );
+                            }
+                            $key++;
+                        }
+                    }
+
+                    // для препаратов кроме смесей
+                    // проверить на наличие регламентов на этом этапе ПЗ
+                    // и склеить старый и новый регламенты при наличии пересечения.
+                    // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
+                    if (!empty($reglaments[$tid]['stages'][$stage_key])) {
+                        foreach ($reglaments[$tid]['stages'][$stage_key] as $key => $regl_old) {
+                            if (_reglaments_merge_crossing_periods($stages_arr, $regl_new, $regl_old)) {
+                                unset($reglaments[$tid]['stages'][$stage_key][$key]);
+                            }
+                        }
+                    }
+
+                    // вычислить длительность периода регламента
+                    $regl_new['period']['duration'] = $stages_arr[$regl_new['period']['end']['tid']] - $stages_arr[$regl_new['period']['start']['tid']] + 1;
+
+                    // ключ регламента в массиве этапа ПЗ
+                    $regl_key = $stages_arr[$regl_new['period']['start']['tid']];
+
+                    // записываем регламент в этап ПЗ
+                    $reglaments[$tid]['stages'][$stage_key][$regl_key] = $regl_new;
                 }
             }
         }
@@ -199,6 +261,65 @@ function _reglaments_resource_retrieve($pid)
     $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
 }
+
+/**
+ * вернуть массив этапов роста культуры в последовательном порядке
+ */
+function _check_reglament_fits_hobjects($reglament_id, $hobject_ids, $type)
+{
+    $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
+
+    // проверка видов
+    $hobjects = array_intersect($reglament_wr->field_pd_a_hobjects->raw(), $hobject_ids);
+
+    switch ($type) {
+        case 'weeds':
+            // получить список родительских категорий регламента
+            $weeds_reglament_groups_arr = [];
+            foreach($reglament_wr->field_pd_a_weeds_groups as $weeds_group_wr) {
+                foreach($weeds_group_wr->field_pd_a_wg_class as $weeds_class_wr) {
+                    $weeds_reglament_groups_arr[] = $weeds_class_wr->tid->value();
+                }
+            }
+            // проверка категорий
+            foreach($hobject_ids as $hobject_id) {
+                $weed_wr = entity_metadata_wrapper('node', $hobject_id);
+                $weed_parent_groups = taxonomy_get_parents_all($weed_wr->field_weed_kind->tid->value());
+                foreach($weed_parent_groups as $weed_parent_group) {
+                    if (in_array($weed_parent_group->tid, $weeds_reglament_groups_arr)) $hobjects[] = $hobject_id;
+                }
+            }
+            break;
+
+            case 'pests':
+                // получить список родительских категорий регламента
+                $pests_reglament_groups_arr = [];
+                foreach($reglament_wr->field_pd_a_pests_groups as $pests_group_wr) {
+                    $pests_reglament_groups_arr[] = $pests_group_wr->tid->value();
+                }
+                // проверка категорий
+                foreach($hobject_ids as $hobject_id) {
+                    $pest_wr = entity_metadata_wrapper('node', $hobject_id);
+                    $pest_parent_groups = taxonomy_get_parents_all($pest_wr->field_pest_classificator->tid->value());
+                    foreach($pest_parent_groups as $pest_parent_group) {
+                        if (in_array($pest_parent_group->tid, $pests_reglament_groups_arr)) $hobjects[] = $hobject_id;
+                    }
+                }
+
+            break;
+    }
+
+    if ($hobjects) {
+        $hobjects = array_unique($hobjects);
+        $query = db_select('node', 'n');
+        $query->condition('n.nid', $hobjects, 'IN');
+        $query->fields('n', array('nid', 'title'));
+        $hobjects = $query->execute()->fetchAllKeyed();
+    }
+
+    return $hobjects;
+}
+
 
 /**
  * вернуть массив этапов роста культуры в последовательном порядке
@@ -234,6 +355,8 @@ function _reglaments_merge_crossing_periods($stages_arr, &$regl1, $regl2)
             if ($regl2['preparation']['rates'][$key]['from'] < $regl1['preparation']['rates'][$key]['from']) $regl1['preparation']['rates'][$key]['from'] = $regl2['preparation']['rates'][$key]['from'];
             if ($regl2['preparation']['rates'][$key]['to'] > $regl1['preparation']['rates'][$key]['to']) $regl1['preparation']['rates'][$key]['to'] = $regl2['preparation']['rates'][$key]['to'];
         }
+
+        $regl1['hobjects'] = array_merge($regl1['hobjects'], $regl2['hobjects']);
 
         return true;
     }

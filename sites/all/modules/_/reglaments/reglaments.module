@@ -1,4 +1,43 @@
 <?php
+
+/**
+ * Implements hook_menu().
+ */
+function reglaments_menu()
+{
+    // источник данных для мобильного приложения
+    $items['source/reglaments/cultures'] = array(
+        'page callback' => '_reglaments_cultures_source',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+    $items['source/reglaments/phases/%'] = array(
+        'page callback' => '_reglaments_phases_source',
+        'page arguments' => array(3),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+    $items['source/reglaments/weeds'] = array(
+        'page callback' => '_reglaments_weeds_source',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+    $items['source/reglaments/pests/%'] = array(
+        'page callback' => '_reglaments_pests_source',
+        'page arguments' => array(3),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+    $items['source/reglaments/diseases/%'] = array(
+        'page callback' => '_reglaments_diseases_source',
+        'page arguments' => array(3),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+
+    return $items;
+}
+
 /**
  * Implements hook_ctools_plugin_api().
  */
@@ -9,4 +48,102 @@ function reglaments_ctools_plugin_api($owner, $api) {
             'file' => 'includes/reglaments.services.inc'
         );
     }
+}
+
+
+/**
+ * callback function
+ * источник данных о культурах, участвующих в пз
+ */
+function _reglaments_cultures_source()
+{
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'main_cultures');
+    $query->distinct();
+    $query->innerJoin('field_data_field_pp_cultures', 'fc', 'fc.field_pp_cultures_target_id = n.nid');
+    $query->condition('fc.bundle', 'protection_program');
+    $query->fields('n', array('nid', 'title'));
+    $results = $query->execute()->fetchAllKeyed();
+
+    drupal_json_output(['items' => $results]);
+    drupal_exit();
+}
+
+/**
+ * callback function
+ * источник данных о фазах заданной культуры
+ */
+function _reglaments_phases_source($culture_id = null)
+{
+    $query = db_select('taxonomy_term_data', 't');
+    $query->condition('t.vid', 20);
+    $query->fields('t', array('tid', 'name'));
+    $query->orderBy('t.weight', 'ASC');
+
+    if ($culture_id) {
+        $culture_wr = entity_metadata_wrapper('node', $culture_id);
+        if (isset($culture_wr->field_growth_stages_set) && $culture_wr->field_growth_stages_set->value()) {
+            $set_tid = $culture_wr->field_growth_stages_set->tid->value();
+            $query->innerJoin('field_data_field_mc_periods', 'fp', 'fp.field_mc_periods_tid = t.tid');
+            $query->condition('fp.entity_id', $set_tid);
+            $query->condition('fp.bundle', 'growth_stages_sets');
+        }
+    }
+
+    $results = $query->execute()->fetchAllKeyed();
+
+    drupal_json_output(['items' => $results]);
+    drupal_exit();
+}
+
+/**
+ * callback function
+ * источник данных о сорняках
+ */
+function _reglaments_weeds_source()
+{
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'weed');
+    $query->fields('n', array('nid', 'title'));
+    $query->orderBy('n.title', 'ASC');
+    $results = $query->execute()->fetchAllKeyed();
+
+    drupal_json_output(['items' => $results]);
+    drupal_exit();
+}
+
+/**
+ * callback function
+ * источник данных о вредителях заданной культуры
+ */
+function _reglaments_pests_source($culture_id = null)
+{
+    $query = db_select('node', 'n');
+    $query->distinct();
+    $query->innerJoin('field_data_field_hobject_cultures', 'fc', 'fc.entity_id = n.nid');
+    $query->condition('fc.bundle', 'pest');
+    $query->condition('fc.field_hobject_cultures_target_id', $culture_id);
+    $query->fields('n', array('nid', 'title'));
+    $results = $query->execute()->fetchAllKeyed();
+
+    drupal_json_output(['items' => $results]);
+    drupal_exit();
+}
+
+/**
+ * callback function
+ * источник данных о болезнях заданной культуры
+ */
+function _reglaments_diseases_source($culture_id = null)
+{
+    $query = db_select('node', 'n');
+    $query->distinct();
+    $query->innerJoin('field_data_field_hobject_cultures', 'fc', 'fc.entity_id = n.nid');
+    $query->condition('fc.bundle', 'disease');
+    $query->condition('fc.field_hobject_cultures_target_id', $culture_id);
+    $query->fields('n', array('nid', 'title'));
+    $results = $query->execute()->fetchAllKeyed();
+
+    drupal_json_output(['items' => $results]);
+    drupal_exit();
 }
