@@ -84,8 +84,8 @@ function agro_recipe_form_alter(&$form, &$form_state, $form_id) {
                 $options = array('_none' => '- None -');
                 foreach($cultures as $cid) {
                     $hobject_tid = 0;
-                    if ($function == AGRO_CATEGORY_HERBICIDES_TID || AGRO_CATEGORY_DESSICANTS_TID) $hobject_tid = HOBJECTS_WEEDS_TID;
-                    if ($function == AGRO_CATEGORY_INCECTICIDES_TID) $hobject_tid = HOBJECTS_PESTS_TID;
+                    if ($function == AGRO_CATEGORY_HERBICIDES_TID || AGRO_CATEGORY_DESICCANTS_TID) $hobject_tid = HOBJECTS_WEEDS_TID;
+                    if ($function == AGRO_CATEGORY_INSECTICIDES_TID) $hobject_tid = HOBJECTS_PESTS_TID;
                     if ($function == AGRO_CATEGORY_DISINFECTANTS_TID
                         || $function == AGRO_CATEGORY_FUNGICIDES_TID) {
                         $culture = node_load($cid);

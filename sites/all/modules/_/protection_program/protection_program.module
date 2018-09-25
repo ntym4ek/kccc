@@ -319,7 +319,7 @@ function pp_stage_form($form, $form_state, $ppid, $sid = '') {
     $mandatory  = !empty($form_state['values']['mandatory']) ? $form_state['values']['mandatory'] : $mandatory;
     $option_own = !empty($form_state['values']['option_own']) ? $form_state['values']['option_own'] : $option_own;
 
-    if ($function == AGRO_CATEGORY_DESSICANTS_TID) {
+    if ($function == AGRO_CATEGORY_DESICCANTS_TID) {
         $option_own = 'провести десикацию культуры после её созревания';
         $disable_oo = true;
     }
@@ -1147,11 +1147,11 @@ function preparation_reglaments($prep, $cultures, $function, &$hobjects = array(
         // проверить функцию регламента
         if ($function) {
             if ($rg_item->field_pd_r_function['und'][0]['tid'] != $function) continue;
-            if ($function == AGRO_CATEGORY_DESSICANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
+            if ($function == AGRO_CATEGORY_DESICCANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
         }
 
         // проверить ВО регламента (кроме этапа десикации)
-        if (!empty($hobjects) && $function != AGRO_CATEGORY_DESSICANTS_TID) {
+        if (!empty($hobjects) && $function != AGRO_CATEGORY_DESICCANTS_TID) {
             // проверить ВО - ВО и Класс - ВО
                 // цикл по ВО регламента
             if (!empty($rg_item->field_pd_r_pest['und']))
@@ -1278,7 +1278,7 @@ function check_reglament($data, &$hobjects) {
     if (empty($hobjects)) return true;
 
     // если десикация - подходит, отсев и запрос будут дальше (обрабатывается и запрашивается как фича)
-    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_DESSICANTS_TID) return true;
+    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_DESICCANTS_TID) return true;
 
 
     // проверить ВО - ВО

@@ -167,7 +167,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         $category = 'препаратом';
                         if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
                         if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
-                        if ($category_tid == AGRO_CATEGORY_INCECTICIDES_TID) $category = 'инсектицидом';
+                        if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
 
                         // фото поля
                         $output['image_thumb'] = $output['image_full'] = '';

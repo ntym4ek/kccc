@@ -135,7 +135,7 @@ if (in_array(AGRO_CATEGORY_HERBICIDES_TID,$fids)) {
 }
 
 // если Инсектицид - проверить группы Насекомых
-if (in_array(AGRO_CATEGORY_INCECTICIDES_TID,$fids)) {
+if (in_array(AGRO_CATEGORY_INSECTICIDES_TID,$fids)) {
     // словарь Классификатор насекомых
     $vid = taxonomy_vocabulary_machine_name_load('pests_classification')->vid;
 
@@ -239,7 +239,7 @@ if ($fc_wrapper->field_pd_a_hobjects->value()) {
             }
         }
         // классификация по Насекомым
-        if (in_array(AGRO_CATEGORY_INCECTICIDES_TID,$fids) && $ho_wrapper->type->value() == 'pest') {
+        if (in_array(AGRO_CATEGORY_INSECTICIDES_TID,$fids) && $ho_wrapper->type->value() == 'pest') {
             $cid = $ho_wrapper->field_pest_classificator->tid->value();
 
             foreach ($classes_arr as $ca_key => $class_arr) {

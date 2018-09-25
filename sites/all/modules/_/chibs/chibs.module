@@ -1,11 +1,11 @@
 <?php
 const CULTURE_PERIODS_VID = 20;                         // vid словаря Периоды роста культур
 const AGRO_CATEGORY_TID = 1;                            // tid термина категории Агрохимикаты
-const AGRO_CATEGORY_DESSICANTS_TID      = 71534;        // tid термина категории Десиканты
+const AGRO_CATEGORY_DESICCANTS_TID      = 71534;        // tid термина категории Десиканты
 const AGRO_CATEGORY_HERBICIDES_TID      = 15;           // tid термина категории Гербициды
 const AGRO_CATEGORY_DISINFECTANTS_TID   = 71533;        // tid термина категории Протравители
 const AGRO_CATEGORY_FUNGICIDES_TID      = 16;           // tid термина категории Фунгициды
-const AGRO_CATEGORY_INCECTICIDES_TID    = 17;           // tid термина категории Инсектициды
+const AGRO_CATEGORY_INSECTICIDES_TID    = 17;           // tid термина категории Инсектициды
 const AGRO_CATEGORY_FERT_TID            = 93;           // tid термина категории Удобрения
 const AGRO_CATEGORY_MIX_TID             = 72343;        // tid термина категории Баковые смеси
 const AGRO_CATEGORY_SURFACTANTS_TID     = 72763;        // tid термина категории ПАВ

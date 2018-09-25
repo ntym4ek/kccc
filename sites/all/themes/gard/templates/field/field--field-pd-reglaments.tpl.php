@@ -136,7 +136,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
 
 
                 // проверить группу Вредителей
-                if (in_array($fid, array(AGRO_CATEGORY_INCECTICIDES_TID, AGRO_CATEGORY_DISINFECTANTS_TID))) {
+                if (in_array($fid, array(AGRO_CATEGORY_INSECTICIDES_TID, AGRO_CATEGORY_DISINFECTANTS_TID))) {
                     if (!empty($fc_item['field_pd_a_pests_groups']['#items'])) {
                         foreach ($fc_item['field_pd_a_pests_groups']['#items'] as $key_g => $item_g) $hog_array[] = $item_g['taxonomy_term']->name;
                     }
@@ -144,7 +144,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
                 }
 
                 // иначе вывести "Десикация"
-                if ($fid == AGRO_CATEGORY_DESSICANTS_TID) {
+                if ($fid == AGRO_CATEGORY_DESICCANTS_TID) {
                     $h_groups[] = 'Десикация';
                 }
                 

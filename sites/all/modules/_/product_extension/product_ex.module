@@ -241,8 +241,8 @@ function product_ex_form_field_collection_item_form_alter(&$form, &$form_state, 
               $options[AGRO_CATEGORY_HERBICIDES_TID] = 'Гербицид';
               break;
 
-            case AGRO_CATEGORY_DESSICANTS_TID:
-              $options[AGRO_CATEGORY_DESSICANTS_TID] = 'Десикант';
+            case AGRO_CATEGORY_DESICCANTS_TID:
+              $options[AGRO_CATEGORY_DESICCANTS_TID] = 'Десикант';
               break;
 
             case AGRO_CATEGORY_FUNGICIDES_TID:
@@ -253,8 +253,8 @@ function product_ex_form_field_collection_item_form_alter(&$form, &$form_state, 
               $options[AGRO_CATEGORY_DISINFECTANTS_TID] = 'Протравитель семян';
               break;
 
-            case AGRO_CATEGORY_INCECTICIDES_TID:
-              $options[AGRO_CATEGORY_INCECTICIDES_TID] = 'Инсектицид';
+            case AGRO_CATEGORY_INSECTICIDES_TID:
+              $options[AGRO_CATEGORY_INSECTICIDES_TID] = 'Инсектицид';
               break;
 
             case AGRO_CATEGORY_FERT_TID:
@@ -263,10 +263,10 @@ function product_ex_form_field_collection_item_form_alter(&$form, &$form_state, 
 
             case AGRO_CATEGORY_MIX_TID:
               $options[AGRO_CATEGORY_HERBICIDES_TID] = 'Гербицид';
-              $options[AGRO_CATEGORY_DESSICANTS_TID] = 'Десикант';
+              $options[AGRO_CATEGORY_DESICCANTS_TID] = 'Десикант';
               $options[AGRO_CATEGORY_FUNGICIDES_TID] = 'Фунгицид';
               $options[AGRO_CATEGORY_DISINFECTANTS_TID] = 'Протравитель семян';
-              $options[AGRO_CATEGORY_INCECTICIDES_TID] = 'Инсектицид';
+              $options[AGRO_CATEGORY_INSECTICIDES_TID] = 'Инсектицид';
               $options[AGRO_CATEGORY_FERT_TID] = 'Удобрение';
               break;
           }
