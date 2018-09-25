@@ -63,7 +63,10 @@ function _reglaments_cultures_source()
     $query->innerJoin('field_data_field_pp_cultures', 'fc', 'fc.field_pp_cultures_target_id = n.nid');
     $query->condition('fc.bundle', 'protection_program');
     $query->fields('n', array('nid', 'title'));
-    $results = $query->execute()->fetchAllKeyed();
+    $query->orderby('n.title', 'ASC');
+
+    $results = $query->execute()->fetchAll();
+//    $results = $query->execute()->fetchAll();
 
     drupal_json_output(['items' => $results]);
     drupal_exit();
@@ -90,7 +93,7 @@ function _reglaments_phases_source($culture_id = null)
         }
     }
 
-    $results = $query->execute()->fetchAllKeyed();
+    $results = $query->execute()->fetchAll();
 
     drupal_json_output(['items' => $results]);
     drupal_exit();
@@ -106,7 +109,7 @@ function _reglaments_weeds_source()
     $query->condition('n.type', 'weed');
     $query->fields('n', array('nid', 'title'));
     $query->orderBy('n.title', 'ASC');
-    $results = $query->execute()->fetchAllKeyed();
+    $results = $query->execute()->fetchAll();
 
     drupal_json_output(['items' => $results]);
     drupal_exit();
@@ -124,7 +127,8 @@ function _reglaments_pests_source($culture_id = null)
     $query->condition('fc.bundle', 'pest');
     $query->condition('fc.field_hobject_cultures_target_id', $culture_id);
     $query->fields('n', array('nid', 'title'));
-    $results = $query->execute()->fetchAllKeyed();
+    $query->orderBy('n.title', 'ASC');
+    $results = $query->execute()->fetchAll();
 
     drupal_json_output(['items' => $results]);
     drupal_exit();
@@ -142,7 +146,8 @@ function _reglaments_diseases_source($culture_id = null)
     $query->condition('fc.bundle', 'disease');
     $query->condition('fc.field_hobject_cultures_target_id', $culture_id);
     $query->fields('n', array('nid', 'title'));
-    $results = $query->execute()->fetchAllKeyed();
+    $query->orderBy('n.title', 'ASC');
+    $results = $query->execute()->fetchAll();
 
     drupal_json_output(['items' => $results]);
     drupal_exit();
