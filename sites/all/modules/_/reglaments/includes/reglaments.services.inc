@@ -124,6 +124,7 @@ function _reglaments_get_protection_system2($parameters)
             AGRO_CATEGORY_HERBICIDES_TID => [],
             AGRO_CATEGORY_INSECTICIDES_TID => [],
             AGRO_CATEGORY_FUNGICIDES_TID => [],
+            AGRO_CATEGORY_DISINFECTANTS_TID => [],
         ];
         if ($parameters['weeds_arr']) {
             $query = db_select('node', 'n');
@@ -160,7 +161,7 @@ function _reglaments_get_protection_system2($parameters)
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['diseases_arr'], 'IN');
             $query->fields('n', array('nid', 'title'));
-            $hobjects_all[AGRO_CATEGORY_FUNGICIDES_TID] = $query->execute()->fetchAllKeyed();
+            $hobjects_all[AGRO_CATEGORY_FUNGICIDES_TID] = $hobjects_all[AGRO_CATEGORY_DISINFECTANTS_TID] = $query->execute()->fetchAllKeyed();
 
             $fung_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_FUNGICIDES_TID);
             $result['categories'][$fung_term->weight->value()] = array(
@@ -227,31 +228,40 @@ function _reglaments_get_protection_system2($parameters)
                         case AGRO_CATEGORY_HERBICIDES_TID:
                             if (!$show_reglament || !$show_full_program && empty($parameters['weeds_arr'])) $show_category = false;
                             $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['weeds_arr'], AGRO_CATEGORY_HERBICIDES_TID);
-                            $hobjects_missing[AGRO_CATEGORY_HERBICIDES_TID] = array_diff($hobjects_missing[AGRO_CATEGORY_HERBICIDES_TID], $hobjects);
                             if (!$show_full_program && !$hobjects) $show_reglament = false;
+                            if ($show_reglament) foreach($hobjects as $hoid) unset($hobjects_missing[AGRO_CATEGORY_HERBICIDES_TID][$hoid]);
+
                             break;
                         case AGRO_CATEGORY_INSECTICIDES_TID:
                             if (!$show_reglament || !$show_full_program && empty($parameters['pests_arr'])) $show_category = false;
                             $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['pests_arr'], AGRO_CATEGORY_INSECTICIDES_TID);
-                            $hobjects_missing[AGRO_CATEGORY_INSECTICIDES_TID] = array_diff($hobjects_missing[AGRO_CATEGORY_INSECTICIDES_TID], $hobjects);
                             if (!$show_full_program && !$hobjects) $show_reglament = false;
+                            if ($show_reglament) foreach($hobjects as $hoid) unset($hobjects_missing[AGRO_CATEGORY_INSECTICIDES_TID][$hoid]);
+
                             break;
                         case AGRO_CATEGORY_FUNGICIDES_TID:
                         case AGRO_CATEGORY_DISINFECTANTS_TID:
                             if (!$show_reglament || !$show_full_program && empty($parameters['diseases_arr'])) $show_category = false;
                             $hobjects = _check_reglament_fits_hobjects($reglament_id, $parameters['diseases_arr'], AGRO_CATEGORY_FUNGICIDES_TID);
-                            $hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID] = array_diff($hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID], $hobjects);
                             if (!$show_full_program && !$hobjects) $show_reglament = false;
+                            if ($show_reglament) foreach($hobjects as $hoid) unset($hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID][$hoid]);
+
                             break;
                         case AGRO_CATEGORY_DESICCANTS_TID:
                             // не выводить только если явно отключен
                             // если параметр отсутствует - это системы защиты - выводить
-                            if (isset($parameters['desiccants']) && !$parameters['desiccants']) $show_category = $show_reglament = false;
+                            if (isset($parameters['desiccants']) && !$parameters['desiccants']) $show_reglament = false;
+                            // $show_reglament мог быть задан ранее
+                            $show_category = $show_reglament;
+
                             break;
                         case AGRO_CATEGORY_FERT_TID:
                             // не выводить только если явно отключен
                             // если параметр отсутствует - это системы защиты - выводить
-                            if (isset($parameters['fertilizers']) && !$parameters['fertilizers']) $show_category = $show_reglament = false;
+                            if (isset($parameters['fertilizers']) && !$parameters['fertilizers']) $show_reglament = false;
+                            // $show_reglament мог быть задан ранее
+                            $show_category = $show_reglament;
+
                             break;
                     }
 
@@ -346,11 +356,13 @@ function _reglaments_get_protection_system2($parameters)
     }
 
     if (!empty($result['categories'])) {
+
+        // записать в результаты неизлечимые ВО
         foreach ($result['categories'] as $weight => $value) {
             if ($value['tid'] == AGRO_CATEGORY_HERBICIDES_TID && !empty($hobjects_missing[AGRO_CATEGORY_HERBICIDES_TID]))       $result['categories'][$weight]['hobjects'] = implode(', ', $hobjects_missing[AGRO_CATEGORY_HERBICIDES_TID]);
             if ($value['tid'] == AGRO_CATEGORY_INSECTICIDES_TID && !empty($hobjects_missing[AGRO_CATEGORY_INSECTICIDES_TID]))   $result['categories'][$weight]['hobjects'] = implode(', ', $hobjects_missing[AGRO_CATEGORY_INSECTICIDES_TID]);
             if ($value['tid'] == AGRO_CATEGORY_FUNGICIDES_TID && !empty($hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID]))       $result['categories'][$weight]['hobjects'] = implode(', ', $hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID]);
-            if ($value['tid'] == AGRO_CATEGORY_DISINFECTANTS_TID && !empty($hobjects_missing[AGRO_CATEGORY_DISINFECTANTS_TID])) $result['categories'][$weight]['hobjects'] = implode(', ', $hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID]);
+            if ($value['tid'] == AGRO_CATEGORY_DISINFECTANTS_TID && !empty($hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID]))    $result['categories'][$weight]['hobjects'] = implode(', ', $hobjects_missing[AGRO_CATEGORY_FUNGICIDES_TID]);
 
             // todo о наличии hobjects_missing нужно рапортовать по email
         }
@@ -376,6 +388,7 @@ function _reglaments_get_protection_system2($parameters)
                 if ($result['categories'][$weight]['stages']) ksort($result['categories'][$weight]['stages']);
             }
         }
+
     }
     $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
@@ -395,19 +408,29 @@ function _check_reglament_fits_hobjects($reglament_id, $hobject_ids, $type)
         case AGRO_CATEGORY_HERBICIDES_TID:
             // получить список родительских категорий регламента
             $weeds_reglament_groups_arr = [];
-            foreach($reglament_wr->field_pd_a_weeds_groups as $weeds_group_wr) {
+            foreach($reglament_wr->field_pd_a_weeds_groups as $key_g => $weeds_group_wr) {
                 foreach($weeds_group_wr->field_pd_a_wg_class as $weeds_class_wr) {
-                    $weeds_reglament_groups_arr[] = $weeds_class_wr->tid->value();
+                    $weeds_reglament_groups_arr[$key_g]['tree'][] = $weeds_class_wr->tid->value();
+                }
+                foreach($weeds_group_wr->field_pd_a_wg_life_time as $weeds_life_time_wr) {
+                    $weeds_reglament_groups_arr[$key_g]['time'][] = $weeds_life_time_wr->tid->value();
                 }
             }
-            // проверка категорий
+            // проверка объекта на вхождение в полученный массив
             foreach($hobject_ids as $hobject_id) {
                 $weed_wr = entity_metadata_wrapper('node', $hobject_id);
-                $weed_parent_groups = taxonomy_get_parents_all($weed_wr->field_weed_kind->tid->value());
-                foreach($weed_parent_groups as $weed_parent_group) {
-                    if (in_array($weed_parent_group->tid, $weeds_reglament_groups_arr)) $hobjects[] = $hobject_id;
+                foreach($weeds_reglament_groups_arr as $weeds_reglament_group) {
+                    // проверить лайфтайм
+                    if (isset($weeds_reglament_group['time']) && in_array($weed_wr->field_weed_life_time->tid->value(), $weeds_reglament_group['time']) || !isset($weeds_reglament_group['time'])) {
+                        $weed_parent_groups = taxonomy_get_parents_all($weed_wr->field_weed_kind->tid->value());
+                        // проверить иерархию
+                        foreach ($weed_parent_groups as $weed_parent_group) {
+                            if (in_array($weed_parent_group->tid, $weeds_reglament_group['tree'])) $hobjects[] = $hobject_id;
+                        }
+                    }
                 }
             }
+
             break;
 
             case AGRO_CATEGORY_INSECTICIDES_TID:
