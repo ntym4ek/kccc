@@ -580,12 +580,13 @@
     .location, .viewed, .comments { color: $text-muted; }
   }
   .node-body {
+      font-size: 17px;
     .field {
       margin-bottom: 15px;
         overflow: hidden;
         span { display: inline-block; }
     }
-      p { text-align: justify; }
+      p { margin: 0 0 $grid-gutter-width; }
     &.node-body-bordered .field-name-body {
       border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
       padding: 15px 0;
@@ -728,7 +729,10 @@
           @include rotate(-180deg);
         }
       }
-      p { text-align: justify; }
+      p, ul {
+          font-size: 17px;
+          margin: 0 0 $grid-gutter-width;
+      }
 
       /* ----------------------------------------------- Микроэлементы (Microelements) - */
       .fc-micronutrients { margin-bottom: 20px; }
@@ -884,7 +888,7 @@
     .group-tab-certificate {
       .field-name-field-pd-certificate {
         .field-items { display: flex; }
-        .field-item { flex: 1 0 500px; }
+        .field-item { flex: 1 1 350px; }
       }
     }
   }

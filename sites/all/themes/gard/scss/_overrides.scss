@@ -190,7 +190,7 @@ a, a:hover, a:focus {
   }
 
   @media #{$normal} {
-    .social h4 { font-size: 19px; padding-left: 10px; }
+    .social h4 { font-size: 19px; }
     .social-links {
       a {
         @include square(40px);
@@ -328,7 +328,7 @@ a, a:hover, a:focus {
 
 // Paragraphs.
 p:last-child {
-  margin-bottom: 0;
+  //margin-bottom: 0;
 }
 
 // Help region.

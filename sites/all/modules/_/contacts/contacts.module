@@ -86,6 +86,13 @@ function contacts_get_contacts_list() {
                     'title' => t('Sales department'),
                     'contacts' => array(
                         array(
+                            'office' => t('Head of sales department'),
+                            'surname' => 'Рудяк', 'name' => 'Дмитрий', 'name2' => 'Вячеславович',
+                            'phones' => array('+7 (912) 726-36-23', '+7 (83361) 9-28-73'),
+                            'emails' => array('td.sale5@kccc.ru'),
+                            'photo' => '/' . $module_path . '/images/photo/rudyak.png',
+                        ),
+                        array(
                             'office' => t('Regional development senior manager'),
                             'surname' => 'Князев',
                             'name' => 'Алексей',
@@ -167,7 +174,7 @@ function contacts_get_contacts_list() {
                             'surname' => 'Якимов',
                             'name' => 'Евгений',
                             'name2' => 'Леонидович',
-                            'phones' => array('8 (83361) 9-28-70', '+7 922 925-88-84'),
+                            'phones' => array('+7 (83361) 9-28-70', '+7 922 925-88-84'),
                             'emails' => array('td.sale11@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photo/yakimov.png',
                             'regions' => array(
@@ -192,6 +199,15 @@ function contacts_get_contacts_list() {
                                 71673 => "Хабаровский край",
                                 71728 => "Чукотский АО",
                             ),
+                        ),
+                        array(
+                            'office' => t('AgroMineral sales manager'),
+                            'surname' => 'Мельникова',
+                            'name' => 'Виктория',
+                            'name2' => 'Леонидовна',
+                            'phones' => array('+7 (83361) 9-28-73', '+7 922 905-11-41'),
+                            'emails' => array('td.sale10@kccc.ru'),
+                            'photo' => '/' . $module_path . '/images/photo/melnikova.jpg',
                         ),
                     )
                 ),
@@ -218,12 +234,12 @@ function contacts_get_contacts_list() {
                         ),
                         array(
                             'office' => t('Manager'),
-                            'surname' => 'Перетягина',
-                            'name' => 'Ирина',
+                            'surname' => 'Логунова',
+                            'name' => 'Анастасия',
                             'name2' => 'Владимировна',
                             'phones' => array('+7 922 941-17-00'),
                             'emails' => array('td.sale9@kccc.ru'),
-                            'photo' => '/' . $module_path . '/images/photo/peretyagina.png',
+                            'photo' => '/' . $module_path . '/images/photo/logunova.jpg',
                         ),
                     ),
                 ),
@@ -338,27 +354,27 @@ function contacts_get_contacts_list() {
                 ),
             ),
         ),
-//        'finfire' => array(
-//            'title' => t('Firefight'),
-//            'logo_on' => '/' . $module_path . '/images/logo/finfire_on.png',
-//            'logo_off' => '/' . $module_path . '/images/logo/finfire_off.png',
-//            'departments' => array(
-//                'sales' => array(
-//                    'title' => t('Sales department'),
-//                    'contacts' => array(
-//                        array(
-//                            'office' => t('Head of department'),
-//                            'surname' => 'Стародумов',
-//                            'name' => 'Антон',
-//                            'name2' => 'Геннадьевич',
-//                            'phones' => array('+7 982 389-33-02'),
-//                            'emails' => array('anton.starodumov@kccc.ru'),
-//                            'photo' => '/' . $module_path . '/images/photo/starodumov.png',
-//                        ),
-//                    ),
-//                ),
-//            ),
-//        ),
+        'finfire' => array(
+            'title' => t('Firefight'),
+            'logo_on' => '/' . $module_path . '/images/logo/finfire_on.png',
+            'logo_off' => '/' . $module_path . '/images/logo/finfire_off.png',
+            'departments' => array(
+                'sales' => array(
+                    'title' => t('Sales department'),
+                    'contacts' => array(
+                        array(
+                            'office' => t('Sales manager'),
+                            'surname' => 'Унжакова',
+                            'name' => 'Анна',
+                            'name2' => 'Алексеевна',
+                            'phones' => array('+7 922 924-35-82'),
+                            'emails' => array('finfire@kccc.ru'),
+                            'photo' => '',
+                        ),
+                    ),
+                ),
+            ),
+        ),
     );
 }
 

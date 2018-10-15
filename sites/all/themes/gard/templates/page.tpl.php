@@ -279,27 +279,28 @@
 
 
         <footer class="footer hidden-print">
-                <div class="hidden-xs col-sm-4 col-lg-4 social">
+                <div class="hidden-xs col-sm-5 col-md-4 social">
                     <h4><?php print t('Follow us');?></h4>
                     <div class="social-links">
                         <a class="vk" href="http://vk.com/public147827276" target="_blank" title="вконтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
+                        <a class="ok" href="https://ok.ru/group/54447113371728" target="_blank" title="вконтакте"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
                         <a class="fb" href="http://www.facebook.com/kccc.ru" target="_blank" title="facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
                         <a class="tw" href="https://twitter.com/kccc_ru" target="_blank" title="twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
                         <a class="in" href="https://instagram.com/cg.kccc" target="_blank" title="instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
                         <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" target="_blank" title="youtube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
                     </div>
                 </div>
-                <div class="col-sm-8 col-lg-8">
+                <div class="col-sm-7 col-md-8">
                     <div class="row">
                         <div class="col-xs-12"><?php print render($footer_nav); ?></div>
                         <div class="col-xs-12">
                             <div class="row">
-                                <div class="col-xs-12 col-md-6 col-md-offset-1 col-lg-5 col-lg-offset-3">
+                                <div class="col-xs-12 col-md-5 col-md-offset-1">
                                     <?php if (!empty($site_slogan)): ?>
                                         <h5><?php print $site_slogan; ?></h5>
                                     <?php endif; ?>
                                 </div>
-                                <div class="col-xs-12 hidden-sm col-md-4 col-lg-4">
+                                <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
                                         <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
                                     </a>
