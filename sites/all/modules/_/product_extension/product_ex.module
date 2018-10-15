@@ -534,7 +534,7 @@ function get_product_info($node)
             // 71552 ВДГ, 71590 СП, 71555 ВР
             if (in_array($wrapper->field_pd_formulation->tid->value(), ["71552", "71590", "71555"]))
                 array_push($preparations, array(
-                        'order' => $key,
+                        'order' => $key,            // порядок следования в бд
                         'item' => $wrapper,
                     )
                 );

@@ -59,6 +59,7 @@ function _reglaments_cultures_source()
 {
     $query = db_select('node', 'n');
     $query->condition('n.type', 'main_cultures');
+    $query->condition('n.status', 1);
     $query->distinct();
     $query->innerJoin('field_data_field_pp_cultures', 'fc', 'fc.field_pp_cultures_target_id = n.nid');
     $query->condition('fc.bundle', 'protection_program');
@@ -107,6 +108,7 @@ function _reglaments_weeds_source()
 {
     $query = db_select('node', 'n');
     $query->condition('n.type', 'weed');
+    $query->condition('n.status', 1);
     $query->fields('n', array('nid', 'title'));
     $query->orderBy('n.title', 'ASC');
     $results = $query->execute()->fetchAll();
@@ -122,6 +124,7 @@ function _reglaments_weeds_source()
 function _reglaments_pests_source($culture_id = null)
 {
     $query = db_select('node', 'n');
+    $query->condition('n.status', 1);
     $query->distinct();
     $query->innerJoin('field_data_field_hobject_cultures', 'fc', 'fc.entity_id = n.nid');
     $query->condition('fc.bundle', 'pest');
@@ -141,6 +144,7 @@ function _reglaments_pests_source($culture_id = null)
 function _reglaments_diseases_source($culture_id = null)
 {
     $query = db_select('node', 'n');
+    $query->condition('n.status', 1);
     $query->distinct();
     $query->innerJoin('field_data_field_hobject_cultures', 'fc', 'fc.entity_id = n.nid');
     $query->condition('fc.bundle', 'disease');

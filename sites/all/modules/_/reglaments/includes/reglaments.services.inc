@@ -113,6 +113,7 @@ function _reglaments_get_protection_system2($parameters)
             'description' => empty($parameters['program_id']) ? 'Комплексная программа защиты и увеличения урожайности культуры' : trim(strip_tags($program_wr->body->value->value())),
             'phase' => $phase_name,
             'pdf' => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+            'area' => empty($parameters['area']) ? '' : $parameters['area'],
         );
 
         // массив этапов роста
@@ -126,7 +127,7 @@ function _reglaments_get_protection_system2($parameters)
             AGRO_CATEGORY_FUNGICIDES_TID => [],
             AGRO_CATEGORY_DISINFECTANTS_TID => [],
         ];
-        if ($parameters['weeds_arr']) {
+        if (!empty($parameters['weeds_arr'])) {
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['weeds_arr'], 'IN');
             $query->fields('n', array('nid', 'title'));
@@ -141,7 +142,7 @@ function _reglaments_get_protection_system2($parameters)
                 'icon' => $herb_term->field_icon->file->url->value(),
             );
         }
-        if ($parameters['pests_arr']) {
+        if (!empty($parameters['pests_arr'])) {
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['pests_arr'], 'IN');
             $query->fields('n', array('nid', 'title'));
@@ -157,7 +158,7 @@ function _reglaments_get_protection_system2($parameters)
             );
 
         }
-        if ($parameters['diseases_arr']) {
+        if (!empty($parameters['diseases_arr'])) {
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['diseases_arr'], 'IN');
             $query->fields('n', array('nid', 'title'));
@@ -282,13 +283,29 @@ function _reglaments_get_protection_system2($parameters)
 
                     // заполняем запись нового регламента
                     // инфо о препарате/смеси
-                    $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = [];
+                    $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = $preparations = [];
+                    $index = 0;
                     foreach($prep_info['items'] as $prep_item) {
                         $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
                         $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
                         $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
                         $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_url']);
+
+                        $preparations['items'][$index . '-' . $prep_item['id']] = array(
+                            'id' => $prep_item['id'],
+                            'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
+                            'photo' => image_style_url('thumbnail', $prep_item['photo_url']),
+                            'units' => $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid],
+                            'price' => $prep_item['price'],
+                            'order' => $prep_item['order'],
+                        );
+                        $index++;
                     }
+                    $preparations['id'] = $preparation_id;
+                    $preparations['title'] = implode(' + ', $title_arr);
+                    $preparations['type']  = $prep_info['type'];
+                    $preparations['icon'] = $prep_info['icon'];
+                    $preparations['ingredients'] = implode(' + ', $ingredients_arr);
 
                     $regl_new = array(
                         'period' => array(
@@ -309,6 +326,7 @@ function _reglaments_get_protection_system2($parameters)
                             'photo' => $photo_arr,
                             'icon' => $prep_info['icon'],
                         ),
+                        'preparations' => $preparations,
                         'hobjects' => $hobjects,
 //                        'description' => $reglament_wr->field_pd_r_processing->value(),
                     );
@@ -317,16 +335,16 @@ function _reglaments_get_protection_system2($parameters)
                     // а get_product_info возвращает БС в определенном порядке (не по порядковому номеру)
                     // связать нормы с препаратом по полю order
                     foreach($reglament_wr->field_pd_r_prep_rate as $key_r => $rate_wr) {
-                        $key = 0;
+                        $index = 0;
                         foreach($prep_info['items'] as $prep_item) {
                             if ($prep_item['order'] == $key_r) {
-                                $regl_new['preparation']['rates'][$key] = array(
+                                $regl_new['preparations']['items'][$index . '-' . $prep_item['id']]['rate'] = array(
                                     'from'  => (float)$rate_wr->from->value(),
                                     'to'    => (float)$rate_wr->to->value(),
-                                    'unit'  => $units_arr[$key_r],
+                                    'unit'  => $units_arr[$index],
                                 );
                             }
-                            $key++;
+                            $index++;
                         }
                     }
 
