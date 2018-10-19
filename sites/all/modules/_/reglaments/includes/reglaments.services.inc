@@ -53,12 +53,86 @@ function reglaments_services_resources()
                     'access arguments' => array('access content'),
                     'access arguments append' => TRUE,
                 ),
+                'send_request' => array(
+                    'help' => 'Send a calculated request to manager',
+                    'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'reglaments.services.inc'),
+                    'callback' => '_reglaments_send_request',
+                    'args' => array(
+                        array(
+                            'name' => 'parameters',
+                            'optional' => FALSE,
+                            'source' => array('data' => 'program'),
+                            'type' => 'array',
+                            'description' => 'Расчитанная программа',
+                        ),
+                    ),
+                    'access callback' => '_drupalgap_resource_access',
+                    'access callback file' => array(
+                        'type' => 'inc',
+                        'module' => 'drupalgap',
+                        'name' => 'drupalgap.resource',
+                    ),
+                    'access arguments' => array('access content'),
+                    'access arguments append' => TRUE,
+                ),
             ),
         ),
     );
 
     return $resources;
 }
+
+function _reglaments_send_request($program)
+{
+    // отправка письма менеджеру и представителю
+    $message = 'Добрый день!<br /><br />';
+    $message .= 'В мобильном приложении в разделе Калькулятор сделан новый запрос.<br />';
+    $message .= '<br />';
+    $message .= '<b>Данные пользователя</b><br />';
+    $message .= empty($program['name'])     ? '' : 'Имя: ' . $program['name'] . '<br />';
+    $message .= empty($program['phone'])    ? '' : 'Телефон: ' . $program['phone'] . '<br />';
+    $message .= empty($program['region'])   ? '' : 'Регион: ' . $program['region'] . '<br />';
+    $message .= '<br />';
+
+    $message .= '<b>Поле</b><br />';
+    $message .= 'Культура: ' . $program['culture'] . '<br />';
+    $message .= 'Фаза: ' . (empty($program['phase'])  ? 'не указана' : $program['phase'] . '<br />');
+    $message .= empty($program['area'])     ? '' : 'Площадь посева: ' . $program['area'] . ' га' . '<br />';
+    $message .= empty($program['seeding'])     ? '' : 'Норма высева: ' . $program['seeding'] . ' кг/га' . '<br />';
+    $message .= '<br />';
+
+    $message .= '<b>Препараты</b><br />';
+    foreach($program['preparations'] as $nid => $preparation) {
+        if ($preparation['status'] == 'on') {
+            $mix = count($preparation['items']) > 1;
+            if ($mix) $message .= '<i>Баковая смесь</i><br />';
+            foreach ($preparation['items'] as $pid => $item) {
+                $message .= $item['title'] . '<br />';
+                $message .= '<span style="color: #999;">' . $item['rate'] . ' ' . $item['units'] . ', ' . $item['rate'] * $program['area'] . ' ' . $item['unit'] . ' на сумму ' . number_format($item['amount'] * $program['area'], 0, ',', ' ') . ' руб.</span><br />';
+            }
+            if (!empty($preparation['hobjects'])) $message .= '<span style="color: #999;">Вредные объекты: ' . $preparation['hobjects'] . '</span><br />';
+            $message .= '<br />';
+        }
+    }
+    $message .= '<br />';
+    $message .= 'Итого: ' . number_format($program['total'] * $program['area'], 0, ',', ' ') . ' руб.<br /><br />';
+
+    if ($program['hobjects']) {
+        $message .= 'Для следующих вредных объектов решения не подобраны:<br />';
+        foreach($program['hobjects'] as $hobjects) {
+            $message .= '&nbsp;&nbsp;- ' . $hobjects . ';<br />';
+        }
+    }
+
+    $email = 'marina.shirokova@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
+    drupal_mail('system', 'mail', $email, language_default(), array(
+        'context' => array(
+            'subject' => 'Новый запрос в мобильном приложении',
+            'message' => $message,
+        ),
+    ));
+}
+
 
 /**
  * составляем программу защиты для заданной культуры или списка культур
@@ -71,7 +145,6 @@ function reglaments_services_resources()
  *
  * @return array
  *
- * // todo осталось прикрутить фильтр по фазе роста
  */
 function _reglaments_get_protection_system2($parameters)
 {
@@ -109,11 +182,12 @@ function _reglaments_get_protection_system2($parameters)
 
         // описание программы и ссылка на pdf
         $result['header'] = array(
-            'title' => empty($parameters['program_id']) ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
+            'title'     => empty($parameters['program_id']) ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
             'description' => empty($parameters['program_id']) ? 'Комплексная программа защиты и увеличения урожайности культуры' : trim(strip_tags($program_wr->body->value->value())),
-            'phase' => $phase_name,
-            'pdf' => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
-            'area' => empty($parameters['area']) ? '' : $parameters['area'],
+            'phase'     => $phase_name,
+            'pdf'       => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+            'area'      => empty($parameters['area']) ? '' : $parameters['area'],
+            'seeding'   => empty($parameters['seeding']) ? '' : $parameters['seeding'],
         );
 
         // массив этапов роста
@@ -141,7 +215,7 @@ function _reglaments_get_protection_system2($parameters)
                 'bkg' => $herb_term->field_image_mobile->file->url->value(),
                 'icon' => $herb_term->field_icon->file->url->value(),
             );
-        }
+        } else $parameters['weeds_arr'] = [];
         if (!empty($parameters['pests_arr'])) {
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['pests_arr'], 'IN');
@@ -157,7 +231,7 @@ function _reglaments_get_protection_system2($parameters)
                 'icon' => $insect_term->field_icon->file->url->value(),
             );
 
-        }
+        } else $parameters['pests_arr'] = [];
         if (!empty($parameters['diseases_arr'])) {
             $query = db_select('node', 'n');
             $query->condition('n.nid', $parameters['diseases_arr'], 'IN');
@@ -172,7 +246,7 @@ function _reglaments_get_protection_system2($parameters)
                 'bkg' => $fung_term->field_image_mobile->file->url->value(),
                 'icon' => $fung_term->field_icon->file->url->value(),
             );
-        }
+        } else $parameters['diseases_arr'] = [];
 
         // массив из которого будем вычёркивать ВО для которых есть решения
         $hobjects_missing = $hobjects_all;
@@ -191,7 +265,7 @@ function _reglaments_get_protection_system2($parameters)
             }
         }
 
-        $time[] = microtime(true);
+//        $time[] = microtime(true);
         if ($reglaments_ids) {
             foreach($reglaments_ids as $reglament_id => $preparation_id) {
                 $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
@@ -296,6 +370,8 @@ function _reglaments_get_protection_system2($parameters)
                             'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
                             'photo' => image_style_url('thumbnail', $prep_item['photo_url']),
                             'units' => $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid],
+                            'unit'  => $prep_item['unit_short'],
+                            'unit_field'  => $prep_item['unit_field'],
                             'price' => $prep_item['price'],
                             'order' => $prep_item['order'],
                         );
@@ -354,7 +430,7 @@ function _reglaments_get_protection_system2($parameters)
                     // проверить все регламенты на этапе, в теории возможно неоднократное склеивание
                     if (!empty($reglaments[$tid]['stages'][$stage_key])) {
                         foreach ($reglaments[$tid]['stages'][$stage_key] as $key => $regl_old) {
-                            if (_reglaments_merge_crossing_periods($stages_arr, $regl_new, $regl_old)) {
+                            if (_reglaments_merge_crossing_periods2($stages_arr, $regl_new, $regl_old)) {
                                 unset($reglaments[$tid]['stages'][$stage_key][$key]);
                             }
                         }
@@ -408,7 +484,7 @@ function _reglaments_get_protection_system2($parameters)
         }
 
     }
-    $time[] = (microtime(true) - $time[0]) * 1000;
+//    $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
 }
 
@@ -505,9 +581,9 @@ function _reglaments_merge_crossing_periods2($stages_arr, &$regl1, $regl2)
     if ($r1_end_num + 1 >= $r2_start_num && $r1_start_num - 1 <= $r2_end_num) {
         if ($r2_end_num > $r1_end_num) $regl1['period']['end']['tid'] = $regl2['period']['end']['tid'];
         if ($r2_start_num < $r1_start_num) $regl1['period']['start']['tid'] = $regl2['period']['start']['tid'];
-        foreach($regl1['preparation']['rates'] as $key => $item) {
-            if ($regl2['preparation']['rates'][$key]['from'] < $regl1['preparation']['rates'][$key]['from']) $regl1['preparation']['rates'][$key]['from'] = $regl2['preparation']['rates'][$key]['from'];
-            if ($regl2['preparation']['rates'][$key]['to'] > $regl1['preparation']['rates'][$key]['to']) $regl1['preparation']['rates'][$key]['to'] = $regl2['preparation']['rates'][$key]['to'];
+        foreach ($regl1['preparations']['items'] as $key_prep => $preparation) {
+            if ($regl2['preparations']['items'][$key_prep]['rate']['from'] < $regl1['preparations']['items'][$key_prep]['rate']['from']) $regl1['preparations']['items'][$key_prep]['rate']['from'] = $regl2['preparations']['items'][$key_prep]['rate']['from'];
+            if ($regl2['preparations']['items'][$key_prep]['rate']['to'] > $regl1['preparations']['items'][$key_prep]['rate']['to']) $regl1['preparations']['items'][$key_prep]['rate']['to'] = $regl2['preparations']['items'][$key_prep]['rate']['to'];
         }
 
         $regl1['hobjects'] = array_merge($regl1['hobjects'], $regl2['hobjects']);
@@ -559,7 +635,7 @@ function _reglaments_resource_retrieve($pid)
                 }
             }
 
-            $time[] = microtime(true);
+//            $time[] = microtime(true);
             if ($reglaments_ids) {
                 // массив этапов роста
                 // выстроить по порядку и поменять местами значения с ключами
@@ -682,7 +758,7 @@ function _reglaments_resource_retrieve($pid)
         ksort($result['categories'][$weight]['stages']);
     }
 
-    $time[] = (microtime(true) - $time[0]) * 1000;
+//    $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
 }
 
