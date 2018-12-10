@@ -43,6 +43,7 @@ function gard_menu_link(array $variables) {
         '3819' => '<i class="fas fa-map-marker"></i>',
         '8980' => '<i class="fab fa-pagelines"></i>',
         '893' => '<i class="fas fa-comment-alt"></i>',
+        '9731' => '<i class="fas fa-user-circle"></i>',
     );
     // убрать текст из пунктов меню Пользователя (будут только иконки)
     if (in_array($mlid, array(9722, 14, 15, 3, 9459))) {
