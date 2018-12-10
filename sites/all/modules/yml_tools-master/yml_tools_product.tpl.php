@@ -14,6 +14,7 @@
       <url><?php echo $product->url ?></url>
       <vendor> <? echo $product->vendor; ?></vendor>
       <model><?php echo $product->title ?></model>
+      <picture><?php echo $product->picture ?></picture>
       <price><?php echo $product->price ?></price>
       <currencyId><?php echo $currency; ?></currencyId>
       <categoryId><?php echo $product->category ?></categoryId>
