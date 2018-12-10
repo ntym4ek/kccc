@@ -285,10 +285,10 @@ function representatives_get_representatives_list()
     $representatives['krasnodar'][] = array(
         'role' =>  'rep',
         'office' => 'Представитель',
-        'surname' => 'Гузь', 'name' => 'Дмитрий', 'name2' => 'Николаевич',
+        'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 900-74-41'),
         'emails' => array('krasnodar@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/krasnodar.png',
+        'photo' => '',
         'regions' => array(
             71669 => "Краснодарский край",
         ),
@@ -307,10 +307,10 @@ function representatives_get_representatives_list()
     $representatives['kursk'][] = array(
         'role' =>  'rep',
         'office' => 'Представитель',
-        'surname' => 'Святненко', 'name' => 'Андрей', 'name2' => 'Юрьевич',
-        'phones' => array('+7 (922) 900-74-64'),
+        'surname' => '', 'name' => '', 'name2' => '',
+        'phones' => array(''),
         'emails' => array('kursk@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/svyatnenko.png',
+        'photo' => '',
         'regions' => array(
             71692 => "Курская область",
       ),
@@ -440,10 +440,10 @@ function representatives_get_representatives_list()
     $representatives['rostov'][] = array(
         'role' =>  'rep',
         'office' => 'Представитель',
-        'surname' => 'Евсюкова', 'name' => 'Наталия', 'name2' => 'Валерьевна',
+        'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 966-59-77'),
         'emails' => array('rostov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/rostov.png',
+        'photo' => '',
         'regions' => array(
             71707 => "Ростовская область",
         ),
@@ -451,10 +451,10 @@ function representatives_get_representatives_list()
     $representatives['stavropol'][] = array(
         'role' =>  'rep',
         'office' => 'Представитель',
-        'surname' => 'Мамина', 'name' => 'Наталья', 'name2' => 'Викторовна',
+        'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 966-60-16'),
         'emails' => array('stavropol@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/stavropol.png',
+        'photo' => '',
         'regions' => array(
             71672 => "Ставропольский край",
         ),
