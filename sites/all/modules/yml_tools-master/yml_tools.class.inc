@@ -85,6 +85,7 @@ abstract class YmlStoreType {
   public function getProducts() {
     $term_field = variable_get('yml_tools_term_field', '');
     $descr_field = variable_get('yml_tools_descr_field', '');
+    $image_field = variable_get('yml_tools_image_field', '');
 
     $this->checkSettings();
 
@@ -123,6 +124,9 @@ abstract class YmlStoreType {
         $description = check_plain(strip_tags($description[0]['summary']));
       }
 
+      $node_wr = entity_metadata_wrapper('node', $node);
+      $image = $node_wr->field_product[0]->field_p_images->value() ? file_create_url($node_wr->field_product[0]->field_p_images[0]->value()['uri']) : '';
+
       $title = check_plain($node->title); 
       $url = url('node/' . $node->nid, array('absolute' => TRUE));
       $price = round((float) $this->getProductPrice($node), 2); 
@@ -133,9 +137,10 @@ abstract class YmlStoreType {
         'url' => $url,
         'category' => $term['tid'],
         'price' => $price,
+        'picture' => $image,
         'description' => $description,
         'model' => $node->nid,
-        'vendor' => ($node->type == 'product_strada') ? 'ООО "СТРАДА"' : 'ООО ТД "Кирово-Чепецкая химическая компания"',
+        'vendor' => 'ООО ТД "Кирово-Чепецкая химическая компания"',
       );
     }
     return $products;
