@@ -58,6 +58,21 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
             if (empty($form['body']['ru'][0]['summary']['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['summary'])) {
                 $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
             }
+
+            // отключить возможность ввода цены для варианта товара
+            // цена расчитывается автоматически от цены за шт.
+            foreach($form['field_product']['und']['entities'] as $key_e => $entity) {
+                if (is_numeric($key_e) && !empty($entity['form']['commerce_price'])) {
+                    $form['field_product']['und']['entities'][$key_e]['form']['commerce_price']['#access'] = false;
+                }
+            }
+            if (!empty($form['field_product']['und']['form']['commerce_price'])) {
+                $form['field_product']['und']['form']['commerce_price']['#access'] = false;
+                $form['field_product']['und']['form']['commerce_price']['und'][0]['amount']['#type'] = 'value';
+                $form['field_product']['und']['form']['commerce_price']['und'][0]['amount']['#default_value'] = '0';
+                $form['field_product']['und']['form']['commerce_price']['und'][0]['currency_code']['#type'] = 'value';
+                $form['field_product']['und']['form']['commerce_price']['und'][0]['currency_code']['#default_value'] = 'RUB';
+            }
             // пересчитать цены вариантов товаров в админке при редактировании товара
             $form['#submit'][] = 'forms_ex_product_calc_price';
             break;
@@ -69,6 +84,18 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
             $form['field_vacancy_name_2']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_2']['und']['#title'];
             $form['field_vacancy_location']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_location']['und']['#title'];
             $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
+            break;
+
+        case 'vacancy_node_form':
+            if ($GLOBALS['user']->uid != 1) {
+                $form['field_vacancy_form']['#access'] = false;
+                $lang = isset($form['body']['ru']) ? 'ru' : 'und';
+                if ($form['body'][$lang]) {
+                    $form['body'][$lang][0]['summary']['#title'] = 'Подзаголовок';
+                    $form['body'][$lang][0]['summary']['#description'] = '';
+                    $form['body'][$lang][0]['#title'] = 'Заключение';
+                }
+            }
             break;
     }
 
@@ -166,18 +193,8 @@ function theme_forms_ex_thumb_upload(&$variables) {
  * 
  */
 
-// перенесено в form_alter
-//function forms_ex_form_product_agro_node_form_alter(&$form, &$form_state, $form_id) {
-//    $form['#submit'][] = 'forms_ex_product_calc_price';
-//}
-//function forms_ex_form_product_fert_node_form_alter(&$form, &$form_state, $form_id) {
-//    $form['#submit'][] = 'forms_ex_product_calc_price';
-//}
-//function forms_ex_form_product_chem_node_form_alter(&$form, &$form_state, $form_id) {
-//    $form['#submit'][] = 'forms_ex_product_calc_price';
-//}
 /**
- * пересчитать цены вариантов товаров в админке при редактировании дисплее товара, если цена за единицу изменила
+ * пересчитать цены вариантов товаров в админке при редактировании дисплее товара, если цена за единицу изменилась
  * TODO: цена не пересчитывается при сохранении сразу после изменения поля Количество, только после повторного сохр.
 */
 function forms_ex_product_calc_price($form, &$form_state) {
