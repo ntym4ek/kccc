@@ -93,7 +93,7 @@ function gard_preprocess_node(&$vars) {
     }
 
     /** ------------------------------------ Просмотры - */
-    if (!in_array($vars['type'], array('product_agro', 'product_mix', 'product_fert', 'product_chem'))) {
+    if (!in_array($vars['type'], array('product_agro', 'product_mix', 'product_fert', 'product_chem', 'page'))) {
         $vars['viewed'] = statistics_get($vars['node']->nid)['totalcount'];
     }
 
@@ -131,6 +131,11 @@ function gard_preprocess_node(&$vars) {
         $vars['image'] = '<a href="' . file_create_url($vars['field_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
         $vars['image'] .= '<div class="img-title"><span>' . t('Click on image to zoom') . '</span></div>';
         hide($vars['content']['field_image']);
+
+        if (isset($vars['field_pp_cultures']['und'][0]['target_id'])) {
+            $program = _reglaments_get_protection_system2(['culture_id' => $vars['field_pp_cultures']['und'][0]['target_id']]);
+            $vars['program'] = theme('protection_program', ['program' => $program]);
+        }
     }
 
     /** ------------------------------------ Продукция -------------------------------------------------------------- */
