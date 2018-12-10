@@ -25,145 +25,122 @@
 */
 
 .menu-container {
-  position: fixed; left: 0; right: 0; z-index: 5;
-  width: 0; height: 100%;
-  .navbar { border: none; }
-  .side-menu {
-    text-align: left;
-    overflow-y: auto;
-    position: absolute; left: -300px;
-    padding-top: $header-xs-height; padding-bottom: 52px;
-    width: 300px; height: 100%;
-    border-right: 1px solid #e7e7e7;
-    background-color: #f8f8f8;
-    @include transition(all .3s linear);
-    @media #{$tablet} { padding-top: $header-sm-height; }
-    @media #{$wide} { left: 0; }
-    a { color: $text-color; background-color: #fff; }
-    & > .navbar-nav { width: 100%; }
-
-    &.language-selector {
-      bottom: 0;
-      height: 52px;
-      padding: 0;
-    }
-  }
-  &.slide-in .side-menu { left: 0; }
-  .navbar-nav {
-    margin: 0;
-    li {
-      display: block;
-      width: 100%;
-      border-bottom: 1px solid #e7e7e7;
-      a {
-        padding: 15px;
-        @include transition(all 0.2s ease-in-out);
-        &:hover {
-          color: #fff;
-          background-color: $menu-hover-color;
+    position: fixed; left: 0; right: 0; z-index: 5;
+    width: 0; height: 100%;
+    .side-menu {
+        text-align: left;
+        overflow-y: auto;
+        position: absolute; left: -300px;
+        padding-top: $header-xs-height; padding-bottom: 52px;
+        width: 300px; height: 100%;
+        border-right: 1px solid #e7e7e7;
+        background-color: #f8f8f8;
+        @include transition(left .3s linear);
+        @media #{$tablet} { padding-top: $header-sm-height; }
+        @media #{$wide} { left: 0; }
+        a {
+            color: $text-color;
+            background-color: #fff;
+            padding: 15px;
+            @include transition(all 0.2s ease-in-out);
+            &:focus { background-color: #fff; }
         }
-      }
-      &:hover .dropdown-link { color: #fff; }
-      &.with-icon > a:first-child {
-        padding-left: 40px;
-        i { position:absolute; left: 15px; top: 19px; }
-      }
-    }
-
-    &.foot {
-      position: absolute; bottom: 0;
-      li {
-        border-top: 1px solid #e7e7e7;
-        border-bottom: 0;
-      }
-    }
-    &.secondary {
-      display: flex;
-      li {
-        border-left: 1px solid #e7e7e7;
-        flex: 0 0 33.3%;
-        text-align: center;
-        justify-content: center;
-        &:first-child {
-          border-left: none;
-          flex-grow: 1;
+        .navbar-nav {
+            float: none;
         }
-        i { padding-right: 0; }
-      }
+        &.language-selector {
+            bottom: 0;
+            height: 52px;
+            padding: 0;
+            li {
+                border-top: 1px solid #e7e7e7;
+                border-bottom: 0;
+            }
+        }
     }
-  }
-
-  #dropdown {
-    border: 0;
-    margin-bottom: 0;
-    border-radius: 0;
-    background-color: transparent;
-    box-shadow: none;
-    position: relative;
-    > a {
-      border-bottom: 1px solid #e7e7e7;
-    }
-    .dropdown-link {
-      background: transparent;
-      position: absolute; right: 0; top: 0;
-      height: 52px;
-      .dropdown-caret {
-        padding: 0;
-        @include rotate(0);
-        @include transition(all 0.2s ease-in-out);
-      }
-      &:not(.collapsed) .dropdown-caret { @include rotate(180deg); }
-      &:hover { background-color: $menu-hover-color; }
-    }
-    .panel-body {
-      padding: 0;
-      background-color: $gray-lighter;
-      .navbar-nav {
-        width: 100%;
+    &.slide-in .side-menu { left: 0; }
+    .navbar-nav {
+        margin: 0;
+        display: flex; flex-wrap: wrap;
         li {
-          padding-left: 15px;
-          border-bottom: 1px solid #e7e7e7;
-          &.leaf a {
-            color: #fff;
-            background-color: $menu-level-1-color;
-          }
-          &:last-child { border-bottom: none; }
-          a:hover {
-              background-color: $menu-hover-color;
-          }
+            display: flex; flex-wrap: wrap;
+            flex: auto;
+            width: 100%;
+            border-bottom: 1px solid #e7e7e7;
+            a {
+                flex: 1 1 200px;
+                &:hover {
+                    color: #fff;
+                    background-color: $menu-hover-color;
+                }
+            }
+            &.with-icon > a:first-child {
+                padding-left: 40px;
+                i { position:absolute; left: 15px; top: 19px; }
+            }
         }
-      }
-      .panel > a:first-child {
-        color: #fff;
-        background-color: $menu-level-1-color;
-      }
-      .dropdown-link { color: #fff; }
-      .panel-body {
-        margin-left: -15px;
-        li.leaf {
-          padding-left: 30px;
-          a {
-            color: #fff;
-            background-color: $menu-level-2-color;
-          }
-          &:last-child { border-bottom: 1px solid #e7e7e7; }
+        &.secondary {
+            li {
+                border-left: 1px solid #e7e7e7;
+                flex: 0 0 33.3%;
+                text-align: center;
+                justify-content: center;
+                &:first-child {
+                    border-left: none;
+                    flex-grow: 1;
+                }
+                i { padding-right: 0; }
+            }
         }
-      }
     }
-  }
 
-  // выделить прайсы цветом
-  #dropdown-796-2 ul > li:nth-child(8) a { background-color: rgba(123, 255, 77, 0.15); }
-  #dropdown-797-2 ul > li:nth-child(10) a { background-color: rgba(123, 255, 77, 0.15); }
+    #dropdown {
+        border: 0; border-radius: 0;
+        margin-bottom: 0;
+        box-shadow: none;
+        > a { border-bottom: 1px solid #e7e7e7; }
+        .dropdown-link {
+            flex: 0 0 45px;
+            .dropdown-caret {
+                padding: 0;
+                @include rotate(0);
+                @include transition(transform 0.2s ease-in-out);
+            }
+            &:not(.collapsed) .dropdown-caret { @include rotate(180deg); }
+        }
+        .panel-body {
+            background-color: #eee;
+            padding: 0;
+        }
+
+        .navbar-nav {
+            li {
+                background-color: #fafafa;
+                border-bottom: 1px solid #e7e7e7;
+                margin-left: 15px;
+                a {
+                    background-color: $menu-level-1-color;
+                    &:hover { background-color: $menu-hover-color; }
+                }
+                &:last-child { border-bottom: none; }
+
+            }
+        }
+        .panel-collapse { flex: 0 0 100%; }
+    }
+
+    // выделить прайсы цветом
+    #dropdown-796-2 ul > li:nth-child(8) a { background-color: rgba(123, 255, 77, 0.15); }
+    #dropdown-797-2 ul > li:nth-child(10) a { background-color: rgba(123, 255, 77, 0.15); }
 
 
-  @media #{$wide} { margin: 0 auto; width: $container-lg; z-index: 0; }
+    @media #{$wide} { margin: 0 auto; width: $container-lg; z-index: 0; }
 }
 
 
 /* Dropdown tweek */
 #dropdown .panel-body .navbar-nav {
-  margin: 0;
+  //margin: 0;
 }
 
 /* ------------------------------------------------- Меню на странице ----------------------------------------------- */
@@ -222,14 +199,15 @@
     margin: 0 auto;
   }
   & > .content  {
-    background: url(../images/bkg_px.png);
     background-repeat: repeat-y;
+      background-color: #fff;
     padding-top: $header-xs-height; padding-bottom: 178px;
     position: relative;
     min-height: 100%;
     margin-left: 0;
     @include transition(all .3s linear);
     @media #{$tablet} {
+        background: url(../images/bkg_px.png);
       padding-top: $header-sm-height; padding-bottom: 111px;
     }
     @media print {
@@ -462,7 +440,7 @@
 .category-header {
   background: #0B99E6;
   width: 100%; height: 140px;
-  margin-bottom: $grid-gutter-width/2;
+  margin-bottom: $grid-gutter-width;
   position: relative;
   overflow: hidden;
   .category-title {
@@ -483,7 +461,7 @@
 
 
 .content-body {
-  padding-bottom: 20px;
+  padding-bottom: $grid-gutter-width * 2;
   .wrapper { padding-top: $grid-gutter-width/2; }
 }
 
@@ -544,60 +522,60 @@
 
 /* ------------------------------------------------- Страница ноды (Node page) - */
 .node {
-  .node-image {
-    //margin-bottom: 15px;
-    //img { box-shadow: 1px 1px 20px 4px #ddd; }
-    .img-title {
-      margin: 15px 0;
-      span {
-        border: none;
-        display: block;
-        color: $text-muted; font-size: .8em;
-        padding: 0;
-      }
+    .node-image {
+        //margin-bottom: 15px;
+        //img { box-shadow: 1px 1px 20px 4px #ddd; }
+        .img-title {
+            margin: 15px 0;
+            span {
+                border: none;
+                display: block;
+                color: $text-muted; font-size: .8em;
+                padding: 0;
+            }
+        }
     }
-  }
-  .node-author   {
-    margin-bottom: 30px;
-    img {
-      float: left;
-      margin-right: 30px;
+    .node-author   {
+        margin-bottom: 30px;
+        img {
+            float: left;
+            margin-right: 30px;
+        }
+        .author-body {
+            display: table-cell;
+            .author-title {
+                font-size: 1.2em; font-weight: 500;
+                margin: 5px 0 10px 0;
+            }
+            .author-subtitle { color: $text-muted; font-size: .9em; }
+        }
+        @include clearfix;
     }
-    .author-body {
-      display: table-cell;
-      .author-title {
-        font-size: 1.2em; font-weight: 500;
-        margin: 5px 0 10px 0;
-      }
-      .author-subtitle { color: $text-muted; font-size: .9em; }
+    .node-stuff {
+        color: $text-muted;
+        margin-bottom: $grid-gutter-width;
+        span { margin-right: 15px; }
+        .location, .viewed, .comments { color: $text-muted; }
     }
-    @include clearfix;
-  }
-  .node-stuff {
-    color: $text-muted;
-    margin-bottom: $grid-gutter-width;
-    span { margin-right: 15px; }
-    .location, .viewed, .comments { color: $text-muted; }
-  }
-  .node-body {
-      font-size: 17px;
-    .field {
-      margin-bottom: 15px;
-        overflow: hidden;
-        span { display: inline-block; }
+    .node-body {
+        font-size: 17px;
+        .field {
+            margin-bottom: 15px;
+            overflow: hidden;
+            span { display: inline-block; }
+        }
+        p { margin: 0 0 $grid-gutter-width; }
+        &.node-body-bordered .field-name-body {
+            border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
+            padding: 15px 0;
+        }
     }
-      p { margin: 0 0 $grid-gutter-width; }
-    &.node-body-bordered .field-name-body {
-      border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
-      padding: 15px 0;
+    .node-tags {
+        font-size: .8em;
+        a { color: $text-muted; }
+        margin-bottom: 15px; padding-bottom: 15px;
     }
-  }
-  .node-tags {
-    font-size: .8em;
-    a { color: $text-muted; }
-    margin-bottom: 15px; padding-bottom: 15px;
-  }
-  span i { margin-right: 7px; }
+    span i { margin-right: 7px; }
 }
 
 /* ------------------------------------------------- Страница препарата - */
@@ -962,19 +940,31 @@
 
 /* ------------------------------------------------- Вакансии (Vacancy) - */
 .node-vacancy {
-  .field .field-label { color: $brand-blue; font-size: 1.1em; }
-  .field-name-field-vacancy-surname .control-label,
-  .field-name-field-vacancy-name-1 .control-label,
-  .field-name-field-vacancy-name-2 .control-label,
-  .field-name-field-vacancy-location .control-label,
-  .field-name-field-contact-email .control-label { display: none; }
-  .field-name-field-vacancy-file { margin: 30px 0; }
-  .form-item-fz152-agreement { font-size: .8em; }
+    .field-name-field-vacancy-surname .control-label,
+    .field-name-field-vacancy-name-1 .control-label,
+    .field-name-field-vacancy-name-2 .control-label,
+    .field-name-field-vacancy-location .control-label,
+    .field-name-field-contact-email .control-label { display: none; }
+    .field-name-field-vacancy-file { margin: 30px 0; }
+    .form-item-fz152-agreement { font-size: .8em; }
 
-  .field-name-field-vacancy-employer {
-    border-bottom: 1px solid $brand-blue;
-    padding-bottom: 15px;
-  }
+    .field {
+        margin-bottom: 15px;
+        .field-label { color: $brand-blue; font-size: 17px; font-weight: 700; }
+        .field-item { font-size: 17px; }
+    }
+    .field.field-name-field-vacancy-location,
+    .field.field-name-field-region { margin-bottom: 0; }
+    .field-name-field-vacancy-employer {
+        border-bottom: 1px solid $text-muted;
+        padding-bottom: 15px;
+    }
+
+    .field-name-body { margin-top: 30px; }
+    .contacts {
+        margin-top: 15px; padding-top: 15px;
+        border-top: 1px solid $text-muted;
+    }
 }
 
 /* ------------------------------------------------- Формы ---------------------------------------------------------- */
@@ -1286,11 +1276,12 @@
   }
 
   .view-item {
-    padding-bottom: $grid-gutter-width;
+      padding-bottom: $grid-gutter-width;
       @media #{$phone} {
           padding-bottom: $grid-gutter-width/2;
       }
   }
+
 
     .view-glossary {
         .views-summary {
@@ -1313,6 +1304,16 @@
   &.view-before-after {
     .views-exposed-form.form-group { margin-bottom: 0; }
   }
+}
+
+.views-table {
+    background-color: #fff;
+    font-size: 70%;
+    table-layout: auto;
+    @include make-sm-column-offset(1);
+    @include make-sm-column(10);
+    @include make-md-column-offset(2);
+    @include make-md-column(8);
 }
 
 
@@ -1383,20 +1384,28 @@
   }
   .v-card-image, .v-card-content {
     padding: 15px;
+      position: relative;
+      img:nth-child(2) {
+          position: absolute; right: 15px; bottom: 20px;
+          width: 100px;
+      }
   }
 
   header { border-bottom: 1px solid $views-list-bg; }
   .v-card-content {
     border-top: 1px solid $views-list-bg;
     border-bottom: 1px solid $views-list-bg;
+      //min-height: 110px;
   }
-  .v-card-title { margin-bottom: 3px; }
+  .v-card-title {
+      margin: 0 0 3px 0;
+  }
 
   .v-card-summary {
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 80px;
+    //min-height: 80px;
     margin-bottom: 10px;
   }
   .v-card-subtitle { color: $gray-lighten; margin: 0 0 10px 0; min-height: 17px; }
@@ -1407,7 +1416,10 @@
     .fa { position: absolute; right: 15px; }
   }
   .v-card-btm { font-size: 12px; }
+
+    &.product .v-card-summary { height: 80px; }
 }
+
 
 /* ------------------------------------------------- Карточка пользователя ------------------------------------------ */
 .user-card {
@@ -1710,6 +1722,186 @@
   }
 }
 
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+.agrocalc-form {
+    fieldset .panel-body {
+        @include make-row();
+    }
+    .form-item-culture,
+    .form-item-phase,
+    .form-item-area,
+    .form-item-seed,
+    .form-item-weeds,
+    .form-item-pests,
+    .form-item-fert,
+    .form-item-desic,
+    .form-item-region,
+    .form-item-phone,
+    .form-item-email,
+    .form-item-name,
+    .form-item-diseases {
+        @include make-sm-column(6);
+    }
+    .form-item-desic,
+    .form-item-fert {
+        text-transform: uppercase;
+    }
+    .form-submit-wrapper {
+        text-align: right;
+    }
+    .form-item-fz152-agreement {
+        color: $text-muted; font-size: 12px; text-align: right;
+        margin-top: 10px;
+    }
+}
+
+/* ------------------------------------------------- Программа защиты (Program) ------------------------------------- */
+@mixin pp-custom-color($page, $brand-color) {
+    $brand-hover:    darken($brand-color, 10%);
+    #{$page} {
+        h4 { color: $brand-color; }
+        &:hover h4 { color: $brand-hover; }
+    }
+}
+
+#protection-program .view-content { padding-bottom: $grid-gutter-width; }
+.protection-program {
+    .view-content { padding-bottom: $grid-gutter-width; }
+    > header {
+        .switch-all {
+            display: flex; justify-content: flex-end;
+            padding: 10px 15px;
+            .material-switch-title { flex: 0 0 265px; }
+            .material-switch { flex: 0 0 40px; }
+        }
+    }
+    .header {
+        margin-bottom: $grid-gutter-width/2;
+        cursor: pointer;
+        .box {
+            background: #fff;
+            border-radius: 8px;
+            position: relative;
+            height: 100px;
+        }
+        .bkg {
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; z-index: 1;
+            max-height: 100px;
+            overflow: hidden;
+            transition: all 300ms ease-in-out;
+            img { width: 100%; }
+        }
+        &.is-active .bkg {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            max-height: 34px;
+        }
+        @media print {
+            &:not(.is-active) {
+                display: none;
+            }
+        }
+
+        .amountByCat,
+        .amountByProgram {
+            display: flex;
+            position: absolute; bottom: 0; left: 0; right: 0; z-index: 0;
+            padding: 0 15px;
+            div {
+                flex: 0 0 150px;
+                padding: 5px;
+                @media #{$phone} {
+                    &:first-child { flex: 0 0 120px; }
+                }
+            }
+            h5 {
+                font-size: 1.2em;
+                margin-bottom: 5px;
+            }
+            p { margin: 5px 0; }
+            @media #{$tablet} {
+                justify-content: center;
+            }
+        }
+        .icon {
+            position: absolute; right: 20px; bottom: -25px; z-index: 1;
+            width: 50px;
+            transition: all 300ms ease-in-out;
+            @media #{$tablet} {
+                width: 60px;
+                right: 45px; bottom: -30px;
+            }
+        }
+        &.collapsed .icon {@include rotate(-360deg); }
+
+        h4 { margin-top: 5px; }
+        &.category-15 .clr-category { color: $brand-herbicides; }
+        &.category-16 .clr-category { color: $brand-fungicides; }
+        &.category-17 .clr-category { color: $brand-insecticides; }
+        &.category-71534 .clr-category { color: $brand-desiccants; }
+        &.category-71533 .clr-category { color: $brand-disinfectants; }
+        &.category-93 .clr-category { color: $brand-fertilizers; }
+    }
+    .calculation-total {
+        .box {
+            .bkg {
+                background-color: $brand-insecticides;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                height: 34px;
+            }
+        }
+        p { margin: 15px 0; }
+    }
+
+    .collapse {
+        page-break-before: auto;
+    }
+    .v-card {
+        transition: all 500ms ease-in-out;
+        filter: grayscale(100%); -webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: gray; /* IE 6-9 */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            .material-switch-title { flex: auto; }
+            .material-switch { flex: 0 0 40px; }
+        }
+        &.reglament .v-card-summary,
+        &.reglament .v-card-subtitle { margin: 0; }
+
+        footer {
+            color: inherit;
+            padding: 10px 15px;
+            div {
+                margin-bottom: 10px;
+                > span {
+                    color: #aaa; font-weight: 100;
+                    display: block;
+                    margin-bottom: 4px;
+                }
+            }
+        }
+        &.is-active {
+            filter: none; -webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none;
+
+        }
+    }
+    .view-item.reglament-print {
+        display: none;
+        @media print {
+            display: block;
+            &.hidden-print { diaplay: none; }
+        }
+    }
+
+}
+
 /* ------------------------------------------------- Страница для печати (Print) ------------------------------------ */
 @media print {
   .do-not-print { display: none; }
@@ -1849,3 +2041,49 @@
   animation-iteration-count: infinite;
 }
 
+/* ------------------------------------------------- Bootstrap Switch ----------------------------------------------- */
+// https://bootsnipp.com/snippets/featured/material-design-switch
+.material-switch > input[type="checkbox"] {
+    display: none;
+}
+
+.material-switch > label {
+    cursor: pointer;
+    height: 0px;
+    position: relative;
+    width: 40px;
+}
+
+.material-switch > label::before {
+    background: rgb(0, 0, 0);
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    content: '';
+    height: 16px;
+    margin-top: -8px;
+    position:absolute;
+    opacity: 0.3;
+    transition: all 0.4s ease-in-out;
+    width: 40px;
+}
+.material-switch > label::after {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    content: '';
+    height: 24px;
+    left: -4px;
+    margin-top: -8px;
+    position: absolute;
+    top: -4px;
+    transition: all 0.3s ease-in-out;
+    width: 24px;
+}
+.material-switch > input[type="checkbox"]:checked + label::before {
+    background: inherit;
+    opacity: 0.5;
+}
+.material-switch > input[type="checkbox"]:checked + label::after {
+    background: inherit;
+    left: 20px;
+}

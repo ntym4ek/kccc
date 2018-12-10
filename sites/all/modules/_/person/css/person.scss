@@ -330,17 +330,17 @@
 
 
 
-.profile-menu .bubble-wrap {
+.subheader-menu .bubble-wrap {
     position: absolute; top: 6px; right: 6px; z-index: 3;
 }
-.profile-menu .bubble {
+.subheader-menu .bubble {
     color: #fff; font-size: 8px; line-height: 14px; text-align: center;
     width: 12px; height: 12px;
     border-radius: 6px;
 }
-.profile-menu .bubble.bubble-green { background-color: #40ae1a; }
-.profile-menu .bubble.bubble-yellow { background-color: #f2a500; }
-.profile-menu .bubble.bubble-red { background-color: #de242a; }
+.subheader-menu .bubble.bubble-green { background-color: #40ae1a; }
+.subheader-menu .bubble.bubble-yellow { background-color: #f2a500; }
+.subheader-menu .bubble.bubble-red { background-color: #de242a; }
 
 /* До и После */
 .profile-content.before-after { padding:0; }

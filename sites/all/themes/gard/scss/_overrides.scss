@@ -201,6 +201,12 @@ a, a:hover, a:focus {
 
 }
 
+
+.btn.btn-wide {
+    padding-left: $grid-gutter-width *2;
+    padding-right: $grid-gutter-width *2;
+}
+
 // Element invisible fix
 .element-invisible {
   margin: 0;
@@ -374,7 +380,7 @@ fieldset.panel {
     background: 0; border-bottom: 1px solid $text-muted;
     float: left;
     line-height: 1em;
-    margin: 0; padding: 2px 0;
+    margin: 0; padding: 8px 0;
     span.panel-title {
       font-size: 1.1em;
     }
@@ -855,6 +861,7 @@ table {
 
 .alert {
   border-radius: 0;
+  margin: 15px 0;
   //@include make-row(); при отображении внутри форм вылезает за границы
 }
 
