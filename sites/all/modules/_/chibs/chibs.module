@@ -833,7 +833,7 @@ function chibs_galleryformatter_styles() {
 
 
 /** ------------------------------------------ Кодировка email -----------------------------------------------------
- * защита от ботов, парсящих email
+ * защита от ботов, парсящих email  fi/nfire[s1]kccc[s2]ru
  * кодировка email в кашу с раскодировкой с помощью JS (common.js) на стороне пользователя
  */
 function email_antibot_encode($email) {
@@ -1096,6 +1096,35 @@ function chibs_preprocess_image_style(&$vars) {
 }
 
 /**
+ * --------------------------------- Создание собственной бибилиотеки --------------------------------------------------
+ * Implements hook_libraries_info().
+ * https://www.drupal.org/docs/7/modules/libraries-api-7x/using-libraries-api-2x-as-a-module-developer
+ * For defining external libraries.
+ */
+function chibs_libraries_info()
+{
+    // A very simple library. No changing APIs (hence, no versions), no variants.
+    // Expected to be extracted into 'sites/all/libraries/ion'.
+    $libraries['ionrange'] = array(
+        'name' => 'Ion Range Library',
+        'vendor url' => 'http://bootstraptema.ru/stuff/snippets_bootstrap/elements/ion_range_slider_bootstrap/33-1-0-2636',
+        'download url' => 'http://bootstraptema.ru/stuff/snippets_bootstrap/elements/ion_range_slider_bootstrap/33-1-0-2636',
+        'version arguments' => array(
+            'file' => 'ion.rangeSlider.js',
+            'pattern' => '@// version ([\d\.]+) B@',
+            'lines' => 2,
+        ),
+        'files' => array(
+            'js' => array('ion.rangeSlider.js'), //this can be a path to the file location like array('lib/simple.js')
+            'css' => array('ion.rangeSlider.css', 'ion.rangeSlider.skin.css'),
+        ),
+    );
+
+    return $libraries;
+}
+
+
+/**
  * --------------------------------- Добавить view mode Front ----------------------------------------------------------
  * Implements hook_entity_info_alter().
  * http://sanchiz.net/blog/node-view-modes
@@ -1131,4 +1160,3 @@ function chibs_page_delivery_callback_alter(&$delivery_callback) {
     variable_set('x_frame_options', 'SAMEORIGIN');
   }
 }
-
