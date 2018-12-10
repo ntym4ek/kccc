@@ -42,7 +42,7 @@ function gard_preprocess_page(&$vars)
     $title_off      = empty($vars['header']['title_off']) ? false : $vars['header']['title_off'];
     // true убирает обёртку, выводящую содержимое с отступом от края
     // необходимо для тёмного фона Views
-    $wrapper_off    = empty($vars['header']['wrapper_off']) ? false : $vars['header']['wrapper_off'];;
+    $wrapper_off    = empty($vars['header']['wrapper_off']) ? false : $vars['header']['wrapper_off'];
 
     $title = drupal_ucfirst($title);
 
@@ -100,7 +100,13 @@ function gard_preprocess_page(&$vars)
             $subtitle = t('Feedback from Trade House customers');
             break;
         case 'info/job':
-            $subtitle = t('Careers in Trade House');
+            if (!arg(2))
+            $subtitle = '<p><b>' . t('ООО Trade House "Kirovo-Chepetsk Chemical Company"') . '</b> - ' . t('manufacturing and realizing company of plant protection and other agrochemical products') . '.</p>' .
+                        '<p><b>' . t('Kirovo-Chepetsk factory «Agrohimikat»') . '</b> ' . t('produces herbicides, desiccants, insecticides, fungicides and disinfectants with international standards quality') . '.</p>' .
+                        '<p>' . t('Our main partners are world\'s large companies') .'.</p>';
+            break;
+        case 'eform/contact-vacancy':
+            $category_title = '<a href="' . '/info/job' . '">' . t('Careers') . '</a>';
             break;
         case 'handbook/protection-programs':
             $subtitle = t('Protection programs using products of Trade House');
@@ -154,9 +160,10 @@ function gard_preprocess_page(&$vars)
             // но если для языка не задано, берем und или ru
             if (isset($vars['node']->body)) {
                 if (empty($vars['node']->body[$lang][0])) {
-                    $subtitle = empty($vars['node']->body['und'][0]) ? $vars['node']->body['ru'][0]['summary'] : $vars['node']->body['und'][0]['summary'];
+                    if (!empty($vars['node']->body['und'][0])) { $subtitle = $vars['node']->body['und'][0]['summary']; }
+                    if (!empty($vars['node']->body['ru'][0])) { $subtitle = $vars['node']->body['ru'][0]['summary']; }
                 } else {
-                    $subtitle = $vars['node']->body[$lang][0]['summary'];
+                    $subtitle = isset($vars['node']->body[$lang]) ? $vars['node']->body[$lang][0]['summary'] : '';
                 }
             }
 
@@ -187,11 +194,14 @@ function gard_preprocess_page(&$vars)
             // для Отзывов
             if ($vars['node']->type == 'review') { $category_title = '<a href="' . '/reviews' . '">' . t('Reviews') . '</a>'; }
             // для Программ защиты
-            if ($vars['node']->type == 'protection_program') { $category_title = '<a href="' . '/handbook/protection-programs' . '">' . t('Protection programs') . '</a>'; }
+            if ($vars['node']->type == 'protection_program') {
+                $category_title = '<a href="' . '/handbook/protection-programs' . '">' . t('Protection programs') . '</a>';
+                $wrapper_off = true;
+            }
             // для Вакансии
             if ($vars['node']->type == 'vacancy') {
                 $category_title = '<a href="' . '/info/job' . '">' . t('Careers') . '</a>';
-                $subtitle = t('Vacancy');
+                if (empty($subtitle)) $subtitle = t('Vacancy');
             }
             // для Культур
             if ($vars['node']->type == 'main_cultures') { $category_title = '<a href="' . '/handbook/cultures' . '">' . t('Cultivated plants') . '</a>'; }
