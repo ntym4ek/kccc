@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="http://bootstraptema.ru/plugins/2018/irs/ion.rangeSlider.css" />
+<link rel="stylesheet" href="http://bootstraptema.ru/plugins/2018/irs/ion.rangeSlider.skin.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="http://bootstraptema.ru/plugins/2018/irs/ion.rangeSlider.min.js"></script>
+
+                    <div class="container-fluid"><h1 class="text-center mt-3 mb-5">Ion Range Slider Bootstrap & BootstrapTema</h1>
+
+                            <div class="col-md-12">
+
+                                    <form class="form-horizontal">
+                                        <div class="form-group row">
+                                            <label for="range_01" class="col-sm-2 control-label"><b>Default</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_01">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_02" class="col-sm-2 control-label"><b>Min-Max</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_02">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_03" class="col-sm-2 control-label"><b>Prefix</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_03">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_04" class="col-sm-2 control-label"><b>Range</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_04">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_05" class="col-sm-2 control-label"><b>Step</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_05">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_06" class="col-sm-2 control-label"><b>Custom Values</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_06">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_07" class="col-sm-2 control-label"><b>Prettify Numbers</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_07">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="range_08" class="col-sm-2 control-label"><b>Disabled</b></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="range_08">
+                                            </div>
+                                        </div>
+                                    </form>
+
+                            </div> <!-- col-md-12 -->
+
+                    </div> <!-- container -->
+
+<script>
+$(document).ready(function () {
+    $("#range_01").ionRangeSlider();
+    
+    $("#range_02").ionRangeSlider({
+        min: 100,
+        max: 1000,
+        from: 550
+    });
+    
+    $("#range_03").ionRangeSlider({
+        type: "double",
+        grid: true,
+        min: 0,
+        max: 1000,
+        from: 200,
+        to: 800,
+        prefix: "$"
+    });
+   
+    $("#range_04").ionRangeSlider({
+        type: "double",
+        grid: true,
+        min: -1000,
+        max: 1000,
+        from: -500,
+        to: 500
+    });
+    
+    $("#range_05").ionRangeSlider({
+        type: "double",
+        grid: true,
+        min: -1000,
+        max: 1000,
+        from: -500,
+        to: 500,
+        step: 250
+    });
+    
+    $("#range_06").ionRangeSlider({
+        grid: true,
+        from: 3,
+        values: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    });
+    
+    $("#range_07").ionRangeSlider({
+        grid: true,
+        min: 1000,
+        max: 1000000,
+        from: 200000,
+        step: 1000,
+        prettify_enabled: true
+    });
+    
+    $("#range_08").ionRangeSlider({
+        min: 100,
+        max: 1000,
+        from: 550,
+        disable: true
+    });
+});
+</script>
