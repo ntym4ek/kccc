@@ -89,7 +89,7 @@ function chibs_theme() {
     return array(
         // карточка контакта
         'contact_card' => array(
-            'variables' => array('contact' => null),
+            'variables' => array('contact' => null, 'options' => null),
             'template' => 'contact-card',
             'path' => drupal_get_path('theme', 'gard') . '/templates/system',
         ),
