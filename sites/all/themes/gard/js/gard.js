@@ -93,14 +93,17 @@
                 var $href = $(this).attr('href');
                 var $pattern = /e\((.*)\)/;
                 var $match = $pattern.exec($href);
-                var $eAddr = $match[1];
-
-                if ($eAddr) {
-                    $eAddr = $eAddr.replace(/\//g, '');
-                    $eAddr = $eAddr.replace(/\[s1\]/, '@');
-                    $eAddr = $eAddr.replace(/\[s2\]/, '.');
-                    $(this).attr('href', 'mailto:' + $eAddr);
-                    if ($(this).hasClass('eAddr-html')) { $(this).html($eAddr); }
+                if ($match) {
+                    var $eAddr = $match[1];
+                    if ($eAddr) {
+                        $eAddr = $eAddr.replace(/\//g, '');
+                        $eAddr = $eAddr.replace(/\[s1\]/, '@');
+                        $eAddr = $eAddr.replace(/\[s2\]/, '.');
+                        $(this).attr('href', 'mailto:' + $eAddr).removeClass('eAddr-encoded');
+                        if ($(this).hasClass('eAddr-html')) {
+                            $(this).html($eAddr).removeClass('eAddr-html');
+                        }
+                    }
                 }
             });
             /* <tag class="eAddr-encoded">.*e(supp/ort[s1]kcc/c[s2]ru).*</tag> */
