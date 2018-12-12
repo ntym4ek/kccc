@@ -182,16 +182,9 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
 
     // представитель
         // берем контакты из модуля Contacts, ищем представителя по региону
-    $reps = representatives_get_representatives_list();
-    $data['representative'] = $reps['head2']['sales_head'];
-    foreach($reps as $reg) {
-        foreach($reg as $rep) {
-            if (isset($rep['regions'][$data['user_region_tid']])) {
-                $data['representative'] = $rep;
-            }
-        }
-    }
-    $data['contact_card'] = theme('contact_card', array('contact' => $data['representative']));
+    $rep = _get_representative_by_region($data['user_region_tid']);
+    $data['representative'] = $rep;
+    $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
 
     $vars['order'] = $data;
 
