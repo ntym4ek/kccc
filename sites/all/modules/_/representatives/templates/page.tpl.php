@@ -31,7 +31,8 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
             }
            print theme('contact_card', array(
                 'contact' => $rep,
-                'collapse' => $collapse)); ?>
+                'collapse' => $collapse,
+                'options' => ['class' => 'col-md-6'])); ?>
         <? endforeach; ?>
 
         <div class="map col-xs-12">
@@ -48,30 +49,33 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                                 <? print key_to_region($key_rs); ?>
                             </div>
                             <?php foreach ($reps as $key_r => $rep): ?>
-                                <div class="media user-card">
-                                    <div class="media-left">
-                                        <img class="media-object" src="<? print $rep['photo']; ?>" alt="">
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="user-name"><? print $rep['surname']; ?> <span><? print $rep['name'] . ' ' . $rep['name2'] ; ?></span></h4>
-                                        <div class="dep"><? print $rep['office']; ?></div>
-                                    </div>
-                                    <div class="media-bottom">
-                                        <? if (!empty($rep['phones'][0])): ?>
-                                            <div class="phones">Телефон</div>
-                                            <?php foreach ($rep['phones'] as $phone): ?>
-                                                <? $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-                                                <div class="phone"><? print $phone; ?><a href="tel:<? print $phone_raw; ?>" rel="nofollow"><i class="icon-phone"></i>Позвонить</a></div>
-                                            <?php endforeach; ?>
-                                        <? endif; ?>
-                                        <? if (!empty($rep['emails'])): ?>
-                                            <div class="emails">Электронная почта</div>
-                                            <? foreach ($rep['emails'] as $email): ?>
-                                                <div class="email eAddr-encoded">e(<? print $email; ?>)<a href="e(<? print $email; ?>)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>
-                                            <? endforeach; ?>
-                                        <? endif; ?>
-                                    </div>
-                                </div>
+                                <?php print theme('contact_card', array('contact' => $rep)); ?>
+
+<!--                                <div class="media user-card">-->
+<!--                                    <div class="media-left">-->
+<!--                                        <img class="media-object" src="--><?// print $rep['photo']; ?><!--" alt="">-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body">-->
+<!--                                        <h4 class="user-name">--><?// print $rep['surname']; ?><!-- <span>--><?// print $rep['name'] . ' ' . $rep['name2'] ; ?><!--</span></h4>-->
+<!--                                        <div class="dep">--><?// print $rep['office']; ?><!--</div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-bottom">-->
+<!--                                        --><?// if (!empty($rep['phones'][0])): ?>
+<!--                                            <div class="phones">Телефон</div>-->
+<!--                                            --><?php //foreach ($rep['phones'] as $phone): ?>
+<!--                                                --><?// $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
+<!--                                                <div class="phone">--><?// print $phone; ?><!--<a href="tel:--><?// print $phone_raw; ?><!--" rel="nofollow"><i class="icon-phone"></i>Позвонить</a></div>-->
+<!--                                            --><?php //endforeach; ?>
+<!--                                        --><?// endif; ?>
+<!--                                        --><?// if (!empty($rep['emails'])): ?>
+<!--                                            <div class="emails">Электронная почта</div>-->
+<!--                                            --><?// foreach ($rep['emails'] as $email): ?>
+<!--                                                <div class="email eAddr-encoded">e(--><?// print $email; ?><!--)<a href="e(--><?// print $email; ?><!--)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>-->
+<!--                                            --><?// endforeach; ?>
+<!--                                        --><?// endif; ?>
+<!--                                    </div>-->
+<!--                                </div>-->
+
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -79,50 +83,50 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
             <?php endforeach; ?>
         </div>
 
-        <h2 class="r-separator col-xs-12">
-            Официальные представители
-        </h2>
-
-        <?php $counter = 0; ?>
-        <? foreach ($representatives as $key_rs => $reps): ?>
-            <? foreach ($reps as $rep): ?>
-                <? if ($rep['role'] == 'rep'): ?>
-                <? $phones_arr = array(); ?>
-
-                    <div class="media user-card rep-box <? print $key_rs; ?> col-sm-6 col-md-4">
-                        <div class="media-heading">
-                            <img class="icon" src="/<? print $rep00['icon_d_path'] . $key_rs . '.png'; ?>"/>
-                            <? print key_to_region($key_rs); ?>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="user-name"><? print $rep['surname']; ?><br /><span><? print $rep['name'] . ' ' . $rep['name2'] ; ?></span></h4>
-                            <div class="dep"><? print $rep['office']; ?></div>
-                        </div>
-                        <div class="media-bottom">
-                            <? if (!empty($rep['phones'][0])): ?>
-                                <?php foreach ($rep['phones'] as $phone): ?>
-                                    <? $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-                                    <div class="phone"><a href="tel:<? print $phone_raw; ?>" rel="nofollow"><? print $phone; ?></a></div>
-                                <?php endforeach; ?>
-                            <? endif; ?>
-                            <? if (!empty($rep['emails'])): ?>
-                                <? foreach ($rep['emails'] as $email): ?>
-                                    <div class="email"><a href="e(<? print $email; ?>)" class="eAddr-encoded" rel="nofollow"><span class="eAddr-encoded">e(<? print $email; ?>)</span></a></div>
-                                <? endforeach; ?>
-                            <? endif; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php $counter++; ?>
-            <?php endforeach; ?>
-        <?php endforeach; ?>
-
-        <?php $counter = 3 - ($counter % 3); ?>
-        <?php $counter = $counter > 2 ? 0 : $counter; ?>
-        <?php for($i=0; $i < $counter; $i++): ?>
-            <div class="media user-card rep-box <? print $key_rs; ?> hidden-sm col-md-4">
-            </div>
-        <?php endfor; ?>
+<!--        <h2 class="r-separator col-xs-12">-->
+<!--            Официальные представители-->
+<!--        </h2>-->
+<!---->
+<!--        --><?php //$counter = 0; ?>
+<!--        --><?// foreach ($representatives as $key_rs => $reps): ?>
+<!--            --><?// foreach ($reps as $rep): ?>
+<!--                --><?// if ($rep['role'] == 'rep'): ?>
+<!--                --><?// $phones_arr = array(); ?>
+<!---->
+<!--                    <div class="media user-card rep-box --><?// print $key_rs; ?><!-- col-sm-6 col-md-4">-->
+<!--                        <div class="media-heading">-->
+<!--                            <img class="icon" src="/--><?// print $rep00['icon_d_path'] . $key_rs . '.png'; ?><!--"/>-->
+<!--                            --><?// print key_to_region($key_rs); ?>
+<!--                        </div>-->
+<!--                        <div class="media-body">-->
+<!--                            <h4 class="user-name">--><?// print $rep['surname']; ?><!--<br /><span>--><?// print $rep['name'] . ' ' . $rep['name2'] ; ?><!--</span></h4>-->
+<!--                            <div class="dep">--><?// print $rep['office']; ?><!--</div>-->
+<!--                        </div>-->
+<!--                        <div class="media-bottom">-->
+<!--                            --><?// if (!empty($rep['phones'][0])): ?>
+<!--                                --><?php //foreach ($rep['phones'] as $phone): ?>
+<!--                                    --><?// $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
+<!--                                    <div class="phone"><a href="tel:--><?// print $phone_raw; ?><!--" rel="nofollow">--><?// print $phone; ?><!--</a></div>-->
+<!--                                --><?php //endforeach; ?>
+<!--                            --><?// endif; ?>
+<!--                            --><?// if (!empty($rep['emails'])): ?>
+<!--                                --><?// foreach ($rep['emails'] as $email): ?>
+<!--                                    <div class="email"><a href="e(--><?// print $email; ?><!--)" class="eAddr-encoded eAddr-html" rel="nofollow"></a></div>-->
+<!--                                --><?// endforeach; ?>
+<!--                            --><?// endif; ?>
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                --><?php //endif; ?>
+<!--                --><?php //$counter++; ?>
+<!--            --><?php //endforeach; ?>
+<!--        --><?php //endforeach; ?>
+<!---->
+<!--        --><?php //$counter = 3 - ($counter % 3); ?>
+<!--        --><?php //$counter = $counter > 2 ? 0 : $counter; ?>
+<!--        --><?php //for($i=0; $i < $counter; $i++): ?>
+<!--            <div class="media user-card rep-box --><?// print $key_rs; ?><!-- hidden-sm col-md-4">-->
+<!--            </div>-->
+<!--        --><?php //endfor; ?>
 
         <div class="rep-box last col-sm-6 col-md-4">
             Если в Вашем регионе нет официального представителя, свяжитесь с нашим центральным офисом.

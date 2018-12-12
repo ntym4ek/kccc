@@ -1,4 +1,4 @@
-<div class="media contact-card col-md-6">
+<div class="media contact-card<?php print isset($options['class']) ? ' ' . $options['class'] : ''; ?>">
     <div class="media-left">
         <img class="media-object" src="<? print $contact['photo']; ?>" alt="">
     </div>
@@ -23,7 +23,7 @@
         <? if (!empty($contact['emails'])): ?>
         <div class="contact-emails">
             <?php foreach ($contact['emails'] as $email): ?>
-                <div class="contact-email eAddr-encoded"><a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded" rel="nofollow">e(<? print email_antibot_encode($email); ?>)</a></div>
+                <div class="contact-email"><a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded eAddr-html" rel="nofollow">e(<? print email_antibot_encode($email); ?>)</a></div>
             <?php endforeach; ?>
         </div>
         <? endif; ?>

@@ -65,6 +65,9 @@
     margin-right: 10px;
     width: 30px;
 }
+.rep .contact-card {
+    padding: 20px;
+}
 
 
 
@@ -77,35 +80,20 @@
     text-decoration: none;
 }
 .rep .popup {
-    width: 335px; height: auto;
+    width: 350px; height: auto;
     margin: 0 0 5px -40px;
-    position: absolute; left: 19px; top: -330px;
+    position: absolute; left: 15px; bottom: 130px;
     pointer-events: none; opacity: 0;
     -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out;
     z-index: 2;
 }
-.rep .popup-2x { margin-left: -75px; width: 690px; }
-.rep .popup-2x .user-card { width: 50%; float: left; }
-.rep .popup-3x { margin-left: -110px; width: 1035px; }
-.rep .popup-3x .user-card { width: 33%; float: left; }
+.rep .popup-2x { margin-left: -75px; width: 700px; }
+.rep .popup-2x .contact-card { width: 50%; float: left; }
+.rep .popup-3x { margin-left: -110px; width: 1050px; }
+.rep .popup-3x .contact-card { width: 33%; float: left; }
 .rep.head .popup{ opacity: 1; }
 
-.rep .popup.pop { opacity: 1; top: -280px; pointer-events: all; }
-/* высота отдельных окон отличается */
-.rep.altai .popup { top: -380px; }
-.rep.altai .popup.pop { top: -295px; }
-.rep.vladimir .popup,
-.rep.ivanovo .popup,
-.rep.kirov .popup,
-.rep.kostroma .popup,
-.rep.perm .popup,
-.rep.yaroslavl .popup { top: -350px; }
-.rep.vladimir .popup.pop,
-.rep.ivanovo .popup.pop,
-.rep.kirov .popup.pop,
-.rep.kostroma .popup.pop,
-.rep.perm .popup.pop,
-.rep.yaroslavl .popup.pop { top: -300px; }
+.rep .popup.pop { opacity: 1; bottom: 50px; pointer-events: all; }
 
 .rep .reg {
     background: 0 0 no-repeat;
