@@ -277,7 +277,7 @@ function agrocalc_form($from, &$form_state)
 
         $form['request']['region'] = [
             '#type' => 'select',
-            '#title' => 'Регион',
+            '#title' => t('Region'),
             '#options' => $regions,
         ];
         $form['request']['phone'] = [
@@ -338,6 +338,10 @@ function agrocalc_form_validate($form, &$form_state)
             }
         }
         if ($states) $form_state['values']['states'] = $states;
+    }
+
+    if ($form_state['triggering_element']['#name'] == 'calc' && !$form_state['values']['area']) {
+        form_set_error('area', 'Задайте площадь посевов.');
     }
 
     if ($form_state['submitted']) {
