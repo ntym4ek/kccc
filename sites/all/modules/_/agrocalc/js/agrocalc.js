@@ -12,8 +12,13 @@ var Seeding = 1;
                 try {
                     if ($(flip).attr("id") === "switch_all") {
                         $("#protection-program [id^=switch_]").each(function (index, fl) {
-                            if ($(fl).prop("checked") !== $(flip).prop("checked")) { $(fl).trigger("click"); }
+                            if ($(fl).attr("id") !== "switch_all" && $(fl).prop("checked") !== $(flip).prop("checked")) {
+                                if ($(flip).prop("checked")) { $(fl).prop("checked", true); }
+                                else { $(fl).prop("checked", false); }
+                                _switch_flip(fl);
+                            }
                         });
+                        recalculate();
                         return;
                     }
 
