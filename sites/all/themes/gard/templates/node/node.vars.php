@@ -132,10 +132,8 @@ function gard_preprocess_node(&$vars) {
         $vars['image'] .= '<div class="img-title"><span>' . t('Click on image to zoom') . '</span></div>';
         hide($vars['content']['field_image']);
 
-        if (isset($vars['field_pp_cultures']['und'][0]['target_id'])) {
-            $program = _reglaments_get_protection_system2(['culture_id' => $vars['field_pp_cultures']['und'][0]['target_id']]);
-            $vars['program'] = theme('protection_program', ['program' => $program]);
-        }
+        $program = _reglaments_get_protection_system2(['program_id' => $vars['node']->nid]);
+        $vars['program'] = theme('protection_program', ['program' => $program]);
     }
 
     /** ------------------------------------ Продукция -------------------------------------------------------------- */
