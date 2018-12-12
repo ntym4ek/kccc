@@ -62,7 +62,8 @@ function contacts_main_page()
                 }
                 $contacts[$key_t]['departments'][$key_d]['contacts'][$key_c]['contact_html'] = theme('contact_card', array(
                     'contact' => $contact,
-                    'collapse' => $collapse));
+                    'collapse' => $collapse,
+                    'options' => ['class' => 'col-md-6']));
             }
         }
     }
