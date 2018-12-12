@@ -377,7 +377,8 @@ fieldset.panel {
   border: 0; box-shadow: none;
   margin-bottom: $grid-gutter-width;
   legend.panel-heading {
-    background: 0; border-bottom: 1px solid $text-muted;
+    background: 0;
+      //border-bottom: 1px solid #ccc;
     float: left;
     line-height: 1em;
     margin: 0; padding: 8px 0;

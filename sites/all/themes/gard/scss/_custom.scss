@@ -465,6 +465,35 @@
   .wrapper { padding-top: $grid-gutter-width/2; }
 }
 
+/* ------------------------------------------------- 404 - */
+.page404 {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    .b1 {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+    .b2 {
+        flex: 0 1 80%;
+        padding: 0 $grid-gutter-width;
+    }
+    h1 { font-size: 75px; }
+    h3 {
+        font-weight: 400;
+        margin-bottom: $grid-gutter-width;
+    }
+    ul {
+        text-align: left;
+        color: $text-muted;
+        padding-left: $grid-gutter-width;
+        margin-bottom: $grid-gutter-width;
+    }
+    @media #{$tablet} {
+        margin-top: 6vh;
+        .b1 { flex: 1 1 50%; order: 2; text-align: left; }
+        .b2 { flex: 1 1 50%; }
+    }
+}
+
 /* ------------------------------------------------- Статья - */
 .article-header {
   margin-bottom: 20px;
@@ -1421,49 +1450,6 @@
 }
 
 
-/* ------------------------------------------------- Карточка пользователя ------------------------------------------ */
-.user-card {
-  &.media { margin-top: 0; }
-  padding: 20px;
-  .media-object { margin-right: 20px; width: 71px; }
-  .user-name {
-    font-size: 18px; font-weight: 500; line-height: 24px;
-    margin-top: 8px;
-    span { white-space: nowrap; }
-  }
-  .dep {
-    color: #aaa; font-size: 13px;
-    margin: 5px 0 15px 0;
-  }
-  .emails {
-    float: left;
-    color: #2b8aff; font-size: 13px; line-height: 20px;
-    padding-top: 10px;
-    min-width: 100%;
-  }
-  .phones {
-    float: left;
-    color: #2b8aff; font-size: 13px; line-height: 20px;
-    margin-top: 10px;
-    min-width: 100%;
-  }
-  .phone,
-  .email {
-    float: left;
-    font-size: 16px; line-height: 24px;
-    min-width: 100%;
-    a {
-      display: block;
-      float: right; color: #2b8aff; font-size: 13px;
-      width: 110px;
-      i {
-        font-size: 16px; line-height: 20px; vertical-align: middle;
-        padding-right: 8px;
-      }
-    }
-  }
-}
-
 /* ------------------------------------------------- Карточка контакта- --------------------------------------------- */
 .contact-card {
   margin-bottom: $grid-gutter-width/2;
@@ -1723,6 +1709,14 @@
 }
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper {
+    > div {
+        @include make-sm-column-offset(1);
+        @include make-sm-column(10);
+        @include make-md-column-offset(2);
+        @include make-md-column(8);
+    }
+}
 .agrocalc-form {
     fieldset .panel-body {
         @include make-row();
