@@ -27,7 +27,7 @@ $phase = $program['header']['phase'];
                     <div class="row" style="page-break-before: always;">
                         <div id="category-<?php print $category['tid']; ?>" class="header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
                             <div class="box">
-                                <div class="bkg"><img src="<?php print $category['bkg']; ?>" alt="<?php print $category['name']; ?>"></div>
+                                <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
                                 <img class="icon" src="<?php print $category['icon']; ?>">
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
