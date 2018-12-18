@@ -376,6 +376,7 @@ input.error {
 fieldset.panel {
   border: 0; box-shadow: none;
   margin-bottom: $grid-gutter-width;
+    position: relative;
   legend.panel-heading {
     background: 0;
       //border-bottom: 1px solid #ccc;
