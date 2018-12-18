@@ -117,8 +117,12 @@ function gard_preprocess_node(&$vars) {
 
     /** ------------------------------------ Авторство - */
     if (in_array($vars['type'], array('blog', 'review'))) {
-        $vars['author'] = person_get_user_array($vars['node']->uid);
+        $author = person_get_user_array($vars['node']->uid);
+        $vars['author'] = $author['name'] . ' ' . $author['surname'];
         //$vars['commented'] = $vars['node']->comment_count;
+    }
+    if ($vars['type'] == 'vacancy') {
+        $vars['author'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
     }
 
 

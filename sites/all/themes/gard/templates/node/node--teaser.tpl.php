@@ -103,7 +103,7 @@
     <?php if (!empty($author)): ?>
     <footer>
         <div class="left-side">
-            <span class="author"><i class="far fa-user"></i><?php print $author['name'] . ' ' . $author['surname']; ?></span>
+            <i class="far fa-user"></i><span class="author"><?php print $author; ?></span>
         </div>
     </footer>
     <?php endif; ?>
