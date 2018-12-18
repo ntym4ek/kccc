@@ -1119,6 +1119,19 @@ function chibs_libraries_info()
             'css' => array('ion.rangeSlider.css', 'ion.rangeSlider.skin.css'),
         ),
     );
+    $libraries['onscreen'] = array(
+        'name' => 'OnScreen Library',
+        'vendor url' => 'https://github.com/silvestreh/onScreen',
+        'download url' => 'https://github.com/silvestreh/onScreen',
+        'version arguments' => array(
+            'file' => 'CHANGELOG.md',
+            'pattern' => '@\[v([\d\.]+)\]@s',
+            'lines' => 3,
+        ),
+        'files' => array(
+            'js' => array('dist/on-screen.umd.js'), //this can be a path to the file location like array('lib/simple.js')
+        ),
+    );
 
     return $libraries;
 }
