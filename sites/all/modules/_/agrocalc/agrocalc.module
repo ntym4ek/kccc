@@ -37,12 +37,21 @@ function agrocalc_form($from, &$form_state)
         '#attributes' => ['class' => ['agrocalc-form']],
         'field' => [
             '#type' => 'fieldset',
-            '#title' => 'Культура<i> и характеристики поля</i>',
+            '#title' => 'Культура<i> и характеристики поля</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" />',
             '#prefix' => '<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">',
         ],
-        'problem' => ['#type' => 'fieldset', '#title' => 'Проблемы<i>, присутствующие на поле</i>'],
+        'problem' => [
+            '#type' => 'fieldset',
+            '#title' => 'Проблемы<i>, присутствующие на поле</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png" />'
+        ],
         'addon' => ['#type' => 'fieldset', '#title' => 'Дополнительно'],
-        'actions' => ['#type' => 'container', '#attributes' => array('class' => array('form-actions'))],
+        'actions' => [
+            '#type' => 'container',
+            '#attributes' => array('class' => array('form-actions')),
+            'help' => [
+                '#markup' => '<img class="help3 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-right" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/3.png" />'
+                ]
+        ],
         '#attached' => [
             'js' => [
                 drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
@@ -53,6 +62,11 @@ function agrocalc_form($from, &$form_state)
     // ion range slider library
     if (module_exists('libraries') && libraries_detect('ionrange')) {
         $form['#attached']['libraries_load'][] = array('ionrange');
+    }
+
+    // onscreen slider library
+    if (module_exists('libraries') && libraries_detect('onscreen')) {
+        $form['#attached']['libraries_load'][] = array('onscreen');
     }
 
     // дефолтные переменные
@@ -277,7 +291,7 @@ function agrocalc_form($from, &$form_state)
 
         $form['request']['region'] = [
             '#type' => 'select',
-            '#title' => t('Region'),
+            '#title' => t('Region') . '<img class="help8 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/8.png" />',
             '#options' => $regions,
         ];
         $form['request']['phone'] = [

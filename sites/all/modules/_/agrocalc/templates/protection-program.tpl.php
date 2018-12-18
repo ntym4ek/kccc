@@ -3,6 +3,7 @@
 global $user;
 $area = $program['header']['area'];
 $phase = $program['header']['phase'];
+$path = drupal_get_path('module', 'agrocalc');
 ?>
 
 
@@ -23,12 +24,16 @@ $phase = $program['header']['phase'];
                 </header>
                 <?php endif; ?>
 
+                <?php $cnt_cat = 1; ?>
                 <?php foreach($program['categories'] as $key_cat => $category): ?>
                     <div class="row" style="page-break-before: always;">
                         <div id="category-<?php print $category['tid']; ?>" class="header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
                             <div class="box">
                                 <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
                                 <img class="icon" src="<?php print $category['icon']; ?>">
+                                <?php if ($cnt_cat == 1): ?>
+                                    <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" />
+                                <?php endif; ?>
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
                                         <div><h5 class="clr-category">НА ГЕКТАР</h5><p class="amount"></p></div>
@@ -41,7 +46,7 @@ $phase = $program['header']['phase'];
                     </div>
 
                     <div class="row collapse in category-<?php print $category['tid']; ?>" id="collapse-<?php print $category['tid']; ?>">
-                    <?php $counter = 1; ?>
+                    <?php $cnt_reg = 1; ?>
                     <?php if (isset($category['stages'])): ?>
                         <?php foreach($category['stages'] as $key_stage => $stage): ?>
                             <?php foreach($stage as $key_set => $set): ?>
@@ -107,6 +112,9 @@ $phase = $program['header']['phase'];
 <!--                                -->
 
                                     <div class="view-item col-xs-12 col-sm-6 col-md-4 col-lg-4 hidden-print">
+                                        <?php if ($area && $cnt_reg == 1 && $cnt_cat == 1): ?>
+                                            <img class="help5 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/<?php print $path; ?>/images/help/5.png" />
+                                        <?php endif; ?>
                                         <div class="v-card reglament gray<?php print $reglament['state'] == 'on' ? " is-active" : ""; ?> hidden-print" data-cat="category-<?php print $category['tid']; ?>" id="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                             <?php if ($area): ?>
                                             <header>
@@ -164,17 +172,19 @@ $phase = $program['header']['phase'];
                                                     <div class="amountByItem"></div>
                                                 </div>
                                             </footer>
-
                                         </div>
+                                        <?php if ($area && $cnt_reg == 2 && $cnt_cat == 1): ?>
+                                            <img class="help6 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/6.png" />
+                                        <?php endif; ?>
                                     </div>
                                     <?php
-                                    if ($counter % 2 == 0) {
+                                    if ($cnt_reg % 2 == 0) {
                                         print '<div class="clearfix hidden-md hidden-lg hidden-print"></div>';
                                     }
-                                    if ($counter % 3 == 0) {
+                                    if ($cnt_reg % 3 == 0) {
                                         print '<div class="clearfix hidden-sm hidden-print"></div>';
                                     }
-                                    $counter++
+                                    $cnt_reg++
                                     ?>
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
@@ -189,11 +199,13 @@ $phase = $program['header']['phase'];
                     <?php endif; ?>
                     </div>
 
+                    <?php $cnt_cat++; ?>
                 <?php endforeach; ?>
 
                 <?php if ($area): ?>
                 <div class="row">
                     <div class="header col-xs-12 calculation-total category-17">
+                        <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" />
                         <div class="box">
                             <div class="bkg"></div>
                             <div class="amountByProgram">
@@ -209,7 +221,7 @@ $phase = $program['header']['phase'];
                 <?php endif; ?>
 
             <?php else: ?>
-                <div class="col-xs-12">Для культуры на данном этапе роста у нашей компании нет препаратов.</div>
+                <div class="col-xs-12"><p class="text-danger">Для культуры на данном этапе роста у нашей компании нет препаратов.</p></div>
             <?php endif;?>
         </div>
 

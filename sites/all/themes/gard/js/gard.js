@@ -6,6 +6,17 @@
     Drupal.behaviors.gard = {
         attach: function (context, settings) {
 
+            /* ------------------------------------------ Animated Elements ----------------------------------------- */
+            $("[data-animate=true]").each(function(){
+                if ($(this).data("a-effect")) {
+                    $(this).addClass($(this).data("a-effect"));
+                } else {
+                    $(this).addClass("slide-up");
+                }
+                $(this).addClass("animate-processed");
+            });
+
+
             /* ------------------------------------------ блок корзины ---------------------------------------------- */
             /* - при обновлении блока корзины через секунду убрать класс с эффектом тряски - */
             /* - (класс добавляется в модуле checkout - checkout_commerce_fast_ajax_atc_commands_alter()) - */

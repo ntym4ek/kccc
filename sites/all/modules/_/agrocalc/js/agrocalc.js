@@ -1,10 +1,67 @@
 var Area = 1;
 var Seeding = 1;
+var dev = false;
 
 (function ($) {
     Drupal.behaviors.argocalc = {
         attach: function (context, settings) {
 
+            /* ------------------------------------------ Animated Elements ----------------------------------------- */
+            // help notes
+            var os = new OnScreen({
+                tolerance: 0,
+                debounce: 100,
+                container: window
+            });
+
+            // do not show cookied helps
+            for (var i = 1; i < 10; i++) {
+                if (!dev && $.cookie("ac_shown_help_" + i)) {
+                    $(".help" + i).addClass("accepted");
+                }
+            }
+
+            os.on('enter', '[data-onscreen=true]', (element, event) => {
+                if ($(element).data("a-delay")) {
+                    $(element).css("transition-delay", $(element).data("a-delay"));
+                }
+                $(element).addClass("visible");
+            });
+            $(".form-item-culture, .help1").on("mousedown", function(){
+                $("[data-animate=true].help1").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_1", true);
+            });
+            $(".form-item-weeds, .form-item-pests, .form-item-diseases, .help2, [name=calc]").on("mousedown", function(){
+                $("[data-animate=true].help2").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_2", true);
+            });
+            $("[name=calc], .help3").on("mousedown", function(){
+                $("[data-animate=true].help3").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_3", true);
+            });
+            $("[id^=category], .help4").on("mousedown", function(){
+                $("[data-animate=true].help4").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_4", true);
+            });
+            $("[id^=switch], .help5").on("click", function(){
+                $("[data-animate=true].help5").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_5", true);
+            });
+            $("span.irs, .help6").on("mousedown", function(){
+                $("[data-animate=true].help6").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_6", true);
+            });
+            $(".help7").on("mousedown", function(){
+                $("[data-animate=true].help7").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_7", true);
+            });
+            $(".form-item-region, .form-item-phone, .form-item-name, .form-item-email, .help8").on("mousedown", function(){
+                $("[data-animate=true].help8").css("transition-delay", "0s").addClass("accepted");
+                $.cookie("ac_shown_help_8", true);
+            });
+
+
+            // results calculation -------------------------------------------------------------------------------------
             Area = $("[name=area]").val() ? $("[name=area]").val() : 1;
             Seeding = $("[name=seed]").val() ? $("[name=seed]").val() : 1;
 
