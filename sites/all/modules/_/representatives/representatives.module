@@ -9,6 +9,7 @@ function representatives_menu() {
     );
     $items['source/representatives'] = array(
         'page callback' => '_representatives_source',
+        'page arguments' => array(2),
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK
     );
@@ -256,7 +257,7 @@ function representatives_get_representatives_list()
     );
 
     $representatives['altai'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Маринина', 'name' => 'Лариса', 'name2' => 'Валентиновна',
@@ -268,7 +269,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['altai'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Хаустов', 'name' => 'Сергей', 'name2' => 'Витальевич',
@@ -280,7 +281,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['amur'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Дорошенко', 'name' => 'Елена', 'name2' => 'Юрьевна',
@@ -292,7 +293,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['belgorod'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Левшин', 'name' => 'Петр', 'name2' => 'Иванович',
@@ -304,7 +305,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['vladimir'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -316,7 +317,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['ivanovo'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -328,7 +329,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['kaliningrad'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Райнова', 'name' => 'Ирина', 'name2' => 'Васильевна',
@@ -340,7 +341,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['kirov'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => true,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -357,7 +358,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['kostroma'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -369,7 +370,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['krasnodar'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => '', 'name' => '', 'name2' => '',
@@ -381,7 +382,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $representatives['krasnodar'][] = array(
-//        'role' =>  'rep',
+//        // 'role' =>  'rep',
 //        'office' => 'Представитель',
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array('+7 (922) 966 60 12'),
@@ -392,7 +393,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $representatives['kursk'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => '', 'name' => '', 'name2' => '',
@@ -404,7 +405,7 @@ function representatives_get_representatives_list()
       ),
     );
     $representatives['lipetsk'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Плешков', 'name' => 'Владимир', 'name2' => 'Геннадьевич',
@@ -416,7 +417,7 @@ function representatives_get_representatives_list()
         )
     );
     $representatives['novosibirsk'][] =  array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 900-74-64'),
@@ -427,7 +428,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $representatives['nnovgorod'][] =  array(
-//        'role' =>  'rep',
+//        // 'role' =>  'rep',
 //        'office' => 'Представитель',
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array('+7 (922) 966-60-12'),
@@ -438,7 +439,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $representatives['omsk'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Усатов', 'name' => 'Валерий', 'name2' => 'Васильевич',
@@ -450,7 +451,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['orenburg'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Попов', 'name' => 'Виктор', 'name2' => 'Михайлович',
@@ -462,7 +463,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['perm'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -474,7 +475,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['bashkortostan'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Тураев', 'name' => 'Радик', 'name2' => 'Галиевич',
@@ -486,7 +487,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['mordoviya'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Агеев', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
@@ -498,7 +499,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $representatives['tatarstan'][] = array(
-//        'role' =>  'rep',
+//        // 'role' =>  'rep',
 //        'office' => 'Представитель',
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array(''),
@@ -509,7 +510,7 @@ function representatives_get_representatives_list()
 //),
 //    );
 //    $representatives['chuvashiya'][] = array(
-//        'role' =>  'rep',
+//        // 'role' =>  'rep',
 //        'office' => 'Представитель',
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array(''),
@@ -520,7 +521,7 @@ function representatives_get_representatives_list()
 //),
 //    );
     $representatives['rostov'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => '', 'name' => '', 'name2' => '',
@@ -532,7 +533,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['stavropol'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => '', 'name' => '', 'name2' => '',
@@ -544,7 +545,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['tambov'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Сироткин', 'name' => 'Евгений', 'name2' => 'Николаевич',
@@ -556,7 +557,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['tyumen'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Знаменщиков', 'name' => 'Василий', 'name2' => 'Александрович',
@@ -568,7 +569,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['udmurtia'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => true,
         'surname' => 'Микряшов', 'name' => 'Владислав', 'name2' => 'Вячеславович',
@@ -580,7 +581,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['chelyabinsk'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Шалаев', 'name' => 'Андрей', 'name2' => 'Сергеевич',
@@ -592,7 +593,7 @@ function representatives_get_representatives_list()
         ),
     );
     $representatives['yaroslavl'][] = array(
-        'role' =>  'rep',
+        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -612,8 +613,11 @@ function representatives_get_representatives_list()
  * callback function
  * источник данных о представителях (исп. в приложении)
  */
-function _representatives_source() {
-    $results = representatives_get_representatives_list();
+function _representatives_source($region_id = null)
+{
+    if (!($region_id && $results['region'][] = _get_representative_by_region($region_id))) {
+        $results = representatives_get_representatives_list();
+    }
     drupal_json_output(['representatives' => $results]);
     drupal_exit();
 }
