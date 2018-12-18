@@ -226,7 +226,7 @@
                         <li><?php print l(t('Protection programs'), 'handbook/protection-programs'); ?></li>
                         <li><?php print l(t('Agro Calculator'), 'agro-calculator'); ?></li>
                     </ul>
-                    <a href="https://kccc.ru" class="btn btn-success btn-wide"><?php print t('Homepage'); ?></a>
+                    <a href="<?php print $GLOBALS['base_root']; ?>" class="btn btn-success btn-wide"><?php print t('Homepage'); ?></a>
                 </div>
                 <div class="b2">
                     <img src="/sites/all/themes/gard/images/404weed.png" class="img-responsive" alt="">
