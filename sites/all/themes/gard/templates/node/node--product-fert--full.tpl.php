@@ -111,7 +111,7 @@
             <?php endif; ?>
 
             <div class="field field-name-field-pd-price-per-unit">
-                <div class="field-label"><?php print t('Price per ') .' '. mb_strtolower($unit) . '. <span style="white-space: nowrap;">' . t('(with NDS)') . '</span>'; ?></div>
+                <div class="field-label"><?php print t('Price per ') .' '. mb_strtolower($units[0]) . '. <span style="white-space: nowrap;">' . t('(with NDS)') . '</span>'; ?></div>
 
                 <?php if ($content['field_pd_price_per_unit']['#items'][0]['amount'] != 0) : ?>
                     <div class="field-items">

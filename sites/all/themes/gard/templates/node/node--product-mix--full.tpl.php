@@ -82,7 +82,10 @@
 
 <div class="product-intro row">
     <div class="col-sm-5">
-        <?php print render($content['field_promo_image']); ?>
+        <div class="product-image">
+            <img src="<?php print $images[0]; ?>" class="img-responsive">
+            <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive"><?php endif; ?>
+        </div>
     </div>
     <div class="col-sm-7">
         <div class="product-brief">
@@ -90,7 +93,7 @@
                 <div class="field field-name-commerce-price field-type-commerce-price field-label-hidden">
                     <div class="field-items">
                         <div class="field-item">
-                            <?php print $prices . ' ' . t('roub.'); ?>
+                            <?php print implode(' + ', $prices_arr) . ' ' . t('roub.'); ?>
                         </div>
                     </div>
                 </div>

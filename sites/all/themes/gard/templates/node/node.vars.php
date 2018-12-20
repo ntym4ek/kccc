@@ -150,48 +150,27 @@ function gard_preprocess_node(&$vars) {
             $vars['product_url'] .= '?cat=' . $tid;
         }
 
-        /** - Баковые смеси - */
+
+
+        $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
+        if ($product = get_product_info($vars['node'])) {
+            foreach ($product['items'] as $nid => $item) {
+                $vars['titles_arr'][] = $item['title'] . ($item['form_short'] ? ', ' . $item['form_short'] : '');
+                $vars['ingredients_arr'][] = implode(' + ', $item['ingredients']);
+                $vars['prices_arr'][] = $item['price'];
+                $vars['units'][] = $item['unit_short'];
+                $preparations[] = $nid;
+                $vars['images'][] = image_style_url('large', $item['photo_url']);
+
+                if ($vars['type'] == 'product_mix') {
+                    $vars['preps_arr'][] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['title'] . ', ' . $item['form_short'] . '</a><br /><span class="ingredients">' . drupal_strtolower(implode(' + ', $item['ingredients'])) . '</span>';
+                }
+            }
+        }
+        $vars['summary'] = $vars['body'][0]['safe_summary'];
+
         if ($vars['type'] == 'product_mix') {
-            $node_wrapper = entity_metadata_wrapper('node', $vars['node']->nid);
-            $products = $preps_arr = $units_arr = $prices_arr = $ingr_arr = array();
-            foreach ($node_wrapper->field_pd_mix_components->getIterator() as $key => $value) {
-                // препараты
-                // todo устарело, заменить на использование get_product_info
-                $prep = get_product_agro_title($value->nid->value());
-                $prep_url = url('node/' . $value->nid->value());
-                $vars['preps_arr'][] = '<a href="' . $prep_url . '" target="_blank">' . $prep['title'] . ', ' . $prep['formulation'] . '</a><br /><span class="ingredients">(' . drupal_strtolower($prep['ingredients']) . ')</span>';
-                $title_arr[] = $prep['title'] . ', ' . $prep['formulation'];
-                $ingr_arr[] = $prep['ingredients'];
-                $products[] = $value->field_product[0]->product_id->value();
-
-                // единицы измерения
-                $unit_arr = get_product_units($value->nid->value());
-                $units_arr[$value->nid->value()] = $unit_arr['cons_unit'];
-                // цены
-                $prices_arr[] = number_format($value->field_product[0]->commerce_price->amount->value() / 100, 0, ',', ' ');
-            }
-            $vars['titles'] = implode('<br>+ ', $title_arr);
-            $vars['ingredients'] = implode(' + ', $ingr_arr);
-            $vars['prices'] = implode(' + ', $prices_arr);
-            $vars['summary'] = $node_wrapper->body->summary->value();
-            // форма добавления в корзину
-            $vars['addtocart_form'] = drupal_get_form('product_mix_add_to_cart_form', $products);
-
-            /** - Все остальные - */
-        } else {
-            // todo устарело, заменить на использование get_product_info
-            $product_info = get_product_agro_title($vars['node']->nid);
-            if ($vars['type'] == 'product_fert') {
-                $vars['title'] = explode('|', $product_info['title'])[0];
-                $vars['subtitle'] = explode('|', $product_info['title'])[1];
-            }
-            else {
-                $vars['title'] = empty($product_info['formulation']) ? $vars['title'] : $product_info['title'] . ', ' . $product_info['formulation'];
-                $vars['subtitle'] = $product_info['ingredients'];
-                $vars['ingredients_arr'] = $product_info['ingredients_arr'];
-            }
-            $vars['formulation_full'] = $product_info['formulation_full'];
-            $vars['unit'] = $product_info['unit_short'];
+            $vars['addtocart_form'] = drupal_get_form('product_mix_add_to_cart_form', $preparations);
         }
     }
 

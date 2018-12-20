@@ -44,16 +44,15 @@ $fids = _get_product_categories($node);
 
 
 // если Гербицид - проверить группы сорняков
-if (in_array(AGRO_CATEGORY_HERBICIDES_TID,$fids)) {
+if (in_array(AGRO_CATEGORY_HERBICIDES_TID, $fids)) {
     // словарь Классификатор
     $vid = taxonomy_vocabulary_machine_name_load('plants_classification')->vid;
+
     // корневые классы (Двудольные, Злаки, Хвощевые)
-//    $output_classes = array(71738, 71756, 71732);
-    $root_classes = taxonomy_get_tree($vid, 0, 1);
-
     // проходим по основным классам
-    foreach ($root_classes as $root_term) {
+    foreach ([71738, 71756, 71732] as $r_tid) {
 
+        $root_term = taxonomy_term_load($r_tid);
         // tid класса и дерево
         $root_class = $root_term->tid;
         $tree = taxonomy_get_tree($vid, $root_class);
@@ -135,7 +134,7 @@ if (in_array(AGRO_CATEGORY_HERBICIDES_TID,$fids)) {
 }
 
 // если Инсектицид - проверить группы Насекомых
-if (in_array(AGRO_CATEGORY_INSECTICIDES_TID,$fids)) {
+if (in_array(AGRO_CATEGORY_INSECTICIDES_TID, $fids)) {
     // словарь Классификатор насекомых
     $vid = taxonomy_vocabulary_machine_name_load('pests_classification')->vid;
 

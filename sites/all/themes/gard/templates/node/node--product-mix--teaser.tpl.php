@@ -84,15 +84,16 @@
     <div class="v-card-top">
         <div class="v-card-image">
             <a href="<?php print $product_url; ?>">
-                <img src="<?php print $image; ?>" class="img-responsive" title="<?php print $title; ?>">
+                <img src="<?php print $images[0]; ?>" class="img-responsive">
+                <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive"><?php endif; ?>
             </a>
         </div>
     </div>
 
     <div class="v-card-content">
-        <h4 class="v-card-title"><a href="<?php print $product_url; ?>"><?php print $titles; ?></a></h4>
+        <h4 class="v-card-title"><a href="<?php print $product_url; ?>"><?php print implode(' +<br />', $titles_arr); ?></a></h4>
         <div class="v-card-summary">
-            <?php print empty($ingredients) ? '' : '<div class="v-card-subtitle">' . $ingredients . '</div>'; ?>
+            <?php print empty($ingredients_arr) ? '' : '<div class="v-card-subtitle">' . implode(' +<br />', $ingredients_arr) . '</div>'; ?>
             <div><?php print $summary; ?></div>
         </div>
         <a class="btn btn-danger v-card-more" href="<?php print $product_url; ?>">
@@ -102,7 +103,7 @@
     </div>
 
     <footer>
-        <?php print '<strong>' . t('Price') . '</strong> ' . t('(with NDS)') . ': ' . $prices . ' ' . t('roub.'); ?>
+        <?php print '<strong>' . t('Price') . '</strong> ' . t('(with NDS)') . ': ' . implode(' + ', $prices_arr) . ' ' . t('roub.'); ?>
     </footer>
 </div>
 
