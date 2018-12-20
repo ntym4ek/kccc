@@ -785,14 +785,18 @@ function _get_product_categories($node)
     $node_wrapper = entity_metadata_wrapper('node', $node);
 
     // для Баковой смеси
-    if (isset($node_wrapper->field_pd_mix_components)) {
-        foreach($node_wrapper->field_pd_mix_components->getIterator() as $mix_wrapper) {
-            foreach($mix_wrapper->field_pd_category->getIterator() as $cat_wrapper) {
+    if (isset($node_wrapper->field_pd_mix_component1)) {
+        foreach($node_wrapper->field_pd_mix_component1->field_pd_category->getIterator() as $cat_wrapper) {
+            $cids[] = $cat_wrapper->tid->value();
+        }
+        if (isset($node_wrapper->field_pd_mix_component2)) {
+            foreach($node_wrapper->field_pd_mix_component2->field_pd_category->getIterator() as $cat_wrapper) {
                 $cids[] = $cat_wrapper->tid->value();
             }
         }
-        // для остальных препаратов
-    } elseif ($node_wrapper->field_pd_category->value()) {
+    }
+    // для остальных препаратов
+    elseif ($node_wrapper->field_pd_category->value()) {
         foreach($node_wrapper->field_pd_category->getIterator() as $cat_wrapper) {
             $cids[] = $cat_wrapper->tid->value();
         }

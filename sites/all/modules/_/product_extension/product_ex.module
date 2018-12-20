@@ -528,22 +528,12 @@ function get_product_info($node)
     // один препарат для химии, два препарата для смесей
     $preparations = [];
     if ($preparation_wr->value()->type == 'product_mix') {
-        foreach($preparation_wr->field_pd_mix_components as $key => $wrapper) {
-            // баковые смеси нужно расположить в определенном порядке
-            // будем сортировать в зависимости от препаративной формы (костыль)
-            // 71552 ВДГ, 71590 СП, 71555 ВР
-            if (in_array($wrapper->field_pd_formulation->tid->value(), ["71552", "71590", "71555"]))
-                array_push($preparations, array(
-                        'order' => $key,            // порядок следования в бд
-                        'item' => $wrapper,
-                    )
-                );
-            else array_unshift($preparations, array(
-                    'order' => $key,
-                    'item' => $wrapper,
-                )
+        foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
+            $wrapper = $preparation_wr->{$field};
+            $preparations[] = array(
+                'order' => $key,
+                'item' => $wrapper,
             );
-
         }
     } else {
         $preparations[] = array(

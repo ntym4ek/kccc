@@ -490,7 +490,8 @@ function agro_recipe_field_form($form, &$form_state, $op) {
                     // определяем наименование препарата
                     $titles = $titles_arr = array();
                     if ($prep_wrapper->field_pd_category[0]->tid->value() == AGRO_CATEGORY_MIX_TID) {
-                        foreach($prep_wrapper->field_pd_mix_components->getIterator() as $key => $value) {
+                        foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
+                            $value = $prep_wrapper->{$field};
                             // todo устарело, заменить на использование get_product_info
                             $titles_arr = get_product_agro_title($value->nid->value());
                             $titles[] = $titles_arr['title'] . ', ' . $titles_arr['formulation'];

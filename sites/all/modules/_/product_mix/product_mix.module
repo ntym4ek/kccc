@@ -21,7 +21,8 @@ function product_mix_add_to_cart_callback($nid) {
     return $html;
 };
 
-function product_mix_add_to_cart_form($form, $form_state, $products) {
+function product_mix_add_to_cart_form($form, $form_state, $products)
+{
     $form = array(
         '#attributes' => array('class' => array('form-horizontal')),
     );
@@ -44,9 +45,12 @@ function product_mix_add_to_cart_form($form, $form_state, $products) {
     return $form;
 };
 
-function product_mix_add_to_cart_form_submit($form, &$form_state) {
+function product_mix_add_to_cart_form_submit($form, &$form_state)
+{
     foreach($form_state['values']['products'] as $pid) {
-        $product = commerce_product_load($pid);
+        $preparation_wr = entity_metadata_wrapper('node', $pid);
+
+        $product = commerce_product_load($preparation_wr->field_product[0]->product_id->value());
         $product_wrapper = entity_metadata_wrapper('commerce_product', $product);
         $nodes = $product_wrapper->field_product_node->value();
 
