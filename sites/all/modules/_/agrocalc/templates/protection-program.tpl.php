@@ -27,7 +27,7 @@ $path = drupal_get_path('module', 'agrocalc');
                 <?php $cnt_cat = 1; ?>
                 <?php foreach($program['categories'] as $key_cat => $category): ?>
                     <div class="row" style="page-break-before: always;">
-                        <div id="category-<?php print $category['tid']; ?>" class="header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
+                        <div id="category-<?php print $category['tid']; ?>" class="list-category-header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
                             <div class="box">
                                 <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
                                 <img class="icon" src="<?php print $category['icon']; ?>">
@@ -204,7 +204,7 @@ $path = drupal_get_path('module', 'agrocalc');
 
                 <?php if ($area): ?>
                 <div class="row">
-                    <div class="header col-xs-12 calculation-total category-17">
+                    <div class="list-category-header col-xs-12 calculation-total category-17">
                         <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" />
                         <div class="box">
                             <div class="bkg"></div>
@@ -227,3 +227,5 @@ $path = drupal_get_path('module', 'agrocalc');
 
     </div>
 </div>
+
+

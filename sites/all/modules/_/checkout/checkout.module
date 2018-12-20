@@ -98,7 +98,7 @@ function checkout_form_alter(&$form, &$form_state, $form_id)
         // отключить отмену, переименовать оформление
         unset($form['buttons']['cancel']);
         $form['buttons']['continue']['#value'] = t('Send request');
-        $form['buttons']['continue']['#attributes']['class'][] = 'pull-right';
+        $form['buttons']['continue']['#attributes']['class'][] = 'pull-right btn-wide';
         $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
 
         // подавить общее сообщение о наличии ошибок в форме

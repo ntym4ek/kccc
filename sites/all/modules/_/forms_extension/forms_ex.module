@@ -61,9 +61,11 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
 
             // отключить возможность ввода цены для варианта товара
             // цена расчитывается автоматически от цены за шт.
-            foreach($form['field_product']['und']['entities'] as $key_e => $entity) {
-                if (is_numeric($key_e) && !empty($entity['form']['commerce_price'])) {
-                    $form['field_product']['und']['entities'][$key_e]['form']['commerce_price']['#access'] = false;
+            if (isset($form['field_product']['und']['entities'])) {
+                foreach ($form['field_product']['und']['entities'] as $key_e => $entity) {
+                    if (is_numeric($key_e) && !empty($entity['form']['commerce_price'])) {
+                        $form['field_product']['und']['entities'][$key_e]['form']['commerce_price']['#access'] = false;
+                    }
                 }
             }
             if (!empty($form['field_product']['und']['form']['commerce_price'])) {

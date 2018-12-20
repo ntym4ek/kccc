@@ -609,6 +609,12 @@
 
 /* ------------------------------------------------- Страница препарата - */
 .product-intro {
+    .product-image {
+        img:nth-child(2) {
+            position: absolute; right: 15px; bottom: -25px;
+            width: 40%;
+        }
+    }
   .product-brief {
     background-color: #eee;
     border-radius: 10px;
@@ -1345,6 +1351,38 @@
     @include make-md-column(8);
 }
 
+// подкатегории в списке препаратов (в программе защиты и баковых смесях)
+.list-category-header {
+    margin-bottom: $grid-gutter-width/2;
+    cursor: pointer;
+    .box {
+        background: #fff;
+        border-radius: 8px;
+        position: relative;
+        height: 100px;
+    }
+    .bkg {
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative; z-index: 1;
+        max-height: 100px;
+        overflow: hidden;
+        transition: all 300ms ease-in-out;
+        img { width: 100%; }
+    }
+    .icon {
+        position: absolute; right: 20px; bottom: -25px; z-index: 1;
+        width: 50px;
+        transition: all 300ms ease-in-out;
+        @media #{$tablet} {
+            width: 60px;
+            right: 45px; bottom: -30px;
+        }
+    }
+    h4 { margin-top: 5px; }
+}
 
 /* ------------------------------------------------- Carousel - */
 //
@@ -1424,8 +1462,8 @@
     padding: 15px;
       position: relative;
       img:nth-child(2) {
-          position: absolute; right: 15px; bottom: 20px;
-          width: 100px;
+          position: absolute; right: 15px; bottom: 0;
+          width: 40%;
       }
   }
 
@@ -1433,7 +1471,6 @@
   .v-card-content {
     border-top: 1px solid $views-list-bg;
     border-bottom: 1px solid $views-list-bg;
-      //min-height: 110px;
   }
   .v-card-title {
       margin: 0 0 3px 0;
@@ -1492,7 +1529,7 @@
 
 /* ------------------------------------------------- Таксономия Каталог --------------------------------------------- */
 .taxonomy.teaser {
-  padding: 0 22px;
+  padding: 0 0 0 22px;
   h4 {
     font-weight: 700;
     position: relative;
@@ -1521,11 +1558,15 @@
     li {
       font-size: 13px;
       line-height: $line-height-base;
+        white-space: nowrap;
       i {
         color: $brand-info; font-size: 10px;
         padding-right: 5px;
       }
-      a { color: $text-color; }
+      a {
+          color: $text-color;
+          white-space: nowrap;
+      }
     }
   }
 }
@@ -1796,26 +1837,7 @@
             .material-switch { flex: 0 0 40px; }
         }
     }
-    .header {
-        margin-bottom: $grid-gutter-width/2;
-        cursor: pointer;
-        .box {
-            background: #fff;
-            border-radius: 8px;
-            position: relative;
-            height: 100px;
-        }
-        .bkg {
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative; z-index: 1;
-            max-height: 100px;
-            overflow: hidden;
-            transition: all 300ms ease-in-out;
-            img { width: 100%; }
-        }
+    .list-category-header {
         &.is-active .bkg {
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
@@ -1848,18 +1870,9 @@
                 justify-content: center;
             }
         }
-        .icon {
-            position: absolute; right: 20px; bottom: -25px; z-index: 1;
-            width: 50px;
-            transition: all 300ms ease-in-out;
-            @media #{$tablet} {
-                width: 60px;
-                right: 45px; bottom: -30px;
-            }
-        }
+
         &.collapsed .icon {@include rotate(-360deg); }
 
-        h4 { margin-top: 5px; }
         &.category-15 .clr-category { color: $brand-herbicides; }
         &.category-16 .clr-category { color: $brand-fungicides; }
         &.category-17 .clr-category { color: $brand-insecticides; }

@@ -5,7 +5,11 @@
     $query->leftJoin('field_data_title_field', 'tf', 'n.nid = tf.entity_id');
     $query->condition('pc.field_pd_category_tid', $tid);
     $query->condition('n.status', 1);
-    $query->condition('tf.language', $GLOBALS['language']->language);
+    $query->condition(
+        db_or()
+            ->condition('tf.language', $GLOBALS['language']->language)
+            ->condition('tf.language', 'und')
+    );
     $query->fields('n', array('nid'));
     $query->orderby('tf.title_field_value', 'ASC');
     $preps = $query->execute()->fetchAll();
