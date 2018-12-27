@@ -201,6 +201,7 @@
   & > .content  {
     background-repeat: repeat-y;
       background-color: #fff;
+
     padding-top: $header-xs-height; padding-bottom: 178px;
     position: relative;
     min-height: 100%;
@@ -209,6 +210,7 @@
     @media #{$tablet} {
         background: url(../images/bkg_px.png);
       padding-top: $header-sm-height; padding-bottom: 111px;
+        box-shadow: 0 -10px 60px 20px rgba(0, 0, 0, 0.12);
     }
     @media print {
       padding-top: 0!important; padding-bottom: 0!important;
@@ -2141,4 +2143,13 @@
         &.slide-left,
         &.slide-right { transform: translateX(0px); }
     }
+}
+
+/* ------------------------------------------------- New Year ----------------------------------------------- */
+.new-year {
+    position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;
+    .ltop { position: absolute; left: 0; top: 0; }
+    .rtop { position: absolute; right: 0; top: 0; }
+    .lbottom { position: absolute; left: 0; bottom: 0; }
+    .rbottom { position: absolute; right: 0; bottom: 0; }
 }

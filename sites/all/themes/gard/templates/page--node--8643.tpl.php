@@ -275,5 +275,10 @@
 
 <div id="modalBackdrop"></div>
 
-<div class="side-body">
+<div class="new-year">
+    <div class="ltop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
+    <div class="rtop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
+    <div class="lbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
+    <div class="rbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
+</div>
 
