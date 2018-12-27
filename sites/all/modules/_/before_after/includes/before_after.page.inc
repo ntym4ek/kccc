@@ -8,8 +8,10 @@ function before_after_list_page()
     $list = '';
 
     if ($atf_array = before_after_get_atfield_list(isset($_GET['region'])?$_GET['region']:null, isset($_GET['culture'])?$_GET['culture']:null)) {
-        foreach ($atf_array as $atf_item) {
+        foreach ($atf_array as $index => $atf_item) {
             $list .= theme('before_after_item', array('content' => $atf_item));
+            if (++$index % 2 == 0) $list .= '<div class="clearfix visible-sm"></div>';
+            if ($index % 3 == 0) $list .= '<div class="clearfix visible-md visible-lg"></div>';
         }
     }
 

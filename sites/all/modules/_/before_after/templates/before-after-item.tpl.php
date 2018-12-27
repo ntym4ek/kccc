@@ -1,6 +1,6 @@
 <?php
 ?>
-<div class="view-item col-xs-12 col-sm-6 col-md-4 col-lg-4">
+<div class="view-item col-xs-12 col-sm-6 col-md-4">
 
     <div class="v-card field">
         <header>
