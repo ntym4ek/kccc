@@ -1,0 +1,142 @@
+<?
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function ext_registration_ctools_plugin_api($owner, $api) {
+    if ($owner == 'services' && $api == 'services') {
+        return array(
+            'version' => 3,
+            'file' => 'includes/ext_registration.services.inc'
+        );
+    }
+}
+
+/**
+ * Implements hook_menu_alter();
+ */
+function ext_registration_menu_alter(&$items)
+{
+    // ограничиваем доступ к закладке только Афишей
+    // http://xandeadx.ru/blog/drupal/740
+    if (isset($items['node/%/agenda-registrations'])) {
+        $items['node/%/agenda-registrations']['access callback'] = 'ext_registration_tab_access';
+    }
+}
+
+/**
+ * Tab access callback.
+ */
+function ext_registration_tab_access()
+{
+    $node = node_load(arg(1));
+    if ($node->type == 'agenda') {
+        return call_user_func_array('views_access', func_get_args());
+    }
+}
+
+/**
+ * Implementation of hook_module_implements_alter().
+ */
+function ext_registration_module_implements_alter(&$implementations, $hook) {
+    //  Если хук - hook_form_alter, то переносим нашу реализацию этого хука в конец очереди
+    if (in_array($hook, ['form_alter', 'menu_alter'])) {
+        $group = $implementations['ext_registration'];
+        unset($implementations['ext_registration']);
+        $implementations['ext_registration'] = $group;
+    }
+}
+
+function ext_registration_form_alter(&$form, &$form_state, $form_id)
+{
+    if ($form_id == 'registration_form' && arg(2) != 'edit') {
+        if ($form['#entity']->type == 'agenda') {
+            $form['#prefix'] = '<div id="registration-form-wrapper">';
+            $form['#suffix'] = '</div>';
+            $form['#attributes']['class'][] = 'form-embedded';
+            $form['title']['#markup'] = '<h4>Запланировать встречу</h4><p class="font-small text-muted">Наш представитель получит уведомление и свяжется в Вами</p>';
+            if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#type'] == 'submit') {
+                // выводим сообщение о принятой заявке
+                $form['title']['#markup'] .= '<h2 class="text-center" style="margin: 100px 0;">Спасибо за уведомление!</h2>';
+                $form['actions']['submit']['#access'] = false;
+                $form['actions']['cancel']['#access'] = false;
+                $form['field_reg_sure']['#access'] = false;
+                $form['field_date_select']['#access'] = false;
+                $form['field_fullname']['#access'] = false;
+                $form['field_company']['#access'] = false;
+                $form['field_profile_post']['#access'] = false;
+                $form['field_phone']['#access'] = false;
+                $form['field_contact_message']['#access'] = false;
+                $form['fz152_agreement']['#access'] = false;
+            } else {
+                // редактируем форму
+                if (isset($form['fz152_agreement'])) $form['fz152_agreement']['#weight'] = 99;
+
+                unset($form['field_reg_sure']['und']['#title']);
+                $form['field_date_select']['und']['#options']['_none'] = 'Выберите день';
+                unset($form['field_date_select']['und']['#title']);
+
+                $form['field_company']['und'][0]['value']['#attributes']['placeholder'] = $form['field_company']['und']['#title'];
+                unset($form['field_company']['und'][0]['value']['#title']);
+                $form['field_profile_post']['und'][0]['value']['#attributes']['placeholder'] = $form['field_profile_post']['und']['#title'];
+                unset($form['field_profile_post']['und'][0]['value']['#title']);
+
+                $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
+                unset($form['field_phone']['und'][0]['value']['#title']);
+                $form['field_fullname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_fullname']['und']['#title'];
+                unset($form['field_fullname']['und'][0]['value']['#title']);
+                $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
+                unset($form['field_contact_message']['und'][0]['value']['#title']);
+                unset($form['registrant_self']);
+
+                $form['actions']['cancel']['#access'] = false;
+                $form['actions']['submit']['#attributes']['class'][] = 'btn-info btn-wide-full';
+                $form['actions']['submit']['#value'] = 'Отправить';
+                $form['actions']['submit']['#ajax'] = array(
+                    'callback' => 'ext_registration_form_refresh',
+                    'wrapper' => 'registration-form-wrapper',
+                    'effect' => 'fade',
+                );
+
+                $form['#validate'][] = 'ext_registration_form_validate';
+                $form['#submit'][] = 'ext_registration_form_submit';
+
+                $agenda_wr = entity_metadata_wrapper('node', $form['#entity']->entity_id);
+                $interval = ($agenda_wr->field_period->value2->value() - $agenda_wr->field_period->value->value()) / (3600 * 24);
+                $options = ['' => 'Выберите день'];
+                for ($i = 1; $i <= $interval + 1; $i++) {
+                    $options[$i] = $form['field_date_select']['und']['#options'][$i];
+                };
+                $form['field_date_select']['und']['#options'] = $options;
+                $form['field_date_select']['und']['#default_value'][] = '';
+            }
+        }
+    }
+}
+
+/**
+ * Ajax callback
+ */
+function ext_registration_form_refresh($form, $form_state)
+{
+    return $form;
+}
+
+function ext_registration_form_validate($form, &$form_state)
+{
+    if (empty($form_state['values']['field_phone']['und'][0]['value'])) { form_set_error('field_phone', 'Укажите телефон для связи'); return false; }
+}
+
+function ext_registration_form_submit($form, &$form_state)
+{
+    if (isset($_SESSION['messages']['status'][0])) unset($_SESSION['messages']['status']);
+    $form_state['rebuild'] = true;
+}
+
+/**
+ * Pre-processes variables for the "node" theme hook.
+ */
+function ext_registration_preprocess_node(&$vars)
+{
+
+}
