@@ -305,19 +305,23 @@ function product_ex_form_field_collection_item_form_alter(&$form, &$form_state, 
     }
 }
 
-function product_ex_preprocess_node(&$vars) {
-    global $user;
-
+function product_ex_preprocess_node(&$vars)
+{
     // для Крупной фасовки подключить js библиотеку для форматирования суммы и расчётов
     if ($vars['view_mode'] == 'full' && in_array($vars['node']->type, array('product_agro', 'product_mix', 'product_fert'))) {
         drupal_add_js(drupal_get_path('module', 'product_ex') . '/js/mini_calc.js');
         drupal_add_js(drupal_get_path('module', 'product_ex') . '/js/accounting.js');
     }
 
+    // разложить title для агроминералов
+    if ($vars['node']->type == 'product_fert') {
+        $vars['header']['title'] = explode('|', $vars['node']->title)[0];
+        $vars['header']['title_suffix'] = explode('|', $vars['node']->title)[1];
+    }
 
 
     // расчёт и размека рейтинга препарата
-    // todo найти причину падения страницы из-за нижеследующего кода
+    // todo найти причину падения страницы из-за следующего кода
 //    if ((in_array($vars['view_mode'], array('full', 'teaser')) && in_array($vars['type'], array('product_agro')))
 //        || $vars['view_mode'] == 'teaser_grid') {
 //        // посчитать рейтинг и количестко отзывов
