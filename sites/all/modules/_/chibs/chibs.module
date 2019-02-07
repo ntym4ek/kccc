@@ -153,76 +153,6 @@ function chibs_js_alter(&$js) {
 
 
 
-
-/**
- * ------------------------------------------ Path Breadcrumbs -------------------------------------------
- * динамически формируем Крошку на описание товара
- */
-//function chibs_path_breadcrumbs_view_alter(&$breadcrumbs, $path_breadcrumbs, $contexts)
-//{
-//    // перевести пункт Home
-//    if ($path_breadcrumbs->home == 1) $breadcrumbs[0] = '<a href="/">' . t('Home', array(), array('context' => 'Path Breadcrumbs Home link')) . '</a>';
-//
-//    // для Описания товара
-//    // определить текущую категорию товара
-//    if ($path_breadcrumbs->machine_name == 'product' && isset($_GET['cat'])) {
-//        $tid = $_GET['cat'];
-//        $term = taxonomy_term_load($tid);
-//        // ссылки на категории
-//        $tid_url = drupal_get_path_alias('taxonomy/term/' . $tid);
-//        // название
-//        $breadcrumbs[3] = '<a href="/' . $tid_url . '">' . $term->name . '</a>';
-//    }
-//}
-
-
-
-
-/**
- * -------------------------------------- Дополнение для модуля Advanced Poll -----------------------------------------
- *
- * начисление и вычитание бонуса за голосование и отмену голоса
- *
- */
-
-const ADVPOLL_VOTE_BONUS = 100; // размер бонуса за голосование
-
-// функция для добавления действий после удачного голосования
-function chibs_votingapi_insert() {
-    global $user;
-
-    // TODO проверка, даётся ли за это голосование бонус
-    if (true) {
-        // добавить пользователю на личный счёт бонус за голосование ( константа ADVPOLL_VOTE_BONUS )
-        if ($profile = profile2_load_by_user($user, 'main')) {
-            $lang = $GLOBALS['language']->language;
-            if (!isset($profile->field_profile_account[$lang][0]['value'])) $profile->field_profile_account[$lang][0]['value'] = 0;
-            $profile->field_profile_account[$lang][0]['value'] += ADVPOLL_VOTE_BONUS;
-            profile2_save($profile);
-        }
-    }
-}
-
-
-// функция для добавления действий после отмены голосования
-function chibs_votingapi_delete() {
-    global $user;
-
-    // TODO проверка, даётся ли за это голосование бонус
-    if (true) {
-        // вычесть у пользователя с личного счёта бонус за голосование ( константа ADVPOLL_VOTE_BONUS )
-        if ($profile = profile2_load_by_user($user, 'main')) {
-            $lang = $GLOBALS['language']->language;
-            if (!isset($profile->field_profile_account[$lang][0]['value'])) $profile->field_profile_account[$lang][0]['value'] = 0;
-            $profile->field_profile_account[$lang][0]['value'] -= ADVPOLL_VOTE_BONUS;
-            if ($profile->field_profile_account[$lang][0]['value'] < 0) {
-                $profile->field_profile_account[$lang][0]['value'] = 0;
-            }
-            profile2_save($profile);
-        }
-    }
-}
-
 /**
  *  --------------------------------------------- Прочие изменения -----------------------------------------------------
  */
@@ -266,6 +196,58 @@ function chibs_node_submit($node, $form, &$form_state) {
                 $image->title = $node->title . ' - ' . strip_tags($pd_wrapper->body->summary->value()) . ' - ' . $site_name;
             }
             $p_wrapper->save();
+        }
+    }
+}
+
+function chibs_node_insert($node)
+{
+    if ($node->type == 'news') _chibs_check_and_place_news_to_front();
+}
+function chibs_node_update($node)
+{
+    if ($node->type == 'news') _chibs_check_and_place_news_to_front();
+}
+
+function _chibs_check_and_place_news_to_front()
+{
+    /** --------------------------------------------- Авторазмещение новостей на главной - */
+    // получить список новостей с галками На главную
+    $query = db_select('node', 'n');
+    $query->fields('n', array('nid'));
+    $query->condition('n.type', 'news');
+    $query->condition('n.promote', 1);
+    $query->innerJoin('field_data_field_news_category', 'nc', 'n.nid = nc.entity_id');
+    $query->condition('nc.field_news_category_tid', 5);
+    $query->orderBy('n.created', 'DESC');
+    $query->range(0, 2);
+    $nodes = $query->execute()->fetchAll();
+
+    // взять две последние
+    // и заполнить два блока на главной (18 и 19)
+    if (!empty($nodes)) {
+        foreach ($nodes as $index => $node) {
+            $node_wr = entity_metadata_wrapper('node', $node->nid);
+            $title = $node_wr->title->value();
+            $url = url('node/' . $node->nid);
+            $image_uri = empty($node_wr->field_promo_image->value()) ? 'public://default_images/no_photo.png' : $node_wr->field_promo_image->file->value()->uri;
+            $image_url = image_style_url('720_465', $image_uri);
+            $block_html = '<div class="block-content no-gutters">' .
+                            '<div class="block-image image-valign-center">' .
+                                '<a href="' . $url . '">' .
+                                    '<img src="' . $image_url . '">' .
+                                '</a>' .
+                            '</div>' .
+                            '<div class="block-body">' .
+                                '<a href="' . $url . '"><h2>' . $title . '</h2></a>' .
+                                    '<p>' . t('Events section') . '</p>' .
+                                '<a class="btn btn-danger" href="' . $url . '">' .
+                                    t('More') . '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>' .
+                                '</a>' .
+                            '</div>' .
+                          '</div>' .
+                          ($index ? '<div class="clearfix"></div>' : '');
+            db_update('block_custom')->fields(array('body' => $block_html))->condition('bid', 18 + $index)->execute();
         }
     }
 }
