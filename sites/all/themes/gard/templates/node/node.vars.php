@@ -33,19 +33,19 @@ function gard_preprocess_node(&$vars) {
         /** -------------------------------- Изображение - */
         if (empty($vars['image'])) {
             $image_style = 'news_teaser';
-            $image_uri = 'public://default_images/no_image.jpg';
+            $image_uri = $vars['type'] == 'vacancy' ? 'public://default_images/user_image.jpg' : 'public://default_images/no_image.jpg';
+            // для Вакансий своё изображение
             if (isset($vars['content']['field_promo_image'][0])) {
-                $image_style = $vars['content']['field_promo_image'][0]['#image_style'];
+                if (!empty($vars['content']['field_promo_image'][0]['#image_style'])) $image_style = $vars['content']['field_promo_image'][0]['#image_style'];
                 $image_uri = $vars['content']['field_promo_image'][0]['#item']['uri'];
             } elseif (isset($vars['content']['field_image_gallery'][0])) {
-                $image_style = $vars['content']['field_image_gallery'][0]['#image_style'];
+                if (!empty($vars['content']['field_image_gallery'][0]['#image_style'])) $image_style = $vars['content']['field_image_gallery'][0]['#image_style'];
                 $image_uri = $vars['content']['field_image_gallery'][0]['#item']['uri'];
             } elseif (isset($vars['content']['product:field_p_images'][0])) {
-                $image_style = $vars['content']['product:field_p_images'][0]['#image_style'];
+                if (!empty($vars['content']['product:field_p_images'][0]['#image_style'])) $image_style = $vars['content']['product:field_p_images'][0]['#image_style'];
                 $image_uri = $vars['content']['product:field_p_images'][0]['#item']['uri'];
             }
-            // для Вакансий своё изображение
-            if ($vars['type'] == 'vacancy') $image_uri = 'public://default_images/user_image.jpg';
+
 
             $vars['image'] = image_style_url($image_style, $image_uri);
         }
@@ -55,7 +55,9 @@ function gard_preprocess_node(&$vars) {
     elseif($vars['view_mode'] == 'full') {
         /** -------------------------------- Изображение - */
         if (empty($vars['image'])) {
-            if (isset($vars['content']['field_promo_image'][0])) {
+            if (isset($vars['content']['field_image_gallery'][0])) {
+                $vars['image'] = render($vars['content']['field_image_gallery']);
+            } elseif (isset($vars['content']['field_promo_image'][0])) {
                 $image_title = empty($vars['field_promo_image'][0]['title']) ? $vars['title'] : $vars['field_promo_image'][0]['title'];
                 $image_alt = empty($vars['field_promo_image'][0]['alt']) ? $vars['title'] : $vars['field_promo_image'][0]['alt'];
 
@@ -66,11 +68,10 @@ function gard_preprocess_node(&$vars) {
                 }
                 $vars['image'] = '<a href="' . file_create_url($vars['field_promo_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
                 $vars['image'] .= '<div class="img-title"><span>' . t('Photo') . '. ' . $image_title . '</span></div>';
-                hide($vars['content']['field_promo_image']);
-            } elseif (isset($vars['content']['field_image_gallery'][0])) {
-                $vars['image'] = render($vars['content']['field_image_gallery']);
-                hide($vars['content']['field_image_gallery']);
+
             }
+            hide($vars['content']['field_promo_image']);
+            hide($vars['content']['field_image_gallery']);
         }
 
         /** -------------------------------- Теги - */
@@ -121,9 +122,13 @@ function gard_preprocess_node(&$vars) {
         $vars['author'] = $author['name'] . ' ' . $author['surname'];
         //$vars['commented'] = $vars['node']->comment_count;
     }
+
+    /** ------------------------------------ Вакансии --------------------------------------------------------------- */
     if ($vars['type'] == 'vacancy') {
-        $vars['author'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
+        $vars['employer'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
+        $vars['place'] = $vars['content']['field_vacancy_location'][0]['#markup'];
     }
+
 
 
     /** ------------------------------------ Программы защиты-------------------------------------------------------- */

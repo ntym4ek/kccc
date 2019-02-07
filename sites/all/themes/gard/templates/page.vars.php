@@ -15,6 +15,12 @@
  */
 function gard_preprocess_page(&$vars)
 {
+    // некоторые пути, типа node/8650/registrations не загружают ноду
+    if (empty($vars['node']) && arg(0) == 'node' && is_numeric(arg(1))) {
+        $vars['node'] = node_load(arg(1));
+        $path_alias_wo_lang = url('node/' . arg(1));
+    }
+
     $lang = $GLOBALS['language']->language;
 
     $vars['search_input_placeholder'] = t('Enter your search query');
@@ -36,18 +42,24 @@ function gard_preprocess_page(&$vars)
     $category_title = empty($vars['header']['category_title']) ? '' : $vars['header']['category_title'];
     $image          = empty($vars['header']['image']) ? '' : $vars['header']['image'];
     $url            = empty($vars['header']['url']) ? '' : $vars['header']['url'];
-    $print          = empty($vars['header']['print']) ? '' : $vars['header']['print'];
+    $print          = empty($vars['header']['print']) ? true : $vars['header']['print'];
     // true убирает заголовок страницы
     // используется в ЛК
     $title_off      = empty($vars['header']['title_off']) ? false : $vars['header']['title_off'];
     // true убирает обёртку, выводящую содержимое с отступом от края
     // необходимо для тёмного фона Views
-    $wrapper_off    = empty($vars['header']['wrapper_off']) ? false : $vars['header']['wrapper_off'];
+    $wrapper_off    = empty($vars['wrapper_off']) ? false : $vars['wrapper_off'];
 
     $title = drupal_ucfirst($title);
 
+    // определить путь, по которому будем искать изображение
+    if (arg(0) == 'node' && is_numeric(arg(1))) {
+        $path_alias_wo_lang = url('node/' . arg(1));
+    }
+
         // если есть картинка PNG или JPG по пути, аналогичному URL страницы, взять её
-    $path_alias_wo_lang = strpos(url($_GET['q']), '/en') === 0 ? drupal_substr(url($_GET['q']), 3) : url($_GET['q']);
+    if (empty($path_alias_wo_lang))
+        $path_alias_wo_lang = strpos(url($_GET['q']), '/en') === 0 ? drupal_substr(url($_GET['q']), 3) : url($_GET['q']);
     foreach(array('png', 'jpg') as $ext) {
         $hi_path = 'public://images/header_images/' . $_GET['q'] . '/header_image.' . $ext;
         if (file_exists($hi_path)) {
@@ -100,13 +112,17 @@ function gard_preprocess_page(&$vars)
             $subtitle = t('Feedback from Trade House customers');
             break;
         case 'info/job':
-            if (!arg(2))
-            $subtitle = '<p><b>' . t('ООО Trade House "Kirovo-Chepetsk Chemical Company"') . '</b> - ' . t('manufacturing and realizing company of plant protection and other agrochemical products') . '.</p>' .
-                        '<p><b>' . t('Kirovo-Chepetsk factory «Agrohimikat»') . '</b> ' . t('produces herbicides, desiccants, insecticides, fungicides and disinfectants with international standards quality') . '.</p>' .
-                        '<p>' . t('Our main partners are world\'s large companies') .'.</p>';
-            break;
-        case 'eform/contact-vacancy':
-            $category_title = '<a href="' . '/info/job' . '">' . t('Careers') . '</a>';
+            if (!arg(2)) {
+                $category_title = t('Careers');
+                $subtitle = '<p><b>' . t('ООО Trade House "Kirovo-Chepetsk Chemical Company"') . '</b> - ' . t('manufacturing and realizing company of plant protection and other agrochemical products') . '.</p>' .
+                            '<p><b>' . t('Kirovo-Chepetsk factory «Agrohimikat»') . '</b> ' . t('produces herbicides, desiccants, insecticides, fungicides and disinfectants with international standards quality') . '.</p>' .
+                            '<p>' . t('Our main partners are world\'s large companies') .'.</p>';
+            }
+            if (arg(2) == 'submissions') {
+                $subtitle = 'Список резюме, отправленных через форму на странице вакансии';
+                $category_title = '<a href="' . '/info/job' . '">' . t('Careers') . '</a>';
+            }
+
             break;
         case 'handbook/protection-programs':
             $subtitle = t('Protection programs using products of Trade House');
@@ -130,22 +146,9 @@ function gard_preprocess_page(&$vars)
             break;
     }
 
-    /** -------------------------------------------- для entityform_type - */
-    if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
-        $subtitle = $entityform['form']['intro']['#markup'];
-        $url = url($_GET['q'], array('absolute' => true));
-        $print = true;
-    }
-
     /** -------------------------------------------- для Нод - */
     if (isset($vars['node'])) {
         $node_wrapper = entity_metadata_wrapper('node', $vars['node']);
-
-        // разложить title для агроминералов
-        if ($vars['node']->type == 'product_fert') {
-            $title = explode('|', $vars['node']->title)[0];
-            $title_suffix = explode('|', $vars['node']->title)[1];
-        }
 
         // нужно ли показывать заголовок
         if (!empty($vars['node']->field_show_header['und'][0]['value'])) {
@@ -158,7 +161,7 @@ function gard_preprocess_page(&$vars)
 
             // описание в зависимости от языка
             // но если для языка не задано, берем und или ru
-            if (isset($vars['node']->body)) {
+            if (!$subtitle && isset($vars['node']->body)) {
                 if (empty($vars['node']->body[$lang][0])) {
                     if (!empty($vars['node']->body['und'][0])) { $subtitle = $vars['node']->body['und'][0]['summary']; }
                     if (!empty($vars['node']->body['ru'][0])) { $subtitle = $vars['node']->body['ru'][0]['summary']; }
@@ -166,9 +169,6 @@ function gard_preprocess_page(&$vars)
                     $subtitle = isset($vars['node']->body[$lang]) ? $vars['node']->body[$lang][0]['summary'] : '';
                 }
             }
-
-            $url = url('node/' . $vars['node']->nid, array('absolute' => true));
-            $print = true;
 
             // определить заголовок Категории
             //для продукции
@@ -211,6 +211,9 @@ function gard_preprocess_page(&$vars)
             if ($vars['node']->type == 'weed') { $category_title = '<a href="' . '/handbook/weeds' . '">' . t('Weeds') . '</a>'; }
             // для Болезней
             if ($vars['node']->type == 'disease') { $category_title = '<a href="' . '/handbook/diseases' . '">' . t('Deseases of plants') . '</a>'; }
+
+            $url = url('node/' . $vars['node']->nid, array('absolute' => true));
+            $print = true;
         }
     }
 
@@ -233,7 +236,9 @@ function gard_preprocess_page(&$vars)
 
     /** -------------------------------------------- Контент  ------------------------------------------------------- */
     /** -------------------------------------------- Представления (Views) - */
-    if (isset($vars['page']['content']['system_main']['view']) || isset($vars['page']['#contextual_links']['views_ui'])) {
+//    if (isset($vars['page']['content']['system_main']['view']) || isset($vars['page']['#contextual_links']['views_ui'])) {
+    if (isset($vars['page']['content']['system_main']['view'])
+        || (isset($vars['page']['content']['system_main']['main']) && strpos($vars['page']['content']['system_main']['main']['#markup'], 'class="view') !== false && arg(0) !== 'person')) {
         $wrapper_off = true;
     }
 

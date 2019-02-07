@@ -204,10 +204,6 @@
 
         <?php print $messages; ?>
 
-        <?php if (!empty($tabs)): ?>
-            <?php print render($tabs); ?>
-        <?php endif; ?>
-
         <?php if (!empty($page['help'])): ?>
             <?php print render($page['help']); ?>
         <?php endif; ?>
@@ -228,6 +224,10 @@
                     </div>
                     <? endif; ?>
                 </div>
+
+                <?php if (!empty($tabs)): ?>
+                    <?php print render($tabs); ?>
+                <?php endif; ?>
 
                 <?php if (!$header['title_off']): ?>
                 <div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
@@ -315,10 +315,3 @@
 </div>
 
 <div id="modalBackdrop"></div>
-
-<div class="new-year">
-    <div class="ltop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
-    <div class="rtop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
-    <div class="lbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
-    <div class="rbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
-</div>

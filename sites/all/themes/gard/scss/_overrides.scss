@@ -119,6 +119,7 @@ body {
   margin: 0 auto;
 }
 
+option:disabled { color: $text-muted; }
 a, a:hover, a:focus {
   @include transition(all 0.2s ease-in-out);
 }
@@ -205,6 +206,9 @@ a, a:hover, a:focus {
 .btn.btn-wide {
     padding-left: $grid-gutter-width *2;
     padding-right: $grid-gutter-width *2;
+}
+.btn.btn-wide-full {
+    width: 100%;
 }
 
 // Element invisible fix
@@ -398,14 +402,15 @@ fieldset.panel {
   .panel-body {
     clear: both;
     display: inherit;
-    padding: 15px 0;
+    padding-bottom: 0;
   }
 }
 
 .form-group {
-  & > label {
+  > label {
     color: $text-muted; font-weight: 100; text-align: right;
   }
+  .form-group { margin-bottom: 0; }
 }
 
 // Exposed filters
@@ -453,6 +458,9 @@ fieldset.panel {
 .form-actions{
   clear: both;
   @include clearfix;
+    button:not(:last-child) {
+        margin-right: $grid-gutter-width/2;
+    }
 }
 .managed-files.table {
   td:first-child {
@@ -462,10 +470,40 @@ fieldset.panel {
 div.image-widget-data {
   float: none;
   overflow: hidden;
+    .form-submit { margin-top: 15px; } // кнопка в виджете загрузки файла
 }
-table.sticky-header {
-  z-index: 1;
+
+table {
+    th, td {
+        font-size: 80%;
+        padding: 10px;
+    }
+    th:first-child,
+    td:first-child { padding-left: 20px }
+    th:last-child,
+    td:last-child { padding-right: 20px }
+    th {
+        color: $text-muted; font-weight: 400;
+        .icon-after {
+                top: 2px;
+                margin-left: 5px;
+        }
+        a { opacity: .8; }
+    }
+
+    // Radio and checkbox in table fixes
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+        max-width: inherit;
+    }
+    &.sticky-header {
+        z-index: 1;
+    }
+    > caption { margin-bottom: $grid-gutter-width; }
+    &.table-condensed { padding: 5px; }
+    .form-group { margin-bottom: 0; }
 }
+
 .resizable-textarea textarea {
   border-radius: $border-radius-base $border-radius-base 0 0;
 }
@@ -540,18 +578,18 @@ table tr.error {
 }
 
 // Lists
-.nav-tabs {
-  margin-bottom: 10px;
-}
+//.nav-tabs {
+//  margin-bottom: 10px;
+//}
 ul li.collapsed,
 ul li.expanded,
 ul li.leaf {
   list-style: none;
   list-style-image: none;
 }
-.tabs--secondary {
-  margin: 0 0 10px;
-}
+//.tabs--secondary {
+//  margin: 0 0 10px;
+//}
 
 // Submitted
 .submitted {
@@ -851,15 +889,6 @@ td.radio {
   margin-top: 1.8em;
 }
 
-// Radio and checkbox in table fixes
-table {
-  .radio input[type="radio"],
-  .checkbox input[type="checkbox"] {
-    max-width: inherit;
-  }
-}
-
-
 
 .alert {
   border-radius: 0;
@@ -1058,6 +1087,7 @@ a {
     min-width: 768px;
   }
 
+    h1 { font-size: 28px; }
   a[href^="mail"]:after,
   a[href^="tel"]:after {
     content: "";

@@ -80,6 +80,7 @@
             }
         }
         &.secondary {
+            flex-wrap: nowrap;
             li {
                 border-left: 1px solid #e7e7e7;
                 flex: 0 0 33.3%;
@@ -188,7 +189,50 @@
   }
 }
 
-
+/* ------------------------------------------------- Закладки меню (Tabs) ------------------------------------------- */
+.tabs {
+    list-style: none;
+    padding-left: 0;
+    text-align: right;
+    &.secondary {
+        @include wrap-content();
+        li {
+            display: inline-block;
+            margin-left: 15px;
+            @include button-size(6px, 25px, 12px, 14px, 6px);
+            @include button-variant(#fff, $brand-l-blue, $brand-l-blue-hover);
+            a { color: inherit; }
+            &.active {
+                @include button-variant(#fff, $brand-blue, $brand-blue-hover);
+            }
+        }
+    }
+}
+.tabs--primary {
+    float: right;
+    margin-top: -33px; margin-right: $grid-gutter-width/2;
+    > li > a {
+        color: #9a9a9a;
+        background-color: $body-bg;
+        padding: 5px 15px;
+    }
+}
+.tabs--secondary {
+    border-bottom: 1px solid #c7c7c7;
+    float: right;
+    text-align: right; list-style: none;
+    > li {
+        display: inline-block;
+        > a {
+            color: #aaa; text-decoration: none;
+            display: block;
+            padding: 7px 15px;
+            &:hover,
+            &:focus,
+            &.active { color: inherit; }
+        }
+    }
+}
 
 
 /* ------------------------------------------------- Контент -------------------------------------------------------- */
@@ -442,7 +486,6 @@
 .category-header {
   background: #0B99E6;
   width: 100%; height: 140px;
-  margin-bottom: $grid-gutter-width;
   position: relative;
   overflow: hidden;
   .category-title {
@@ -498,7 +541,7 @@
 
 /* ------------------------------------------------- Статья - */
 .article-header {
-  margin-bottom: 20px;
+    margin: $grid-gutter-width 0;
   h1 {
       color: $brand-primary;
       display: inline-block;
@@ -596,9 +639,9 @@
             span { display: inline-block; }
         }
         p { margin: 0 0 $grid-gutter-width; }
-        &.node-body-bordered .field-name-body {
-            border-top: 1px solid $brand-info; border-bottom: 1px solid $brand-info;
-            padding: 15px 0;
+        &.node-body-bordered {
+            border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
+            padding: $grid-gutter-width 0;
         }
     }
     .node-tags {
@@ -1002,10 +1045,27 @@
         margin-top: 15px; padding-top: 15px;
         border-top: 1px solid $text-muted;
     }
+    @media print {
+        .field-name-field-vacancy-form { display: none; }
+    }
 }
 
 /* ------------------------------------------------- Формы ---------------------------------------------------------- */
 .dropbox-entry td { padding: 5px 10px; }
+.form-item-fz152-agreement {
+    color: $text-muted; font-size: 12px; text-align: right;
+    margin-top: 10px;
+}
+
+/* ------------------------------------------------- Форма встраиваемая - */
+.form-embedded {
+    background: #eee;
+    padding: 20px 30px;
+    .node & p { margin-bottom: $grid-gutter-width/2; }
+}
+
+/* ------------------------------------------------- Формы подтверждения удаления - */
+form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 /* ------------------------------------------------- Формы редактирования - */
 .page-node .form-item-language { display: none; }
@@ -1049,6 +1109,9 @@
     .g-recaptcha > div { margin: 0 auto; }
   }
 }
+
+/* ------------------------------------------------- Форма регистрации Афиша () - */
+#edit-registrant-self { display: none; }
 
 /* ------------------------------------------------- Форма вакансии - */
 .node-vacancy-form {
@@ -1269,56 +1332,48 @@
 
 
 /* ------------------------------------------------- Представления (Views)  ----------------------------------------- */
-/* ------------------------------------------------- Список блога - */
-/* ------------------------------------------------- Список новостей - */
-/* ------------------------------------------------- Список препаратов - */
-//.view-blogs-list,
-//.view-shop,
-//.view-news {
-.view-list {
-  @include make-sm-column(12);
-  & > .view-header,
-  & > .view-filters,
-  & > .view-content,
-  & > .view-empty,
-  & > .attachment {
-    @include make-row();
-  }
-  & > .view-filters,
-  & > .view-empty,
-  & > .view-content,
-  & > .attachment {
-    background-color: $views-list-bg;
-    padding-top: $grid-gutter-width;
-  }
-  & > .view-filters {
-    .views-exposed-form {
-      @include wrap-content();
-    }
-    .views-exposed-widgets {
-      margin-bottom: 0;
-      @include make-row();
-      .views-exposed-widget {
-          padding-top: 0;
-      }
-    }
-  }
-  & > .view-empty {
-    min-height: 100px;
-  }
-  & > .attachment {
-      .view {
-          @include wrap-content();
-      }
-  }
+/* ------------------------------------------------- Списки и таблицы - */
+.view-list,
+.view-table {
+    @include make-sm-column(12);
 
-  .view-item {
-      padding-bottom: $grid-gutter-width;
-      @media #{$phone} {
-          padding-bottom: $grid-gutter-width/2;
-      }
-  }
+    & > .view-header,
+    & > .view-filters,
+    & > .view-content,
+    & > .view-empty,
+    & > .attachment {
+        @include make-row();
+    }
 
+    &:not(.view-shop) > .view-header > div,
+    > .view-empty > div,
+    > .attachment .view,
+    > .view-filters .views-exposed-form,
+    .view-content > .vbo-views-form,
+    .view-content > .table-responsive {
+        @include wrap-content();
+    }
+
+    & > .view-filters {
+        .views-exposed-widgets {
+            margin-bottom: 0;
+            @include make-row();
+            .views-exposed-widget {
+                padding-top: 0;
+            }
+        }
+    }
+    & > .view-empty { min-height: 100px; }
+
+    .view-content {
+        & > .vbo-views-form fieldset.panel { background-color: transparent; }
+        .view-item {
+            padding-bottom: $grid-gutter-width;
+            @media #{$phone} {
+                padding-bottom: $grid-gutter-width/2;
+            }
+        }
+    }
 
     .view-glossary {
         .views-summary {
@@ -1338,20 +1393,22 @@
     [class*="views-widget-filter"] { @include make-sm-column(6); }
     .views-submit-button { float: left; padding-left: $grid-gutter-width/2; }
     .views-reset-button { float: left; }
-  &.view-before-after {
-    .views-exposed-form.form-group { margin-bottom: 0; }
-  }
+    &.view-before-after {
+        .views-exposed-form.form-group { margin-bottom: 0; }
+    }
+}
+.view-list {
+    &:not(.view-shop) > .view-header,
+    & > .view-filters,
+    & > .view-empty,
+    & > .view-content,
+    & > .attachment {
+        background-color: $views-list-bg;
+        padding-top: $grid-gutter-width;
+        padding-bottom: $grid-gutter-width; // поставлено для невысоких таблиц на странице
+    }
 }
 
-.views-table {
-    background-color: #fff;
-    font-size: 70%;
-    table-layout: auto;
-    @include make-sm-column-offset(1);
-    @include make-sm-column(10);
-    @include make-md-column-offset(2);
-    @include make-md-column(8);
-}
 
 // подкатегории в списке препаратов (в программе защиты и баковых смесях)
 .list-category-header {
@@ -1412,26 +1469,39 @@
 
     header,
     footer {
-        padding: 5px 15px;
-        & > div {
+        font-size: .9em;
+        padding: 7px 15px;
+        & > div > a,
+        & > div > span{
             display: flex;
+            color: $text-muted;
             i {
-                flex: auto;
-                margin-right: 7px;
+                //flex: auto;
+                line-height: inherit;
+                margin-right: 7px; margin-top: 1px;
             }
             span {
-                flex: auto;
-                color: $text-muted; font-size: .9em; margin-right: 10px;
-
+                //flex: auto;
+                margin-right: 10px;
                 &:last-child { margin-right: 0; }
             }
         }
+        a { cursor: help; color: inherit; text-decoration: none; }
 
+        .wide-side {
+            &:not(:last-child) { margin-bottom: 3px; }
+            width: 100%;
+        }
         .left-side { float: left; }
         .right-side { float: right; }
+        .submitted { margin-bottom: 0; }
         @include clearfix;
     }
-    footer { border-top: 1px solid $views-list-bg; }
+    footer {
+        border-top: 1px solid $views-list-bg;
+        .passed span { color: $brand-warning; }
+        .not-passed span { color: $brand-green; }
+    }
 
     .card-image { box-shadow: 0 1px 20px rgba(0, 0, 0, 0.2); }
 
@@ -1723,7 +1793,7 @@
 }
 
 .captcha { margin: 10px 0; }
-
+.font-small { font-size: .8em; }
 .sup { font-size: 10px; line-height: 10px; font-weight: 100; vertical-align: super; }
 
 // убрать отступы по краям
@@ -1752,7 +1822,12 @@
   .end-date-wrapper.container-inline-date {
     @include make-sm-column(6);
     clear: none;
-    & > .end-date-wrapper > .control-label { float: left; }
+    & > .end-date-wrapper > .control-label {
+        float: left;
+        line-height: 35px;
+        margin: 0 15px;
+        .form-required { display: none; }
+    }
     .help-block { display: none; }
   }
   .start-date-wrapper.container-inline-date {
@@ -1794,10 +1869,6 @@
     }
     .form-submit-wrapper {
         text-align: right;
-    }
-    .form-item-fz152-agreement {
-        color: $text-muted; font-size: 12px; text-align: right;
-        margin-top: 10px;
     }
     .help-block { margin: 0; }
     .form-actions { position: relative; }
@@ -2125,6 +2196,47 @@
 }
 
 
+/* ------------------------------------------------- Опросы (Webform) ----------------------------------------------- */
+.webform-client-form {
+    font-size: 16px;
+    padding-top: 30px;
+}
+.webform-progressbar {
+    font-size: .9em;
+    padding-bottom: $grid-gutter-width*2;
+    width: 70%;
+}
+.webform-progressbar-outer { border-color: $brand-blue; }
+.webform-progressbar-inner {
+    background-color: $brand-blue;
+    height: 2px;
+}
+.webform-progressbar-page {
+    border-color: $brand-blue;
+    width: 8px; height: 8px;
+}
+.webform-progressbar-page.completed { background-color: $brand-blue; }
+.webform-progressbar-page.current { background-color: $brand-l-blue; }
+
+.webform-client-form {
+    .form-group > label {
+        color: #000;
+        font-size: 24px;
+        font-weight: 500;
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+    .radio label,
+    .checkbox label {
+        color: #000;
+    }
+
+    .form-actions {
+        margin-top: 60px;
+    }
+}
+
 /* ------------------------------------------------- Animated Elements ----------------------------------------------- */
 // пока исп только для всплывающих (.slide-up) текстовых подписей на экранах описания продуктов
 [data-animate=true] {
@@ -2143,13 +2255,4 @@
         &.slide-left,
         &.slide-right { transform: translateX(0px); }
     }
-}
-
-/* ------------------------------------------------- New Year ----------------------------------------------- */
-.new-year {
-    position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;
-    .ltop { position: absolute; left: 0; top: 0; }
-    .rtop { position: absolute; right: 0; top: 0; }
-    .lbottom { position: absolute; left: 0; bottom: 0; }
-    .rbottom { position: absolute; right: 0; bottom: 0; }
 }
