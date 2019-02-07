@@ -22,6 +22,7 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                 <? endif; ?>
             </div>
         </div>
+        <? $i = 0; ?>
         <? foreach ($rep01 as $key_c => $rep): ?>
         <? $collapse = [];
             if (isset($rep['regions'])) {
@@ -32,7 +33,10 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
            print theme('contact_card', array(
                 'contact' => $rep,
                 'collapse' => $collapse,
-                'options' => ['class' => 'col-md-6'])); ?>
+                'options' => ['class' => 'col-md-6']));
+           if ((++$i) % 2) print '<div class="clearfix"></div>';
+        ?>
+
         <? endforeach; ?>
 
         <div class="map col-xs-12">

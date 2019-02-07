@@ -155,7 +155,7 @@ function representatives_get_representatives_list()
         'office' => 'Старший менеджер по региональному развитию',
         'access' => true,
         'surname' => 'Князев', 'name' => 'Алексей', 'name2' => 'Юрьевич',
-        'phones' => array('+7 (83361) 9-28-70'),
+        'phones' => array('+7 (83361) 9-28-70', '+7 (922) 936-10-14'),
         'emails' => array('td.sale2@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/knyazev.png',
         'regions' => array(
@@ -332,10 +332,10 @@ function representatives_get_representatives_list()
         // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
-        'surname' => 'Райнова', 'name' => 'Ирина', 'name2' => 'Васильевна',
+        'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 966-64-34'),
         'emails' => array('kaliningrad@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kaliningrad.png',
+        'photo' => $no_photo,
         'regions' => array(
             71685 => "Калининградская область",
         ),
@@ -376,7 +376,7 @@ function representatives_get_representatives_list()
         'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 900-74-41'),
         'emails' => array('krasnodar@kccc.ru'),
-        'photo' => '',
+        'photo' => $no_photo,
         'regions' => array(
             71669 => "Краснодарский край",
         ),
@@ -399,7 +399,7 @@ function representatives_get_representatives_list()
         'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array(''),
         'emails' => array('kursk@kccc.ru'),
-        'photo' => '',
+        'photo' => $no_photo,
         'regions' => array(
             71692 => "Курская область",
       ),
@@ -422,7 +422,7 @@ function representatives_get_representatives_list()
         'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 900-74-64'),
         'emails' => array('novosibirsk@kccc.ru'),
-        'photo' => '',
+        'photo' => $no_photo,
         'regions' => array(
             71700 => "Новосибирская область",
         ),
@@ -433,7 +433,7 @@ function representatives_get_representatives_list()
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array('+7 (922) 966-60-12'),
 //        'emails' => array('n.novgorod@kccc.ru'),
-//        'photo' => '',
+//        'photo' => $no_photo,
 //        'regions' => array(
 //            71698 => "Нижегородская область",
 //        ),
@@ -504,7 +504,7 @@ function representatives_get_representatives_list()
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array(''),
 //        'emails' => array('tatarstan@kccc.ru'),
-//        'photo' => '',
+//        'photo' => $no_photo,
 //        'regions' => array(
 
 //),
@@ -515,19 +515,29 @@ function representatives_get_representatives_list()
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array(''),
 //        'emails' => array('chuvashiya@kccc.ru'),
-//        'photo' => '',
+//        'photo' => $no_photo,
 //        'regions' => array(
 
 //),
 //    );
     $representatives['rostov'][] = array(
-        // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
-        'surname' => '', 'name' => '', 'name2' => '',
+        'surname' => 'Ганжин', 'name' => 'Виктор', 'name2' => 'Михайлович',
         'phones' => array('+7 (922) 966-59-77'),
         'emails' => array('rostov@kccc.ru'),
-        'photo' => '',
+        'photo' => '/' . $module_path . '/images/photos/ganzhin.png',
+        'regions' => array(
+            71707 => "Ростовская область",
+        ),
+    );
+    $representatives['rostov'][] = array(
+        'office' => 'Представитель',
+        'access' => false,
+        'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
+        'phones' => array('+7 (922) 966-59-77'),
+        'emails' => array('rostov@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/shvets.png',
         'regions' => array(
             71707 => "Ростовская область",
         ),
@@ -539,7 +549,7 @@ function representatives_get_representatives_list()
         'surname' => '', 'name' => '', 'name2' => '',
         'phones' => array('+7 (922) 966-60-16'),
         'emails' => array('stavropol@kccc.ru'),
-        'photo' => '',
+        'photo' => $no_photo,
         'regions' => array(
             71672 => "Ставропольский край",
         ),
@@ -584,10 +594,10 @@ function representatives_get_representatives_list()
         // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
-        'surname' => 'Шалаев', 'name' => 'Андрей', 'name2' => 'Сергеевич',
-        'phones' => array('+7 (902) 602-56-00'),
+        'surname' => 'Коновалов', 'name' => 'Вячеслав', 'name2' => 'Юрьевич',
+        'phones' => array('+7 (951) 774-05-74', '+7 (922) 747-26-41'),
         'emails' => array('chelyabinsk@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/chelyabinsk.png',
+        'photo' => $no_photo,
         'regions' => array(
             71720 => "Челябинская область",
         ),
