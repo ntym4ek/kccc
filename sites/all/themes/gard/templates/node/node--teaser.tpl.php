@@ -87,7 +87,7 @@
             </span>
         </div>
         <div class="right-side">
-            <span class="viewed"><i class="fas fa-eye"></i><?php print $viewed; ?></span>
+            <a title="Количество просмотров"><span class="viewed"><i class="fas fa-eye"></i><?php print $viewed; ?></span></a>
         </div>
     </header>
 
@@ -100,11 +100,11 @@
         <h4<?php print $title_attributes; ?>><a href="<?php print $node_url; ?>"><?php print $title; ?></a></h4>
     </div>
 
-    <?php if (!empty($author)): ?>
+    <?php if (!empty($author) || !empty($employer) || !empty($place) || !empty($time)): ?>
     <footer>
-        <div class="left-side">
-            <i class="far fa-user"></i><span class="author"><?php print $author; ?></span>
-        </div>
+        <?php if (!empty($author)): ?><div class="left-side"><a title="Автор материала"><i class="far fa-user"></i><span><?php print $author; ?></span></a></div><?php endif; ?>
+        <?php if (!empty($place)): ?><div class="wide-side"><a title="Расположение"><i class="fas fa-location-arrow"></i><span><?php print $place; ?></span></a></div><?php endif; ?>
+        <?php if (!empty($employer)): ?><div class="wide-side"><a title="Работодатель"><i class="fas fa-industry"></i><span><?php print $employer; ?></span></a></div><?php endif; ?>
     </footer>
     <?php endif; ?>
 </article>
