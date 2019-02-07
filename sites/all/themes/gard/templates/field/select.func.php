@@ -88,8 +88,8 @@ function gard_form_select_options($element, $choices = NULL) {
             else {
                 $selected = '';
             }
-            // custom -> commenting options can't be chosen by user
-            $disabled = (!$key || $key == 'none') ? ' disabled="disabled"' : '';
+            // custom -> commenting options (with key '') can't be chosen by user
+            $disabled = ($key === '') ? ' disabled="disabled"' : '';
 
             $options .= '<option value="' . check_plain($key) . '"' . $selected . $disabled . '>' . check_plain($choice) . '</option>';
         }
