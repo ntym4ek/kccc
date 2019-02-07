@@ -14,16 +14,15 @@ function forms_ex_menu() {
     return $items;
 }
 
-function forms_ex_form_alter(&$form, &$form_state, $form_id) {
-
+function forms_ex_form_alter(&$form, &$form_state, $form_id)
+{
     switch ($form_id) {
-        case 'news_node_form':
         case 'blog_node_form':
+            $form['field_promo_image']['#access'] = false;
+        case 'news_node_form':
             if ($GLOBALS['user']->uid != 1) {
                 $form['language']['#access'] = false;
-                $form['field_promo_image']['#access'] = false;
                 $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме записи</i>';
-                // $form['photo']['field_image_gallery']['#element_validate'][] = '_unset_status_message';
             }
             break;
 
@@ -35,17 +34,6 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
             }
             break;
         
-        case 'contact_us_entityform_edit_form':
-            $form['field_contact_name']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_name']['und']['#title'];
-            $form['field_contact_name']['und'][0]['value']['#title'] = '';
-            $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
-            $form['field_phone']['und'][0]['value']['#title'] = '';
-            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
-            $form['field_contact_email']['und'][0]['value']['#title'] = '';
-            $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
-            $form['field_contact_message']['und'][0]['value']['#title'] = '';
-            break;
-
         case 'product_agro_node_form':
         case 'product_mix_node_form':
         case 'product_fert_node_form':
@@ -79,14 +67,6 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id) {
             $form['#submit'][] = 'forms_ex_product_calc_price';
             break;
 
-
-        case 'contact_vacancy_entityform_edit_form':
-            $form['field_vacancy_surname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_surname']['und']['#title'];
-            $form['field_vacancy_name_1']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_1']['und']['#title'];
-            $form['field_vacancy_name_2']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_2']['und']['#title'];
-            $form['field_vacancy_location']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_location']['und']['#title'];
-            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
-            break;
 
         case 'vacancy_node_form':
             if ($GLOBALS['user']->uid != 1) {
