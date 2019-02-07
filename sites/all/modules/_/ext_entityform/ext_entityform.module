@@ -1,0 +1,35 @@
+<?
+
+function ext_entityform_form_alter(&$form, &$form_state, $form_id)
+{
+    if ($form_id == 'contact_us_entityform_edit_form') {
+        $form['field_contact_name']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_name']['und']['#title'];
+        $form['field_contact_name']['und'][0]['value']['#title'] = '';
+        $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
+        $form['field_phone']['und'][0]['value']['#title'] = '';
+        $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
+        $form['field_contact_email']['und'][0]['value']['#title'] = '';
+        $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
+        $form['field_contact_message']['und'][0]['value']['#title'] = '';
+    }
+    if ($form_id == 'contact_vacancy_entityform_edit_form') {
+        $form['field_vacancy_surname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_surname']['und']['#title'];
+        $form['field_vacancy_name_1']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_1']['und']['#title'];
+        $form['field_vacancy_name_2']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_2']['und']['#title'];
+        $form['field_vacancy_location']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_location']['und']['#title'];
+        $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
+    }
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function ext_entityform_preprocess_page(&$vars)
+{
+
+    if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
+        $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
+        $vars['header']['url'] = url($_GET['q'], array('absolute' => true));
+        $vars['header']['print'] = true;
+    }
+}

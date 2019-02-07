@@ -1,0 +1,6 @@
+name = H | Entityform Custom
+description = Изменение и дополнения для модуля
+package = Jax
+core = 7.x
+dependencies[] = entityform
+
