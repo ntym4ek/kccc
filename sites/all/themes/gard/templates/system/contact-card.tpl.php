@@ -12,6 +12,13 @@
             </div>
         <? endif; ?>
 
+        <? if (!empty($contact['expert'])): ?>
+            <div class="contact-expert">
+                <? $phone_raw = str_replace(array('(', ')', '-', ' ', '+'), '', $contact['expert'])?>
+                <div class="contact-whatsapp"><a href="https://wa.me/<? print $phone_raw; ?>" rel="nofollow">WhatsApp</a></div>
+            </div>
+        <? endif; ?>
+
         <? if (!empty($contact['phones'])): ?>
         <div class="contact-phones">
             <?php foreach ($contact['phones'] as $phone): ?>
