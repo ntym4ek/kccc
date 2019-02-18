@@ -50,43 +50,17 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                         <div class="popup popup-bottom-left popup-<? print count($reps); ?>x">
                             <div class="header">
                                 <img class="icon" src="/<? print $rep00['icon_l_path'] . $key_rs . '.png'; ?>"/>
-                                <? print key_to_region($key_rs); ?>
+                                <? print array_shift($reps[0]['regions']); ?>
                             </div>
                             <?php foreach ($reps as $key_r => $rep): ?>
                                 <?php print theme('contact_card', array('contact' => $rep)); ?>
-
-<!--                                <div class="media user-card">-->
-<!--                                    <div class="media-left">-->
-<!--                                        <img class="media-object" src="--><?// print $rep['photo']; ?><!--" alt="">-->
-<!--                                    </div>-->
-<!--                                    <div class="media-body">-->
-<!--                                        <h4 class="user-name">--><?// print $rep['surname']; ?><!-- <span>--><?// print $rep['name'] . ' ' . $rep['name2'] ; ?><!--</span></h4>-->
-<!--                                        <div class="dep">--><?// print $rep['office']; ?><!--</div>-->
-<!--                                    </div>-->
-<!--                                    <div class="media-bottom">-->
-<!--                                        --><?// if (!empty($rep['phones'][0])): ?>
-<!--                                            <div class="phones">Телефон</div>-->
-<!--                                            --><?php //foreach ($rep['phones'] as $phone): ?>
-<!--                                                --><?// $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-<!--                                                <div class="phone">--><?// print $phone; ?><!--<a href="tel:--><?// print $phone_raw; ?><!--" rel="nofollow"><i class="icon-phone"></i>Позвонить</a></div>-->
-<!--                                            --><?php //endforeach; ?>
-<!--                                        --><?// endif; ?>
-<!--                                        --><?// if (!empty($rep['emails'])): ?>
-<!--                                            <div class="emails">Электронная почта</div>-->
-<!--                                            --><?// foreach ($rep['emails'] as $email): ?>
-<!--                                                <div class="email eAddr-encoded">e(--><?// print $email; ?><!--)<a href="e(--><?// print $email; ?><!--)" class="eAddr-encoded" rel="nofollow"><i class="icon-mail"></i>Написать</a></div>-->
-<!--                                            --><?// endforeach; ?>
-<!--                                        --><?// endif; ?>
-<!--                                    </div>-->
-<!--                                </div>-->
-
                             <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
-
+        <div class="clearfix"></div>
 <!--        <h2 class="r-separator col-xs-12">-->
 <!--            Официальные представители-->
 <!--        </h2>-->

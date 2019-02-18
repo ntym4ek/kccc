@@ -13,6 +13,12 @@ function representatives_menu() {
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK
     );
+    $items['source/experts'] = array(
+        'page callback' => '_experts_source',
+        'page arguments' => array(2),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
     return $items;
 }
 
@@ -91,9 +97,8 @@ function representatives_form($from, &$form_state)
     ];
 
     $contact = '';
-    if (!empty($form_state['values']['region'])) {
-        $rep = _get_representative_by_region($form_state['values']['region']);
-        $contact = theme('contact_card', ['contact' => $rep, 'options' => ['class' => 'col-md-6']]);
+    if (!empty($form_state['values']['region']) && $rep = _get_representative($form_state['values']['region'])) {
+        $contact = theme('contact_card', ['contact' => array_shift($rep['region']), 'options' => ['class' => 'col-md-6']]);
     }
     $form['selector']['contact'] = [
         '#markup' => $contact,
@@ -113,20 +118,6 @@ function representatives_form_refresh($form, $form_state)
     return $form;
 }
 
-function _get_representative_by_region($tid)
-{
-    $reps = representatives_get_representatives_list();
-    $representative = $reps['head2']['sales_head'];
-    foreach($reps as $reg) {
-        foreach($reg as $rep) {
-            if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
-                $representative = $rep;
-            }
-        }
-    }
-
-    return $representative;
-}
 
 function representatives_get_representatives_list()
 {
@@ -558,6 +549,7 @@ function representatives_get_representatives_list()
         // 'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
+        'expert' => '+79027308022',
         'surname' => 'Сироткин', 'name' => 'Евгений', 'name2' => 'Николаевич',
         'phones' => array('+7 (922) 966-59-88'),
         'emails' => array('tambov@kccc.ru'),
@@ -625,50 +617,99 @@ function representatives_get_representatives_list()
  */
 function _representatives_source($region_id = null)
 {
-    if (!($region_id && $results['region'][] = _get_representative_by_region($region_id))) {
-        $results = representatives_get_representatives_list();
-    }
-    drupal_json_output(['representatives' => $results]);
+    drupal_json_output(['representatives' => _get_representative($region_id)]);
     drupal_exit();
 }
 
-function key_to_region ($key) {
-    $region = array(
-        'head' => 'ООО Торговый Дом "Кирово-Чепецкая Химическая Компания"',
-        'altai' => 'Алтайский край',
-        'amur' => 'Амурская область',
-        'bashkortostan' => 'Республика Башкортостан',
-        'belgorod' => 'Белгородская область',
-        'vladimir' => 'Владимирская область',
-        'voronezh' => 'Воронежская область',
-        'volgograd' => 'Волгоградская область',
-        'ivanovo' => 'Ивановская область',
-        'kaliningrad' => 'Калининградская область',
-        'kirov' => 'Кировская область',
-        'kostroma' => 'Костромская область',
-        'krasnodar' => 'Краснодарский край',
-        'kursk' => 'Курская область',
-        'lipetsk' => 'Липецкая область',
-        'mordoviya' => 'Республика Мордовия',
-        'novosibirsk' => 'Новосибирская область',
-        'nnovgorod' => 'Нижегородская область',
-        'omsk' => 'Омская область',
-        'orenburg' => 'Оренбургская область',
-        'orel' => 'Орловская область',
-        'perm' => 'Пермский край',
-        'rostov' => 'Ростовская область',
-        'samara' => 'Самарская область',
-        'saratov' => 'Саратовская область',
-        'stavropol' => 'Ставропольский край',
-        'tatarstan' => 'Республика Татарстан',
-        'tambov' => 'Тамбовская область',
-        'tyumen' => 'Тюменская область',
-        'udmurtia' => 'Республика Удмуртия',
-        'ulyanovsk' => 'Ульяновская область',
-        'chelyabinsk' => 'Челябинская область',
-        'chuvashiya' => 'Чувашская Республика',
-        'yaroslavl' => 'Ярославская область',
-    );
-
-    return isset($region[$key]) ? $region[$key] : '';
+function _get_representative($tid)
+{
+    $reps = representatives_get_representatives_list();
+    if ($tid) {
+        $representatives = [];
+        foreach ($reps as $region => $reg) {
+            foreach ($reg as $rep) {
+                if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
+                    $representatives['region'][] = $rep;
+                }
+            }
+        }
+        if (empty($representatives)) {
+            $representatives['region'][] = $reps['head2']['sales_head'];
+        }
+        return $representatives;
+    }
+    return $reps;
 }
+
+/**
+ * callback function
+ * источник данных об экспертах (исп. в приложении)
+ */
+function _experts_source($region_id = null)
+{
+    drupal_json_output(['representatives' => _get_experts($region_id)]);
+    drupal_exit();
+}
+
+function _get_experts($tid)
+{
+    $reps = representatives_get_representatives_list();
+
+    $representatives = [];
+    foreach ($reps as $region => $reg) {
+        foreach ($reg as $rep) {
+            if (!empty($rep['expert'])) {
+                if (empty($tid) || isset($rep['regions'][$tid])) {
+                    unset($rep['regions']);
+                    $representatives['expert'][] = $rep;
+                }
+            }
+        }
+    }
+    if (empty($representatives)) {
+        $representatives['expert'][] = $reps['tambov'][0];
+    }
+    return $representatives;
+
+}
+
+//function key_to_region ($key) {
+//    $region = array(
+//        'head' => 'ООО Торговый Дом "Кирово-Чепецкая Химическая Компания"',
+//        'altai' => 'Алтайский край',
+//        'amur' => 'Амурская область',
+//        'bashkortostan' => 'Республика Башкортостан',
+//        'belgorod' => 'Белгородская область',
+//        'vladimir' => 'Владимирская область',
+//        'voronezh' => 'Воронежская область',
+//        'volgograd' => 'Волгоградская область',
+//        'ivanovo' => 'Ивановская область',
+//        'kaliningrad' => 'Калининградская область',
+//        'kirov' => 'Кировская область',
+//        'kostroma' => 'Костромская область',
+//        'krasnodar' => 'Краснодарский край',
+//        'kursk' => 'Курская область',
+//        'lipetsk' => 'Липецкая область',
+//        'mordoviya' => 'Республика Мордовия',
+//        'novosibirsk' => 'Новосибирская область',
+//        'nnovgorod' => 'Нижегородская область',
+//        'omsk' => 'Омская область',
+//        'orenburg' => 'Оренбургская область',
+//        'orel' => 'Орловская область',
+//        'perm' => 'Пермский край',
+//        'rostov' => 'Ростовская область',
+//        'samara' => 'Самарская область',
+//        'saratov' => 'Саратовская область',
+//        'stavropol' => 'Ставропольский край',
+//        'tatarstan' => 'Республика Татарстан',
+//        'tambov' => 'Тамбовская область',
+//        'tyumen' => 'Тюменская область',
+//        'udmurtia' => 'Республика Удмуртия',
+//        'ulyanovsk' => 'Ульяновская область',
+//        'chelyabinsk' => 'Челябинская область',
+//        'chuvashiya' => 'Чувашская Республика',
+//        'yaroslavl' => 'Ярославская область',
+//    );
+//
+//    return isset($region[$key]) ? $region[$key] : '';
+//}
