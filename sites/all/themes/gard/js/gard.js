@@ -6,6 +6,17 @@
     Drupal.behaviors.gard = {
         attach: function (context, settings) {
 
+            /* ------------------------------------------ Main Menu ------------------------------------------------- */
+            $("ul.level-2 > li").hover(function () {
+                var hoveredEl = this;
+                $("ul.level-2 > li").each(function(index, el) {
+                    if (el !== hoveredEl) {
+                        $(el).removeClass("visible");
+                    }
+                });
+                $(this).addClass("visible");
+            });
+
             /* ------------------------------------------ Animated Elements ----------------------------------------- */
             $("[data-animate=true]").each(function(){
                 if ($(this).data("a-effect")) {

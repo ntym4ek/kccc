@@ -28,6 +28,13 @@ function gard_menu_tree__primary(&$variables) {
 }
 
 /**
+ * Bootstrap theme wrapper function for the primary desctop menu links.
+ */
+function gard_menu_tree__menu_main_d(&$variables) {
+  return '<ul class="nav navbar-nav level-1">' . $variables['tree'] . '</ul>';
+}
+
+/**
  * Bootstrap theme wrapper function for the user menu links.
  */
 function gard_menu_tree__user_menu(&$variables) {
@@ -40,3 +47,4 @@ function gard_menu_tree__user_menu(&$variables) {
 function gard_menu_tree__navigation(&$variables) {
   return '<ul class="menu nav navbar-nav navigation">' . $variables['tree'] . '</ul>';
 }
+

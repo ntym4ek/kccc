@@ -16,7 +16,169 @@
 }
 
 /* ------------------------------------------------- Главное меню --------------------------------------------------- */
+
 /*
+    Десктопное представление
+*/
+.primary-d-menu {
+    .nav {
+        .open > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                border-color: $brand-green;
+            }
+        }
+        > li { position: initial; }
+        @media #{$tablet} {
+            > .dropdown-menu { display: block; }
+        }
+        @media #{$normal} {
+            > .dropdown-menu { display: flex; }
+        }
+    }
+    a:hover { text-decoration: none; }
+    .level-1 > li {
+        float: left;
+        > a {
+            border-bottom: 5px solid transparent;
+            color: $text-color; font-size: 18px;
+            display: inline-block;
+            line-height: 26px;
+            padding: 22px 25px;
+            &:hover {
+                background-color: transparent;
+                border-bottom: 5px solid $brand-green;
+            }
+        }
+    }
+    .level-2-wrapper {
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        @include clearfix();
+        @media #{$tablet} {
+            position: absolute; top: 100%; left: 0; z-index: 1035;
+            width: 100%;
+            margin: 0;
+            border-top: 1px solid #e1e1e1;
+        }
+        @media #{$normal} {
+            left: 50%;
+            max-width: 1200px;
+            overflow: visible!important;
+            -ms-transform: translateX(-50%); transform: translateX(-50%);
+            width: 100%;
+        }
+    }
+    .level-2 {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        width: 100%;
+        padding-left: 0;
+        > li.level-2-item {
+            align-items: stretch;
+            display: flex;
+            -ms-flex-positive: 1;
+            flex-grow: 1;
+            max-width: 200px;
+            width: 100%;
+            > a {
+                color: $menu-level-1-color; font-weight: 500;
+                display: block;
+                line-height: 18px;
+                min-height: 50px;
+                padding: 5px 10px 5px 20px;
+                width: 100%; height: 100%;
+                position: relative;
+                &:hover {
+                    background-color: #f1f1f1;
+                    color: $link-color;
+                }
+                @media #{$normal} {
+                    display: block;
+                    height: auto;
+                    padding: 20px 5px;
+                }
+            }
+            &:not(.last) > a:after {
+                border-right: 1px solid #c6c6c6;
+                bottom: 0;
+                content: "";
+                display: block;
+                height: 20px;
+                position: absolute; left: 0;
+                width: 100%;
+            }
+            .category-img {
+                text-align: center;
+                margin-bottom: 10px; margin-left: auto; margin-right: auto;
+                display: block;
+                width: 100px; height: 70px;
+            }
+            .category-link {
+                text-align: center;
+                padding: 0 20px;
+            }
+        }
+    }
+    .level-3-wrapper {
+        background-color: #fff;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        display: none;
+        position: absolute; left: 33.333%; top: 0;
+        width: 66.666%; min-height: 300px;
+        margin: 0;
+        @media #{$normal} {
+            left: 0; top: 100%;
+            width: 100%;
+            border-top: 1px solid #e1e1e1;
+            border-bottom-left-radius: 7px;
+            border-bottom-right-radius: 7px;
+        }
+        a.show-more { color: $text-color; }
+        h3, h4 { padding-left: 40px; }
+        h3 { margin-top: 50px; }
+        h4 {
+            margin-top: 25px;
+            i { font-size: .7em; }
+        }
+        .menu-banner {
+            border-left: 1px solid #e1e1e1;
+            height: 100%;
+        }
+    }
+    .level-3 {
+        padding: 0;
+        @include clearfix();
+        @media #{$normal} { margin: 50px 0 15px 15px; }
+        > li {
+            float: left;
+            width: 50%;
+            margin-bottom: 10px;
+            position: relative;
+            list-style: none;
+            > a {
+                color: $menu-level-1-color;
+                padding-left: 12px;
+                &:hover {
+                    color: $link-color;
+                }
+
+            }
+            > i { color: $brand-l-blue; font-size: 10px; position: absolute; top: 6px; }
+        }
+    }
+    .visible .level-3-wrapper { display: block; }
+
+}
+
+
+
+/*
+    Мобильное представление
     взято https://bootsnipp.com/snippets/featured/admin-side-menu
 
     --------------------------------------------------------------------------------------------------------------------

@@ -117,7 +117,7 @@ $brand-orange-hover:    darken($brand-orange, 10%);
 $form-background:       $gray-lighter;
 
 // menu
-$menu-level-1-color: #fafafa;
+$menu-level-1-color: #585857;
 $menu-level-2-color: #a3a3a3;
 $menu-hover-color: #4f4f4f;
 
@@ -136,6 +136,9 @@ $font-size-h5:            $font-size-base;
 $font-size-h6:            ceil(($font-size-base * 0.85)); // ~12px
 
 $body-bg:    #d9d9d9;
+
+//** Global textual link color.
+$link-color:            $brand-green;
 
 //== высота header
 $header-xs-height:   60px;

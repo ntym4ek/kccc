@@ -294,18 +294,20 @@ a, a:hover, a:focus {
   &.slide-in .fa-bars { display: none; }
   &.slide-in .btn-s4 .fa-times { display: inline-block; }
 
-  // лого
-  .navbar-brand {
-    //float: none;
-    //display: inline-block;
-    line-height: $header-xs-height;
-    margin-top: 0;
-    height: initial; width: 40%;
-    @media #{$tablet} {
-      line-height: $header-sm-height;
-      padding: 0 30px 0 25px;
+    // лого
+    .navbar-brand {
+        //float: none;
+        //display: inline-block;
+        line-height: $header-xs-height;
+        margin-top: 0;
+        height: initial; width: 40%;
+        @media #{$tablet} {
+            line-height: $header-sm-height;
+            padding: 0 30px 0 25px;
+            float: left;
+            width: initial;
+        }
     }
-  }
 
   // панель поиска
   #search-pane {

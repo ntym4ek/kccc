@@ -150,7 +150,7 @@
  */
 ?>
 <header id="navbar" role="banner" class="navbar hidden-print">
-    <button type="button" class="btn btn-header btn-s4">
+    <button type="button" class="btn btn-header btn-s4 hidden-md hidden-lg">
         <i class="fa fa-bars" aria-hidden="true"></i>
         <i class="fa fa-times" aria-hidden="true"></i>
         <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
@@ -159,6 +159,10 @@
     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
         <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
     </a>
+
+    <div class="primary-d-menu hidden-xs hidden-sm">
+        <?php print render($primary_nav_d); ?>
+    </div>
 
     <a href="/checkout" class="btn btn-header popup-trigger btn-s3">
         <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>

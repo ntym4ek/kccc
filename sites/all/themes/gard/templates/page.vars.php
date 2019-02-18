@@ -184,8 +184,10 @@ function gard_preprocess_page(&$vars)
 
             // для новостей
             if ($vars['node']->type == 'news') {
-                $tid = $node_wrapper->language('und')->field_news_category->tid->value();
-                $category_title = '<a href="' . url('taxonomy/term/' . $tid) . '">' . $node_wrapper->language('und')->field_news_category->name->value() . '</a>';
+                if ($node_wrapper->language('und')->field_news_category->value()) {
+                    $tid = $node_wrapper->language('und')->field_news_category->tid->value();
+                    $category_title = '<a href="' . url('taxonomy/term/' . $tid) . '">' . $node_wrapper->language('und')->field_news_category->name->value() . '</a>';
+                }
             }
             // для Блогов
             if ($vars['node']->type == 'blog') { $category_title = '<a href="' . '/blogs' . '">' . t('Blogs') . '</a>'; }
@@ -245,6 +247,11 @@ function gard_preprocess_page(&$vars)
     if (!isset($vars['wrapper_off'])) $vars['wrapper_off'] = $wrapper_off;
 
     /** -------------------------------------------- Меню  ---------------------------------------------------------- */
+    // Primary desctop nav.
+    $vars['primary_nav_d'] = FALSE;
+    $menu = menu_tree_all_data('menu-main-d');
+    $vars['primary_nav_d'] = menu_tree_output($menu);
+
     // Primary nav.
     $vars['primary_nav'] = FALSE;
     if ($vars['main_menu']) {
