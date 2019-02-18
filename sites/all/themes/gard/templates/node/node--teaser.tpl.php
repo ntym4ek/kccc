@@ -102,7 +102,7 @@
 
     <?php if (!empty($author) || !empty($employer) || !empty($place) || !empty($time)): ?>
     <footer>
-        <?php if (!empty($author)): ?><div class="left-side"><a title="Автор материала"><i class="far fa-user"></i><span><?php print $author; ?></span></a></div><?php endif; ?>
+        <?php if (!empty($author)): ?><div class="left-side"><a title="Автор материала"><i class="far fa-user"></i><span><?php print $author['name'] . ' ' . $author['surname']; ?></span></a></div><?php endif; ?>
         <?php if (!empty($place)): ?><div class="wide-side"><a title="Расположение"><i class="fas fa-location-arrow"></i><span><?php print $place; ?></span></a></div><?php endif; ?>
         <?php if (!empty($employer)): ?><div class="wide-side"><a title="Работодатель"><i class="fas fa-industry"></i><span><?php print $employer; ?></span></a></div><?php endif; ?>
     </footer>

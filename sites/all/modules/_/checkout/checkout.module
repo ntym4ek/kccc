@@ -182,7 +182,7 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
 
     // представитель
         // берем контакты из модуля Contacts, ищем представителя по региону
-    $rep = _get_representative_by_region($data['user_region_tid']);
+    $rep = _get_representative($data['user_region_tid']);
     $data['representative'] = $rep;
     $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
 
