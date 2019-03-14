@@ -1,0 +1,155 @@
+<?php
+
+// константы терминов в словаре Подписки пользователей
+foreach(_ext_message_get_vars() as $index => $var) {
+    define($var['const'], 'ext_message_var_' . $index);
+}
+
+function _ext_message_get_vars()
+{
+    return [
+        0 => ['const' => 'EM_ADD_AGENDA',   'title' => 'Добавление мероприятия'],
+        1 => ['const' => 'EM_ADD_NEWS',     'title' => 'Добавление новости'],
+    ];
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function ext_message_views_api($module = NULL, $api = NULL) {
+    return array("api" => "3.0");
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function ext_message_node_insert($node)
+{
+    // нижеследующие типы сообщений уже должны быть созданы в админке
+    //  - node_agenda_create
+    //  - node_news_create
+    //  - node_blog_create
+    // с ссответствующими полями
+    //  - field_entity_ref
+    //  - field_published
+    //
+    // Контекст
+    //  - Добавление мероприятия - EM_ADD_AGENDA
+    //
+    // система именования типа сообщений
+    // сущность_тип-сущности_действие
+    // todo перенести настройки из кода в админку
+
+    if (in_array($node->type, ['agenda'])) {
+        $message = message_create('node_' . $node->type . '_create', array('uid' => $node->uid));
+        $wrapper = entity_metadata_wrapper('message', $message);
+        $wrapper->field_entity_ref->set($node);
+        $wrapper->field_published->set($node->status);
+
+        if (module_exists('message_subscribe')) {
+            // If Message-subscribe exists, let this example module use it.
+            message_subscribe_send_message('node', $node, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [variable_get(EM_ADD_AGENDA)]]);
+        }
+    }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function ext_message_node_update($node)
+{
+    ext_message_update_message_status('node', $node);
+}
+
+/**
+ * Update the "published" field in the message entity, when it changes in the
+ * related entity.
+ *
+ * @param $entity_type
+ *   The entity type (node or comment).
+ * @param $entity
+ *   The entity object.
+ */
+function ext_message_update_message_status($entity_type, $entity)
+{
+    if (in_array($entity_type, ['node'])) {
+        if ($entity->status == $entity->original->status) {
+            // status didn't change.
+            return;
+        }
+        list($id) = entity_extract_ids($entity_type, $entity);
+        $field_name = 'field_entity_ref';
+
+        $query = new EntityFieldQuery();
+        $result = $query
+            ->entityCondition('entity_type', 'message')
+            ->fieldCondition($field_name, 'target_id', $id, '=')
+            ->execute();
+
+        if (empty($result['message'])) {
+            return;
+        }
+
+        foreach (array_keys($result['message']) as $mid) {
+            $wrapper = entity_metadata_wrapper('message', $mid);
+            // If comment status changed, we still need to check the node as-well.
+            $status = $entity->status;
+            if ($wrapper->field_published->value() != $status) {
+                // Status changed, so update the message entity.
+                $wrapper->field_published->set($status);
+                $wrapper->save();
+            }
+        }
+    }
+}
+
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ext_message_ctools_plugin_directory($module, $plugin) {
+    if ($module == 'message_notify') {
+        return 'plugins/' . $plugin;
+    }
+}
+
+/**
+ * Implements hook_flag_default_flags().
+ */
+function ext_message_flag_default_flags()
+{
+    $flags = array();
+
+    // Exported flag: "Подписки пользователей".
+    $flags['subscribe_subscribes'] = array(
+        'entity_type' => 'taxonomy_term',
+        'title' => 'Подписки пользователей',
+        'global' => 0,
+        'types' => array(
+            0 => 'subscribes',
+        ),
+        'flag_short' => t('Subscribe'),
+        'flag_long' => '',
+        'flag_message' => '',
+        'unflag_short' => t('Unsubscribe'),
+        'unflag_long' => '',
+        'unflag_message' => '',
+        'unflag_denied_text' => '',
+        'link_type' => 'toggle',
+        'weight' => 0,
+        'show_in_links' => array(
+            'full' => 0,
+            'term_teaser' => 0,
+            'token' => 0,
+        ),
+        'show_as_field' => 0,
+        'show_on_form' => 0,
+        'access_author' => '',
+        'show_contextual_link' => 0,
+        'api_version' => 3,
+        'status' => TRUE,
+        'module' => 'ext_message',
+    );
+
+    return $flags;
+}

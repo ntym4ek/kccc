@@ -1,0 +1,235 @@
+<?php
+
+// для использования констант
+include_once ('ext_message.module');
+
+/**
+ * Implements hook_install().
+ */
+function ext_message_install()
+{
+    // создание словаря с полем и терминами
+    // http://xandeadx.ru/blog/drupal/707
+    if (!taxonomy_vocabulary_machine_name_load('subscribes')) {
+        // Create vocabulary
+        $vocabulary = (object)array(
+            'name' => 'Подписки пользователей',
+            'machine_name' => 'subscribes',
+            'module' => 'ext_message',
+        );
+        taxonomy_vocabulary_save($vocabulary);
+
+        // Create field "field_custom_text"
+        // ...
+
+        // Создаём словарь подписок
+        // термин - подписка на уведомление
+        // обращение к ID подписки осуществляется через
+        // переменные по константе из списка _ext_message_get_vars
+        $vid = $vocabulary->vid;
+
+        foreach(_ext_message_get_vars() as $index => $var) {
+            $term = (object)array('vid' => $vid, 'name' => $var['title']);
+            taxonomy_term_save($term);
+            variable_set('ext_message_var_' . $index, $term->tid);
+        }
+    }
+
+    // создание поля
+    $field = array(
+        'field_name' => 'field_entity_ref',
+        'type' => 'entityreference',
+        'module' => 'entityreference',
+        'entity_types' => [],
+        'cardinality' => 1,
+        'translatable' => 0,
+        'locked' => 0,
+        'settings' => array(
+            'entity_translation_sync' => FALSE,
+            'handler' => 'base',
+            'handler_settings' => array(
+                'behaviors' => array(
+                    'views-select-list' => array(
+                        'status' => 0,
+                    ),
+                ),
+                'target_bundles' => array(),
+            ),
+            'handler_submit' => 'Change handler',
+            'target_type' => 'node',
+        ),
+        'indexes' => array(
+            'target_id' => array(
+                0 => 'target_id',
+            ),
+        ),
+    );
+    field_create_field($field);
+
+    // создание поля field_published
+    $field = array(
+        'field_name' => 'field_published',
+        'type' => 'list_boolean',
+        'module' => 'list',
+        'entity_types' => [],
+        'cardinality' => 1,
+        'translatable' => 0,
+        'locked' => 0,
+        'settings' => array(
+            'allowed_values' => array(
+                0 => 'Unpublished',
+                1 => 'Published',
+            ),
+            'allowed_values_function' => '',
+        ),
+        'foreign keys' => array(),
+        'indexes' => array(
+            'value' => array(
+                0 => 'value',
+            ),
+        ),
+    );
+    field_create_field($field);
+
+    // добавить тип сообщения
+    $message_type = message_type_create('node_agenda_create', array(
+        'description' => 'Добавление мероприятия',
+        'argument_keys' => array(),
+        'message_text' => array(
+            'ru' => array(
+                array('value' => 'Новое мероприятие'),
+                array('value' => 'Добрый день!<br /><br />В разделе <a href="https://kccc.ru/agenda">Афиша</a> добавлено новое мероприятие <a href="[message:field-entity-ref:url]">[message:field-entity-ref:title]</a>.<br /><br />'),
+            ),
+        ),
+        'language' => 'ru',
+    ));
+    $message_type->save();
+
+    // привязать поля к типу сообщения
+    $instance = array(
+        'field_name' => 'field_entity_ref',
+        'bundle' => 'node_agenda_create',
+        'entity_type' => 'message',
+        'label' => t('Agenda reference'),
+        'description' => '',
+        'required' => TRUE,
+        'settings' => array(
+            'behaviors' => array(
+                'prepopulate' => array(
+                    'action' => 'none',
+                    'fallback' => 'none',
+                    'skip_perm' => 0,
+                    'status' => 0,
+                ),
+            ),
+            'entity_translation_sync' => FALSE,
+            'user_register_form' => FALSE,
+        ),
+        'display' => array(
+            'default' => array(
+                'label' => 'above',
+                'module' => 'entityreference',
+                'settings' => array(
+                    'bypass_access' => FALSE,
+                    'link' => FALSE,
+                ),
+                'type' => 'entityreference_label',
+                'weight' => 3,
+            ),
+            'message_notify_email_body' => array(
+                'label' => 'above',
+                'settings' => array(),
+                'type' => 'hidden',
+                'weight' => 4,
+            ),
+            'message_notify_email_subject' => array(
+                'label' => 'above',
+                'settings' => array(),
+                'type' => 'hidden',
+                'weight' => 3,
+            ),
+        ),
+        'widget' => array(
+            'active' => 1,
+            'module' => 'entityreference',
+            'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'path' => '',
+                'size' => 60,
+            ),
+            'type' => 'entityreference_autocomplete',
+            'weight' => 3,
+        )
+    );
+    field_create_instance($instance);
+
+    $instance = array(
+        'entity_type' => 'message',
+        'bundle' => 'node_agenda_create',
+        'field_name' => 'field_published',
+        'label' => 'Published',
+        'default_value' => array(
+            0 => array(
+                'value' => 0,
+            ),
+        ),
+        'deleted' => 0,
+        'description' => '',
+        'display' => array(
+            'default' => array(
+                'label' => 'above',
+                'settings' => array(),
+                'type' => 'hidden',
+                'weight' => 5,
+            ),
+            'full' => array(
+                'label' => 'above',
+                'settings' => array(),
+                'type' => 'hidden',
+                'weight' => 4,
+            ),
+        ),
+        'required' => 0,
+        'settings' => array(
+            'user_register_form' => FALSE,
+        ),
+        'widget' => array(
+            'active' => 1,
+            'module' => 'options',
+            'settings' => array(
+                'display_label' => 0,
+            ),
+            'type' => 'options_onoff',
+            'weight' => 2,
+        ),
+    );
+    field_create_instance($instance);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ext_message_uninstall()
+{
+    // Delete vocabulary
+    if ($vocabulary = taxonomy_vocabulary_machine_name_load('subscribes')) {
+        taxonomy_vocabulary_delete($vocabulary->vid);
+    }
+
+    // удалить переменные
+    foreach(_ext_message_get_vars() as $index => $const) {
+        variable_del('ext_message_var_' . $index);
+    }
+
+    // удалить поля
+    $instance_1 = field_info_instance('message_type', 'field_entity_ref', 'node_agenda_create');
+    $instance_2 = field_info_instance('message_type', 'field_published', 'node_agenda_create');
+    field_delete_instance($instance_1);
+    field_delete_instance($instance_2);
+    field_delete_field('field_entity_ref');
+    field_delete_field('field_published');
+
+    // удалить типы сообщений
+    message_type_delete('node_agenda_create');
+}
+

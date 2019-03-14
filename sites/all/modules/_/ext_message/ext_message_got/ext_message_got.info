@@ -1,0 +1,7 @@
+name = F | Message Got
+description = Регистрация прочтений сообщений пользователями
+version = 7.x-1.0
+core = 7.x
+package = Jax
+
+dependencies[] = entity

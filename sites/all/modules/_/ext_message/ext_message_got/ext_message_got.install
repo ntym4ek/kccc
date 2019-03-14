@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the message module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function msg_install() {
+
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function msg_uninstall() {
+//  $instance = field_info_instance('msg_type', 'message_text', 'message_type');
+//  field_delete_instance($instance);
+}
+
+/**
+ * Implements hook_schema()
+ *
+ * Message been read, if record exists
+ */
+function msg_schema() {
+  $schema['message_got'] = array(
+    'description' => 'List of messages viewed by user',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'The Unique ID of record.',
+      ),
+      'mid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'The ID of the message.',
+      ),
+      'uid' => array(
+        'description' => 'The user ID of the acting user.',
+        'type' => 'int',
+        'default value' => NULL,
+        'unsigned' => TRUE,
+      ),
+      'timestamp' => array(
+        'description' => 'When the message instance was viewed.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'mid' => array('mid'),
+      'uid' => array('uid'),
+    ),
+  );
+
+  return $schema;
+}

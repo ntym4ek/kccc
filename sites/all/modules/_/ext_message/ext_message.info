@@ -1,0 +1,29 @@
+name = F | Messaging system
+description = Система уведомления пользователей о событиях на сайте на базе Message API
+core = 7.x
+package = Jax
+version = 7.x-1.0
+dependencies[] = ctools
+dependencies[] = entity
+dependencies[] = entity_token
+dependencies[] = entityreference
+;dependencies[] = features
+dependencies[] = message
+dependencies[] = message_subscribe
+dependencies[] = text
+dependencies[] = views
+dependencies[] = views_bootstrap
+
+;features[ctools][] = views:views_default:3.0
+;features[features_api][] = api:2
+
+;features[field_base][] = field_entity_ref
+;features[field_base][] = field_published
+
+;features[field_instance][] = message-node_agenda_create-field_entity_ref
+;features[field_instance][] = message-node_agenda_create-field_published
+
+;features[views_view][] = user_subscribes
+
+; файл плагина
+files[] = plugins/notifier/MessageNotifierEmailWithRealname.class.php
