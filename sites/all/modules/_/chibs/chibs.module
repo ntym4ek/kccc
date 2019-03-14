@@ -1076,9 +1076,9 @@ function chibs_block_list_alter(&$blocks) {
 function chibs_preprocess_image_style(&$vars) {
     // для REST запросов переменная $vars['path'] вместо установки начального значения будет перезаписана
     // поэтому для REST (мобильные изображения) деф. изображения отключаем
-  if (strpos($_SERVER['HTTP_HOST'],'.local') && $vars['style_name'] != 'category_teaser_mob') {
-    $vars['path'] = 'public://default_images/no_photo.png';
-  }
+    if (strpos($_SERVER['HTTP_HOST'],'.local') && !in_array($vars['style_name'], ['category_teaser_mob', 'mobile_teaser_product'])) {
+        $vars['path'] = 'public://default_images/no_photo.png';
+    }
 }
 
 /**
