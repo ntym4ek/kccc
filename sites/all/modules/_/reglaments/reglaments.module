@@ -175,6 +175,7 @@ function _reglaments_get_protection_system2($parameters)
     if (!empty($parameters['phase_id']) && !is_numeric($parameters['phase_id'])) unset($parameters['phase_id']);
 
     $cultures_ids = [];
+    $program_wr = null;
     if (!empty($parameters['program_id'])) {
         $program_wr = entity_metadata_wrapper('node', $parameters['program_id']);
 
@@ -185,7 +186,17 @@ function _reglaments_get_protection_system2($parameters)
             }
         }
     } else {
-        if (!empty($parameters['culture_id'])) $cultures_ids[] = $parameters['culture_id'];
+        if (!empty($parameters['culture_id'])) {
+            $cultures_ids[] = $parameters['culture_id'];
+
+            // найти программу по культуре
+            $query = db_select('field_data_field_pp_cultures', 'fc');
+            $query->condition('fc.field_pp_cultures_target_id', $parameters['culture_id']);
+            $query->addField('fc', 'entity_id');
+            if ($program_id = $query->execute()->fetchField()) {
+                $program_wr = entity_metadata_wrapper('node', $program_id);
+            }
+        }
     }
 
     // составляем список регламентов для заданных культур
@@ -212,6 +223,11 @@ function _reglaments_get_protection_system2($parameters)
             'area'      => empty($parameters['area']) ? '' : $parameters['area'],
             'seeding'   => empty($parameters['seeding']) ? '' : $parameters['seeding'],
         );
+
+        // иконка
+        if ($program_wr) {
+            $result['header']['icon'] = $program_wr->field_icon->file->url->value();
+        }
 
         // массив этапов роста
         // выстроить по порядку и поменять местами значения с ключами

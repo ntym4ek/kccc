@@ -2,9 +2,21 @@
     min-height: 400px;
 }
 .filter {
-    border-bottom: 2px solid #2b8aff;
+    display: inline-block;
     margin-bottom: 15px;
 }
+.letters {
+    border-bottom: 1px dotted #f2a500;
+    list-style: none;
+    padding: 0; margin: 0; }
+.letters li {
+    font-size: 24px; line-height: 24px;
+    display: inline-block;
+    padding: 5px;
+    transition: all 0.2s ease-in-out; }
+    .letters li:hover { transform: scale(1.2); }
+    .letters li a { color: #f2a500; }
+
 .letter {
     display: inline-block;
     padding: 5px;
@@ -18,7 +30,7 @@
 }
 .terms .delimiter { border-top: 1px solid rgba(9, 148, 220, 0.16); }
 .litera {
-    color: #2b8aff;
+    color: #f2a500;
     font-size: 28px; line-height: 28px; text-transform: uppercase;
     width: 50px;
 }

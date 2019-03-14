@@ -514,8 +514,8 @@ function representatives_get_representatives_list()
     $representatives['rostov'][] = array(
         'office' => 'Представитель',
         'access' => false,
-        'surname' => 'Ганжин', 'name' => 'Виктор', 'name2' => 'Михайлович',
-        'phones' => array('+7 (922) 966-59-77'),
+        'surname' => 'Ганжин', 'name' => 'Виктор', 'name2' => 'Фёдорович',
+        'phones' => array('+7 (922) 966-60-16'),
         'emails' => array('rostov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/ganzhin.png',
         'regions' => array(
@@ -526,7 +526,7 @@ function representatives_get_representatives_list()
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
-        'phones' => array('+7 (922) 966-59-77'),
+        'phones' => array('+7 (928) 170-71-11'),
         'emails' => array('rostov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/shvets.png',
         'regions' => array(
@@ -553,7 +553,7 @@ function representatives_get_representatives_list()
         'surname' => 'Сироткин', 'name' => 'Евгений', 'name2' => 'Николаевич',
         'phones' => array('+7 (922) 966-59-88'),
         'emails' => array('tambov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/tambov.png',
+        'photo' => '/' . $module_path . '/images/photos/sirotkin.png',
         'regions' => array(
             71714 => "Тамбовская область",
         ),
@@ -661,6 +661,7 @@ function _get_experts($tid)
             if (!empty($rep['expert'])) {
                 if (empty($tid) || isset($rep['regions'][$tid])) {
                     unset($rep['regions']);
+                    $rep['office'] = 'Научный консультант';
                     $representatives['expert'][] = $rep;
                 }
             }
