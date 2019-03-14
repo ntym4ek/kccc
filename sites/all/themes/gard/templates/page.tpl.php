@@ -164,26 +164,18 @@
         <?php print render($primary_nav_d); ?>
     </div>
 
-    <a href="/checkout" class="btn btn-header popup-trigger btn-s3">
-        <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
-        <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
-    </a>
-    <button type="button" class="btn btn-header popup-trigger btn-s2" onClick="MeTalk('openSupport'); return false;">
-        <i class="fa fa-comments" aria-hidden="true"></i>
-        <div class="popup popup-top-center"><div class="popup-content"><? print t('Online chat');?></div></div>
-    </button>
-    <button type="button" class="btn btn-header popup-trigger btn-s1 call_back_post">
-        <i class="fa fa-phone" aria-hidden="true"></i>
-        <div class="popup popup-top-center"><div class="popup-content"><? print t('Call back request');?></div></div>
-    </button>
+    <div class="right-menu">
+        <?php print render($secondary_nav); ?>
+        <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
+            <i class="fa fa-phone" aria-hidden="true"></i>
+            <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
+        </button>
+        <a href="/checkout" class="btn btn-header popup-trigger btn-s3">
+            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
+            <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
+        </a>
+    </div>
 
-<!--        <span id="search-pane" class="hide">-->
-<!--            <form action="/search" id="search-api-header" class="spane">-->
-<!--                <div class="sp1"><input  name="s" value="" maxlength="128" class="form-control"  type="text" placeholder="--><?php //print $search_input_placeholder; ?><!--"></div>-->
-<!--                <button type="submit" class="btn btn-header sp2"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>-->
-<!--                <button type="button" class="btn btn-header sp3"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>-->
-<!--            </form>-->
-<!--        </span>-->
 </header>
 
 

@@ -124,25 +124,28 @@ function gard_preprocess_page(&$vars)
             }
 
             break;
+        case 'handbook':
+            $subtitle = t('List of handbooks available in Trade House');
+            break;
         case 'handbook/protection-programs':
             $subtitle = t('Protection programs using products of Trade House');
-            $category_title = t('Handbooks');
+            $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/cultures':
             $subtitle = t('Handbook of cultivated plants');
-            $category_title = t('Handbooks');
+            $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/diseases':
             $subtitle = t('Handbook of plants diseases');
-            $category_title = t('Handbooks');
+            $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/weeds':
             $subtitle = t('Handbook of weeds');
-            $category_title = t('Handbooks');
+            $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/pests':
             $subtitle = t('Handbook of pests');
-            $category_title = t('Handbooks');
+            $category_title = l(t('Handbooks'), 'handbook');
             break;
     }
 
@@ -266,11 +269,12 @@ function gard_preprocess_page(&$vars)
     $vars['secondary_nav'] = FALSE;
     if ($vars['secondary_menu']) {
         // Build links.
-        $vars['secondary_nav'] = menu_tree(variable_get('menu_secondary_links_source', 'user-menu'));
+        $menu = menu_tree_all_data(variable_get('menu_secondary_links_source', 'user-menu'));
+        $vars['secondary_nav'] = menu_tree_output($menu);
         // убрать ссылку User account для анонима
-        if (!$GLOBALS['user']->uid) unset($vars['secondary_nav'][3]);
+        //if (!$GLOBALS['user']->uid) unset($vars['secondary_nav'][3]);
         // Provide default theme wrapper function.
-        $vars['secondary_nav']['#theme_wrappers'] = array('menu_tree__secondary');
+        $vars['secondary_nav']['#theme_wrappers'] = array('menu_tree__user_menu');
     }
 
     // Navigation nav.

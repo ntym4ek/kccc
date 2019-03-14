@@ -73,8 +73,8 @@
  * @ingroup templates
  */
 ?>
-<header id="navbar" role="banner" class="navbar">
-    <button type="button" class="btn btn-header btn-s4">
+<header id="navbar" role="banner" class="navbar hidden-print">
+    <button type="button" class="btn btn-header btn-s4 hidden-md hidden-lg">
         <i class="fa fa-bars" aria-hidden="true"></i>
         <i class="fa fa-times" aria-hidden="true"></i>
         <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
@@ -84,32 +84,27 @@
         <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
     </a>
 
-    <a href="/checkout" class="btn btn-header popup-trigger btn-s3">
-        <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
-        <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
-    </a>
-    <button type="button" class="btn btn-header popup-trigger btn-s2" onClick="MeTalk('openSupport'); return false;">
-        <i class="fa fa-comments" aria-hidden="true"></i>
-        <div class="popup popup-top-center"><div class="popup-content"><? print t('Online chat');?></div></div>
-    </button>
-    <button type="button" class="btn btn-header popup-trigger btn-s1 call_back_post">
-        <i class="fa fa-phone" aria-hidden="true"></i>
-        <div class="popup popup-top-center"><div class="popup-content"><? print t('Call back request');?></div></div>
-    </button>
+    <div class="primary-d-menu hidden-xs hidden-sm">
+        <?php print render($primary_nav_d); ?>
+    </div>
 
-    <!--        <span id="search-pane" class="hide">-->
-    <!--            <form action="/search" id="search-api-header" class="spane">-->
-    <!--                <div class="sp1"><input  name="s" value="" maxlength="128" class="form-control"  type="text" placeholder="--><?php //print $search_input_placeholder; ?><!--"></div>-->
-    <!--                <button type="submit" class="btn btn-header sp2"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>-->
-    <!--                <button type="button" class="btn btn-header sp3"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>-->
-    <!--            </form>-->
-    <!--        </span>-->
+    <div class="right-menu">
+        <?php print render($secondary_nav); ?>
+        <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
+            <i class="fa fa-phone" aria-hidden="true"></i>
+            <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
+        </button>
+        <a href="/checkout" class="btn btn-header popup-trigger btn-s3">
+            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
+            <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
+        </a>
+    </div>
 </header>
 
 
 <div class="menu-container">
     <div class="side-menu">
-        <?php print render($secondary_nav); ?>
+<!--        --><?php //print render($secondary_nav); ?>
         <?php print render($primary_nav); ?>
         <?php print render($navigation_nav); ?>
     </div>
@@ -124,7 +119,7 @@
         <?php if (!empty($slider)): ?>
         <div class="region region-highlighted">
             <div class="row-1">
-                    <?php print render($slider); ?>
+                <?php print render($slider); ?>
             </div>
         </div>
         <?php endif; ?>

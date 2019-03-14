@@ -31,25 +31,26 @@ function gard_menu_link(array $variables) {
     $mlid = $element['#original_link']['mlid'];
     $title = empty($options['html']) ? check_plain($element['#title']) : filter_xss_admin($element['#title']);
     $icons = array(
-        '9722' => '<i class="fas fa-home"></i>',
-        '2055' => '<i class="fas fa-newspaper"></i>',
+        '9722'  => '<i class="fas fa-home"></i>',
+        '2055'  => '<i class="fas fa-newspaper"></i>',
         '10174' => '<i class="fas fa-flask"></i>',
-        '2054' => '<i class="fas fa-info-circle"></i>',
-        '14' => '<i class="fas fa-sign-in-alt"></i>',
-        '15' => '<i class="fas fa-sign-out-alt"></i>',
-        '3' => '<i class="fas fa-user"></i>',
-        '2675' => '<i class="fas fa-cog"></i>',
-        '9459' => '<i class="fas fa-check"></i>',
-        '3819' => '<i class="fas fa-map-marker"></i>',
-        '8980' => '<i class="fab fa-pagelines"></i>',
-        '893' => '<i class="fas fa-comment-alt"></i>',
-        '9731' => '<i class="fas fa-user-circle"></i>',
+        '2054'  => '<i class="fas fa-info-circle"></i>',
+        '14'    => '<i class="fas fa-user"></i>',
+        '15'    => '<i class="fas fa-sign-out-alt"></i>',
+        '12858' => '<i class="fas fa-user"></i>',
+        '2675'  => '<i class="fas fa-cog"></i>',
+        '9459'  => '<i class="fas fa-check"></i>',
+        '3819'  => '<i class="fas fa-map-marker"></i>',
+        '8980'  => '<i class="fab fa-pagelines"></i>',
+        '893'   => '<i class="fas fa-comment-alt"></i>',
+        '9731'  => '<i class="fas fa-user-circle"></i>',
     );
     // убрать текст из пунктов меню Пользователя (будут только иконки)
-    if (in_array($mlid, array(9722, 14, 15, 3, 9459))) {
+    if (in_array($mlid, array(9722, 14, 15, 12858, 9459))) {
         $options['attributes']['title'] = $title;
         $title = '';
     }
+
     // вставить Иконки
     if (!empty($icons[$mlid])) {
         if ($title && $element['#original_link']['depth'] == 1) $element['#attributes']['class'][] = 'with-icon';
@@ -108,6 +109,85 @@ function gard_menu_link(array $variables) {
  * @see theme_menu_link()
  *
  * @ingroup theme_functions
+ *
+ * Пользовательское меню
+ */
+function gard_menu_link__user_menu(array $variables)
+{
+    $element = $variables['element'];
+    $mlid = $element['#original_link']['mlid'];
+
+    // не выводить кнопку входа или личного кабинета в зависимости от наличия авторизации
+    if ($GLOBALS['user']->uid) {
+        if ($mlid == 14)   return '';
+    } else {
+        if ($mlid == 12880) return '';
+    }
+
+    // Check plain title if "html" is not set, otherwise, filter for XSS attacks.
+    $title = empty($options['html']) ? check_plain($element['#title']) : filter_xss_admin($element['#title']);
+
+    $options = !empty($element['#localized_options']) ? $element['#localized_options'] : array();
+    // Ensure "html" is now enabled so l() doesn't double encode. This is now
+    // safe to do since both check_plain() and filter_xss_admin() encode HTML
+    // entities. See: https://www.drupal.org/node/2854978
+    $options['html'] = TRUE;
+
+    // вставить Иконки
+    if (in_array($mlid, [14, 12880])) {
+        $options['attributes']['class'][] = 'btn btn-header btn-s1';
+        $title =  '<i class="fa fa-user"></i>';
+    }
+
+    $href = $element['#href'];
+    $attributes = !empty($element['#attributes']) ? $element['#attributes'] : array();
+
+    $sub_menu = '';
+    $depth = $element['#original_link']['depth'];
+    if (!empty($element['#below'])) {
+        unset($element['#below']['#theme_wrappers']);
+        $sub_menu .= '<div class="dropdown-menu level-' . ($depth + 1) . '-wrapper">';
+        if ($mlid == 12880 && $GLOBALS['user']->uid) {
+
+            $sub_menu .= '<div class="user-info">' .
+                            (module_exists('realname') ? realname_load($GLOBALS['user']) : $GLOBALS['user']->name) .
+                            '<span>' . $GLOBALS['user']->mail . '</span>' .
+                        '</div>';
+        }
+        $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
+                            drupal_render($element['#below']) .
+                        '</ul>' .
+                    '</div>';
+
+        $attributes['class'][] = 'dropdown';
+        $attributes['id'] = 'dropdown';
+
+        $options['attributes']['class'][] = 'dropdown-toggle';
+        $options['attributes']['data-toggle'] = 'dropdown';
+    }
+    $attributes['class'][] = 'level-' . $depth . '-item';
+
+    if ($mlid == 14) {
+        $options['attributes']['class'][] = 'popup-trigger';
+        $title .= '<div class="popup popup-top-left"><div class="popup-content">Авторизация</div></div>';
+    }
+
+    return '<li' . drupal_attributes($attributes) . '>' . l($title, $href, $options) . $sub_menu . "</li>";
+}
+
+/**
+ * Returns HTML for a menu link and submenu.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: Structured array data for a menu link.
+ *
+ * @return string
+ *   The constructed HTML.
+ *
+ * @see theme_menu_link()
+ *
+ * @ingroup theme_functions
  */
 function gard_menu_link__menu_main_d(array $variables) {
     $element = $variables['element'];
@@ -140,7 +220,7 @@ function gard_menu_link__menu_main_d(array $variables) {
             // у меню второго уровня должно присутствовать изображение
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
-                $image_url = image_style_url('menu', $image_uri);
+                $image_url = image_style_url('thumbnail', $image_uri);
                 $title =  '<div class="category-img"><img src="' . $image_url . '" /></div>'
                         . '<div class="category-link">' . $title . '</div>';
 
@@ -170,19 +250,24 @@ function gard_menu_link__menu_main_d(array $variables) {
                     $chevron_color = $category_subtitle_color ? $category_subtitle_color : $category_title_color;
                     $list = _pack_entities_to_list($entities, ['color' => $chevron_color]);
 
+                    // подготовить баннер при наличии
+                    $banner_html = '';
+                    if ($element['#below']) {
+                        $banner_html = _get_banner_html(array_shift($element['#below']));
+                        unset($element['#below']);
+                    }
+
                     $sub_menu =   '<div class="level-3-wrapper">'
                                     . '<div class="col-sm-12">'
-                                        . '<div class="row">'
+                                        . '<div class="row fix-heights">'
                                             . '<div class="col-sm-3">'
                                                 . '<a href="' . $category_title_url . '"><h3 style="color: #' . $category_title_color . '">' . $category_title . '</h3></a>'
-                                                . '<a href="' . $category_subtitle_url . '" class="show-more"><h4 ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
+                                                . '<a href="' . $category_subtitle_url . '" class="show-more" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
                                             . '</div>'
                                             . '<div class="col-sm-6">'
                                                 . $list
                                             . '</div>'
-                                            . '<div class="col-sm-3 menu-banner">'
-                                                . ''
-                                            . '</div>'
+                                            . '<div class="col-sm-3' . ($banner_html ? ' menu-banner' : '') . '">' . $banner_html . '</div>'
                                         . '</div>'
                                     . '</div>'
                                 . '</div>';
@@ -192,7 +277,7 @@ function gard_menu_link__menu_main_d(array $variables) {
         }
     }
 
-    if ($element['#below']) {
+    if (!empty($element['#below'])) {
         unset($element['#below']['#theme_wrappers']);
         $sub_menu =   '<div class="dropdown-menu level-' . ($depth + 1) . '-wrapper">'
                         . '<ul class="level-' . ($depth + 1) . '">'
@@ -207,7 +292,7 @@ function gard_menu_link__menu_main_d(array $variables) {
         $options['attributes']['data-toggle'] = 'dropdown';
     }
     $attributes['class'][] = 'level-' . $depth . '-item';
-    if (isset($tid) && $tid == 15) $attributes['class'][] = 'visible';
+    if (isset($tid) && $tid == 16) $attributes['class'][] = 'visible';
 
     return '<li' . drupal_attributes($attributes) . '>' . l($title, $href, $options) . $sub_menu . "</li>";
 }
@@ -237,6 +322,18 @@ function _get_menu_entities($field_entity, $field_entity_field = null, $tid = nu
         $query->orderby('tf.title_field_value', 'ASC');
     }
 
+    // формуляция
+    if (in_array($field_entity, ['product_agro'])) {
+        $query->leftJoin('field_data_field_pd_formulation', 'ff', 'n.nid = ff.entity_id');
+        $query->leftJoin('field_data_field_tax_short_name', 'fs', 'ff.field_pd_formulation_tid = fs.entity_id');
+        $query->condition(
+            db_or()
+                ->condition('fs.language', $GLOBALS['language']->language)
+                ->condition('fs.language', 'und')
+        );
+        $query->addField('fs', 'field_tax_short_name_value', 'formulation');
+    }
+
     return $query->execute()->fetchAll();
 }
 
@@ -247,10 +344,38 @@ function _pack_entities_to_list($entities, $options)
     if ($entities) {
         $list .= '<ul class="level-3">';
         foreach ($entities as $entity) {
-            $color = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
-            $list .= '<li><i class="fa fa-chevron-right"' . $color . '></i><a href="' . url('node/' . $entity->nid) . '">' . $entity->title . '</a></li>';
+            $title = $entity->title . (empty($entity->formulation) ? '' : ', ' . $entity->formulation);
+            $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
+            $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#585857\';"' : '';
+            $list .= '<li><i class="fa fa-chevron-right"' . $color_style . '></i><a href="' . url('node/' . $entity->nid) . '"' . $hover_style . '>' . $title . '</a></li>';
         }
         $list .= '</ul>';
     }
     return $list;
+}
+
+// сформировать разметку баннера
+function _get_banner_html($element)
+{
+    $html = '';
+    $tid = str_replace('taxonomy/term/', '', $element['#original_link']['link_path']);
+    if ($term_wr = entity_metadata_wrapper('taxonomy_term', $tid)) {
+
+        $href = $term_wr->field_link->value();
+        $desc = $term_wr->description->value();
+        $link_title = $element['#original_link']['link_title'];
+
+        $image_uri = empty($term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $term_wr->field_shop_category_image->file->value()->uri;
+        $image_url = image_style_url('menu_banner', $image_uri);
+        $html = '<div class="row category-banner">' .
+                    '<div class="col-xs-12 banner-img"><img src="' . $image_url . '" /></div>' .
+                    '<div class="col-xs-12 banner-text">' .
+                        '<p>' . $desc . '</p>' .
+                        '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
+                    '</div>' .
+                '</div>';
+
+    }
+
+    return $html;
 }

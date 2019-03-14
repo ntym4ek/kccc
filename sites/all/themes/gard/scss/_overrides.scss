@@ -121,7 +121,7 @@ body {
 
 option:disabled { color: $text-muted; }
 a, a:hover, a:focus {
-  @include transition(all 0.2s ease-in-out);
+  //@include transition(all 0.2s ease-in-out);
 }
 
 // Adjust z-index of core components.
@@ -235,7 +235,8 @@ a, a:hover, a:focus {
 // панель Header
 .navbar {
   position: fixed; z-index: 6; left: 0; right: 0;
-  background-color: #f8f8f8;   border-radius: 0; border: 0;
+  background-color: #fff;
+  border-radius: 0; border: 0;
   box-shadow: 0 10px 60px 20px rgba(0,0,0,.12);
   font-size: 21px; text-align: center;
   height: $header-xs-height;
@@ -243,7 +244,46 @@ a, a:hover, a:focus {
 
   > div { padding: 0; }
 
-  // кнопки
+    // кнопки справа
+    .right-menu {
+        float: right;
+        display: flex;
+        justify-content: flex-end;
+        .user-menu {
+            //float: right;
+            padding: 0; margin: 0;
+            > li { position: initial; }
+            .dropdown-menu {
+                right: 0; left: initial;
+                min-width: 200px;
+                list-style: none;
+                border: none;
+                border-top: 1px solid #e1e1e1;
+                margin: 0; padding: 8px 0 14px;
+                ul {
+                    padding: 0;
+                    > li > a {
+                        display: inline-block;
+                        color: $text-color; text-decoration: none;
+                        line-height: 35px;
+                        padding: 0 20px;
+                        &:hover { color: $link-color; }
+                    }
+                }
+
+            }
+            .user-info {
+                font-weight: 500;
+                margin: 11px 0 14px; padding: 0 20px;
+                span {
+                    display: block;
+                    color: $text-muted; font-weight: 400;
+                }
+            }
+        }
+        @include clearfix();
+    }
+
   .btn-header {
     background: transparent;
     border: 0; border-left: 1px solid #eee; border-radius: 0;
@@ -256,13 +296,13 @@ a, a:hover, a:focus {
       color: $gray;
       @include transition(all 0.3s ease-in-out);
     }
+    &.open,
     &:hover {
       background: $brand-blue;
       .btn-mark,
       .fa { color: #fff; }
     }
     i, span { vertical-align: middle; }
-    &.btn-s1, &.btn-s2, &.btn-s3 { float: right; }
     &.btn-s4 {
       border: 0;
       float: left;
@@ -296,16 +336,18 @@ a, a:hover, a:focus {
 
     // лого
     .navbar-brand {
-        //float: none;
-        //display: inline-block;
+        float: none;
+        display: inline-block;
         line-height: $header-xs-height;
         margin-top: 0;
         height: initial; width: 40%;
         @media #{$tablet} {
             line-height: $header-sm-height;
             padding: 0 30px 0 25px;
-            float: left;
             width: initial;
+        }
+        @media #{$normal} {
+            float: left;
         }
     }
 
@@ -323,7 +365,8 @@ a, a:hover, a:focus {
 
   @media #{$tablet} {
     height: $header-sm-height;
-    .btn .fa { font-size: 25px; line-height: 1; width: 22px; }
+    .btn .fa,
+    .btn .fas { font-size: 25px; line-height: 1; width: 22px; }
     #search-pane {
       .sp1 { padding: 20px; }
       .sp2, .sp3 { flex-basis: $header-button-sm-width; }

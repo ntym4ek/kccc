@@ -86,7 +86,7 @@ function gard_preprocess_node(&$vars) {
         }
 
         /** -------------------------------- Место проведения (Афиша) - */
-        if (isset($vars['field_location'])) {
+        if (!empty($vars['field_location'])) {
             $vars['location'] = $vars['field_location'][0]['value'];
             hide($vars['content']['field_location']);
         }

@@ -9,13 +9,32 @@
             /* ------------------------------------------ Main Menu ------------------------------------------------- */
             $("ul.level-2 > li").hover(function () {
                 var hoveredEl = this;
-                $("ul.level-2 > li").each(function(index, el) {
+                $(this).closest("ul.level-2").find("li").each(function(index, el) {
                     if (el !== hoveredEl) {
                         $(el).removeClass("visible");
                     }
                 });
                 $(this).addClass("visible");
             });
+            // затемнение
+            $(".level-1 > li").on("show.bs.dropdown", function () {
+                var docHeight = $(document).height() + 50;
+                var docWidth = $(document).width();
+                var winHeight = $(window).height();
+                if( docHeight < winHeight ) { docHeight = winHeight; }
+                $("#modalBackdrop").css("top", 0).css("height", docHeight + "px").css("width", docWidth + "px").show();
+            });
+            $(".level-1 > li").on("hidden.bs.dropdown", function () {
+                $("#modalBackdrop").hide();
+            });
+
+            /* ------------------------------------------ Right  Menu ----------------------------------------------- */
+            $(".user-menu .dropdown").hover(function() {
+                    $(this).addClass("open");
+                },
+                function() {
+                    $(this).removeClass("open");
+                });
 
             /* ------------------------------------------ Animated Elements ----------------------------------------- */
             $("[data-animate=true]").each(function(){
@@ -27,38 +46,37 @@
                 $(this).addClass("animate-processed");
             });
 
-
             /* ------------------------------------------ блок корзины ---------------------------------------------- */
             /* - при обновлении блока корзины через секунду убрать класс с эффектом тряски - */
             /* - (класс добавляется в модуле checkout - checkout_commerce_fast_ajax_atc_commands_alter()) - */
-            $('#block-cart').once(function() {
-                $('#block-cart').each(function() {
-                    setTimeout(function() { $('#block-cart').removeClass('shake-on'); }, 1500);
+            $("#block-cart").once(function() {
+                $("#block-cart").each(function() {
+                    setTimeout(function() { $("#block-cart").removeClass("shake-on"); }, 1500);
                 });
             });
 
             /* ------------------------------------------  swipe events init ---------------------------------------- */
             function toggleMenu() {
-                $('#navbar').toggleClass('slide-in');
-                $('.menu-container').toggleClass('slide-in');
-                $('.content-container > .content').toggleClass('body-slide-in');
+                $("#navbar").toggleClass("slide-in");
+                $(".menu-container").toggleClass("slide-in");
+                $(".content-container > .content").toggleClass("body-slide-in");
             }
 
-            $('body', context).once(function () {
+            $("body", context).once(function () {
                 /* -----------------------------------  slide меню -------------------------------------------------- */
-                $('.btn-s4').click(function () { toggleMenu(); });
+                $(".btn-s4").click(function () { toggleMenu(); });
 
                 if (!device.desktop()) {
                     // свайп реализован на основе jquery.touchSwipe.min.js
                     // http://labs.rampinteractive.co.uk/touchSwipe/docs/index.html
-                    $('.content-container > .content').swipe( {
+                    $(".content-container > .content").swipe( {
                         threshold: Math.min($(document).width() / 2, 160),
                         swipeRight:function() {
                             toggleMenu();
                         },
                         excludedElements:$.fn.swipe.defaults.excludedElements+", .horizontal-tabs-list"
                     });
-                    $('.side-menu').swipe( {
+                    $(".side-menu").swipe( {
                         swipeLeft:function() {
                             toggleMenu();
                         },
@@ -66,21 +84,21 @@
                 }
 
                 /* ------------------------------------ панель поиска, Search --------------------------------------- */
-                $('.sp3, .btn-s3').on('click', function () {
-                    $('#search-pane').toggleClass('hide');
+                $(".sp3, .btn-s3").on("click", function () {
+                    $("#search-pane").toggleClass("hide");
                 });
 
                 /* ------------------------------------ Prevent disabled link from following its href --------------- */
-                $('.disabled').click(function(event){
+                $(".disabled").click(function(event){
                     event.preventDefault();
                 });
 
                 /* ------------------------------------ Слайдер - */
-                $('#bootstrap-slider, [id^=views-bootstrap-carousel]').each(function(){
+                $("#bootstrap-slider, [id^=views-bootstrap-carousel]").each(function(){
                     $(this).swipe( {
-                        swipeLeft:function() { $('.carousel').carousel('next'); },
+                        swipeLeft:function() { $(".carousel").carousel("next"); },
                         swipeRight:function(event) {
-                            $('.carousel').carousel('prev');
+                            $(".carousel").carousel("prev");
                             event.stopPropagation();
                         },
                     });
@@ -90,56 +108,56 @@
             /* ------------------------------------ popup ----------------------------------------------------------- */
             $(".popup-trigger-js").on({
                 mouseenter: function () {
-                    $(this).find('.popup').addClass('pop');
+                    $(this).find(".popup").addClass("pop");
                 },
                 mouseleave: function () {
-                    $(this).find('.popup').removeClass('pop');
+                    $(this).find(".popup").removeClass("pop");
                 }
             });
-            $('.popup .close').on("click", function(){
+            $(".popup .close").on("click", function(){
                 var win = $(this).parent();
-                $(win).removeClass('pop');
+                $(win).removeClass("pop");
             });
 
             /* ------------------------------------- print & share -------------------------------------------------- */
-            $('.btn-print').on('click', function() {
+            $(".btn-print").on("click", function() {
                 window.print();
             });
-            $('.btn-share').on('click', function() {
-                $('.header-share').toggleClass('closed');
+            $(".btn-share").on("click", function() {
+                $(".header-share").toggleClass("closed");
             });
 
             /* ------------------------------------- e-address decode ----------------------------------------------- */
             /* <a href="e(supp/ort[s1]kcc/c[s2]ru)" class="eAddr-encoded"></a> */
-            $('a.eAddr-encoded').each(function() {
-                var $href = $(this).attr('href');
+            $("a.eAddr-encoded").each(function() {
+                var $href = $(this).attr("href");
                 var $pattern = /e\((.*)\)/;
                 var $match = $pattern.exec($href);
                 if ($match) {
                     var $eAddr = $match[1];
                     if ($eAddr) {
-                        $eAddr = $eAddr.replace(/\//g, '');
-                        $eAddr = $eAddr.replace(/\[s1\]/, '@');
-                        $eAddr = $eAddr.replace(/\[s2\]/, '.');
-                        $(this).attr('href', 'mailto:' + $eAddr).removeClass('eAddr-encoded');
-                        if ($(this).hasClass('eAddr-html')) {
-                            $(this).html($eAddr).removeClass('eAddr-html');
+                        $eAddr = $eAddr.replace(/\//g, "");
+                        $eAddr = $eAddr.replace(/\[s1\]/, "@");
+                        $eAddr = $eAddr.replace(/\[s2\]/, ".");
+                        $(this).attr("href", "mailto:" + $eAddr).removeClass("eAddr-encoded");
+                        if ($(this).hasClass("eAddr-html")) {
+                            $(this).html($eAddr).removeClass("eAddr-html");
                         }
                     }
                 }
             });
             /* <tag class="eAddr-encoded">.*e(supp/ort[s1]kcc/c[s2]ru).*</tag> */
-            $('.eAddr-encoded').each(function() {
-                if (this.tagName !== 'A') {
+            $(".eAddr-encoded").each(function() {
+                if (this.tagName !== "A") {
                     var $html = $(this).html();
                     var $pattern = /^(.*)e\((.*)\)(.*)$/;
                     var $match = $pattern.exec($html);
                     var $eAddr = $match[2];
 
                     if ($eAddr) {
-                        $eAddr = $eAddr.replace(/\//g, '');
-                        $eAddr = $eAddr.replace(/\[s1\]/, '@');
-                        $eAddr = $eAddr.replace(/\[s2\]/, '.');
+                        $eAddr = $eAddr.replace(/\//g, "");
+                        $eAddr = $eAddr.replace(/\[s1\]/, "@");
+                        $eAddr = $eAddr.replace(/\[s2\]/, ".");
                         $(this).html($match[1] + $eAddr + $match[3]);
                     }
                 }
@@ -156,8 +174,8 @@
                     var $magicLine = $("#magic-line");
 
                     $magicLine
-                        .width($mainNav.find('li.active').width())
-                        .css("left", $mainNav.find('li.active').position().left + 15)
+                        .width($mainNav.find("li.active").width())
+                        .css("left", $mainNav.find("li.active").position().left + 15)
                         .data("origLeft", $magicLine.position().left)
                         .data("origWidth", $magicLine.width());
 
@@ -196,27 +214,27 @@
 
                         var setSize = function (el) {
                             var $el = $(el);
-                            var $slides = $('li.gallery-slide', $el);
-                            var $slideContainer = $('div.gallery-slides', $el);
+                            var $slides = $("li.gallery-slide", $el);
+                            var $slideContainer = $("div.gallery-slides", $el);
 
                             // установить размер галереи по родительскому окну
                             var slideContainerWidth = $slideContainer.outerWidth();
                             var slideHeight = 0;
                             $($slides).each(function () {
-                                $(this).width(slideContainerWidth + 'px');
-                                if (slideHeight < $(this).find('img').height()) {
-                                    slideHeight = $(this).find('img').height();
+                                $(this).width(slideContainerWidth + "px");
+                                if (slideHeight < $(this).find("img").height()) {
+                                    slideHeight = $(this).find("img").height();
                                 }
                             });
-                            $slideContainer.height(slideHeight + 'px');
+                            $slideContainer.height(slideHeight + "px");
                         };
 
                         oldPrepare(el);
                         setSize(el);
 
                         // повесить установку размера на ресайз окна
-                        $(window).bind('resize', function () {
-                            $('.galleryformatter', context).each(function () {
+                        $(window).bind("resize", function () {
+                            $(".galleryformatter", context).each(function () {
                                 setSize(this);
                             });
 
