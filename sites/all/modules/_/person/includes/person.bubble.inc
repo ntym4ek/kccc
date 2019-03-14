@@ -6,7 +6,7 @@
  */
 
 /**
- * sections для bubble
+ * sections (разделы сайта) для bubble
  */
 define('BS_BEFORE_AFTER', 1);
 define('BS_COMPANY',      2);
@@ -26,12 +26,35 @@ define('BL_YELLOW', 2);
 define('BL_RED',    3);
 
 /**
+ * зона действия bubble.
+ */
+define('BA_WEB',  1);   // отображать только на сайте
+define('BA_APP',  2);   // отображать только в приложении
+define('BA_BOTH', 3);   // и там и там
+
+/**
+ * структура поля data
+ *
+ * array(
+ *   'web' => array(
+ *      'link' => '',
+ *      'text' => '',
+ *   ),
+ *   'app' => array(
+ *      'link' => '',
+ *      'text' => '',
+ *   ),
+ * );
+ */
+
+
+/**
  * Реализация hook_entity_info()
  */
 function person_entity_info() {
   return array(
       'bubble' => array(                                      // Системное имя сущности
-          'label' => t('Bubble note'),                        // Человеко-понятное имя сущности
+          'label' => t('Bubble note'),                 // Человеко-понятное имя сущности
           'entity class' => 'Entity',                         // Класс сущности
           'controller class' => 'EntityAPIController',        // Контроллер сущности
           'base table' => 'bubbles',                          // Таблица, в которой хранится информация об альбомах

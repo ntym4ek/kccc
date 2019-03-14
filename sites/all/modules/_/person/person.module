@@ -28,7 +28,7 @@ include 'includes/person.bubble.inc';
 function person_init() {
     global $base_url;
     // переадресовать /user на /person и /user/$uid на /person/$uid
-    if ($GLOBALS['user']->uid != 1) {
+    if (!in_array($GLOBALS['user']->uid, [1, 2737, 6334])) {
         if (preg_match('|^user/{0,1}$|', $_GET['q'], $matches)) {
             drupal_goto($base_url . '/person');
         }
@@ -506,6 +506,15 @@ function person_user_register_form_submit($form, $form_state) {
         global $user;
         $user->roles[STAFF] = 1;
         user_save($user);
+    }
+
+    // если пользователь регистрируется со ссылки user/login
+    // то модyль login_destination не может определить, что это регистрация
+    // и переадресует на страницу, с которой перешли на форму регистрации
+    // а нужно заполнить форму личных данных в кабинете
+    if (module_exists('login_destination')) {
+        unset($_GET['current']);
+        unset($GLOBALS['destination']);
     }
 }
 
