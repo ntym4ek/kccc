@@ -212,7 +212,10 @@ function person_staff_form_submit($form, &$form_state) {
       }
     }
 
-    if (!$staff = profile2_load_by_user($user, 'staff')) $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+    if (!$staff = profile2_load_by_user($user, 'staff')) {
+        $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+        $staff->save();
+    }
     $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
 
     // удалить запись, если заявка отклонена

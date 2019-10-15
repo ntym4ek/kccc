@@ -7,17 +7,20 @@
   color: $color;
   background-color: $background;
   border-color: $border;
+    @include transition(all 0.3s ease-in-out);
 
   &:focus,
   &.focus {
     color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 25%);
+      text-decoration: none;
   }
   &:hover {
     color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 12%);
+      text-decoration: none;
   }
   &:active,
   &.active,

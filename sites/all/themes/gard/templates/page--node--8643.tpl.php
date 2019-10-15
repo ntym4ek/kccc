@@ -130,7 +130,7 @@
             <header class="row content-header" role="banner" >
                 <div class="category-header hidden-print">
                     <?php if (!empty($header['image'])):?>
-                    <img src="<?php print $header['image']; ?>">
+                    <img src="<?php print $header['image']; ?>" alt="<?php empty($header['category_title']) ? t("Category") : $header['category_title']; ?>">
                     <? endif; ?>
                     <?php if (!empty($header['category_title'])):?>
                     <div class="category-title">
@@ -147,7 +147,7 @@
             <div class="page404">
                 <div class="b1">
                     <h1>404</h1>
-                    <h3><?php print t('Page not found'); ?></h3>
+                    <h2><?php print t('Page not found'); ?></h2>
                     <h4><?php print t('But still you could be interested in:'); ?></h4>
                     <ul>
                         <li><?php print l(t('Preparations catalog'), 'catalog/agrochemicals'); ?></li>
@@ -169,12 +169,12 @@
                 <div class="hidden-xs col-sm-5 col-md-4 social">
                     <h4><?php print t('Follow us');?></h4>
                     <div class="social-links">
-                        <a class="vk" href="http://vk.com/public147827276" target="_blank" title="ВКонтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
-                        <a class="ok" href="https://ok.ru/group/54447113371728" target="_blank" title="Одноклассники"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
-                        <a class="fb" href="http://www.facebook.com/kccc.ru" target="_blank" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                        <a class="tw" href="https://twitter.com/kccc_ru" target="_blank" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                        <a class="in" href="https://www.instagram.com/td_kccc/" target="_blank" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                        <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" target="_blank" title="YouTube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
+                        <a class="vk" href="http://vk.com/public147827276" rel="nofollow" target="_blank" title="ВКонтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
+                        <a class="ok" href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="Одноклассники"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
+                        <a class="fb" href="http://www.facebook.com/kccc.ru" rel="nofollow" target="_blank" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                        <a class="tw" href="https://twitter.com/kccc_ru" rel="nofollow" target="_blank" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                        <a class="in" href="https://www.instagram.com/td_kccc/" rel="nofollow" target="_blank" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                        <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" rel="nofollow" target="_blank" title="YouTube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div class="col-sm-7 col-md-8">
@@ -203,10 +203,4 @@
 
 <div id="modalBackdrop"></div>
 
-<div class="new-year">
-    <div class="ltop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
-    <div class="rtop"><img src="/sites/all/themes/gard/images/ny/top.png" /></div>
-    <div class="lbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
-    <div class="rbottom"><img src="/sites/all/themes/gard/images/ny/bottom.png" /></div>
-</div>
 

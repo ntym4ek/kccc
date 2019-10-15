@@ -1,5 +1,6 @@
 <?php
     hide($content['links']);
+    hide($content['comments']);
 ?>
 
 <article class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>

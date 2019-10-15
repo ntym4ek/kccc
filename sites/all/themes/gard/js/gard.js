@@ -34,7 +34,8 @@
                 },
                 function() {
                     $(this).removeClass("open");
-                });
+                }
+            );
 
             /* ------------------------------------------ Animated Elements ----------------------------------------- */
             $("[data-animate=true]").each(function(){

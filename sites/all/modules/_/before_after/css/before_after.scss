@@ -142,15 +142,14 @@
         }
     }
     .text {
+        text-align: left;
+        margin-bottom: 15px;
         &.c1 {
-            height: 50px;
             overflow: hidden;
             .cc1 { overflow: hidden; }
             .cc2 { height: 0; overflow: hidden; }
             .s1 {
-                display: block;
-                color: #2b8aff; font-size: 11px; cursor: pointer;
-                padding: 2px 0 4px 0;
+                color: #2b8aff; cursor: pointer;
                 &:hover { text-decoration: underline; }
             }
         }

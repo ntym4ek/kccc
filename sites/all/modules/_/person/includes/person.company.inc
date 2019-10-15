@@ -485,7 +485,10 @@ function person_company_form_validate($form, &$form_state) {
 function person_company_form_submit($form, &$form_state) {
     $user = $form_state['user'];
 
-    if(!$company = profile2_load_by_user($user, 'company')) $company = profile2_create(array('user' => $user->uid, 'type' => 'company'));
+    if(!$company = profile2_load_by_user($user, 'company')) {
+        $company = profile2_create(array('user' => $user->uid, 'type' => 'company'));
+        $company->save();
+    }
     $company_wrapper = entity_metadata_wrapper('profile2', $company);
 
     // задать значения полей
@@ -549,7 +552,10 @@ function person_company_form_submit($form, &$form_state) {
     $company_wrapper->save();
 
     // создать сотрудника-администратора
-    if(!$staff = profile2_load_by_user($user, 'staff')) $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+    if(!$staff = profile2_load_by_user($user, 'staff')) {
+        $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+        $staff->save();
+    }
     $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
     if ((!$staff_wrapper->field_profile_company2->value() || $staff_wrapper->field_profile_company2->pid->value() != $company->pid)
         || $staff_wrapper->field_profile_company_approved->value() != 1) {

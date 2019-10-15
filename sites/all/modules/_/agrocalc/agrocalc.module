@@ -55,7 +55,7 @@ function agrocalc_form($from, &$form_state)
         '#attached' => [
             'js' => [
                 drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
-                drupal_get_path('module', 'product_ex') . '/js/accounting.js'
+                drupal_get_path('module', 'ext_product') . '/js/accounting.js'
             ],
         ]
     ];
@@ -238,7 +238,10 @@ function agrocalc_form($from, &$form_state)
         '#type' => 'button',
         '#value' => 'Расcчитать',
         '#name' => 'calc',
-        '#attributes' => ['class' => ['pull-right', 'btn-success', 'btn-wide', 'do-not-print']],
+        '#attributes' => [
+            'class' => ['pull-right', 'btn-success', 'btn-wide', 'do-not-print'],
+            'onclick' => ["yaCounter11541151.reachGoal('send_agrocalc'); return true;"],
+        ],
         '#disabled' => $culture_id ? false : true,
         '#suffix' => '</div>',
         '#ajax' => array(

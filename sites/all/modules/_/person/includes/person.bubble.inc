@@ -17,6 +17,7 @@ define('BS_ORDERS',       6);
 define('BS_PERSONELL',    7);
 define('BS_ADMIN_ORDERS', 8);
 define('BS_CONTACT_US',   9);
+define('BS_IDEA',        10);
 
 /**
  * уровни важности bubble.

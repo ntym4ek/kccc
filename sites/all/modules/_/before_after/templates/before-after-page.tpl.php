@@ -28,7 +28,7 @@
                 <div class="text c1">
                     <? if (!empty($before['comment_short'])): ?>
                         <div class="cc1"><? print $before['comment_short']; ?></div>
-                        <div class="cc2"><? print $before['comment']; ?></div>
+                        <div class="cc2"><? print $before['comment']; ?>&nbsp;<span class="s1">свернуть</span></div>
                     <? else: ?>
                         <div class="cc1"><? print $before['comment']; ?></div>
                     <? endif; ?>
@@ -82,16 +82,18 @@
                 </div>
             </div>
             <div class="block">
-                <div class="image">
-                    <div class="date">Культура <? print $before['date']; ?></div>
-                    <a href="<? print $before['image_culture_full']; ?>" class="fancybox">
-                        <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
-                    </a>
-                </div>
-                <div class="text">
-                    <div class="b2"><span>Состояние культуры: </span><? print $before['condition']; ?></div>
-                    <div class="b2"><span>Фаза: </span><? print $before['phase']; ?></div>
-                </div>
+                <?php if (!empty($before['image_culture_thumb'])): ?>
+                    <div class="image">
+                        <div class="date">Культура <? print $before['date']; ?></div>
+                        <a href="<? print $before['image_culture_full']; ?>" class="fancybox">
+                            <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="b2"><span>Состояние культуры: </span><? print $before['condition']; ?></div>
+                        <div class="b2"><span>Фаза: </span><? print $before['phase']; ?></div>
+                    </div>
+                <?php endif; ?>
                 <? if ($content['pests']): ?>
                 <div class="text">
                     <? $ho_photo_message = false; ?>
@@ -179,7 +181,7 @@
                             <div class="text c1">
                                 <? if (!empty($measurement['comment_short'])): ?>
                                     <div class="cc1"><? print $measurement['comment_short']; ?></div>
-                                    <div class="cc2"><? print $measurement['comment']; ?><span class="s1">свернуть</span></div>
+                                    <div class="cc2"><? print $measurement['comment']; ?>&nbsp;<span class="s1">свернуть</span></div>
                                 <? else: ?>
                                     <div class="cc1"><? print $measurement['comment']; ?></div>
                                 <? endif; ?>
@@ -237,6 +239,7 @@
                         </div>
 
                         <div class="block">
+                            <?php if (!empty($measurement['image_culture_thumb'])): ?>
                             <div class="image">
                                 <div class="date">Культура на <? print $measurement['date']; ?></div>
                                 <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox">
@@ -247,6 +250,7 @@
                                 <div class="b2"><span>Состояние: </span><? print $measurement['condition']; ?></div>
                                 <div class="b2"><span>Фаза: </span><? print $measurement['phase']; ?></div>
                             </div>
+                            <?php endif; ?>
                             <? if ($content['pests']): ?>
                                 <div class="text">
                                     <? $ho_photo_message = false; ?>

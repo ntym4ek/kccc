@@ -183,8 +183,10 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
     // представитель
         // берем контакты из модуля Contacts, ищем представителя по региону
     $rep = _get_representative($data['user_region_tid']);
-    $data['representative'] = $rep;
-    $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
+    if ($rep = array_shift($rep['region'])) {
+        $data['representative'] = $rep;
+        $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
+    }
 
     $vars['order'] = $data;
 
@@ -198,14 +200,16 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
             'message' => $message,
         ),
     ));
-        // пока дублировать мне и Рудяку
-    drupal_mail('system', 'mail', 'mega_comp@mail.ru', $GLOBALS['language'], array(
+
+    // дублировать Рудяку
+    drupal_mail('system', 'mail', 'td.sale5@kccc.ru', $GLOBALS['language'], array(
         'context' => array(
             'subject' => t('There is a new request from TradeHouse website visitor.'),
             'message' => $message,
         ),
     ));
-    drupal_mail('system', 'mail', 'td.sale5@kccc.ru', $GLOBALS['language'], array(
+    // Рудяк попросил отправлять ещё на td.sale3@kccc.ru
+    drupal_mail('system', 'mail', 'td.sale3@kccc.ru', $GLOBALS['language'], array(
         'context' => array(
             'subject' => t('There is a new request from TradeHouse website visitor.'),
             'message' => $message,

@@ -18,7 +18,13 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
 {
     switch ($form_id) {
         case 'blog_node_form':
-            $form['field_promo_image']['#access'] = false;
+            if ($GLOBALS['user']->uid != 1) {
+                $form['field_promo_image']['#access'] = false;
+                $form['field_tags']['#access'] = false;
+                $form['options']['#access'] = false;
+                $form['revision_information']['#access'] = false;
+                $form['author']['#access'] = false;
+            }
         case 'news_node_form':
             if ($GLOBALS['user']->uid != 1) {
                 $form['language']['#access'] = false;

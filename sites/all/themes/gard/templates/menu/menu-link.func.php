@@ -154,6 +154,14 @@ function gard_menu_link__user_menu(array $variables)
                             '<span>' . $GLOBALS['user']->mail . '</span>' .
                         '</div>';
         }
+        // навигация
+        $nav_menu = menu_tree_all_data('navigation');
+        $nav_menu = menu_tree_output($nav_menu);
+        $nav_menu['#theme_wrappers'] = ['menu_tree__navigation_submenu'];
+
+        $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
+                            drupal_render($nav_menu) .
+                        '</ul>';
         $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
                             drupal_render($element['#below']) .
                         '</ul>' .
@@ -161,9 +169,10 @@ function gard_menu_link__user_menu(array $variables)
 
         $attributes['class'][] = 'dropdown';
         $attributes['id'] = 'dropdown';
-
-        $options['attributes']['class'][] = 'dropdown-toggle';
-        $options['attributes']['data-toggle'] = 'dropdown';
+        if ($GLOBALS['user']->uid) $href = 'person/' . $GLOBALS['user']->uid . '/summary';
+//
+//        $options['attributes']['class'][] = 'dropdown-toggle';
+//        $options['attributes']['data-toggle'] = 'dropdown';
     }
     $attributes['class'][] = 'level-' . $depth . '-item';
 
@@ -217,7 +226,7 @@ function gard_menu_link__menu_main_d(array $variables) {
             $href = $source_term_wr->field_link->value();
             $tid = strpos($href, 'taxonomy/term/' ) === 0 ?  str_replace('taxonomy/term/', '', $href) : null;
 
-            // у меню второго уровня должно присутствовать изображение
+            // панель второго уровня
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
                 $image_url = image_style_url('thumbnail', $image_uri);
@@ -226,36 +235,68 @@ function gard_menu_link__menu_main_d(array $variables) {
 
                 // формируем при необходимости меню третьего уровня
                 // тащим экземпляры заданной сущности
+                // или пункты следующего уровня
+                $list = [];
+
                 if ($field_entity = empty($source_term_wr->field_entity->value()) ? '' : $source_term_wr->field_entity->value()) {
                     $field_entity_field = empty($source_term_wr->field_entity_field->value()) ? '' : $source_term_wr->field_entity_field->value();
+                    $field_tids = empty($source_term_wr->field_textfield_1->value()) ? '' : $source_term_wr->field_textfield_1->value();
+                    $tids = explode(',', $field_tids);
+                    if (count($tids) == 1) $tids = [$tid];
+                    $list = _get_menu_entities($field_entity, $field_entity_field, $tids);
+                }
 
-                    $parents = taxonomy_get_parents_all($tid);
-                    if (empty($parents[1])) {
-                        $category_title = $parents[0]->name;
-                        $category_subtitle = t('View more');
-                        $category_title_color = $parents[0]->field_color['und'][0]['value'];
-                        $category_subtitle_color = '';
-                        $category_title_url = url('taxonomy/term/' . $parents[0]->tid);
-                        $category_subtitle_url = $category_title_url;
+                // если сущности для второй трети выше не заданы
+                // проверить наличие подпунктов и вывести их
+                if (empty($list) && $element['#below']) {
+                    $list = _get_menu_terms($element['#below']);
+                }
+
+                // третий уровень выводить только при наличии наполнения второй трети
+                if ($list) {
+                    // определяем наполнение первой трети
+                    // если это каталог
+                    if ($tid) {
+                        $parents = taxonomy_get_parents_all($tid);
+                        if (empty($parents[1])) {
+                            $category_title = $parents[0]->name;
+                            $category_subtitle = t('View more');
+                            $category_title_color = $parents[0]->field_color['und'][0]['value'];
+                            $category_subtitle_color = '';
+                            $category_title_url = url('taxonomy/term/' . $parents[0]->tid);
+                            $category_subtitle_url = $category_title_url;
+                        } else {
+                            $category_title = $parents[1]->name;
+                            $category_subtitle = $parents[0]->name;
+                            $category_title_color = $parents[1]->field_color['und'][0]['value'];
+                            $category_subtitle_color = $parents[0]->field_color['und'][0]['value'];
+                            $category_title_url = url('taxonomy/term/' . $parents[1]->tid);
+                            $category_subtitle_url = url('taxonomy/term/' . $parents[0]->tid);
+                        }
+                        $chevron_color = $category_subtitle_color ? $category_subtitle_color : $category_title_color;
+                    // если ссылка на раздел
                     } else {
-                        $category_title = $parents[1]->name;
-                        $category_subtitle = $parents[0]->name;
-                        $category_title_color = $parents[1]->field_color['und'][0]['value'];
-                        $category_subtitle_color = $parents[0]->field_color['und'][0]['value'];
-                        $category_title_url = url('taxonomy/term/' . $parents[1]->tid);
-                        $category_subtitle_url = url('taxonomy/term/' . $parents[0]->tid);
+                        $category_title = $element['#title'];
+                        $category_subtitle = t('View more');
+                        $category_title_color = '';
+                        $category_subtitle_color = '';
+                        $category_title_url = url($href);
+                        $category_subtitle_url = $category_title_url;
                     }
+                    $list_html = _pack_list_to_html($list, empty($chevron_color) ? [] : ['color' => $chevron_color]);
 
-                    $entities = _get_menu_entities($field_entity, $field_entity_field, $tid);
-                    $chevron_color = $category_subtitle_color ? $category_subtitle_color : $category_title_color;
-                    $list = _pack_entities_to_list($entities, ['color' => $chevron_color]);
-
+                    // определяем наполнение последней трети
                     // подготовить баннер при наличии
                     $banner_html = '';
                     if ($element['#below']) {
-                        $banner_html = _get_banner_html(array_shift($element['#below']));
-                        unset($element['#below']);
+                        foreach ($element['#below'] as $key => $item) {
+                            if (is_numeric($key) && $banner_html = _get_banner_html($element['#below'][$key])) {
+                                unset($element['#below'][$key]);
+                                break;
+                            }
+                        }
                     }
+
 
                     $sub_menu =   '<div class="level-3-wrapper">'
                                     . '<div class="col-sm-12">'
@@ -265,13 +306,15 @@ function gard_menu_link__menu_main_d(array $variables) {
                                                 . '<a href="' . $category_subtitle_url . '" class="show-more" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
                                             . '</div>'
                                             . '<div class="col-sm-6">'
-                                                . $list
+                                                . $list_html
                                             . '</div>'
                                             . '<div class="col-sm-3' . ($banner_html ? ' menu-banner' : '') . '">' . $banner_html . '</div>'
                                         . '</div>'
                                     . '</div>'
                                 . '</div>';
-                    }
+
+                    unset($element['#below']);
+                }
             }
 
         }
@@ -297,17 +340,39 @@ function gard_menu_link__menu_main_d(array $variables) {
     return '<li' . drupal_attributes($attributes) . '>' . l($title, $href, $options) . $sub_menu . "</li>";
 }
 
-function _get_menu_entities($field_entity, $field_entity_field = null, $tid = null)
+function _get_menu_terms($menu_list)
 {
+    $term_tids = $terms = [];
+    foreach ($menu_list as $key => $element) {
+        if (is_numeric($key)) {
+            $term_tids[] = str_replace('taxonomy/term/', '', $element['#original_link']['link_path']);
+        }
+    }
+
+    foreach(taxonomy_term_load_multiple($term_tids) as $term) {
+        $terms[] = [
+            'id' => $term->tid,
+            'title' => $term->name,
+            'url' => url($term->field_link['und'][0]['value']),
+        ];
+    }
+    return $terms;
+}
+
+
+function _get_menu_entities($field_entity, $field_entity_field = null, $tids = [])
+{
+    $items = [];
+
     $query = db_select('node', 'n')->distinct();
     $query->condition('n.type', $field_entity);
     $query->condition('n.status', 1);
     $query->fields('n', array('nid'));
 
     // дополнительный фильтр по таксономии
-    if ($field_entity_field && $tid) {
+    if ($field_entity_field && $tids) {
         $query->innerJoin('field_data_' . $field_entity_field, 'f', 'n.nid = f.entity_id');
-        $query->condition('f.' . $field_entity_field . '_tid', $tid);
+        $query->condition('f.' . $field_entity_field . '_tid', $tids, 'IN');
     }
 
     // подцепить имя сущности
@@ -334,20 +399,29 @@ function _get_menu_entities($field_entity, $field_entity_field = null, $tid = nu
         $query->addField('fs', 'field_tax_short_name_value', 'formulation');
     }
 
-    return $query->execute()->fetchAll();
+    foreach($query->execute()->fetchAll() as $item) {
+        $items[] = [
+            'id' => $item->nid,
+            'title' => $item->title,
+            'url' => url('node/' . $item->nid),
+            'formulation' => empty($item->formulation) ? '' : $item->formulation,
+        ];
+    }
+
+    return $items;
 }
 
 // завернуть вписок в ul
-function _pack_entities_to_list($entities, $options)
+function _pack_list_to_html($items, $options)
 {
     $list = '';
-    if ($entities) {
+    if ($items) {
         $list .= '<ul class="level-3">';
-        foreach ($entities as $entity) {
-            $title = $entity->title . (empty($entity->formulation) ? '' : ', ' . $entity->formulation);
+        foreach ($items as $item) {
+            $title = $item['title'] . (empty($item['formulation']) ? '' : ', ' . $item['formulation']);
             $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
             $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#585857\';"' : '';
-            $list .= '<li><i class="fa fa-chevron-right"' . $color_style . '></i><a href="' . url('node/' . $entity->nid) . '"' . $hover_style . '>' . $title . '</a></li>';
+            $list .= '<li><i class="fa fa-chevron-right"' . $color_style . '></i><a href="' . $item['url'] . '"' . $hover_style . '>' . $title . '</a></li>';
         }
         $list .= '</ul>';
     }
@@ -361,19 +435,20 @@ function _get_banner_html($element)
     $tid = str_replace('taxonomy/term/', '', $element['#original_link']['link_path']);
     if ($term_wr = entity_metadata_wrapper('taxonomy_term', $tid)) {
 
-        $href = $term_wr->field_link->value();
+        $href = url($term_wr->field_link->value());
         $desc = $term_wr->description->value();
         $link_title = $element['#original_link']['link_title'];
 
-        $image_uri = empty($term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $term_wr->field_shop_category_image->file->value()->uri;
-        $image_url = image_style_url('menu_banner', $image_uri);
-        $html = '<div class="row category-banner">' .
-                    '<div class="col-xs-12 banner-img"><img src="' . $image_url . '" /></div>' .
-                    '<div class="col-xs-12 banner-text">' .
-                        '<p>' . $desc . '</p>' .
-                        '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
-                    '</div>' .
-                '</div>';
+        if ($image_uri = empty($term_wr->field_shop_category_image->value()) ? '' : $term_wr->field_shop_category_image->file->value()->uri) {
+            $image_url = image_style_url('menu_banner', $image_uri);
+            $html = '<div class="row category-banner">' .
+                        '<div class="col-xs-12 banner-img"><img src="' . $image_url . '" /></div>' .
+                        '<div class="col-xs-12 banner-text">' .
+                            '<p>' . $desc . '</p>' .
+                            '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
+                        '</div>' .
+                    '</div>';
+        }
 
     }
 

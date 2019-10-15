@@ -2,7 +2,20 @@
 
 function webform_ex_form_alter(&$form, &$form_state, $form_id)
 {
-    if (strpos($form_id, 'webform_client_form_') === 0) {
+    // центр идей
+    if ($form_id === 'webform_client_form_8785') {
+        $form['submitted']['o_predlozhenii']['#prefix'] = '<div class="row"><div class="col-md-7">';
+        $form['submitted']['o_predlozhenii']['#suffix'] = '</div>';
+        $form['submitted']['moi_kontakty']['#prefix'] = '<div class="col-md-5">';
+        $form['submitted']['moi_kontakty']['#suffix'] = '</div></div>';
+        // только Редактор может заполнять поле Результаты рассмотрения
+        if (!isset($GLOBALS['user']->roles[5]) && !isset($GLOBALS['user']->roles[3])) {
+            $form['submitted']['rezultat_rassmotreniya']['#access'] = false;
+        }
+    }
+
+    // опросы
+    if ($form_id === 'webform_client_form_8659') {
         if (isset($form['actions']['next'])) $form['actions']['next']['#attributes']['class'][] = 'btn-primary';
         if (isset($form['actions']['next'])) $form['actions']['next']['#attributes']['class'][] = 'btn-wide';
     }
@@ -13,17 +26,23 @@ function webform_ex_form_alter(&$form, &$form_state, $form_id)
  */
 function webform_ex_preprocess_page(&$vars)
 {
-    // todo сделать более точное определение того, что это страница завершения опроса
-    if (arg(0) == 'node') {
-        if ((isset($vars['node']) && $vars['node']->type == 'webform') || in_array(arg(2), ['done', 'submissions'])) {
-            $hi_path = 'public://images/header_images/survey/header_image.jpg';
-            $vars['header']['category_title'] = l(t('Surveys'), 'survey');
-            $vars['header']['image'] = file_create_url($hi_path);
-            $vars['header']['print'] = true;
-        }
-        if ((isset($vars['node']) && $vars['node']->type == 'webform')) {
-            $vars['header']['subtitle'] = t('Survey');
-        }
+    if (arg(0) == 'node' && is_numeric(arg(1)) && !isset($vars['node'])) {
+        $query = db_select('node', 'n');
+        $query->fields('n');
+        $query->condition('n.nid', arg(1));
+        $vars['node'] = $query->execute()->fetchObject();
+    }
+
+    if (isset($vars['node']) && in_array($vars['node']->type, ['webform', 'idea'])) {
+        $vars['header']['print'] = false;
+        $vars['header']['url'] = '';
+    }
+
+    if ((isset($vars['node']) && $vars['node']->type == 'webform')) {
+        $vars['header']['subtitle'] = t('Survey');
+        $hi_path = 'public://images/header_images/survey/header_image.jpg';
+        $vars['header']['category_title'] = l(t('Surveys'), 'survey');
+        $vars['header']['image'] = file_create_url($hi_path);
     }
 }
 
@@ -34,8 +53,36 @@ function webform_ex_preprocess_node(&$vars)
 {
     if($vars['view_mode'] == 'teaser' && $vars['type'] == 'webform') {
         global $user;
+        // определить, пройден ли Опрос пользователем
         $vars['wf_passed_by_user'] = $user->uid && webform_get_submission_count($vars['node']->nid, $user->uid);
 
         if (!empty($vars['content']['field_textfield_1'])) $vars['time'] = $vars['content']['field_textfield_1'][0]['#markup'];
+    }
+}
+
+/**
+ * Pre-processes variables for the "node" theme hook.
+ */
+function webform_ex_preprocess_webform_element(&$vars)
+{
+    if(isset($vars['element']['#format']) && $vars['element']['#format'] == 'html' && !isset($GLOBALS['user']->roles[3])) {
+        // отдельные Поля, добавить обёртку элементам
+        $vars['element']['#field_prefix'] = '<div>';
+        $vars['element']['#field_suffix'] = '</div>';
+    }
+}
+
+/**
+ * Pre-processes variables for the "node" theme hook.
+ */
+function webform_ex_webform_submission_render_alter(&$data)
+{
+    // просмотр Идей, добавить обёртки
+    if($data['#submission']->nid == 8785 && !isset($GLOBALS['user']->roles[3])) {
+        $data['o_predlozhenii']['#prefix'] = '<div class="row"><div class="col-md-7">';
+        $data['o_predlozhenii']['#suffix'] = '</div>';
+        $data['moi_kontakty']['#prefix'] = '<div class="col-md-5">';
+        $data['moi_kontakty']['#suffix'] = '</div></div>';
+        $data['rezultat_rassmotreniya']['#value'] = empty($data['rezultat_rassmotreniya']['#value']) ? "Ещё на рассмотрении" : $data['rezultat_rassmotreniya']['#value'];
     }
 }

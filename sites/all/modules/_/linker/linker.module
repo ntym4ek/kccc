@@ -1,11 +1,121 @@
 <?
-
+/**
+ * Implements hook_node_presave()
+ * @param $node
+ */
 function linker_node_presave($node)
 {
-    $lang = $GLOBALS['language']->language;
+    // только для заданных типов
+    if (in_array($node->type, ['news', 'blog', 'review'])) {
+        $lang = $GLOBALS['language']->language;
 
-    // полный текст для проверки
-    $text = $node->body[$lang][0]['value'];
+        // полный текст для проверки
+        $text = $node->body[$lang][0]['value'];
 
-    //
+        // убираем неподдающиеся регекспу кавычки
+        $text = str_replace('«', '"', $text);
+        $text = str_replace('»', '"', $text);
+
+        // список искомых фраз и их ссылок
+        foreach(_linker_replacement_list() as $replacement_item) {
+            $patterns = _linker_convert_needles_to_preg_patterns($replacement_item['needles']);
+            $replace = '<a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>';
+            foreach($patterns as $pattern) {
+                preg_match($patterns[0], $text, $match);
+                $text = preg_replace($pattern, $replace, $text);
+            }
+        }
+        $node->body[$lang][0]['value'] = $text;
+    }
+}
+
+/**
+ * Сформировать массив замен
+ *
+ * $arr[] = [
+ *     'needles' => [], // список искомых фраз
+ *     'url' => '',     // ссылка, которую необходимо прикрепить
+ * ];
+
+ * @return array
+ */
+function _linker_replacement_list()
+{
+    $arr = [];
+
+    $arr[] = [
+        'needles' => [
+            'ООО ТД "Кирово-Чепецкая Химическая Компания"',
+            'ООО Торговый Дом "Кирово-Чепецкая Химическая Компания"',
+            'ТД "Кирово-Чепецкая Химическая Компания"',
+            'Торговый Дом "Кирово-Чепецкая Химическая Компания"',
+            'Торговый Дом "КЧХК"',
+            'ТД "КЧХК"',
+        ],
+        'url' => '<front>',
+    ];
+    $arr[] = [
+        'needles' => [
+            'представители', 'представительства', 'представительство', 'представитель', 'представителей', 'представителя', 'представителю', 'представителем', 'представителями',
+            'купить', 'приобрести'
+        ],
+        'url' => 'https://kccc.ru/info/representatives',
+    ];
+    $arr[] = [
+        'needles' => [
+            'испытания', 'испытаний', 'испытаниям', 'испытании', 'опыты',
+        ],
+        'url' => 'http://kccc.local/before-after',
+    ];
+    $arr[] = [
+        'needles' => [
+            'специалист', 'экспертное мнение', 'эксперт'
+        ],
+        'url' => 'https://kccc.ru/agro-expert',
+    ];
+    $arr[] = [
+        'needles' => [
+            'программы защиты', 'программа защиты', 'программ защиты', 'системы защиты', 'система защиты', 'систем защиты'
+        ],
+        'url' => 'http://kccc.local/handbook/protection-programs',
+    ];
+
+    // препараты
+    $query = db_select('node', 'n');
+    $query->fields('n', ['nid']);
+    $query->condition('n.type', ['product_agro', 'product_fert'], 'IN');
+    $query->condition('n.status', 1);
+    $query->leftJoin('field_data_title_field', 'tf', 'tf.entity_id = n.nid');
+    $query->condition('tf.language', 'ru');
+    $query->addField('tf', 'title_field_value', 'title');
+    $query->leftJoin('field_data_field_pd_formulation', 'pf', 'pf.entity_id = n.nid');
+    $query->leftJoin('field_data_field_tax_short_name', 'pfsn', 'pfsn.entity_id = pf.field_pd_formulation_tid');
+    $query->condition('pfsn.language', 'ru');
+    $query->addField('pfsn', 'field_tax_short_name_value', 'short_name');
+
+    if ($products = $query->execute()->fetchAll()) {
+        foreach($products as $product) {
+            $title = str_replace(['*', '®'], '', $product->title);
+            $title = trim($title);
+            $arr[] = [
+                'needles' => [$title . ', ' . trim($product->short_name), $title],
+                'url' => url('node/' . $product->nid),
+            ];
+        }
+    }
+
+    return $arr;
+}
+
+function _linker_convert_needles_to_preg_patterns($needles)
+{
+    if (empty($needles)) return false;
+
+    $patterns = [];
+    foreach ($needles as $needle) {
+        $needle = str_replace('"', '["\']', $needle);
+        $patterns[] = '/(?<!target="_blank">)(' . $needle . ')(?!<\/a>)/si';
+    }
+
+    return $patterns;
 }

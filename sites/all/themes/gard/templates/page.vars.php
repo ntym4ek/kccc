@@ -35,14 +35,20 @@ function gard_preprocess_page(&$vars)
         $vars['theme_hook_suggestions'][] = 'page__print';
     }
 
+
     /** -------------------------------------------- Шапка страницы ------------------------------------------------- */
-        // возможно заголовок уже задан (например, Представители задают его раньше)
+        // описание страницы
+    if ($menu_item = menu_get_item($_GET['q'])) {
+        if ($menu_item['description']) drupal_set_subtitle($menu_item['description']);
+    }
+
+    // возможно заголовок уже задан (например, Представители задают его раньше)
     $title          = empty($vars['header']['title']) ? drupal_get_title() : $vars['header']['title'];
     $subtitle       = empty($vars['header']['subtitle']) ? drupal_set_subtitle() : $vars['header']['subtitle'];
     $category_title = empty($vars['header']['category_title']) ? '' : $vars['header']['category_title'];
     $image          = empty($vars['header']['image']) ? '' : $vars['header']['image'];
-    $url            = empty($vars['header']['url']) ? '' : $vars['header']['url'];
-    $print          = empty($vars['header']['print']) ? true : $vars['header']['print'];
+    $url            = isset($vars['header']['url']) ? $vars['header']['url'] : null;                              // адрес страницы для соцсетей
+    $print          = isset($vars['header']['print']) ? $vars['header']['print'] : null;
     // true убирает заголовок страницы
     // используется в ЛК
     $title_off      = empty($vars['header']['title_off']) ? false : $vars['header']['title_off'];
@@ -95,6 +101,7 @@ function gard_preprocess_page(&$vars)
             $category_title = '<a href="' . url('taxonomy/term/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
         }
     }
+
 
     /** -------------------------------------------- для прочих страниц -
      * на случай более длинных путей (фильтры добавляют аргументы) проверяем первые два аргумента
@@ -217,8 +224,8 @@ function gard_preprocess_page(&$vars)
             // для Болезней
             if ($vars['node']->type == 'disease') { $category_title = '<a href="' . '/handbook/diseases' . '">' . t('Deseases of plants') . '</a>'; }
 
-            $url = url('node/' . $vars['node']->nid, array('absolute' => true));
-            $print = true;
+            if (!isset($print)) $url = url('node/' . $vars['node']->nid, array('absolute' => true));
+            if (!isset($print)) $print = true;
         }
     }
 
@@ -250,7 +257,7 @@ function gard_preprocess_page(&$vars)
     if (!isset($vars['wrapper_off'])) $vars['wrapper_off'] = $wrapper_off;
 
     /** -------------------------------------------- Меню  ---------------------------------------------------------- */
-    // Primary desctop nav.
+    // Primary desktop nav.
     $vars['primary_nav_d'] = FALSE;
     $menu = menu_tree_all_data('menu-main-d');
     $vars['primary_nav_d'] = menu_tree_output($menu);

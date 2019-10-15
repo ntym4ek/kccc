@@ -48,3 +48,10 @@ function gard_menu_tree__navigation(&$variables) {
   return '<ul class="menu nav navbar-nav navigation">' . $variables['tree'] . '</ul>';
 }
 
+/**
+ * Bootstrap theme wrapper function for the navigation menu links in right menu.
+ */
+function gard_menu_tree__navigation_submenu(&$variables) {
+  return $variables['tree'];
+}
+

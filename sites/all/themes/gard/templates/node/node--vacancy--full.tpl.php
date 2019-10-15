@@ -23,29 +23,87 @@
 
     <div class="row">
         <div class="col-md-7">
-            <div class="node-body" property="content:encoded">
-                <? print render($content); ?>
-            </div>
+            <fieldset class="panel panel-default">
+                <legend class="panel-heading">
+                    <span class="panel-title fieldset-legend"><? print t('Workplace'); ?></span>
+                </legend>
+                <div class="panel-body">
+                    <? print render($content['field_region']); ?>
+                    <? print render($content['field_vacancy_location']); ?>
+                    <? print render($content['field_vacancy_employer']); ?>
+                </div>
+            </fieldset>
+
+            <fieldset class="panel panel-default">
+                <legend class="panel-heading">
+                    <span class="panel-title fieldset-legend"><? print t('About vacancy'); ?></span>
+                </legend>
+                <div class="panel-body">
+                    <? print render($content); ?>
+                </div>
+            </fieldset>
         </div>
+
         <div class="col-md-5">
             <? print render($content['field_vacancy_form']); ?>
         </div>
+
         <div class="col-md-12">
-            <div class="field field-label-above">
-                <div class="field-label">Ваши действия</div>
-                <div class="field-item">
+            <fieldset class="panel panel-default">
+                <legend class="panel-heading">
+                    <span class="panel-title fieldset-legend"><? print t('Your actions'); ?></span>
+                </legend>
+                <div class="panel-body">
                     <ul>
                         <li>Отправить отклик</li>
                         <li>Дождаться звонка с приглашением на собеседование от сотрудников нашей кадровой службы</li>
                     </ul>
+
+                    <? print render($content['body']); ?>
                 </div>
-            </div>
-            <? print render($content['body']); ?>
-            <div class="contacts">
-                Контактное лицо: <?php print $st ? 'Шиврина Дарья Сергеевна' : 'Жуйкова Елена Анатольевна'; ?><br />
-                Телефон: <?php print $st ? '+7 (83361) 5-20-62' : '+7 (83361) 9-28-24'; ?><br />
-                E-mail: <?php print $st ? 'darya.shivrina@kccc.ru' : 'elena.zhuykova@kccc.ru'; ?><br />
-            </div>
+            </fieldset>
+
+            <fieldset class="panel panel-default">
+                <legend class="panel-heading">
+                    <span class="panel-title fieldset-legend"><? print t('Contacts'); ?></span>
+                </legend>
+                <div class="panel-body">
+                    <div class="media contact-card col-md-6">
+                        <div class="media-left">
+                            <img class="media-object" src="/sites/all/modules/_/contacts/images/photo/zhuikova.png" alt="">
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Жуйкова<br>Елена Анатольевна</h4>
+                            <div class="contact-dep">Менеджер по персоналу</div>
+
+
+                            <div class="contact-phones">
+                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-22, доб. 1114</a></div>
+                            </div>
+                            <div class="contact-emails">
+                                <div class="contact-email"><a href="mailto:elena.zhuykova@kccc.ru" class="" rel="nofollow">elena.zhuykova@kccc.ru</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media contact-card col-md-6">
+                        <div class="media-left">
+                            <img class="media-object" src="/sites/all/modules/_/contacts/images/photo/ogorodova.png" alt="">
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Огородова<br>Мария Николаевна</h4>
+                            <div class="contact-dep">Менеджер по персоналу</div>
+
+
+                            <div class="contact-phones">
+                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-22, доб. 1186</a></div>
+                            </div>
+                            <div class="contact-emails">
+                                <div class="contact-email"><a href="mailto:maria.ogorodova@kccc.ru" class="" rel="nofollow">maria.ogorodova@kccc.ru</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
         </div>
     </div>
 

@@ -1,0 +1,99 @@
+<?php
+
+function ext_forum_form_comment_form_alter(&$form, $form_state)
+{
+    if ($form['comment_body']['und'][0]['#bundle'] == 'comment_node_forum') {
+        $form['author']['_author']['#access'] = false;
+        $form['comment_body']['und'][0]['#title'] = '';
+        $form['comment_body']['und'][0]['#rows'] = 4;
+        $form['comment_body']['und'][0]['#format'] = 'plain_text';
+    }
+}
+
+function ext_forum_ctools_plugin_directory($module, $plugin) {
+    if ($module == 'advanced_forum') {
+        return 'styles/custom';
+    }
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function ext_forum_preprocess_page(&$vars)
+{
+    if (empty($vars['header'])) $vars['header'] = [];
+
+    // установить для страницы параметры шапки
+    if (arg(0) == 'forum') {
+        $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_forum') . '/images/header_image.jpg', array('absolute' => true));
+        $vars['header']['subtitle'] = t('Place to get another opinion');
+        $vars['wrapper_off'] = false;
+    }
+    if (strpos(drupal_get_path_alias($_GET['q']), 'forum/') === 0) {
+        $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_forum') . '/images/header_image.jpg', array('absolute' => true));
+        $vars['header']['category_title'] = '<a href="' . '/forum' . '">' . t('Forum') . '</a>';
+        $vars['wrapper_off'] = false;
+        $vars['header']['print'] = false;
+        $vars['header']['url'] = false;
+    }
+    if (strpos(drupal_get_path_alias($_GET['q']), 'node/add/forum') === 0) {
+        $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_forum') . '/images/header_image.jpg', array('absolute' => true));
+        $vars['header']['category_title'] = '<a href="' . '/forum' . '">' . t('Forum') . '</a>';
+    }
+    if (arg(0) == 'forum' && $term = taxonomy_term_load(arg(1))) {
+        $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+        $vars['header']['subtitle'] = $term_wrapper->description->value();
+
+        // определяем родительскую категорию для термина
+        if ($parent_term = current(taxonomy_get_parents($term->tid))) {
+            $vars['header']['category_title'] = '<a href="' . url('forum/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
+        }
+    }
+    if (arg(0) == 'comment' && !empty($vars['page']['content']['system_main']['#bundle']) && $vars['page']['content']['system_main']['#bundle'] == 'comment_node_forum') {
+        $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_forum') . '/images/header_image.jpg', array('absolute' => true));
+        if (isset($vars['page']['content']['system_main']['#node']) && $vars['page']['content']['system_main']['#node']->type == 'forum') {
+            $vars['header']['category_title'] = '<a href="' . '/forum/' . $vars['page']['content']['system_main']['#node']->nid . '">' . $vars['page']['content']['system_main']['#node']->title . '</a>';
+        }
+        if (arg(2) == 'edit') $vars['header']['title'] = t('Edit comment');
+    }
+}
+
+/**
+ * Preprocesses template variables for the topic header template.
+ */
+function ext_forum_process_advanced_forum_topic_header(&$vars)
+{
+    $reply_link = advanced_forum_get_reply_link($vars['node']);
+    // убрать ссылку на логин в заголовке темы
+    if ($reply_link == 'reply-forbidden') {
+        $vars['reply_link'] = '';
+    }
+}
+
+
+/**
+ * Preprocess comment wrapper.
+ */
+function ext_forum_process_comment_wrapper(&$vars)
+{
+    if (advanced_forum_is_styled($vars['node'], FALSE, 'comment-wrapper')) {
+        // добавить ссылку на логин в заголовке темы
+        $reply_link = advanced_forum_get_reply_link($vars['node']);
+        if ($reply_link == 'reply-forbidden') {
+            // If the post is locked or the comment form is on a seperate page,
+            $vars['reply_link'] = theme('advanced_forum_reply_link', array('node' => $vars['node']));
+        }
+    }
+}
+
+/**
+ * Preprocess comment wrapper.
+ */
+function ext_forum_process_author_pane(&$vars)
+{
+    if ($vars['account']->uid != 0) {
+        // Online status - uses the settings for the who's online block.
+        // отображать только одно время (минуты, без сек, часы без минут)
+        $vars['last_active'] = ($vars['account']->access) ? format_interval(REQUEST_TIME - $vars['account']->access, 1) : t("Never");
+    }
+}

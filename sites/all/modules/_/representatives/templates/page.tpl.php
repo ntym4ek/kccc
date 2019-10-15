@@ -39,6 +39,13 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
 
         <? endforeach; ?>
 
+        <div class="col-xs-12">
+            <div class="map-title ">
+                <h3>Карта представителей<i> в регионах</i></h3>
+                <p>Наведите курсор на нужный росток</p>
+            </div>
+        </div>
+
         <div class="map col-xs-12">
             <img src="/<? print $rep00['region_path'] . 'map.png'; ?>" />
 
@@ -111,7 +118,7 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
         </div>
         <div class="rep-box last col-sm-6 col-md-4">
             <span style="display: inline-block; font-size: 14px; margin-bottom: 20px;">613048, Кировская область,<br />Кирово-Чепецк, Производственная, 6</span>
-            +7(83361) 5-20-67, 5-40-60, 9-28-73
+            +7 (8332) 76-15-20
             <a href="e(<? print email_antibot_encode('td@kccc.ru'); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
         </div>
         <div class="rep-box last col-sm-6 col-md-4">

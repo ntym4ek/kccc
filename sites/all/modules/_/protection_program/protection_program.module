@@ -661,7 +661,7 @@ function pp_bg_form_validate($form, &$form_state) {
     $validators = array(
         'file_validate_is_image' => array(), // Проверка, действительно ли файл является изображением
         'file_validate_extensions' => array('png jpg jpeg'), // Проверка на расширения
-        'file_validate_image_resolution' => array('1280x1024', '400x400'),
+        'file_validate_image_resolution' => array('2560x2048', '400x400'),
     );
     // Загружаем файл в sites/default/files/images/protection_program/ (по умолчанию)
     if (!$_FILES['files']['name']['file']) {

@@ -155,23 +155,26 @@
                 <div class="hidden-xs col-sm-4 col-lg-4 social">
                     <h4><?php print t('Follow us');?></h4>
                     <div class="social-links">
-                        <a class="vk" href="http://vk.com/public147827276" target="_blank" title="ВКонтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
-                        <a class="ok" href="https://ok.ru/group/54447113371728" target="_blank" title="Одноклассники"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
-                        <a class="fb" href="http://www.facebook.com/kccc.ru" target="_blank" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                        <a class="tw" href="https://twitter.com/kccc_ru" target="_blank" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                        <a class="in" href="https://www.instagram.com/td_kccc/" target="_blank" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                        <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" target="_blank" title="YouTube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
+                        <a class="vk" href="http://vk.com/public147827276" rel="nofollow" target="_blank" title="ВКонтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
+                        <a class="ok" href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="Одноклассники"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
+                        <a class="fb" href="http://www.facebook.com/kccc.ru" rel="nofollow" target="_blank" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                        <a class="tw" href="https://twitter.com/kccc_ru" rel="nofollow" target="_blank" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                        <a class="in" href="https://www.instagram.com/td_kccc/" rel="nofollow" target="_blank" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                        <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" rel="nofollow" target="_blank" title="YouTube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div class="col-sm-8 col-lg-8">
                     <div class="row">
-                        <div class="col-xs-12"><?php print render($footer_nav); ?></div>
                         <div class="col-xs-12">
                             <div class="row">
-                                <div class="col-xs-12 col-md-6 col-md-offset-1 col-lg-5 col-lg-offset-3">
-                                    <?php if (!empty($site_slogan)): ?>
-                                        <h5><?php print $site_slogan; ?></h5>
-                                    <?php endif; ?>
+                                <div class="col-xs-12 col-md-5 col-md-offset-1"><h1><?php print $site_slogan; ?></h1></div>
+                                <div class="col-xs-12 col-md-6"><?php print render($footer_nav); ?></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-7 col-md-offset-1 col-lg-7">
+                                    <h5><?php print t('Central office') . '<br />+7 (8332) 76-15-20 доб. 1107'; ?></h5>
                                 </div>
                                 <div class="col-xs-12 hidden-sm col-md-4 col-lg-4">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">

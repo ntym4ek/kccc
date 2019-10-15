@@ -94,7 +94,7 @@ function gard_preprocess_node(&$vars) {
     }
 
     /** ------------------------------------ Просмотры - */
-    if (!in_array($vars['type'], array('product_agro', 'product_mix', 'product_fert', 'product_chem', 'page'))) {
+    if (!in_array($vars['type'], array('product_agro', 'product_mix', 'product_fert', 'product_chem', 'page', 'idea')) || ($vars['type'] == 'webform' && $vars['view_mode'] != 'full')) {
         $vars['viewed'] = statistics_get($vars['node']->nid)['totalcount'];
     }
 
@@ -127,7 +127,7 @@ function gard_preprocess_node(&$vars) {
     /** ------------------------------------ Вакансии --------------------------------------------------------------- */
     if ($vars['type'] == 'vacancy') {
         $vars['employer'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
-        $vars['place'] = $vars['content']['field_vacancy_location'][0]['#markup'];
+        $vars['place'] = empty($vars['content']['field_vacancy_location'][0]['#markup']) ? '' : $vars['content']['field_vacancy_location'][0]['#markup'];
     }
 
 

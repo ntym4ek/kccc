@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectTasksOptions">
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="--source-map-embed $FileName$ $FileParentDir$\css\$FileNameWithoutExtension$.css" />
+      <option name="arguments" value="--source-map-embed $FileName$ $FileDir$\$FileNameWithoutExtension$.css" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="scss" />
-      <option name="immediateSync" value="true" />
+      <option name="immediateSync" value="false" />
       <option name="name" value="SСSS" />
       <option name="output" value="" />
       <option name="outputFilters">

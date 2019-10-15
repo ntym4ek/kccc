@@ -148,19 +148,14 @@ function person_main_form($form, &$form_state, $acid) {
     );
 
     // панель смены пароля
-    $form['old_pass'] = array(
-        '#type' => 'textfield',
-        '#title' => 'Старый',
-        '#value' => '',
-        '#prefix' => '<div class="form-item form-item-password form-group"><label class="control-label">' . t('Password') . '</label>'
-            . '<p class="form-control-static pass-text"><a class="pass-show btn-link">' . t('change') . '</a></p>'
-            . '<div class="password-pane">',
-    );
     $form['new_pass'] = array(
         '#type' => 'textfield',
         '#title' => 'Новый',
         '#value' => '',
         '#attributes' => array('placeholder' => 'Не менее 4х символов'),
+        '#prefix' => '<div class="form-item form-item-password form-group"><label class="control-label">' . t('Password') . '</label>'
+            . '<p class="form-control-static pass-text"><a class="pass-show btn-link">' . t('change') . '</a></p>'
+            . '<div class="password-pane">',
         '#suffix' => '</div></div>',
     );
 
@@ -235,25 +230,14 @@ function person_main_form_validate($form, &$form_state) {
     if (isset($form_state['triggering_element']['#name']) && $form_state['triggering_element']['#name'] == 'revalidate') return true;
 
     $form_state['pane_error'] = 0;
-    $old_pass = $form_state['input']['old_pass'];
     $form_state['new_pass'] = trim($form_state['input']['new_pass']);
-    unset($form_state['input']['old_pass']); unset($form_state['values']['old_pass']);
     unset($form_state['input']['new_pass']); unset($form_state['values']['new_pass']);
 
     if (empty($form_state['values']['surname'])) { form_set_error('surname', 'Нужно указать фамилию'); return false; }
     if (empty($form_state['values']['name'])) { form_set_error('name', 'Нужно указать имя'); return false; }
 
     // проверка старого пароля (только при указании нового)
-    if (!empty($form_state['new_pass']) || $old_pass) {
-        require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
-        if (!$old_pass) {
-            $form_state['pane_error'] = 1;
-            form_set_error('old_pass', 'Для смены пароля на новый укажите старый пароль'); return false;
-        }
-        if (!user_check_password($old_pass, $user)) {
-            $form_state['pane_error'] = 1;
-            form_set_error('old_pass', 'Неверно указан старый пароль'); return false;
-        }
+    if (!empty($form_state['new_pass'])) {
         if (drupal_strlen($form_state['new_pass']) < 4) {
             $form_state['pane_error'] = 1;
             form_set_error('new_pass', 'Длина нового пароля должна быть не менее 4 символов'); return false;
@@ -264,7 +248,11 @@ function person_main_form_validate($form, &$form_state) {
 function person_main_form_submit($form, &$form_state) {
     $user = $form_state['user'];
 
-    if(!$main = profile2_load_by_user($user, 'main')) $main = profile2_create(array('user' => $user->uid, 'type' => 'main'));
+    if(!$main = profile2_load_by_user($user, 'main')) {
+        $main = profile2_create(array('user' => $user->uid, 'type' => 'main'));
+        // сохранить сразу, так как при создании не срабатывает profile2_update
+        $main->save();
+    }
 
     $main_wrapper = entity_metadata_wrapper('profile2', $main);
 
@@ -305,7 +293,10 @@ function person_main_form_submit($form, &$form_state) {
 
     // заполнить поля для сотрудников
     if (isset($user->roles[STAFF])) {
-        if (!$staff = profile2_load_by_user($user, 'staff')) $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+        if (!$staff = profile2_load_by_user($user, 'staff')) {
+            $staff = profile2_create(array('user' => $user->uid, 'type' => 'staff'));
+            $staff->save();
+        }
         $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
 
         $company = profile2_load(KCCC_COMPANY_PID);

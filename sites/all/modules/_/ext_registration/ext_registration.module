@@ -105,7 +105,8 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
                 $interval = ($agenda_wr->field_period->value2->value() - $agenda_wr->field_period->value->value()) / (3600 * 24);
                 $options = ['' => 'Выберите день'];
                 for ($i = 1; $i <= $interval + 1; $i++) {
-                    $options[$i] = $form['field_date_select']['und']['#options'][$i];
+                    if (isset($form['field_date_select']['und']['#options'][$i]))
+                        $options[$i] = $form['field_date_select']['und']['#options'][$i];
                 };
                 $form['field_date_select']['und']['#options'] = $options;
                 $form['field_date_select']['und']['#default_value'][] = '';

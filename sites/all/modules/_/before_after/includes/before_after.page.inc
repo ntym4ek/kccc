@@ -236,14 +236,17 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         $output['image_full']   = $image ? file_create_url($image->uri) : '';
 
                         // содержимое
-                        $output['condition_title'] = 'Состояние культуры: ';
-                        $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
+                        $output['condition_title'] = '';
+                        $output['condition'] = '';
+                        if ($measurement_wrapper->field_f_s_m_condition_mc->value()) {
+                            $output['condition_title'] = 'Состояние культуры: ';
+                            $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
+                        }
 
 
                         // все вредные объекты сезона
                         $arr_ho_all = array();
                         foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
-
                             $name = $item_ho->field_f_s_h_hobject->value() ? $item_ho->field_f_s_h_hobject->title->value() : 'Не найден';
                             $dom = $item_ho->field_f_s_h_dominant->value();
                             $arr_ho_all[] = $dom ? $name . ' (доминант)' : $name;
@@ -556,13 +559,13 @@ function before_after_get_atfield($sid)
                 $measurements[$key_m]['image_field_thumb'] = $image_f ? image_style_url('news_teaser', $image_f->uri) : '';
                 $measurements[$key_m]['image_field_full'] = $image_f ? file_create_url($image_f->uri) : '';
                 $image_c_fid = $measurement_wrapper->field_f_s_m_foto_culture->value();
-                $image_c = file_load($image_c_fid);
+                $image_c = $image_c_fid ? file_load($image_c_fid) : false;
                 $measurements[$key_m]['image_culture_thumb'] = $image_c ? image_style_url('news_teaser', $image_c->uri) : '';
                 $measurements[$key_m]['image_culture_full'] = $image_c ? file_create_url($image_c->uri) : '';
                 $measurements[$key_m]['condition'] = drupal_strtolower($measurement_wrapper->field_f_s_m_condition_mc->value());
-                $measurements[$key_m]['phase'] = drupal_strtolower($measurement_wrapper->field_f_s_m_phase_mc->name->value());
+                $measurements[$key_m]['phase'] = $measurement_wrapper->field_f_s_m_phase_mc->value() ? drupal_strtolower($measurement_wrapper->field_f_s_m_phase_mc->name->value()) : '';
                 $measurements[$key_m]['date'] = date('d.m.Y', $measurement_wrapper->field_f_s_m_date->value());
-                $comment = mb_ucfirst(trim($measurement_wrapper->field_f_s_m_comment->value()));
+                $comment = trim($measurement_wrapper->field_f_s_m_comment->value());
                 $comment_short = _cropStr($comment, 150, '... <span class="s1">развернуть</span>');
                 $measurements[$key_m]['comment'] = $comment;
                 $measurements[$key_m]['comment_short'] = $comment_short;
@@ -615,7 +618,7 @@ function before_after_get_atfield($sid)
 
                 // препарат
                 $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
-                $processings[$key_p]['preparation'] = $preparation['title'] . ', ' . $preparation['form_short'];
+                $processings[$key_p]['preparation'] = $preparation['title'] . ($preparation['form_short'] ? ', ' . $preparation['form_short'] : '');
                 $processings[$key_p]['ingredients'] = implode(' + ', $preparation['ingredients']);
                 $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation['id']);
                 $processings[$key_p]['prep_nid'] = $preparation['id'];

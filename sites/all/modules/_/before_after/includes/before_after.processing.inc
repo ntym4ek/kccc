@@ -6,124 +6,126 @@
 function before_after_processing_callback($sid = 0, $type = 'processing', $op = 'list', $pid = 0)
 {
     $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-    $season = $season_wrapper->value();
-    $fid = $season->hostEntityId();
+    if ($season = $season_wrapper->value()) {
 
-    $output = '';
-    if ($type == 'processing') {
-        $field_wrapper = entity_metadata_wrapper('node', $fid);
+        $fid = $season->hostEntityId();
 
-        $year_time = $season_wrapper->field_f_s_season->value();
-        $year = $season_wrapper->field_f_s_year->value();
+        $output = '';
+        if ($type == 'processing') {
+            $field_wrapper = entity_metadata_wrapper('node', $fid);
 
-        $output = array(
-            'title1' => $field_wrapper->title->value(),
-            'title2' => $field_wrapper->field_f_farm->value(),
-            'title3' => 'Сезон ' . $year_time . ' ' . $year,
-            'title4' => $season_wrapper->field_f_s_culture->title->value(),
-        );
-        $menu = array();
+            $year_time = $season_wrapper->field_f_s_season->value();
+            $year = $season_wrapper->field_f_s_year->value();
 
-        switch ($op) {
-            case 'list':
-                // ссылки меню
-                $menu[] = array('data' => l(t('Fields list'), "/fields/list"));
-                $menu[] = array('data' => l(t('Seasons list'), "/field/$fid/season/list"));
+            $output = array(
+                'title1' => $field_wrapper->title->value(),
+                'title2' => $field_wrapper->field_f_farm->value(),
+                'title3' => 'Сезон ' . $year_time . ' ' . $year,
+                'title4' => $season_wrapper->field_f_s_culture->title->value(),
+            );
+            $menu = array();
 
-                // обработки текущего поля
-                $query = db_select('field_data_field_f_s_processings', 'p');
-                $query->condition('p.entity_id', $sid);
-                $query->fields('p', array('field_f_s_processings_value'));
-                $result_p = $query->execute()->fetchAll();
+            switch ($op) {
+                case 'list':
+                    // ссылки меню
+                    $menu[] = array('data' => l(t('Fields list'), "/fields/list"));
+                    $menu[] = array('data' => l(t('Seasons list'), "/field/$fid/season/list"));
 
-                $procs = array();
-                if ($result_p) {
-                    foreach ($result_p as $key_p => $p_item) {
-                        $pid = $p_item->field_f_s_processings_value;
-                        $processing_wrapper = entity_metadata_wrapper('field_collection_item', $pid);
-                        $date = $processing_wrapper->field_f_s_p_date->value();
-                        $procs[$date . 'p' . $key_p]['proc'] = "p";
-                        $procs[$date . 'p' . $key_p]['id'] = $pid;
-                        $procs[$date . 'p' . $key_p]['link'] = "/season/$sid/processing/edit/$pid";
-                        $procs[$date . 'p' . $key_p]['image'] = "";
-                        $procs[$date . 'p' . $key_p]['title1'] = date('d.m.Y', $date) . '&nbsp;&nbsp;Обработка';
-                        $procs[$date . 'p' . $key_p]['title2'] = $processing_wrapper->field_f_s_p_preparation->title->value();
-                        $procs[$date . 'p' . $key_p]['link_edit'] = "/season/$sid/processing/edit/$pid";
-                        $procs[$date . 'p' . $key_p]['link_delete'] = "/season/$sid/processing/del/$pid";
+                    // обработки текущего поля
+                    $query = db_select('field_data_field_f_s_processings', 'p');
+                    $query->condition('p.entity_id', $sid);
+                    $query->fields('p', array('field_f_s_processings_value'));
+                    $result_p = $query->execute()->fetchAll();
+
+                    $procs = array();
+                    if ($result_p) {
+                        foreach ($result_p as $key_p => $p_item) {
+                            $pid = $p_item->field_f_s_processings_value;
+                            $processing_wrapper = entity_metadata_wrapper('field_collection_item', $pid);
+                            $date = $processing_wrapper->field_f_s_p_date->value();
+                            $procs[$date . 'p' . $key_p]['proc'] = "p";
+                            $procs[$date . 'p' . $key_p]['id'] = $pid;
+                            $procs[$date . 'p' . $key_p]['link'] = "/season/$sid/processing/edit/$pid";
+                            $procs[$date . 'p' . $key_p]['image'] = "";
+                            $procs[$date . 'p' . $key_p]['title1'] = date('d.m.Y', $date) . '&nbsp;&nbsp;Обработка';
+                            $procs[$date . 'p' . $key_p]['title2'] = $processing_wrapper->field_f_s_p_preparation->title->value();
+                            $procs[$date . 'p' . $key_p]['link_edit'] = "/season/$sid/processing/edit/$pid";
+                            $procs[$date . 'p' . $key_p]['link_delete'] = "/season/$sid/processing/del/$pid";
+                        }
                     }
-                }
 
-                // замеры текущего поля
-                $query = db_select('field_data_field_f_s_measurements', 'm');
-                $query->condition('m.entity_id', $sid);
-                $query->fields('m', array('field_f_s_measurements_value'));
-                $result_m = $query->execute()->fetchAll();
+                    // замеры текущего поля
+                    $query = db_select('field_data_field_f_s_measurements', 'm');
+                    $query->condition('m.entity_id', $sid);
+                    $query->fields('m', array('field_f_s_measurements_value'));
+                    $result_m = $query->execute()->fetchAll();
 
-                if ($result_m) {
-                    foreach ($result_m as $key_m => $m_item) {
-                        $mid = $m_item->field_f_s_measurements_value;
-                        $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $mid);
-                        $date = $measurement_wrapper->field_f_s_m_date->value();
-                        $procs[$date . 'm' . $key_m]['proc'] = "m";
-                        $procs[$date . 'm' . $key_m]['id'] = $mid;
-                        $procs[$date . 'm' . $key_m]['link'] = "/season/$sid/measurement/edit/$mid";
-                        $procs[$date . 'm' . $key_m]['image'] = "";
-                        $procs[$date . 'm' . $key_m]['title1'] = date('d.m.Y', $date) . '&nbsp;&nbsp;Замер';
-                        $procs[$date . 'm' . $key_m]['link_edit'] = "/season/$sid/measurement/edit/$mid";
-                        $procs[$date . 'm' . $key_m]['link_delete'] = "/season/$sid/measurement/del/$mid";
-                        if ($measurement_wrapper->field_f_s_m_phase_mc->value())
-                            $procs[$date . 'm' . $key_m]['title2'] = $measurement_wrapper->field_f_s_m_phase_mc->name->value();
+                    if ($result_m) {
+                        foreach ($result_m as $key_m => $m_item) {
+                            $mid = $m_item->field_f_s_measurements_value;
+                            $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $mid);
+                            $date = $measurement_wrapper->field_f_s_m_date->value();
+                            $procs[$date . 'm' . $key_m]['proc'] = "m";
+                            $procs[$date . 'm' . $key_m]['id'] = $mid;
+                            $procs[$date . 'm' . $key_m]['link'] = "/season/$sid/measurement/edit/$mid";
+                            $procs[$date . 'm' . $key_m]['image'] = "";
+                            $procs[$date . 'm' . $key_m]['title1'] = date('d.m.Y', $date) . '&nbsp;&nbsp;Замер';
+                            $procs[$date . 'm' . $key_m]['link_edit'] = "/season/$sid/measurement/edit/$mid";
+                            $procs[$date . 'm' . $key_m]['link_delete'] = "/season/$sid/measurement/del/$mid";
+                            $procs[$date . 'm' . $key_m]['title2'] = $measurement_wrapper->field_f_s_m_phase_mc->value() ? $measurement_wrapper->field_f_s_m_phase_mc->name->value() : '';
+                        }
                     }
-                }
 
-                $menu[] = array('data' => l(t('Add measurement'), "/season/$sid/measurement/add"));
-                $menu[] = array(
-                    'data' => l(t('Add processing'), "/season/$sid/processing/add"),
-                    'class' => array($result_m  ? '' : 'disabled'),
-                );
-
-                if ($procs) {
-                    ksort($procs);
-                    $output['items'] = $procs;
+                    $menu[] = array('data' => l(t('Add measurement'), "/season/$sid/measurement/add"));
                     $menu[] = array(
-                        'data' => l(t('View result'), "/before-after/$sid", ['attributes' => ['target' => '_blank']])
+                        'data' => l(t('Add processing'), "/season/$sid/processing/add"),
+                        'class' => array($result_m ? '' : 'disabled'),
                     );
-                }
-                $output['menu'] = theme('item_list', array('items' => $menu, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
-                $output = theme('before_after_user', array('content' => $output));
-                break;
-            case 'edit':
-                drupal_set_title('Редактировать Обработку');
-                $output = drupal_get_form('before_after_processing_form', $sid, $pid);
-                break;
-            case 'add':
-                drupal_set_title('Добавить новую Обработку');
-                $output = drupal_get_form('before_after_processing_form', $sid);
-                break;
-            case 'del':
-                drupal_set_title('Удаление');
-                $output = drupal_get_form('before_after_del_form', 'processing', $sid, $pid);
-                break;
-        }
-    }
 
-    if ($type == 'measurement') {
-        switch ($op) {
-            case 'edit':
-                drupal_set_title('Редактировать Замер');
-                $output = drupal_get_form('before_after_measurement_form', $sid, $pid);
-                break;
-            case 'add':
-                drupal_set_title('Добавить новый Замер');
-                $output = drupal_get_form('before_after_measurement_form', $sid);
-                break;
-            case 'del':
-                drupal_set_title('Удаление');
-                $output = drupal_get_form('before_after_del_form', 'measurement', $sid, $pid);
-                break;
+                    if ($procs) {
+                        ksort($procs);
+                        $output['items'] = $procs;
+                        $menu[] = array(
+                            'data' => l(t('View result'), "/before-after/$sid", ['attributes' => ['target' => '_blank']])
+                        );
+                    }
+                    $output['menu'] = theme('item_list', array('items' => $menu, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
+                    $output = theme('before_after_user', array('content' => $output));
+                    break;
+                case 'edit':
+                    drupal_set_title('Редактировать Обработку');
+                    $output = drupal_get_form('before_after_processing_form', $sid, $pid);
+                    break;
+                case 'add':
+                    drupal_set_title('Добавить новую Обработку');
+                    $output = drupal_get_form('before_after_processing_form', $sid);
+                    break;
+                case 'del':
+                    drupal_set_title('Удаление');
+                    $output = drupal_get_form('before_after_del_form', 'processing', $sid, $pid);
+                    break;
+            }
         }
-    }
 
+        if ($type == 'measurement') {
+            switch ($op) {
+                case 'edit':
+                    drupal_set_title('Редактировать Замер');
+                    $output = drupal_get_form('before_after_measurement_form', $sid, $pid);
+                    break;
+                case 'add':
+                    drupal_set_title('Добавить новый Замер');
+                    $output = drupal_get_form('before_after_measurement_form', $sid);
+                    break;
+                case 'del':
+                    drupal_set_title('Удаление');
+                    $output = drupal_get_form('before_after_del_form', 'measurement', $sid, $pid);
+                    break;
+            }
+        }
+    } else {
+        $output = 'Сезон не найден';
+    }
     // подключить стили
     drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
 
@@ -142,7 +144,7 @@ function before_after_processing_form($form, &$form_state, $sid, $pid = '') {
 
     // список всех Препаратов
     $query = db_select('node', 'n');
-    $query->condition('n.type', 'product_agro');
+    $query->condition('n.type', ['product_agro', 'product_fert'], 'IN');
     $query->condition('n.status', 1);
     $query->leftJoin('field_data_title_field', 'tf', 'n.nid = tf.entity_id');
     $query->condition('tf.language', $GLOBALS['language']->language);
@@ -330,7 +332,7 @@ function before_after_processing_form($form, &$form_state, $sid, $pid = '') {
         '#upload_validators' => array(
             'file_validate_is_image' => array(),
             'file_validate_extensions' => array('png jpg jpeg'),
-            'file_validate_image_resolution' => array('1280x1024', '400x400'),
+            'file_validate_image_resolution' => array('2560x2048', '400x400'),
         ),
         '#default_value' => $photo,
         '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate
