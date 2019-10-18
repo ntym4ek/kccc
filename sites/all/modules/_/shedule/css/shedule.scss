@@ -2,7 +2,16 @@ $sh-gutter-width: 1rem;
 $sh-column-b-width: 25%;
 $sh-block-header-height: 25%;
 
-body.page-shedule { overflow: hidden; }
+html {
+    @media only screen and (min-width : 0) and (max-width : 768px) { font-size: 3px!important; }
+    @media only screen and (min-width : 769px) and (max-width : 1024px) { font-size: 4px!important; }
+    @media only screen and (min-width : 1025px) and (max-width : 1280px) { font-size: 5px!important; }
+    @media only screen and (min-width : 1281px) and (max-width : 1440px) { font-size: 6px!important; }
+    @media only screen and (min-width : 1441px) and (max-width : 1920px) { font-size: 8px!important; }
+}
+body {
+    .page-shedule { overflow: hidden; }
+}
 .shedule {
     background: black;
     display: flex;
