@@ -19,13 +19,15 @@ function shedule_menu()
     $items['shedule'] = array(
         'page callback' => 'shedule_page',
         'page arguments' => array(1),
-        'access callback' => '_user_has_role',
+        'access callback' => true,
+//        'access callback' => '_user_has_role',
         'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
     $items['source/shedule'] = array(
         'page callback' => 'shedule_page_ajax',
-        'access callback' => '_user_has_role',
+        'access callback' => true,
+//        'access callback' => '_user_has_role',
         'access arguments' => array('6'),
         'type' => MENU_CALLBACK,
         'delivery callback' => 'ajax_deliver',
