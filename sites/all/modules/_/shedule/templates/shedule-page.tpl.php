@@ -8,15 +8,17 @@
                         <div class="line1"><? print $content[ROOM1]['title']; ?></div>
                         <div class="line2"><? print $content[ROOM1]['floor_text']; ?></div>
                     </div>
+                    <a href="/node/add/room-event" class="add-link"><i class="fas fa-plus"></i></a>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM1]['events'] as $event): ?>
-                    <div class="event">
+                    <?php foreach($content[ROOM1]['events'] as $eid => $event): ?>
+                    <div class="event<? print $event['started']; ?>">
                         <div class="row1"><? print $event['start']; ?></div>
                         <div class="row2">
                             <div class="line1"><? print $event['title']; ?></div>
                             <div class="line2"><? print $event['description']; ?></div>
                         </div>
+                        <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -30,13 +32,14 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM2]['events'] as $event): ?>
-                        <div class="event">
+                    <?php foreach($content[ROOM2]['events'] as $eid => $event): ?>
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1"><? print $event['start']; ?></div>
                             <div class="row2">
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
+                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -51,13 +54,14 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM4]['events'] as $event): ?>
-                        <div class="event">
+                    <?php foreach($content[ROOM4]['events'] as $eid => $event): ?>
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1"><? print $event['start']; ?></div>
                             <div class="row2">
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
+                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -70,13 +74,14 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM5]['events'] as $event): ?>
-                        <div class="event">
+                    <?php foreach($content[ROOM5]['events'] as $eid => $event): ?>
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1"><? print $event['start']; ?></div>
                             <div class="row2">
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
+                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -89,13 +94,14 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM6]['events'] as $event): ?>
-                        <div class="event">
+                    <?php foreach($content[ROOM6]['events'] as $eid => $event): ?>
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1"><? print $event['start']; ?></div>
                             <div class="row2">
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
+                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -113,13 +119,14 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php foreach($content[ROOM3]['events'] as $event): ?>
-                        <div class="event">
+                    <?php foreach($content[ROOM3]['events'] as $eid => $event): ?>
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1"><? print $event['start']; ?></div>
                             <div class="row2">
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
+                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -131,7 +138,7 @@
             <div class="block">
                 <div class="content">
                     <?php foreach($content['footer']['events'] as $event): ?>
-                        <div class="event">
+                        <div class="event<? print $event['started']; ?>">
                             <div class="row1">
                                 <div class="line1"><? print $event['start']; ?></div>
                                 <div class="line2"><? print $event['title']; ?></div>
@@ -139,10 +146,10 @@
                             <div class="row2">
                                 <? if ($event['floor'] == 1): ?>
                                     <i class="fas fa-long-arrow-alt-left"></i>
-                                    <i class="fas fa-walking fa-flip-horizontal"></i>
+                                    <i class="fas fa-<? print $event['hurry'] ? 'running' : 'walking'; ?> fa-flip-horizontal"></i>
                                 <? endif; ?>
                                 <? if ($event['floor'] == 2): ?>
-                                    <i class="fas fa-walking"></i>
+                                    <i class="fas fa-<? print $event['hurry'] ? 'running' : 'walking'; ?>"></i>
                                     <i class="fas fa-long-arrow-alt-up"></i>
                                 <? endif; ?>
                             </div>

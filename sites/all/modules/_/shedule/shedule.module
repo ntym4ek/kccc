@@ -95,19 +95,23 @@ function shedule_page($ajax)
                     'title' => $event->title,
                     'description' => $event->body_value,
                     'start' => date('H:i', $event->field_period_value),
-                    'started' => time() > $event->field_period_value ? true : false,
+                    'started' => (time() > $event->field_period_value) ? ' started' : '',
                 ];
             }
 
             // события, до начала которых или с начала которых 15 минут в нижний блок
             $now = time();
-            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
-                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
+//            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
+//                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
+            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
                 $content['footer']['events'][$eid] = [
                     'title' => $event->title,
                     'start' => date('H:i', $event->field_period_value),
                     'floor' => $content[$room_id]['floor'],
+                    'started' => $content[$room_id]['events'][$eid]['started'],
+                    'hurry' => $event->field_period_value - 2*60 < $now ? true : false,
                 ];
+
             }
 
         }
@@ -152,6 +156,8 @@ function shedule_form_room_event_node_form_alter(&$form, $form_state)
         }
     }
 
+    $form['actions']['submit']['#submit'][] = 'shedule_form_room_event_node_form_submit';
+
     // подключаем к форме редактирования и создания элемента расписания виджета выбора даты-времени
     // https://xdan.ru/samij-udobnij-datetimepicker.html
     // версия js из статьи выдавала ошибку,
@@ -159,6 +165,14 @@ function shedule_form_room_event_node_form_alter(&$form, $form_state)
     $form['#attached']['css'][] = drupal_get_path('module', 'shedule') . '/css/jquery.datetimepicker.css';
     $form['#attached']['js'][] = drupal_get_path('module', 'shedule') . '/js/jquery.datetimepicker.js';
     $form['#attached']['js'][] = drupal_get_path('module', 'shedule') . '/js/shedule.forms.js';
+}
+
+/**
+ * submit callback
+ */
+function shedule_form_room_event_node_form_submit($form, &$form_state)
+{
+    $form_state['redirect'] = '/shedule';
 }
 
 /**

@@ -65,7 +65,7 @@ function gard_preprocess_html(&$vars)
 
     /** --------------------------  подключить FontAwesome 5 -
      */
-    drupal_add_css('https://use.fontawesome.com/releases/v5.3.0/css/all.css', array('type' => 'external'));
+    drupal_add_css('https://use.fontawesome.com/releases/v5.11.0/css/all.css', array('type' => 'external'));
 }
 
 /**
