@@ -1,0 +1,195 @@
+<?
+
+define('ROOM1', 73063);
+define('ROOM2', 73064);
+define('ROOM3', 73067);
+define('ROOM4', 73065);
+define('ROOM5', 73066);
+define('ROOM6', 73068);
+
+// время в минутах до начала и после начала
+// в течение которых выводить События в серую зону
+define('TIME_TO_FOOTER', 15);
+
+/**
+ * Implements hook_menu().
+ */
+function shedule_menu()
+{
+    $items['shedule'] = array(
+        'page callback' => 'shedule_page',
+        'page arguments' => array(1),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(6),
+        'type' => MENU_CALLBACK,
+    );
+    $items['source/shedule'] = array(
+        'page callback' => 'shedule_page_ajax',
+        'access callback' => '_user_has_role',
+        'access arguments' => array(6),
+        'type' => MENU_CALLBACK,
+        'delivery callback' => 'ajax_deliver',
+    );
+
+    return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function shedule_theme()
+{
+    return array(
+        'shedule_page' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-page',
+        ),
+    );
+}
+
+/**
+ * menu ajax callback
+ *
+ *
+ */
+function shedule_page_ajax()
+{
+    $result = array(
+        '#type' => 'ajax',
+        '#commands' => [
+            ajax_command_invoke('.shedule', 'replaceWith', [shedule_page()]),
+        ],
+    );
+    return $result;
+}
+
+/**
+ * menu callback
+ */
+function shedule_page($ajax)
+{
+    $content = [];
+
+    // допустимые значения для поля Этаж
+    $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
+
+    // выбрать все текущие или идущие события на сегодняшний день
+    if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
+        foreach ($rooms as $room) {
+            $content[$room->tid] = [
+                'title' => $room->name,
+                'floor' => $room->field_floor['und'][0]['value'],
+                'floor_text' => trim($field_floor_allowed_values[$room->field_floor['und'][0]['value']]),
+            ];
+        }
+    }
+
+    // выбрать все текущие или идущие события на сегодняшний день
+    if ($events = shedule_get_events_by_date(time(), false)) {
+        foreach ($events as $eid => $event) {
+            $room_id = $event->field_room_tid;
+            if (count($content[$room_id]['events']) < 3) {
+                $content[$room_id]['events'][$eid] = [
+                    'title' => $event->title,
+                    'description' => $event->body_value,
+                    'start' => date('H:i', $event->field_period_value),
+                    'started' => time() > $event->field_period_value ? true : false,
+                ];
+            }
+
+            // события, до начала которых или с начала которых 15 минут в нижний блок
+            $now = time();
+            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
+                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
+                $content['footer']['events'][$eid] = [
+                    'title' => $event->title,
+                    'start' => date('H:i', $event->field_period_value),
+                    'floor' => $content[$room_id]['floor'],
+                ];
+            }
+
+        }
+    }
+
+    $output = theme('shedule_page', ['content' => $content]);
+
+    if ($ajax == 'ajax') {
+        $result = array(
+            '#type' => 'ajax',
+            '#commands' => [
+                ajax_command_invoke('.shedule', 'replaceWith', [$output]),
+            ],
+        );
+        ajax_deliver($result);
+        drupal_exit();
+    } else {
+        drupal_add_library('system', 'drupal.ajax');
+        drupal_add_css(drupal_get_path('module', 'shedule') . '/css/shedule.css');
+        drupal_add_js(drupal_get_path('module', 'shedule') . '/js/shedule.autorefresh.js');
+        return $output;
+    }
+}
+
+/**
+ * hook_form_FORM_ID_alter
+ */
+function shedule_form_room_event_node_form_alter(&$form, $form_state)
+{
+    // дополнить названия Комнат значением Этажа
+        // допустимые значения для поля Этаж
+    $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
+        // перебор опций
+    foreach ($form['field_room']['und']['#options'] as $tid => $option) {
+        if (is_numeric($tid)) {
+            $query = db_select('field_data_field_floor', 'fr');
+            $query->condition('fr.entity_id', $tid);
+            $query->addField('fr', 'field_floor_value');
+            if ($floor = $query->execute()->fetchField()) {
+                $form['field_room']['und']['#options'][$tid] .= ', ' .  $field_floor_allowed_values[$floor];
+            }
+        }
+    }
+
+    // подключаем к форме редактирования и создания элемента расписания виджета выбора даты-времени
+    // https://xdan.ru/samij-udobnij-datetimepicker.html
+    // версия js из статьи выдавала ошибку,
+    // поэтому взят файл из https://github.com/xdan/datetimepicker/issues/471
+    $form['#attached']['css'][] = drupal_get_path('module', 'shedule') . '/css/jquery.datetimepicker.css';
+    $form['#attached']['js'][] = drupal_get_path('module', 'shedule') . '/js/jquery.datetimepicker.js';
+    $form['#attached']['js'][] = drupal_get_path('module', 'shedule') . '/js/shedule.forms.js';
+}
+
+/**
+ * вернуть события для заданной даты
+ * @param $date - дата unix
+ * @param bool $all - все или за исключением прошедших
+ * @return array
+ */
+function shedule_get_events_by_date($date, $all = true)
+{
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'room_event');
+    $query->condition('n.status', 1);
+    $query->leftJoin('field_data_field_period', 'fp', 'fp.entity_id = n.nid');
+    $query->condition('fp.field_period_value2', $date, '>');
+    $query->leftJoin('field_data_body', 'fb', 'fb.entity_id = n.nid');
+    $query->leftJoin('field_data_field_room', 'fr', 'fr.entity_id = n.nid');
+    $query->fields('n', ['nid', 'title']);
+    $query->fields('fp', ['field_period_value', 'field_period_value2']);
+    $query->fields('fb', ['body_value']);
+    $query->fields('fr', ['field_room_tid']);
+    $query->orderBy('field_period_value');
+    return $query->execute()->fetchAllAssoc('nid');
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function shedule_preprocess_page(&$vars)
+{
+    // сменить шаблон страницы на пустой,
+    // чтобы иметь возможность развернуться на весь экран
+    if (arg(0) == 'shedule' && !arg(1)) {
+        $vars['theme_hook_suggestions'][] = 'page__empty';
+    }
+}

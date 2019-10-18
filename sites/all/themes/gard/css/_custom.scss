@@ -1363,6 +1363,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     @include button-variant(#fff, $brand-blue, $brand-blue-hover);
 }
 
+
 /* ------------------------------------------------- Поля (Fields) -------------------------------------------------- */
 /* ------------------------------------------------- Скачивание файла (File-link) - */
 .field-type-file {
@@ -2070,14 +2071,25 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   @include make-row();
   .start-date-wrapper.container-inline-date,
   .end-date-wrapper.container-inline-date {
-    @include make-sm-column(6);
+      .form-item,
+      .form-item input { width: 98%; }
+      .date-padding {
+          display: flex;
+          > div { flex: auto; }
+          [class*=-time] {
+              margin-left: $grid-gutter-width/4;
+              flex: 0 0 5em;
+          }
+      }
+      @include make-sm-column(3);
     clear: none;
-    & > .end-date-wrapper > .control-label {
-        float: left;
+    > .end-date-wrapper > .control-label {
         line-height: 35px;
-        margin: 0 15px;
+        position: absolute;
+        left: -4px;
         .form-required { display: none; }
     }
+      .end-date-wrapper label[for*=-date]{ display: none; }
     .help-block { display: none; }
   }
   .start-date-wrapper.container-inline-date {

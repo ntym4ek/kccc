@@ -840,6 +840,18 @@ function person_set_points($user, $points, $action_id, $info) {
     return $points_new;
 }
 
+// проверка заданного или текущего пользователя на наличие роли
+function _user_has_role($role_name, $acc = NULL)
+{
+    if (!$acc)
+        $acc = $GLOBALS['user'];
+
+    if (is_array($acc->roles) && in_array($role_name, array_values($acc->roles))) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 ///**
 // * добавление обработчика на сабмит формы в Афише
 // *  - создание или редактирование термина Слайдеры

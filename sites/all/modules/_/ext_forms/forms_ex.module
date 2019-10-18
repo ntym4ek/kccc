@@ -17,6 +17,14 @@ function forms_ex_menu() {
 function forms_ex_form_alter(&$form, &$form_state, $form_id)
 {
     switch ($form_id) {
+        case 'room_event_node_form':
+            if ($GLOBALS['user']->uid != 1) {
+                $form['options']['#access'] = false;
+                $form['revision_information']['#access'] = false;
+                $form['author']['#access'] = false;
+            }
+            break;
+
         case 'blog_node_form':
             if ($GLOBALS['user']->uid != 1) {
                 $form['field_promo_image']['#access'] = false;
