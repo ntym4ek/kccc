@@ -176,7 +176,7 @@ function shedule_form_room_event_node_form_submit($form, &$form_state)
 }
 
 /**
- * вернуть события для заданной даты
+ * вернуть события от заданной даты до конца дня
  * @param $date - дата unix
  * @param bool $all - все или за исключением прошедших
  * @return array
@@ -188,6 +188,7 @@ function shedule_get_events_by_date($date, $all = true)
     $query->condition('n.status', 1);
     $query->leftJoin('field_data_field_period', 'fp', 'fp.entity_id = n.nid');
     $query->condition('fp.field_period_value2', $date, '>');
+    $query->condition('fp.field_period_value', strtotime('tomorrow 1am'), '<'); //
     $query->leftJoin('field_data_body', 'fb', 'fb.entity_id = n.nid');
     $query->leftJoin('field_data_field_room', 'fr', 'fr.entity_id = n.nid');
     $query->fields('n', ['nid', 'title']);
