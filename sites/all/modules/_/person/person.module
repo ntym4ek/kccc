@@ -841,14 +841,14 @@ function person_set_points($user, $points, $action_id, $info) {
 }
 
 // проверка заданного или текущего пользователя на наличие роли
-function _user_has_role($role_name, $acc = NULL)
+function _user_has_role($role, $acc = NULL)
 {
     if (!$acc)
         $acc = $GLOBALS['user'];
 
-    if (is_array($acc->roles) && in_array($role_name, array_values($acc->roles))) {
-        return TRUE;
-    }
+    if (is_numeric($role) && isset($acc->roles[$role])) return true;
+    if (is_array($acc->roles) && in_array($role, array_values($acc->roles))) return TRUE;
+
     return FALSE;
 }
 
