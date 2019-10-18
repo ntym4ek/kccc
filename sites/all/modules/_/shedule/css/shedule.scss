@@ -23,7 +23,7 @@ body.page-shedule { overflow: hidden; }
         &.disabled { opacity: .7; }
         .header {
             background: #0019d6;
-            flex: 0 0 $sh-gutter-width*7;
+            flex: 0 0 10rem;
             color: white;
             padding: 1rem;
             display: flex; flex-wrap: nowrap;
