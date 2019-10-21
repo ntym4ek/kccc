@@ -21,7 +21,7 @@ body {
     .group {
         flex: auto;
         display: flex;
-        margin-bottom: $sh-gutter-width;
+        margin-top: $sh-gutter-width;
         max-height: 100%;
     }
     .block {
@@ -130,7 +130,7 @@ body {
         .block {
             margin: 0;
             .content {
-                background: #898989;
+                background: white;
                 display: flex;
             }
             .event {
