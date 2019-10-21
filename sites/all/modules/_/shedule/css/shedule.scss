@@ -29,7 +29,7 @@ body {
         display: flex; flex-direction: column;
         margin: 0 $sh-gutter-width/2;
         overflow: hidden;
-        &.disabled { opacity: .7; }
+        &.disabled { opacity: .8; }
         .header {
             background: #0019d6;
             flex: 0 0 10rem;

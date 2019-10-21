@@ -40,7 +40,7 @@ body .page-shedule {
     margin: 0 0.5rem;
     overflow: hidden; }
     .shedule .block.disabled {
-      opacity: .7; }
+      opacity: .8; }
     .shedule .block .header {
       background: #0019d6;
       flex: 0 0 10rem;

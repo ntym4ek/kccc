@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="kccc.ru" showNewOnSourceInSync="false">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="kccc.ru" persistUploadOnCheckin="false" showNewOnSourceInSync="false">
     <serverData>
       <paths name="ff.local">
         <serverdata>
@@ -31,6 +31,13 @@
         </serverdata>
       </paths>
       <paths name="vagro.local">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="vin.local">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
