@@ -21,14 +21,14 @@ function shedule_menu()
         'page arguments' => array(1),
         'access callback' => true,
 //        'access callback' => '_user_has_role',
-        'access arguments' => array('6'),       // только для роли Сотрудник
+//        'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
     $items['source/shedule'] = array(
         'page callback' => 'shedule_page_ajax',
         'access callback' => true,
 //        'access callback' => '_user_has_role',
-        'access arguments' => array('6'),
+//        'access arguments' => array('6'),
         'type' => MENU_CALLBACK,
         'delivery callback' => 'ajax_deliver',
     );
@@ -70,7 +70,9 @@ function shedule_page_ajax()
  */
 function shedule_page($ajax)
 {
-    $content = [];
+    $content = [
+        'admin' => _user_has_role(6),
+    ];
 
     // допустимые значения для поля Этаж
     $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));

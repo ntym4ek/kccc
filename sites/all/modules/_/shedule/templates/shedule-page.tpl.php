@@ -40,7 +40,7 @@
                         <div class="line1"><? print $content[ROOM1]['title']; ?></div>
                         <div class="line2"><? print $content[ROOM1]['floor_text']; ?></div>
                     </div>
-                    <a href="/node/add/room-event" class="add-link"><i class="fas fa-plus"></i></a>
+                    <? if ($content['admin']): ?><a href="/node/add/room-event" class="add-link"><i class="fas fa-plus"></i></a><? endif; ?>
                 </div>
                 <div class="content">
                     <?php foreach($content[ROOM1]['events'] as $eid => $event): ?>
@@ -50,7 +50,7 @@
                             <div class="line1"><? print $event['title']; ?></div>
                             <div class="line2"><? print $event['description']; ?></div>
                         </div>
-                        <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                        <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -71,7 +71,7 @@
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
-                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -93,7 +93,7 @@
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
-                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -113,7 +113,7 @@
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
-                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -133,7 +133,7 @@
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
-                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -158,7 +158,7 @@
                                 <div class="line1"><? print $event['title']; ?></div>
                                 <div class="line2"><? print $event['description']; ?></div>
                             </div>
-                            <a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a>
+                            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

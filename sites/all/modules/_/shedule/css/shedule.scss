@@ -120,7 +120,6 @@ body {
     }
 
     .column-f {
-        color: #333;
         flex: 100%;
         height: 20%;
         display: flex;
@@ -131,6 +130,7 @@ body {
         .block {
             margin: 0;
             .content {
+                color: #333;
                 background: white;
                 display: flex;
             }
