@@ -72,7 +72,7 @@ body {
                 display: flex;
                 position: relative;
                 &:not(:last-child) { margin-bottom: 1rem; }
-                &.started { color: #f9f100; }
+                //&.started { color: #f9f100; }
                 .edit-link {
                     color: white;
                     position: absolute; right: 10px; top: 10px; opacity: 0;
