@@ -22,7 +22,7 @@ body .page-shedule {
   overflow: hidden; }
 
 .shedule {
-  background: black;
+  background: white;
   display: flex;
   flex-wrap: wrap;
   height: 100%;
