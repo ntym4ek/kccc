@@ -36,6 +36,10 @@
                     $(this).removeClass("open");
                 }
             );
+            $(".call_back_post").on("click", function () {
+                TalkMe("openTab", 1);
+            });
+
 
             /* ------------------------------------------ Animated Elements ----------------------------------------- */
             $("[data-animate=true]").each(function(){
