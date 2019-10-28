@@ -167,7 +167,7 @@
 
         <footer class="footer hidden-print">
                 <div class="hidden-xs col-sm-5 col-md-4 social">
-                    <h4><?php print t('Follow us');?></h4>
+                    <div class="social-title"><?php print t('Follow us');?></div>
                     <div class="social-links">
                         <a class="vk" href="http://vk.com/public147827276" rel="nofollow" target="_blank" title="ВКонтакте"><i class="fa fa-vk" aria-hidden="true"></i></a>
                         <a class="ok" href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="Одноклассники"><i class="fa fa-odnoklassniki" aria-hidden="true"></i></a>
@@ -177,25 +177,23 @@
                         <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" rel="nofollow" target="_blank" title="YouTube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
                     </div>
                 </div>
-                <div class="col-sm-7 col-md-8">
-                    <div class="row">
-                        <div class="col-xs-12"><?php print render($footer_nav); ?></div>
-                        <div class="col-xs-12">
-                            <div class="row">
-                                <div class="col-xs-12 col-md-5 col-md-offset-1">
-                                    <?php if (!empty($site_slogan)): ?>
-                                        <h5><?php print $site_slogan; ?></h5>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
-                                    <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-                                        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
-                                    </a>
-                                </div>
+            <div class="col-sm-7 col-md-8">
+                <div class="row">
+                    <div class="col-xs-12"><?php print render($footer_nav); ?></div>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-5 col-md-offset-1">
+                                <div class="contact"><?php print t('Central office') . '<br />+7 (8332) 76-15-20 доб. 1107'; ?></div>
+                            </div>
+                            <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
+                                <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
+                                    <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             <?php print render($page['footer']); ?>
         </footer>
     </div>
