@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * This file describes hooks, provided by module admin_language.
+ * This file describes hooks provided by module admin_language.
  */
 
 /**
@@ -10,7 +11,7 @@
  * Be sure that your module is initialized on early bootstrap phase to execute
  * this hook.
  *
- * @param boolean $switch
+ * @param bool $switch
  *   Indicates whether language should be switched to the admin language or not.
  */
 function hook_admin_language_switch_alter(&$switch) {
