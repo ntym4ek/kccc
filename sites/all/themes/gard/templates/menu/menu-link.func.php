@@ -219,7 +219,7 @@ function gard_menu_link__menu_main_d(array $variables) {
 
     // если используется модуль taxonomy_menu
     // меняем ссылку на заданную в словаре Главное Меню
-    if ($element['#original_link']['module'] == 'taxonomy_menu') {
+    if ($element['#original_link']['menu_name'] == 'menu-main-d') {
         $source_tid = str_replace('taxonomy/term/', '', $element['#original_link']['link_path']);
         if ($source_term_wr = entity_metadata_wrapper('taxonomy_term', $source_tid)) {
 

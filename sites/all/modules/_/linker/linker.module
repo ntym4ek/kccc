@@ -113,7 +113,9 @@ function _linker_convert_needles_to_preg_patterns($needles)
 
     $patterns = [];
     foreach ($needles as $needle) {
+        // кавычки могут быть любыми
         $needle = str_replace('"', '["\']', $needle);
+        // искомое слово не должно быть уже ссылкой
         $patterns[] = '/(?<!target="_blank">)(' . $needle . ')(?!<\/a>)/si';
     }
 
