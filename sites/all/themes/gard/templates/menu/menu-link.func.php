@@ -436,7 +436,7 @@ function _get_banner_html($element)
     if ($term_wr = entity_metadata_wrapper('taxonomy_term', $tid)) {
 
         $href = url($term_wr->field_link->value());
-        $lang = $GLOBALS['lang']->language;
+        $lang = $GLOBALS['language']->language;
         $desc = $term_wr->language($lang)->description->value();
         $link_title = $element['#original_link']['link_title'];
 
@@ -450,7 +450,6 @@ function _get_banner_html($element)
                         '</div>' .
                     '</div>';
         }
-
     }
 
     return $html;
