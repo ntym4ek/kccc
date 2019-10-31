@@ -436,7 +436,8 @@ function _get_banner_html($element)
     if ($term_wr = entity_metadata_wrapper('taxonomy_term', $tid)) {
 
         $href = url($term_wr->field_link->value());
-        $desc = $term_wr->description->value();
+        $lang = $GLOBALS['lang']->language;
+        $desc = $term_wr->language($lang)->description->value();
         $link_title = $element['#original_link']['link_title'];
 
         if ($image_uri = empty($term_wr->field_shop_category_image->value()) ? '' : $term_wr->field_shop_category_image->file->value()->uri) {
