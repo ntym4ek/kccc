@@ -178,7 +178,7 @@ function gard_menu_link__user_menu(array $variables)
 
     if ($mlid == 14) {
         $options['attributes']['class'][] = 'popup-trigger';
-        $title .= '<div class="popup popup-top-left"><div class="popup-content">Авторизация</div></div>';
+        $title .= '<div class="popup popup-top-left"><div class="popup-content">' . t('Sign in') . '</div></div>';
     }
 
     return '<li' . drupal_attributes($attributes) . '>' . l($title, $href, $options) . $sub_menu . "</li>";
