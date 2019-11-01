@@ -60,7 +60,7 @@ function gard_preprocess_page(&$vars)
 
     // определить путь, по которому будем искать изображение
     if (arg(0) == 'node' && is_numeric(arg(1))) {
-        $path_alias_wo_lang = url('node/' . arg(1));
+        $path_alias_wo_lang = preg_replace('/^\/en/', '', url($_GET['q']));
     }
 
         // если есть картинка PNG или JPG по пути, аналогичному URL страницы, взять её
