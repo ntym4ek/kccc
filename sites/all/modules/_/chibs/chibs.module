@@ -148,7 +148,7 @@ function chibs_file_presave($file) {
 function chibs_node_submit($node, $form, &$form_state)
 {
     if (strpos($node->type, 'product_') === 0 && $node->type != 'product_mix') {
-        $lang = $GLOBALS['language']->language;
+        $lang = $form['body']['#language'];
         $site_name = t('ООО Trade House "Kirovo-Chepetsk Chemical Company"');
         $summary = $form_state['values']['body'][$lang][0]['summary'];
         $pd_wrapper = entity_metadata_wrapper('node', $node);
