@@ -24,14 +24,6 @@ function shedule_menu()
 //        'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
-    $items['source/shedule'] = array(
-        'page callback' => 'shedule_page_ajax',
-        'access callback' => true,
-//        'access callback' => '_user_has_role',
-//        'access arguments' => array('6'),
-        'type' => MENU_CALLBACK,
-        'delivery callback' => 'ajax_deliver',
-    );
 
     return $items;
 }
@@ -46,23 +38,31 @@ function shedule_theme()
             'variables' => array('content' => NULL),
             'template' => 'templates/shedule-page',
         ),
+        'shedule_block_1' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-1',
+        ),
+        'shedule_block_2' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-2',
+        ),
+        'shedule_block_3' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-3',
+        ),
+        'shedule_block_4' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-4',
+        ),
+        'shedule_block_5' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-5',
+        ),
+        'shedule_block_6' => array(
+            'variables' => array('content' => NULL),
+            'template' => 'templates/shedule-block-6',
+        ),
     );
-}
-
-/**
- * menu ajax callback
- *
- *
- */
-function shedule_page_ajax()
-{
-    $result = array(
-        '#type' => 'ajax',
-        '#commands' => [
-            ajax_command_invoke('.shedule', 'replaceWith', [shedule_page()]),
-        ],
-    );
-    return $result;
 }
 
 /**
@@ -70,62 +70,66 @@ function shedule_page_ajax()
  */
 function shedule_page($ajax)
 {
-    $content = [
-        'admin' => _user_has_role(6),
-    ];
-
-    // допустимые значения для поля Этаж
-    $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
-
-    // выбрать все текущие или идущие события на сегодняшний день
-    if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
-        foreach ($rooms as $room) {
-            $content[$room->tid] = [
-                'title' => $room->name,
-                'floor' => $room->field_floor['und'][0]['value'],
-                'floor_text' => trim($field_floor_allowed_values[$room->field_floor['und'][0]['value']]),
-            ];
-        }
-    }
-
-    // выбрать все текущие или идущие события на сегодняшний день
-    if ($events = shedule_get_events_by_date(time(), false)) {
-        foreach ($events as $eid => $event) {
-            $room_id = $event->field_room_tid;
-            if (count($content[$room_id]['events']) < 3) {
-                $content[$room_id]['events'][$eid] = [
-                    'title' => $event->title,
-                    'description' => $event->body_value,
-                    'start' => date('H:i', $event->field_period_value),
-                    'started' => (time() > $event->field_period_value) ? ' started' : '',
-                ];
-            }
-
-            // события, до начала которых или с начала которых 15 минут в нижний блок
-            $now = time();
-//            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
-//                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
-            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
-                $content['footer']['events'][$eid] = [
-                    'title' => $event->title,
-                    'start' => date('H:i', $event->field_period_value),
-                    'floor' => $content[$room_id]['floor'],
-                    'started' => $content[$room_id]['events'][$eid]['started'],
-                    'hurry' => $event->field_period_value - 2*60 < $now ? true : false,
-                ];
-
-            }
-
-        }
-    }
-
-    $output = theme('shedule_page', ['content' => $content]);
-
     if ($ajax == 'ajax') {
+
+        $content = [
+            'admin' => _user_has_role(6),
+        ];
+
+        // допустимые значения для поля Этаж
+        $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
+
+        // выбрать все текущие или идущие события на сегодняшний день
+        if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
+            foreach ($rooms as $room) {
+                $content[$room->tid] = [
+                    'title' => $room->name,
+                    'floor' => $room->field_floor['und'][0]['value'],
+                    'floor_text' => trim($field_floor_allowed_values[$room->field_floor['und'][0]['value']]),
+                ];
+            }
+        }
+
+        // выбрать все текущие или идущие события на сегодняшний день
+        if ($events = shedule_get_events_by_date(time(), false)) {
+            foreach ($events as $eid => $event) {
+                $room_id = $event->field_room_tid;
+                if (count($content[$room_id]['events']) < 3) {
+                    $content[$room_id]['events'][$eid] = [
+                        'title' => $event->title,
+                        'description' => $event->body_value,
+                        'start' => date('H:i', $event->field_period_value),
+                        'started' => (time() > $event->field_period_value) ? ' started' : '',
+                    ];
+                }
+
+                // события, до начала которых или с начала которых 15 минут в нижний блок
+                $now = time();
+    //            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
+    //                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
+                if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
+                    $content['footer']['events'][$eid] = [
+                        'title' => $event->title,
+                        'start' => date('H:i', $event->field_period_value),
+                        'floor' => $content[$room_id]['floor'],
+                        'started' => $content[$room_id]['events'][$eid]['started'],
+                        'hurry' => $event->field_period_value - 2*60 < $now ? true : false,
+                    ];
+
+                }
+
+            }
+        }
+
         $result = array(
             '#type' => 'ajax',
             '#commands' => [
-                ajax_command_invoke('.shedule', 'replaceWith', [$output]),
+                ajax_command_invoke('.block-1', 'replaceWith', [theme('shedule_block_1', ['content' => $content])]),
+                ajax_command_invoke('.block-2', 'replaceWith', [theme('shedule_block_2', ['content' => $content])]),
+                ajax_command_invoke('.block-3', 'replaceWith', [theme('shedule_block_3', ['content' => $content])]),
+                ajax_command_invoke('.block-4', 'replaceWith', [theme('shedule_block_4', ['content' => $content])]),
+                ajax_command_invoke('.block-5', 'replaceWith', [theme('shedule_block_5', ['content' => $content])]),
+                ajax_command_invoke('.block-6', 'replaceWith', [theme('shedule_block_6', ['content' => $content])]),
             ],
         );
         ajax_deliver($result);
@@ -134,7 +138,7 @@ function shedule_page($ajax)
         drupal_add_library('system', 'drupal.ajax');
         drupal_add_css(drupal_get_path('module', 'shedule') . '/css/shedule.css');
         drupal_add_js(drupal_get_path('module', 'shedule') . '/js/shedule.autorefresh.js');
-        return $output;
+        return theme('shedule_page');
     }
 }
 
