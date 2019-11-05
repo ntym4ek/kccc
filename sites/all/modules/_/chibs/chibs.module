@@ -116,6 +116,20 @@ function chibs_js_alter(&$js) {
  *  --------------------------------------------- Прочие изменения -----------------------------------------------------
  */
 
+/**
+ * Implements hook_preprocess_menu_link().
+ */
+function chibs_preprocess_menu_link(&$variables)
+{
+    // для ссылки меню Подвал для переключения языка изменить адрес на текущую страницу
+    // с учётом языка, на который идёт переход
+    if ($variables['element']['#original_link']['menu_name'] == 'menu-footer' && (in_array($variables['element']['#href'], ['https://kccc.ru/en', 'https://kccc.ru']))) {
+        $languages = language_list();
+        $language = $variables['element']['#href'] == 'https://kccc.ru/en' ? 'en' : 'ru';
+        $variables['element']['#href'] = url($_GET['q'], ['language' => $languages[$language], 'absolute' => true]);
+    }
+}
+
 // не менять расширение js на js.txt для поля field_page_files, тип контента: Страница
 function chibs_file_presave($file) {
 
