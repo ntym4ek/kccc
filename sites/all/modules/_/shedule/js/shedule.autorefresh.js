@@ -31,7 +31,7 @@
                     h = (h < 10) ? "0" + h : h;
                     m = (m < 10) ? "0" + m : m;
                     s = (s < 10) ? "0" + s : s;
-                    $(".clock").html(h + ":" + m + ":" + s);
+                    $(".clock").html("<span class=\"hours\">" + h + "</span><span class=\"minutes\">:" + m + "</span><span class=\"seconds\"> " + s + "</span>");
                 }, 1000);
 
             });

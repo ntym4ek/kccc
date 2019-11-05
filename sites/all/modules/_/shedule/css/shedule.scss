@@ -178,6 +178,7 @@ body {
         .clock {
             color: #21396e; font-weight: 600; font-size: 3rem; text-align: center;
             flex: 0 0 auto;
+            .seconds { color: #aaa; font-size: 2rem; font-weight: 400; }
         }
     }
 
