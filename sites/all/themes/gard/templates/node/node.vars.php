@@ -157,8 +157,21 @@ function gard_preprocess_node(&$vars) {
         }
 
         // перевести количество
-        if (isset($vars['content']['product:field_p_in_package'][0]['#markup'])) {
-            $vars['content']['product:field_p_in_package'][0]['#markup'] = t($vars['content']['product:field_p_in_package'][0]['#markup']);
+        $translate_array = [
+            '0.5 килограмма' => '0.5 kg',
+            '1 килограмм' => '1 kg',
+            '4 пакета' => '4 packets',
+            '5 литров' => '5 liters',
+            '20 литров' => '20 liters',
+            '4 канистры' => '4 canisters',
+            '32 канистры' => '32 canisters',
+            '40 коробок' => '40 boxes',
+            '60 коробок' => '60 boxes',
+        ];
+        if (isset($vars['content']['product:field_p_in_package'][0]['#markup'])
+            && $GLOBALS['language']->language == 'en'
+            && isset($translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']])) {
+            $vars['content']['product:field_p_in_package'][0]['#markup'] = $translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']];
         }
 
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];

@@ -114,9 +114,11 @@ function checkout_form_commerce_cart_add_to_cart_form_alter(&$form, $form_state)
 {
     // i18n не перевёл taxonomy_term_reference
     // извлекаем переведенное значение поля Упаковка вручную
-    foreach($form['attributes']['field_p_tare']['#options'] as $tid => $title) {
-        $term_wr = entity_metadata_wrapper('taxonomy_term', $tid);
-        $form['attributes']['field_p_tare']['#options'][$tid] = $term_wr->language($GLOBALS['language']->language)->name->value();
+    if (isset($form['attributes']['field_p_tare']['#options'])) {
+        foreach ($form['attributes']['field_p_tare']['#options'] as $tid => $title) {
+            $term_wr = entity_metadata_wrapper('taxonomy_term', $tid);
+            $form['attributes']['field_p_tare']['#options'][$tid] = $term_wr->language($GLOBALS['language']->language)->name->value();
+        }
     }
 }
 
