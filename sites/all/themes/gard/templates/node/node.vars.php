@@ -156,7 +156,10 @@ function gard_preprocess_node(&$vars) {
             $vars['product_url'] .= '?cat=' . $tid;
         }
 
-
+        // перевести количество
+        if (isset($vars['content']['product:field_p_in_package'][0]['#markup'])) {
+            $vars['content']['product:field_p_in_package'][0]['#markup'] = t($vars['content']['product:field_p_in_package'][0]['#markup']);
+        }
 
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
         if ($product = get_product_info($vars['node'])) {
