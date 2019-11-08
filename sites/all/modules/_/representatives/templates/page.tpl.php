@@ -122,7 +122,7 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
             <a href="e(<? print email_antibot_encode('td@kccc.ru'); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
         </div>
         <div class="rep-box last col-sm-6 col-md-4">
-            <? print '<a href="/en/info/contacts" class="contacts">Contacts page <i class="icon-arrow_right"></i></a>'; ?>
+            <? print t('<a href="/en/info/contacts" class="contacts">Contacts page <i class="icon-arrow_right"></i></a>'); ?>
         </div>
 
     </div>
