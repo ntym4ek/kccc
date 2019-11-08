@@ -37,7 +37,7 @@ function representatives_theme() {
  */
 function representatives_preprocess_page(&$vars) {
     // установить для страницы параметры шапки
-    if ($_GET['q'] == 'info/representatives') {
+    if (strpos($_GET['q'], 'info/representatives')) {
         $image = url('/' . drupal_get_path('module', 'representatives') . '/images/header_image.jpg', array('absolute' => true));
 
         $vars['header'] = array(
