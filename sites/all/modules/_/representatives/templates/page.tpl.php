@@ -41,8 +41,8 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
 
         <div class="col-xs-12">
             <div class="map-title ">
-                <h3>Карта представителей<i> в регионах</i></h3>
-                <p>Наведите курсор на нужный росток</p>
+                <h3><? print t('Regional representatives map'); ?></h3>
+                <p><? print t('Point cursor to sprout at region'); ?></p>
             </div>
         </div>
 

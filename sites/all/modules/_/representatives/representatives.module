@@ -716,6 +716,22 @@ function representatives_get_representatives_list()
         ),
     );
 
+    if ($GLOBALS['language']->language != 'ru') {
+        foreach ($representatives as $key_r => $region) {
+            foreach ($region as $key_rp => $rep) {
+                if (isset($rep['surname'])) $representatives[$key_r][$key_rp]['surname'] = translit($rep['surname']);
+                if (isset($rep['name'])) $representatives[$key_r][$key_rp]['name'] = translit($rep['name']);
+                if (isset($rep['name2'])) $representatives[$key_r][$key_rp]['name2'] = translit($rep['name2']);
+                if (isset($rep['name2'])) $representatives[$key_r][$key_rp]['name2'] = translit($rep['name2']);
+                if (isset($rep['phones'])) {
+                    foreach($rep['phones'] as $key => $phone) {
+                        $representatives[$key_r][$key_rp]['phones'][$key] = str_replace('доб.', 'add', $phone);
+                    }
+                }
+            }
+        }
+    }
+
     return $representatives;
 }
 
