@@ -33,7 +33,7 @@ function product_mix_add_to_cart_form($form, $form_state, $products)
     );
 
     $form['comment'] = array(
-        '#markup' => '<div class="form-item-comment form-group col-sm-12"><p>При нажатии на кнопку в список будет добавлено по одной канистре или коробке каждого компонента.</p></div>',
+        '#markup' => '<div class="form-item-comment form-group col-sm-12"><p>' . t('Pressing button "Add to list" will add one item of each product.') . '</p></div>',
     );
     $form['add_to_cart'] = array(
         '#type' => 'submit',
