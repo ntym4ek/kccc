@@ -73,7 +73,7 @@ function representatives_form($from, &$form_state)
         '#suffix' => '</div>',
         '#attributes' => ['class' => ['representatives-form']],
         'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>')],
-        'list' => ['#type' => 'fieldset', '#title' => t('The list<i> of area managers</i>)'],
+        'list' => ['#type' => 'fieldset', '#title' => t('The list<i> of area managers</i>')],
     ];
 
     $query = db_select('taxonomy_term_data', 't');
