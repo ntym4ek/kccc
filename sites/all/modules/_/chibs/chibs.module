@@ -163,16 +163,18 @@ function chibs_node_submit($node, $form, &$form_state)
 {
     if (strpos($node->type, 'product_') === 0 && $node->type != 'product_mix') {
         $lang = $form['body']['#language'];
-        $site_name = t('ООО Trade House "Kirovo-Chepetsk Chemical Company"');
-        $summary = $form_state['values']['body'][$lang][0]['summary'];
-        $pd_wrapper = entity_metadata_wrapper('node', $node);
-        if ($summary) {
-            foreach ($pd_wrapper->field_product as $p_wrapper) {
-                foreach ($p_wrapper->field_p_images as $image) {
-                    $image->alt = $node->title . ' - ' . strip_tags($summary) . ' - ' . $site_name;
-                    $image->title = $node->title . ' - ' . strip_tags($summary) . ' - ' . $site_name;
+        if ($lang == 'ru') {
+            $site_name = t('ООО Trade House "Kirovo-Chepetsk Chemical Company"');
+            $summary = $form_state['values']['body'][$lang][0]['summary'];
+            $pd_wrapper = entity_metadata_wrapper('node', $node);
+            if ($summary) {
+                foreach ($pd_wrapper->field_product as $p_wrapper) {
+                    foreach ($p_wrapper->field_p_images as $image) {
+                        $image->alt = $node->title . ' - ' . strip_tags($summary) . ' - ' . $site_name;
+                        $image->title = $node->title . ' - ' . strip_tags($summary) . ' - ' . $site_name;
+                    }
+                    $p_wrapper->save();
                 }
-                $p_wrapper->save();
             }
         }
     }

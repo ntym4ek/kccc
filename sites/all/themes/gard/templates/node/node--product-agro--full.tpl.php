@@ -95,7 +95,8 @@
                 </div>
             <?php endif; ?>
 
-            <?php print render($content['product:field_p_in_package']); ?>
+            <?php print render($content['product:field_p_packaging']); ?>
+<!--            --><?php //print render($content['product:field_p_in_package']); ?>
 
             <?php print render($content['field_product']); ?>
 
