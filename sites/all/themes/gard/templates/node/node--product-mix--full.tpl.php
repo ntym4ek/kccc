@@ -101,7 +101,7 @@
 
 
             <div class="field field-name-field-pd-mix-components field-components">
-                <div class="field-label">Компоненты</div>
+                <div class="field-label"><? print t('Components'); ?></div>
                 <div class="field-items">
                     <? foreach($preps_arr as $prep_item): ?>
                         <div class="field-item">
