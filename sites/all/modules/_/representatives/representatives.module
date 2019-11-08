@@ -37,11 +37,11 @@ function representatives_theme() {
  */
 function representatives_preprocess_page(&$vars) {
     // установить для страницы параметры шапки
-    if (strpos($_GET['q'], 'info/representatives')) {
-        $image = url('/' . drupal_get_path('module', 'representatives') . '/images/header_image.jpg', array('absolute' => true));
+    if ($_GET['q'] == 'info/representatives') {
+        $image_url = '/' . drupal_get_path('module', 'representatives') . '/images/header_image.jpg';
 
         $vars['header'] = array(
-            'image' => $image,
+            'image' => $image_url,
             'category_title' => '',
             'title' => t('Representatives'),
             'subtitle' => t('Our representatives will help you to select and buy products of ООО Trade House "Kirovo-Chepetsk Chemical Company"'),
@@ -72,8 +72,8 @@ function representatives_form($from, &$form_state)
         '#prefix' => '<div id="representatives-form-wrapper">',
         '#suffix' => '</div>',
         '#attributes' => ['class' => ['representatives-form']],
-        'selector' => ['#type' => 'fieldset', '#title' => 'Найти территориального менеджера<i> по региону</i>'],
-        'list' => ['#type' => 'fieldset', '#title' => 'Список<i> территориальных менеджеров</i>'],
+        'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>')],
+        'list' => ['#type' => 'fieldset', '#title' => 'The list<i> of area managers</i>'],
     ];
 
     $query = db_select('taxonomy_term_data', 't');
