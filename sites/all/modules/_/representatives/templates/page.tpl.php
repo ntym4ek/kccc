@@ -114,15 +114,15 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
 <!--        --><?php //endfor; ?>
 
         <div class="rep-box last col-sm-6 col-md-4">
-            Если в Вашем регионе нет официального представителя, свяжитесь с нашим центральным офисом.
+            <? print t('If there is no representative in your region, contact our central office.'); ?>
         </div>
         <div class="rep-box last col-sm-6 col-md-4">
-            <span style="display: inline-block; font-size: 14px; margin-bottom: 20px;">613048, Кировская область,<br />Кирово-Чепецк, Производственная, 6</span>
+            <span style="display: inline-block; font-size: 14px; margin-bottom: 20px;">613048, <? print t('Kirov region'); ?>,<br /><? print t('Kirovo-Chepetsk'); ?>, <? print t('Proizvodstvennaya, 6'); ?></span>
             +7 (8332) 76-15-20
             <a href="e(<? print email_antibot_encode('td@kccc.ru'); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
         </div>
         <div class="rep-box last col-sm-6 col-md-4">
-            <a href="/info/contacts" class="contacts">Перейти в контакты <i class="icon-arrow_right"></i></a>
+            <? print '<a href="/en/info/contacts" class="contacts">Contacts page <i class="icon-arrow_right"></i></a>'; ?>
         </div>
 
     </div>
