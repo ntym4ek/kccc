@@ -559,6 +559,7 @@ function get_product_info($node)
         'status' => $preparation_wr->status->value(),
         'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
     );
+    $titles_w_form = [];
     foreach($preparations as $item) {
         $preparation_wr = $item['item'];
         $id = $preparation_wr->nid->value();
@@ -614,7 +615,7 @@ function get_product_info($node)
 
         $preparation['items'][$id] = array(
             'id'            => $id,
-            'title'         => $preparation_wr->title_field->value(),
+            'title'         => $preparation_wr->language($lang)->title_field->value(),
             'description'   => strip_tags($preparation_wr->body->summary->value()),
             'form_short'    => $form_short,
             'form_full'     => $form_full,
@@ -629,7 +630,9 @@ function get_product_info($node)
             'order'         => $item['order'],
             'categories'    => $cats
         );
+        $titles_w_form[] = $form_short ? $preparation_wr->title_field->value() . ', ' . $form_short : $preparation_wr->title_field->value();
     }
+    $preparation['title'] = implode(' + ', $titles_w_form);
 
     $result[$preparation['nid']] = $preparation;
 

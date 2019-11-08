@@ -19,12 +19,7 @@
     <h4><span class="tax-icon"></span><a href="<?php print url('taxonomy/term/' . $tid); ?>"><?php print $name; ?></a></h4>
     <ul>
         <?php foreach($preps as $prep): ?>
-            <?php
-            // todo перейти на использование get_product_info
-            $product_info = get_product_agro_title($prep->nid);
-            $product_title = $product_info['formulation'] ? $product_info['title'] . ', ' . $product_info['formulation'] : $product_info['title'];
-            ?>
-            <li><i class="fa fa-chevron-right"></i><a href="<?php print url('node/' . $prep->nid); ?>"><?php print $product_title; ?></a></li>
+            <li><i class="fa fa-chevron-right"></i><a href="<?php print url('node/' . $prep->nid); ?>"><?php print get_product_info($prep->nid)['title']; ?></a></li>
         <?php endforeach; ?>
     </ul>
 </div>
