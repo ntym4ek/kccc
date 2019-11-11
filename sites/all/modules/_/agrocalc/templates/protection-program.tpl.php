@@ -15,7 +15,7 @@ $path = drupal_get_path('module', 'agrocalc');
                 <?php if ($area): ?>
                 <header>
                     <div class="switch-all hidden-print">
-                        <div class="material-switch-title">Включить в расчёт все препараты</div>
+                        <div class="material-switch-title"><? print t('Include all preparations'); ?></div>
                         <div class="material-switch">
                             <input id="switch_all" name="switch_all" type="checkbox" />
                             <label for="switch_all" class="label-info"></label>
@@ -36,8 +36,8 @@ $path = drupal_get_path('module', 'agrocalc');
                                 <?php endif; ?>
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
-                                        <div><h5 class="clr-category">НА ГЕКТАР</h5><p class="amount"></p></div>
-                                        <div><h5 class="clr-category">ВСЕГО</h5><p class="total"></p></div>
+                                        <div><h5 class="clr-category"><? print t('Per hectare'); ?></h5><p class="amount"></p></div>
+                                        <div><h5 class="clr-category"><? print t('Summary'); ?></h5><p class="total"></p></div>
                                     </div>
                                 <?php endif; ?>
                             </div>

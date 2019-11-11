@@ -388,7 +388,7 @@ function _reglaments_get_protection_system2($parameters)
                             'weight' => $weight,
                             'name' => $reglament_wr->field_pd_r_function->name->value(),
                             'bkg' => $reglament_wr->field_pd_r_function->field_image_mobile->file->url->value(),
-                            'bkg_desk' => $reglament_wr->field_pd_r_function->field_shop_category_image->file->url->value(),
+                            'bkg_desk' => $reglament_wr->language('ru')->field_pd_r_function->field_shop_category_image->file->url->value(),
                             'icon' => $reglament_wr->field_pd_r_function->field_icon->file->url->value(),
                         );
                     }
