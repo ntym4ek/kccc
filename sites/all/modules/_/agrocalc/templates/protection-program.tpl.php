@@ -154,18 +154,18 @@ $path = drupal_get_path('module', 'agrocalc');
                                             <footer>
                                                 <?php if (empty($phase)): ?>
                                                 <div>
-                                                    <?php print '<span>Фаза культуры</span>'; ?>
+                                                    <?php print '<span>' . t('Growth stage') . '</span>'; ?>
                                                     <?php print $periods; ?>
                                                 </div>
                                                 <?php endif; ?>
                                                 <?php if (!empty($reglament['hobjects'])): ?>
                                                 <div>
-                                                    <?php print '<span>Вредные объекты</span>'; ?>
+                                                    <?php print '<span>' . t('Harmful objects') . '</span>'; ?>
                                                     <?php print $reglament['hobjects']; ?>
                                                 </div>
                                                 <?php endif; ?>
                                                 <div>
-                                                    <?php print '<span>Норма расхода, ' . implode(' + ', $rates_units) . '</span>'; ?>
+                                                    <?php print '<span>' . t('Consuption rate') . ', ' . implode(' + ', $rates_units) . '</span>'; ?>
                                                     <?php print implode('', $rates); ?>
                                                 </div>
                                                 <div class="calculation">
@@ -194,7 +194,7 @@ $path = drupal_get_path('module', 'agrocalc');
                     <?php if (isset($category['hobjects'])):
                         $phase = $program['header']['phase'] ? ' на этапе "' . $program['header']['phase'] . '"' : '';  ?>
                         <div class="view-item col-xs-12">
-                            По препаратам против вредных объектов: "<?php print $category['hobjects'] . '"' . $phase; ?> свяжитесь с нашими специалистами на странице <?php print l('Представителей', 'info/representatives', ['attributes' => ['target' => '_blank']]); ?>
+                            <? print t('To get information about preparations against harmful objects: '); ?>"<?php print $category['hobjects'] . '"' . $phase; ?> <?php print t('contact our ') . l(t('Representatives'), 'info/representatives', ['attributes' => ['target' => '_blank']]); ?>
                         </div>
                     <?php endif; ?>
                     </div>
@@ -209,19 +209,19 @@ $path = drupal_get_path('module', 'agrocalc');
                         <div class="box">
                             <div class="bkg"></div>
                             <div class="amountByProgram">
-                                <div><h5>НА ГЕКТАР</h5><p class="amount">0 руб.</p></div>
-                                <div><h5>ВСЕГО</h5><p class="total">0 руб.</p></div>
+                                <div><h5><? print t('Per hectare'); ?></h5><p class="amount">0 руб.</p></div>
+                                <div><h5><? print t('Summary'); ?></h5><p class="total">0 руб.</p></div>
                             </div>
                         </div>
-                        <h4 class="clr-category">Итог по программе</h4>
-                        <p class="note font-small">Указанные цены могут быть снижены. Для расчёта скидки свяжитесь с нашим представителем.</p>
-                        <p class="choose-one font-small hidden-print text-danger">Вы не включили в расчёт ни одного препарата. Нажмите на переключатель над изображением.</p>
+                        <h4 class="clr-category"><? print t('Program summary'); ?></h4>
+                        <p class="note font-small"><? print t('Presented prices could be lower. Contact our representatives for discount.'); ?></p>
+                        <p class="choose-one font-small hidden-print text-danger"><? print t('You did not chose any preparation. Click on switch above image.'); ?></p>
                     </div>
                  </div>
                 <?php endif; ?>
 
             <?php else: ?>
-                <div class="col-xs-12"><p class="text-danger">Для культуры на данном этапе роста у нашей компании нет препаратов.</p></div>
+                <div class="col-xs-12"><p class="text-danger"><? print t('We do not have preparations for culture in this growth stage.'); ?></p></div>
             <?php endif;?>
         </div>
 
