@@ -34,7 +34,7 @@ $update_access = (node_access('update', node_load($pp['id'])) && arg(0) == 'prot
                         print $l_descr . '<br />';
                         $l_bg = l('Изменить фоновое изображение в таблице', 'protection-program/' . $pp['id'] . '/bg/nojs', array('attributes' => array('class' => array('ctools-modal-style', 'ctools-use-modal'))));
                         print $l_bg . '<br />';
-                        print '<a href="/agro-recipe">Перейти к АгроРецепту</a>';
+                        print '<a href="/agro-recipe">' . t('Calculate individual program') . '</a>';
                     }
                     ?>
                 </td>

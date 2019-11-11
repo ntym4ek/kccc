@@ -217,7 +217,7 @@ function _reglaments_get_protection_system2($parameters)
         // описание программы и ссылка на pdf
         $result['header'] = array(
             'title'     => empty($parameters['program_id']) ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
-            'description' => empty($parameters['program_id']) ? 'Комплексная программа защиты и увеличения урожайности культуры' : trim(strip_tags($program_wr->body->value->value())),
+            'description' => empty($parameters['program_id']) ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->value->value())),
             'phase'     => $phase_name,
             'pdf'       => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
             'area'      => empty($parameters['area']) ? '' : $parameters['area'],
