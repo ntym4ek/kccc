@@ -303,7 +303,7 @@ function agrocalc_form($from, &$form_state)
         ];
         $form['request']['name'] = [
             '#type' => 'textfield',
-            '#title' => t('Имя'),
+            '#title' => t('Name'),
         ];
         $form['request']['email'] = [
             '#type' => 'textfield',

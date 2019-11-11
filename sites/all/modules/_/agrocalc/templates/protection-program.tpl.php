@@ -118,7 +118,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                         <div class="v-card reglament gray<?php print $reglament['state'] == 'on' ? " is-active" : ""; ?> hidden-print" data-cat="category-<?php print $category['tid']; ?>" id="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                             <?php if ($area): ?>
                                             <header>
-                                                <div class="material-switch-title">Включить в расчёт</div>
+                                                <div class="material-switch-title"><? print t('Include'); ?></div>
                                                 <div class="material-switch">
                                                     <input id="switch_<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>"
                                                            name="switch_<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>"
