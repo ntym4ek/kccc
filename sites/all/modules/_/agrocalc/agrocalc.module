@@ -37,14 +37,14 @@ function agrocalc_form($from, &$form_state)
         '#attributes' => ['class' => ['agrocalc-form']],
         'field' => [
             '#type' => 'fieldset',
-            '#title' => 'Культура<i> и характеристики поля</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" />',
+            '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" />',
             '#prefix' => '<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">',
         ],
         'problem' => [
             '#type' => 'fieldset',
-            '#title' => 'Проблемы<i>, присутствующие на поле</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png" />'
+            '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png" />'
         ],
-        'addon' => ['#type' => 'fieldset', '#title' => 'Дополнительно'],
+        'addon' => ['#type' => 'fieldset', '#title' => t('Additional')],
         'actions' => [
             '#type' => 'container',
             '#attributes' => array('class' => array('form-actions')),
@@ -236,7 +236,7 @@ function agrocalc_form($from, &$form_state)
     // Кнопка  ---------------------------------------------------------------------------------------------------------
     $form['actions']['calc'] = array(
         '#type' => 'button',
-        '#value' => 'Расcчитать',
+        '#value' => t('Calculate'),
         '#name' => 'calc',
         '#attributes' => [
             'class' => ['pull-right', 'btn-success', 'btn-wide', 'do-not-print'],
@@ -456,7 +456,7 @@ function agrocalc_form_submit($form, &$form_state)
 function agrocalc_preprocess_page(&$vars) {
     // установить для страницы параметры шапки
     if ($_GET['q'] == 'agro-calculator') {
-        $image = url('/' . drupal_get_path('module', 'agrocalc') . '/images/header_image.jpg', array('absolute' => true));
+        $image = '/' . drupal_get_path('module', 'agrocalc') . '/images/header_image.jpg';
 
         $vars['header'] = array(
             'image' => $image,
