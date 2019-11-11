@@ -37,7 +37,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
                                         <div><h5 class="clr-category"><? print t('Per hectare'); ?></h5><p class="amount"></p></div>
-                                        <div><h5 class="clr-category"><? print t('Summary'); ?></h5><p class="total"></p></div>
+                                        <div><h5 class="clr-category"><? print t('Summary', [], ['context' => 'agrocalc']); ?></h5><p class="total"></p></div>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -210,7 +210,7 @@ $path = drupal_get_path('module', 'agrocalc');
                             <div class="bkg"></div>
                             <div class="amountByProgram">
                                 <div><h5><? print t('Per hectare'); ?></h5><p class="amount">0 руб.</p></div>
-                                <div><h5><? print t('Summary'); ?></h5><p class="total">0 руб.</p></div>
+                                <div><h5><? print t('Summary', [], ['context' => 'agrocalc']); ?></h5><p class="total">0 руб.</p></div>
                             </div>
                         </div>
                         <h4 class="clr-category"><? print t('Program summary'); ?></h4>
