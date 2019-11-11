@@ -28,14 +28,17 @@ function terms_theme() {
     );
 }
 
-function terms_preprocess_page(&$vars, $hook) {
-    switch (request_path()) {
+function terms_preprocess_page(&$vars, $hook)
+{
+    switch ($_GET['q']) {
         case 'handbook/terms':
-            $vars['title_description'] = 'Справочник терминов, используемых в сельском хозяйстве и связанной с ним химической промышленности';
+            $vars['header']['subtitle'] = t('Handbook of terms, used in agriculture and related chemical industry');
+//            $vars['header']['subtitle'] = 'Справочник терминов, используемых в сельском хозяйстве и связанной с ним химической промышленности';
             $vars['header']['category_title'] = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/active-substances':
-            $vars['title_description'] = 'Справочник действующих веществ, используемых при производстве пестицидов';
+            $vars['header']['subtitle'] = t('Handbook of active substances used in the manufacture of pesticides');
+//            $vars['header']['subtitle'] = 'Справочник действующих веществ, используемых при производстве пестицидов';
             $vars['header']['category_title'] = l(t('Handbooks'), 'handbook');
             break;
     }
