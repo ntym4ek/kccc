@@ -29,6 +29,6 @@ function gard_preprocess_taxonomy_term(&$vars)
         $vars['term_url'] = empty($vars['field_link'][0]['value']) ? '' : url($vars['field_link'][0]['value']);
 
         // количество записей в справочниках
-        $vars['items_qty'] = empty($vars['field_textfield_1'][0]['value']) ? '' : $vars['field_textfield_1'][0]['value'];
+        $vars['items_qty'] = empty($vars['field_textfield_1'][0]['value']) ? '' : t($vars['field_textfield_1'][0]['value']);
     }
 }
