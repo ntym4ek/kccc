@@ -184,7 +184,7 @@ function before_after_preprocess_page(&$vars) {
 
     }
     if (arg(0) == 'before-after' && arg(1)) {
-        $vars['header']['category_title'] = '<a href="/before-after" >'. 'Препараты в поле' . '</a>';
+        $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
     }
 
     if (in_array(arg(0), array('field', 'fields', 'season', 'seasons'))) {
@@ -193,7 +193,7 @@ function before_after_preprocess_page(&$vars) {
             || !isset($vars['page']['content']['system_main']['#type']))) {
                 $vars['header']['title_off'] = true;
         }
-        $vars['header']['category_title'] = '<a href="/before-after" >'. 'Препараты в поле' . '</a>';
+        $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
         // установить изображение
         $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
     }

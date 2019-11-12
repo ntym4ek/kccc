@@ -347,10 +347,10 @@ function before_after_exposed_filters_form($form, &$form_state)
         }
         asort($region_options);
     }
-    $region_options = array('All' => '- Любой -') + $region_options;
+    $region_options = array('All' => '- ' . t('Any') . ' -') + $region_options;
     $form['c']['c1']['region'] = array(
         '#type' => 'select',
-        '#title' => 'Уточнить по региону',
+        '#title' => t('Region'),
         '#options' => $region_options,
         '#prefix' => '<div class="col-sm-6">',
         '#suffix' => '</div>',
@@ -382,11 +382,11 @@ function before_after_exposed_filters_form($form, &$form_state)
         $query->condition('fr.field_f_region_tid', $region_selected);
     }
     $culture_options = $query->execute()->fetchAllKeyed();
-    $culture_options = array('All' => '- Любая -') + $culture_options;
+    $culture_options = array('All' => '- ' . t('Any') . ' -') + $culture_options;
 
     $form['c']['c1']['culture'] = array(
         '#type' => 'select',
-        '#title' => 'Уточнить по культуре',
+        '#title' => t('Culture'),
         '#options' => $culture_options,
         '#prefix' => '<div class="col-sm-6">',
         '#suffix' => '</div>',
