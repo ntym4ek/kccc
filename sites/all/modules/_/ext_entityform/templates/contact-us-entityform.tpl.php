@@ -20,7 +20,7 @@
         <div class="cu-form ">
             <fieldset class="panel panel-default panel-shadow">
                 <legend class="panel-heading">
-                    <span class="panel-title fieldset-legend"><? print t('Contact form'); ?></span>
+                    <span class="panel-title fieldset-legend"><? print t('Contact form', [], ['context' => 'Contact us']); ?></span>
                 </legend>
                 <div class="panel-body">
                     <? print render($form['intro']); ?>
