@@ -28,22 +28,9 @@ function ext_entityform_form_alter(&$form, &$form_state, $form_id)
 {
     switch($form_id) {
         case "contact_us_entityform_edit_form":
-            $form['field_contact_name']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_name']['und']['#title'];
-            $form['field_contact_name']['und'][0]['value']['#title'] = '';
-            $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
-            $form['field_phone']['und'][0]['value']['#title'] = '';
-            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
-            $form['field_contact_email']['und'][0]['value']['#title'] = '';
-            $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
-            $form['field_contact_message']['und'][0]['value']['#title'] = '';
             break;
 
         case "contact_vacancy_entityform_edit_form":
-            $form['field_vacancy_surname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_surname']['und']['#title'];
-            $form['field_vacancy_name_1']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_1']['und']['#title'];
-            $form['field_vacancy_name_2']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_name_2']['und']['#title'];
-            $form['field_vacancy_location']['und'][0]['value']['#attributes']['placeholder'] = $form['field_vacancy_location']['und']['#title'];
-            $form['field_contact_email']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_email']['und']['#title'];
             $form['actions']['submit']['#attributes']['class'][] = 'btn-wide';
             break;
 

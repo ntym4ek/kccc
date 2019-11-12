@@ -33,12 +33,10 @@ function terms_preprocess_page(&$vars, $hook)
     switch ($_GET['q']) {
         case 'handbook/terms':
             $vars['header']['subtitle'] = t('Handbook of terms, used in agriculture and related chemical industry');
-//            $vars['header']['subtitle'] = 'Справочник терминов, используемых в сельском хозяйстве и связанной с ним химической промышленности';
             $vars['header']['category_title'] = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/active-substances':
             $vars['header']['subtitle'] = t('Handbook of active substances used in the manufacture of pesticides');
-//            $vars['header']['subtitle'] = 'Справочник действующих веществ, используемых при производстве пестицидов';
             $vars['header']['category_title'] = l(t('Handbooks'), 'handbook');
             break;
     }
