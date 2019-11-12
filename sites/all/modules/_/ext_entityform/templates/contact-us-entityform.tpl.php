@@ -18,12 +18,19 @@
     </div>
     <div class="col-md-5 do-not-print">
         <div class="cu-form ">
-            <? print render($form['intro']); ?>
-            <? print render($form['field_contact_name']); ?>
-            <? print render($form['field_phone']); ?>
-            <? print render($form['field_contact_email']); ?>
-            <? print render($form['field_contact_message']); ?>
-            <? print drupal_render_children($form); ?>
+            <fieldset class="panel panel-default panel-shadow">
+                <legend class="panel-heading">
+                    <span class="panel-title fieldset-legend"><? print t('My response'); ?></span>
+                </legend>
+                <div class="panel-body">
+                    <? print render($form['intro']); ?>
+                    <? print render($form['field_contact_name']); ?>
+                    <? print render($form['field_phone']); ?>
+                    <? print render($form['field_contact_email']); ?>
+                    <? print render($form['field_contact_message']); ?>
+                    <? print drupal_render_children($form); ?>
+                </div>
+            </fieldset>
         </div>
     </div>
     <div class="cu-map col-xs-12">

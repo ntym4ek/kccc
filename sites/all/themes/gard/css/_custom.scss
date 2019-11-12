@@ -1456,10 +1456,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   margin: .5em 0 2em 0;
 }
 .cu-info .hr { margin: 2em 0; }
-.cu-form {
-  background: $form-background;
-  padding: 20px $grid-gutter-width;
-}
 .cu-form .field-name-field-contact-message { margin-top: 10px; }
 .cu-form .form-actions { margin-bottom: 0; }
 .cu-form .form-submit { width: 100%; }
@@ -1485,6 +1481,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .cu-map {
   float: left;
   height: 450px; width: 100%;
+    margin-top: 15px;
 }
 .cu-map .ymaps-2-1-45-controls__toolbar_left,
 .cu-map .ymaps-2-1-45-controls__control_toolbar:nth-child(1),
