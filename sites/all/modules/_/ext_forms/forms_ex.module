@@ -14,8 +14,29 @@ function forms_ex_menu() {
     return $items;
 }
 
+/**
+ * Implementation of hook_module_implements_alter().
+ */
+function forms_ex_module_implements_alter(&$implementations, $hook) {
+    //  Если хук - hook_form_alter, то переносим нашу реализацию этого хука в конец очереди
+    if ($hook == 'form_alter') {
+        $group = $implementations['forms_ex'];
+        unset($implementations['forms_ex']);
+        $implementations['forms_ex'] = $group;
+    }
+    //  Если хук - hook_theme, то переносим нашу реализацию этого хука в конец очереди
+//    if ($hook == 'theme') {
+//        $group = $implementations['forms_ex'];
+//        unset($implementations['forms_ex']);
+//        $implementations['forms_ex'] = $group;
+//    }
+}
+
 function forms_ex_form_alter(&$form, &$form_state, $form_id)
 {
+    // отключить ФЗ152 для всех кроме русского
+    if ($GLOBALS['language']->language != 'ru' && isset($form['fz152_agreement'])) $form['fz152_agreement']['#access'] = false;
+
     switch ($form_id) {
         case 'room_event_node_form':
             if ($GLOBALS['user']->uid != 1) {

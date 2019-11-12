@@ -8,7 +8,7 @@
         <div class="cu-title"><? print t('Address'); ?></div>
         <div class="cu-content"><? print t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya, 6'); ?></div>
         <div class="cu-title"><? print t('Phone'); ?></div>
-        <div class="cu-content"><? print '+7 (83361) 5-20-67, 5-40-60, 9-28-73'; ?><a href="tel:+78336152067"><i class="icon-phone"></i><? print t('Call');?></a></div>
+        <div class="cu-content"><? print '+7 (8332) 76-15-20 доб. 1107'; ?><a href="tel:+78332761520"><i class="icon-phone"></i><? print t('Call');?></a></div>
         <div class="cu-title"><? print 'Email'; ?></div>
         <div class="cu-content eAddr-encoded">e(td[s1]kc/cc[s2]ru)<a href="e(td[s1]kc/cc[s2]ru)" class="eAddr-encoded"><i class="icon-mail"></i><? print t('Email us');?></a></div>
         <div class="hr"></div>
