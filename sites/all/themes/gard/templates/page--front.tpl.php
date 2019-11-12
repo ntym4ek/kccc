@@ -174,7 +174,7 @@
                         <div class="col-xs-12">
                             <div class="row">
                                 <div class="col-xs-12 col-md-7 col-md-offset-1 col-lg-7">
-                                    <div class="contact"><?php print t('Central office') . '<br />+7 (8332) 76-15-20 доб. 1107'; ?></div>
+                                    <div class="contact"><?php print t('Central office') . '<br />+7 (8332) 76-15-20 ' . t('add.') . ' 1107'; ?></div>
                                 </div>
                                 <div class="col-xs-12 hidden-sm col-md-4 col-lg-4">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">

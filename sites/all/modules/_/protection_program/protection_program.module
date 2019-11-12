@@ -197,7 +197,7 @@ function pp_edit_callback($ppid) {
         $output = theme('protection_program_table', array('pp' => $pp));
         $output = '<div class="protection-program full">' .$output . '</div>';
     }
-    else $output = 'Страница не найдена';
+    else $output = t('Page not found');
 
     return $output;
 }
