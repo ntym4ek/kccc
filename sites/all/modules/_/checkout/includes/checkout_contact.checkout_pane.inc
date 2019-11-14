@@ -17,14 +17,22 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#attributes' => array('class' => array('cc-request')),
     );
     $checkout_form['request']['text'] = array(
-        '#markup' =>  '<p>При необходимости скорректируйте список и количество препаратов. Затем выберите свой регион, добавьте контакты и нажмите "Отправить заявку". С Вами свяжется наш представитель по данному региону.</p>'
-                    . '<p>Наш представитель в регионе:</p>'
-                        . '<ul>'
-                            . '<li>проконсультирует по любому из препаратов;</li>'
-                            . '<li>предложит вариант взаимовыгодного сотрудничества;</li>'
-                            . '<li>продемонстрирует результаты применения наших препаратов в полях;</li>'
-                            . '<li>ответит на любые другие Ваши вопросы.</li>'
-                        . '</li>',
+        '#markup' => '<p> If necessary, adjust the list and number of drugs. Then select your region, add contacts and click "Send request". Our representative for this region will contact you. </p> ' .
+                    '<p> Our representative in the region: </p>' .
+                    '<ul>' .
+                        '<li> will advise on any of the drugs; </li>' .
+                        '<li> will offer a mutually beneficial cooperation option; </li>' .
+                        '<li> will demonstrate the results of the use of our preparations in the fields; </li>' .
+                        '<li> will answer any of your other questions. </li>' .
+                    '</ul>',
+//        '#markup' =>  '<p>При необходимости скорректируйте список и количество препаратов. Затем выберите свой регион, добавьте контакты и нажмите "Отправить заявку". С Вами свяжется наш представитель по данному региону.</p>'
+//                    . '<p>Наш представитель в регионе:</p>'
+//                        . '<ul>'
+//                            . '<li>проконсультирует по любому из препаратов;</li>'
+//                            . '<li>предложит вариант взаимовыгодного сотрудничества;</li>'
+//                            . '<li>продемонстрирует результаты применения наших препаратов в полях;</li>'
+//                            . '<li>ответит на любые другие Ваши вопросы.</li>'
+//                        . '</ul>',
         '#prefix' => '<div class="row"><div class="col-md-7">',
         '#suffix' => '</div>',
     );
