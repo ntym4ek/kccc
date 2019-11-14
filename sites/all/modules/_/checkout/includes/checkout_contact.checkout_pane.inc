@@ -17,14 +17,14 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#attributes' => array('class' => array('cc-request')),
     );
     $checkout_form['request']['text'] = array(
-        '#markup' => '<p> If necessary, adjust the list and number of preparations. Then select your region, add contacts and click "Send request". Our representative for this region will contact you. </p> ' .
+        '#markup' => t('<p> If necessary, adjust the list and number of preparations. Then select your region, add contacts and click "Send request". Our representative for this region will contact you. </p> ' .
                     '<p> Our representative in the region: </p>' .
                     '<ul>' .
                         '<li> will advise on any of the preparations; </li>' .
                         '<li> will offer a mutually beneficial cooperation option; </li>' .
                         '<li> will demonstrate the results of the use of our preparations at the fields; </li>' .
                         '<li> will answer any of your other questions. </li>' .
-                    '</ul>',
+                    '</ul>'),
 //        '#markup' =>  '<p>При необходимости скорректируйте список и количество препаратов. Затем выберите свой регион, добавьте контакты и нажмите "Отправить заявку". С Вами свяжется наш представитель по данному региону.</p>'
 //                    . '<p>Наш представитель в регионе:</p>'
 //                        . '<ul>'
