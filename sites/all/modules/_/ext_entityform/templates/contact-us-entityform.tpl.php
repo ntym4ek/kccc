@@ -17,7 +17,7 @@
         <div class="cu-link"><i class="fas fa-map"></i><a href="/info/representatives"><? print t('Official representatives'); ?></a></div>
     </div>
     <div class="col-md-5 do-not-print">
-        <div class="cu-form ">
+        <div class="cu-form">
             <fieldset class="panel panel-default panel-shadow">
                 <legend class="panel-heading">
                     <span class="panel-title fieldset-legend"><? print t('Contact form', [], ['context' => 'Contact us']); ?></span>

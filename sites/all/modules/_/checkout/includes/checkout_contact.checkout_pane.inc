@@ -37,8 +37,8 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#suffix' => '</div>',
     );
     $checkout_form['request']['forma'] = array(
-        '#type' => 'container',
-        '#attributes' => array('class' => array('cc-forma')),
+        '#type' => 'fieldset',
+        '#attributes' => array('class' => ['cc-forma', 'panel-shadow']),
         '#prefix' => '<div class="col-md-5">',
         '#suffix' => '</div></div>',
     );
@@ -68,8 +68,7 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#attributes' => array('placeholder' => t('Contact phone')),
     );
     $checkout_form['request']['forma']['agree'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('I do agree for my personal data <a href="/info/privacy-policy">processing</a>'),
+        '#markup' => '<div class="agree">' . t('Submitting this form you agree with <a href="/info/privacy-policy">personal data processing</a>') . '</div>',
     );
 
     return $checkout_form;
@@ -86,11 +85,14 @@ function checkout_contact_pane_checkout_form_validate($form, &$form_state, $chec
 
         if ($pane_values['request']['forma']['region'] == 'All')    { $invalid[$checkout_pane['pane_id'] . '][request][forma][region'] = ''; }
         if (!$pane_values['request']['forma']['name'])              { $invalid[$checkout_pane['pane_id'] . '][request][forma][name'] = ''; }
-        if (!valid_email_address($pane_values['request']['forma']['email']))
-                                                                    { $invalid[$checkout_pane['pane_id'] . '][request][forma][email'] = t('Unable to recognize email address'); }
-        // todo проверить валидность phone
-        if (!$pane_values['request']['forma']['phone'])             { $invalid[$checkout_pane['pane_id'] . '][request][forma][phone'] = ''; }
-        if (!$pane_values['request']['forma']['agree'])             { $invalid[$checkout_pane['pane_id'] . '][request][forma][agree'] = ''; }
+
+        if (!valid_email_address($pane_values['request']['forma']['email'])) {
+            $invalid[$checkout_pane['pane_id'] . '][request][forma][email'] = t('Unable to recognize email address');
+        }
+
+        if (drupal_strlen(preg_replace('/[^\d]/', '', $pane_values['request']['forma']['phone'])) < 10) {
+            $invalid[$checkout_pane['pane_id'] . '][request][forma][phone'] = t('Provided phone number is not correct');
+        }
 
         // выделить поля и вывести сообщение об ошибке
         if ($invalid) {
