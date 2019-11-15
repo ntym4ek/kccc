@@ -25,7 +25,7 @@
                         iconImageSize: [42,47],
                         iconImageOffset: [-30, -30],
                         iconContentSize: [275,33],
-                        iconContentOffset: [50, 2],
+                        iconContentOffset: [45, 2],
                         iconContentLayout: MyIconContentLayout
                     });
 
