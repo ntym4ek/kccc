@@ -23,7 +23,7 @@
                         iconLayout: 'default#imageWithContent',
                         iconImageHref: '/sites/all/modules/_/ext_entityform/images/map_logo.png',
                         iconImageSize: [53,56],
-                        iconImageOffset: [0, 0],
+                        iconImageOffset: [-30, -30],
                         iconContentSize: [230,37],
                         iconContentOffset: [60, 0],
                         iconContentLayout: MyIconContentLayout
