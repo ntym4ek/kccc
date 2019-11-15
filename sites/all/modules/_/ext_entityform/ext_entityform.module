@@ -28,8 +28,8 @@ function ext_entityform_form_alter(&$form, &$form_state, $form_id)
 {
     switch($form_id) {
         case "contact_us_entityform_edit_form":
-            $form['#attahed']['js'][] = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c1e4b070-a5e4-4a15-bc6e-ce64711bdf52';
-            $form['#attahed']['js'][] = drupal_get_path('module', 'ext_entityform') . '/map.js';
+            $form['#attached']['js'][] = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c1e4b070-a5e4-4a15-bc6e-ce64711bdf52';
+            $form['#attached']['js'][] = drupal_get_path('module', 'ext_entityform') . '/js/map.js';
             break;
 
         case "contact_vacancy_entityform_edit_form":

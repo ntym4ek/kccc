@@ -4,56 +4,32 @@
 
             ymaps.ready(function () {
                 var myMap = new ymaps.Map('map', {
-                        center: [55.751574, 37.573856],
-                        zoom: 9
+                        center: [58.538202, 50.009723],
+                        zoom: 13
                     }, {
                         searchControlProvider: 'yandex#search'
                     }),
 
                     // Создаём макет содержимого.
                     MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-                        '<div style="color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
+                        '<div style="color: #000; background: #fff; border-radius: 5px; padding: 5px; ">$[properties.iconContent]</div>'
                     ),
 
-                    myPlacemark = new ymaps.Placemark(myMap.getCenter(), {
-                        hintContent: 'Собственный значок метки',
-                        balloonContent: 'Это красивая метка'
+                    myPlacemarkWithContent = new ymaps.Placemark([58.540547, 49.976694], {
+                        hintContent: 'Административное здание',
+                        balloonContent: 'Пн-Пт  8:00-17:00<br />+7 (8332) 76-15-20',
+                        iconContent: 'ООО Торговый Дом<br />"Кирово-Чепецкая Химическая Компания"'
                     }, {
-                        // Опции.
-                        // Необходимо указать данный тип макета.
-                        iconLayout: 'default#image',
-                        // Своё изображение иконки метки.
-                        iconImageHref: 'images/myIcon.gif',
-                        // Размеры метки.
-                        iconImageSize: [30, 42],
-                        // Смещение левого верхнего угла иконки относительно
-                        // её "ножки" (точки привязки).
-                        iconImageOffset: [-5, -38]
-                    }),
-
-                    myPlacemarkWithContent = new ymaps.Placemark([55.661574, 37.573856], {
-                        hintContent: 'Собственный значок метки с контентом',
-                        balloonContent: 'А эта — новогодняя',
-                        iconContent: '12'
-                    }, {
-                        // Опции.
-                        // Необходимо указать данный тип макета.
                         iconLayout: 'default#imageWithContent',
-                        // Своё изображение иконки метки.
-                        iconImageHref: 'images/ball.png',
-                        // Размеры метки.
-                        iconImageSize: [48, 48],
-                        // Смещение левого верхнего угла иконки относительно
-                        // её "ножки" (точки привязки).
-                        iconImageOffset: [-24, -24],
-                        // Смещение слоя с содержимым относительно слоя с картинкой.
-                        iconContentOffset: [15, 15],
-                        // Макет содержимого.
+                        iconImageHref: '/sites/all/modules/_/ext_entityform/images/map_logo.png',
+                        iconImageSize: [53,56],
+                        iconImageOffset: [0, 0],
+                        iconContentSize: [230,37],
+                        iconContentOffset: [60, 0],
                         iconContentLayout: MyIconContentLayout
                     });
 
                 myMap.geoObjects
-                    .add(myPlacemark)
                     .add(myPlacemarkWithContent);
             });
 
