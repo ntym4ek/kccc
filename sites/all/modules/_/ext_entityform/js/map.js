@@ -24,7 +24,7 @@
                         iconImageHref: '/sites/all/modules/_/ext_entityform/images/map_logo.png',
                         iconImageSize: [45,47],
                         iconImageOffset: [-30, -30],
-                        iconContentSize: [270,33],
+                        iconContentSize: [275,33],
                         iconContentOffset: [50, 2],
                         iconContentLayout: MyIconContentLayout
                     });
