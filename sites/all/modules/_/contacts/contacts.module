@@ -256,15 +256,15 @@ function contacts_get_contacts_list() {
                 'supply' => array(
                     'title' => t('Supply department'),
                     'contacts' => array(
-                        array(
-                            'office' => t('Head of department'),
-                            'surname' => 'Малых',
-                            'name' => 'Максим',
-                            'name2' => 'Анатольевич',
-                            'phones' => array('+7(8332) 76-15-27, доб. 1123', '+7 922 902-54-84'),
-                            'emails' => array('maksim.malyx@kccc.ru'),
-                            'photo' => '/' . $module_path . '/images/photo/malykh.png',
-                        ),
+//                        array(
+//                            'office' => t('Head of department'),
+//                            'surname' => 'Малых',
+//                            'name' => 'Максим',
+//                            'name2' => 'Анатольевич',
+//                            'phones' => array('+7(8332) 76-15-27, доб. 1123', '+7 922 902-54-84'),
+//                            'emails' => array('maksim.malyx@kccc.ru'),
+//                            'photo' => '/' . $module_path . '/images/photo/malykh.png',
+//                        ),
                         array(
                             'office' => t('Manager'),
                             'surname' => 'Пислегина',
