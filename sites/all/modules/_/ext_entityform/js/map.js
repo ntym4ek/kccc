@@ -12,7 +12,7 @@
 
                     // Создаём макет содержимого.
                     MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-                        '<div style="color: #000; background: #fff; border-radius: 5px; padding: 5px; ">$[properties.iconContent]</div>'
+                        '<div style="color: #000; background: #fff; border: 2px solid #0DB02B; border-radius: 5px; padding: 5px; ">$[properties.iconContent]</div>'
                     ),
 
                     myPlacemarkWithContent = new ymaps.Placemark([58.540547, 49.976694], {
@@ -22,10 +22,10 @@
                     }, {
                         iconLayout: 'default#imageWithContent',
                         iconImageHref: '/sites/all/modules/_/ext_entityform/images/map_logo.png',
-                        iconImageSize: [53,56],
+                        iconImageSize: [45,47],
                         iconImageOffset: [-30, -30],
-                        iconContentSize: [230,37],
-                        iconContentOffset: [60, 0],
+                        iconContentSize: [260,33],
+                        iconContentOffset: [50, 2],
                         iconContentLayout: MyIconContentLayout
                     });
 
