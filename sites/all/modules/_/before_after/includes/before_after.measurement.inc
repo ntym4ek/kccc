@@ -511,11 +511,6 @@ function before_after_measurement_form_submit(&$form, &$form_state)
     $measurement_wrapper->save();
     $form_state['mid'] = $measurement_wrapper->item_id->value();
 
-    // обработать события на сохранение Замера (используется в Bubble)
-    $op = empty($form_state['mid']) ? 'create' : 'update';
-    $data = array('op' => $op, 'sid' => $measurement->hostEntityId());
-    drupal_alter('before_after_measurement_save', $data);
-
     $form_state['redirect'] = 'season/' . $form_state['sid'] . '/processing/list';
 }
 

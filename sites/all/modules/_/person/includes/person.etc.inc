@@ -12,8 +12,6 @@
 function person_orders($acid, $op, $oid = '') {
     global $user;
 
-    delBubbles(array('uid' => $user->uid, 'section' => BS_ORDERS));
-
     $output = false;
     if ($op == null) $op = 'list';
         
@@ -58,8 +56,6 @@ function person_protection_programs($acid, $op, $oid = '') {
  */
 function person_before_after($acid) {
   global $user;
-
-  delBubbles(array('uid' => $user->uid, 'section' => BS_BEFORE_AFTER));
 
   $output = false;
 

@@ -312,15 +312,6 @@
 .form-item-photo label { margin-bottom: 15px; }
 .form-item-photo .description { display: none; }
 
-
-
-
-
-
-
-
-
-
 /* меню в профиле пользователя */
 /*.profile-content a { color: #2b8aff; }*/
 /*.profile-content .group { padding: 0; margin-bottom: 20px;  }*/
@@ -328,19 +319,6 @@
 /*.profile-content .group.pr10 { padding-right: 10px; }*/
 /*.profile-content .grid-1-2 { display: inline-block; vertical-align: top; }*/
 
-
-
-.subheader-menu .bubble-wrap {
-    position: absolute; top: 6px; right: 6px; z-index: 3;
-}
-.subheader-menu .bubble {
-    color: #fff; font-size: 8px; line-height: 14px; text-align: center;
-    width: 12px; height: 12px;
-    border-radius: 6px;
-}
-.subheader-menu .bubble.bubble-green { background-color: #40ae1a; }
-.subheader-menu .bubble.bubble-yellow { background-color: #f2a500; }
-.subheader-menu .bubble.bubble-red { background-color: #de242a; }
 
 /* До и После */
 .profile-content.before-after { padding:0; }

@@ -12,8 +12,6 @@
 function person_reviews($acid) {
     global $user;
     
-    delBubbles(array('uid' => $user->uid, 'section' => BS_REVIEWS));
-
     $output = false;
 
     // вернуть список только, если свой аккаунт 

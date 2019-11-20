@@ -12,8 +12,6 @@
 function person_blog($acid) {
     global $user;
     
-    delBubbles(array('uid' => $user->uid, 'section' => BS_BLOG));
-
     $output = false;
 
     // вернуть список только, если свой аккаунт

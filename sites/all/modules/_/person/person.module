@@ -21,7 +21,6 @@ include 'includes/person.idea.inc';
 include 'includes/person.agenda.inc';
 include 'includes/person.reviews.inc';
 include 'includes/person.etc.inc';
-include 'includes/person.bubble.inc';
 
 /**
  * Implements hook_init().
@@ -108,14 +107,6 @@ function person_menu() {
 //        'access arguments' => array(1),
 //        'type' => MENU_CALLBACK,
 //    );
-
-    $items['admin/structure/bubbles'] = array(
-        'title' => 'Bubbles',
-        'description' => 'List of bubbles',
-        'page callback' => 'person_admin_bubbles_list',
-        'access arguments' => array('administer products'),
-        'type' => MENU_NORMAL_ITEM,
-    );
 
     return $items;
 }
@@ -350,9 +341,8 @@ function _person_actions($acid, $section) {
 
         // Блог пользователя
         if (user_access('create blog content')) {
-          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_BLOG)) : '';
           $user_actions[] = array(
-              'data' => l(t('Blog'), "/person/$acid/blog") . $bubble,
+              'data' => l(t('Blog'), "/person/$acid/blog"),
               'class' => array($section == 'blog' ? 'active' : NULL),
           );
         }
@@ -366,17 +356,15 @@ function _person_actions($acid, $section) {
         }
 
         // Отзывы пользователя
-      $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_REVIEWS)) : '';
       $user_actions[] = array(
-          'data' => l(t('Reviews'), "/person/$acid/reviews/list") . $bubble,
+          'data' => l(t('Reviews'), "/person/$acid/reviews/list"),
           'class' => array($section == 'reviews' ? 'active' : NULL),
       );
 
       // афиша
       if (user_access('create agenda content')) {
-        $bubble = '';
         $user_actions[] = array(
-          'data' => l(t('Agenda'), "/person/$acid/agenda") . $bubble,
+          'data' => l(t('Agenda'), "/person/$acid/agenda"),
           'class' => array($section == 'agenda' ? 'active' : NULL),
         );
       }
@@ -384,35 +372,31 @@ function _person_actions($acid, $section) {
         // До и После для сотрудников компании
 //        if (false) {
         if (user_access('access before_after edit')) {
-          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_BEFORE_AFTER)) : '';
           $user_actions[] = array(
-              'data' => l(t('Before & After'), "fields/list") . $bubble,
+              'data' => l(t('Before & After'), "fields/list"),
           );
         }
 
         // вывести ссылку Заказы, если они есть (проверка по статусу)
 //        if (person_orders_count($acid)) {
-//          $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_ORDERS)) : '';
 //          $user_actions[] = array(
-//              'data' => l(t('Orders'), "person/$acid/orders/list/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+//              'data' => l(t('Orders'), "person/$acid/orders/list/nojs", array('attributes' => array('class' => array('use-ajax')))),
 //              'class' => array($section == 'orders' ? 'active' : NULL),
 //          );
 //        }
 
         // Компания, добавление и редактирование (оставлено только для админа, тк не работает форма ввода адреса)
         if (in_array('administrator', $user->roles)) {
-            $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_COMPANY)) : '';
             $company_menu = isset($profile2['company']) ? t('My company') : t('Add company');
             $user_actions[] = array(
-                'data' => l($company_menu, "person/$acid/company/edit") . $bubble,
+                'data' => l($company_menu, "person/$acid/company/edit"),
                 'class' => array($section == 'company' ? 'active' : NULL),
             );
         }
 
       // Я сотрудник
-//      $bubble = $is_own_account ? getBubbleHTML(array('uid' => $acid, 'section' => BS_STAFF)) : '';
 //      $user_actions[] = array(
-//          'data' => l( t("I'm employee"), "person/$acid/staff/edit/nojs", array('attributes' => array('class' => array('use-ajax')))) . $bubble,
+//          'data' => l( t("I'm employee"), "person/$acid/staff/edit/nojs", array('attributes' => array('class' => array('use-ajax')))),
 //          'class' => array($section == 'staff' ? 'active' : NULL),
 //      );
     } else {
@@ -446,11 +430,6 @@ function person_theme() {
         'person_wrap' => array(
             'variables' => array('content' => NULL),
             'template' => 'templates/person-account',
-        ),
-        // ----------  уведомление -----------------
-        'bubble' => array(
-            'variables' => array('bubbles' => NULL, 'with_popup' => null),
-            'template' => 'templates/bubble',
         ),
     );
 }
@@ -545,7 +524,7 @@ function person_user_register_form_validate($form, $form_state)
     }
 
     // отсеять нежелательные email
-    foreach(['!.*@.*\.site!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray.com!s', '!.*@.*\.dynainbox.com!s'] as $pattern) {
+    foreach(['!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray.com!s', '!.*@.*\.dynainbox.com!s'] as $pattern) {
         if (preg_match($pattern, $form_state['values']['mail'])) {
             form_set_error('mail', t('E-mail is not valid.'));
         }
