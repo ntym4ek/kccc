@@ -8,34 +8,7 @@ include_once ('ext_message.module');
  */
 function ext_message_install()
 {
-    // создание словаря с полем и терминами
-    // http://xandeadx.ru/blog/drupal/707
-    if (!taxonomy_vocabulary_machine_name_load('subscribes')) {
-        // Create vocabulary
-        $vocabulary = (object)array(
-            'name' => 'Подписки пользователей',
-            'machine_name' => 'subscribes',
-            'module' => 'ext_message',
-        );
-        taxonomy_vocabulary_save($vocabulary);
-
-        // Create field "field_custom_text"
-        // ...
-
-        // Создаём словарь подписок
-        // термин - подписка на уведомление
-        // обращение к ID подписки осуществляется через
-        // переменные по константе из списка _ext_message_get_vars
-        $vid = $vocabulary->vid;
-
-        foreach(_ext_message_get_vars() as $index => $var) {
-            $term = (object)array('vid' => $vid, 'name' => $var['title']);
-            taxonomy_term_save($term);
-            variable_set('ext_message_var_' . $index, $term->tid);
-        }
-    }
-
-    // создание поля
+    // создание поля ссылки на сущность для типа Сообщения
     $field = array(
         'field_name' => 'field_entity_ref',
         'type' => 'entityreference',
@@ -66,7 +39,7 @@ function ext_message_install()
     );
     field_create_field($field);
 
-    // создание поля field_published
+    // создание поля field_published для типа Сообщения
     $field = array(
         'field_name' => 'field_published',
         'type' => 'list_boolean',
@@ -92,12 +65,12 @@ function ext_message_install()
     field_create_field($field);
 
     // добавить тип сообщения
-    $message_type = message_type_create('node_agenda_create', array(
-        'description' => 'Добавление мероприятия',
+    $message_type = message_type_create('node__agenda__create', array(
+        'description' => t('Agenda add'),
         'argument_keys' => array(),
         'message_text' => array(
             'ru' => array(
-                array('value' => 'Новое мероприятие'),
+                array('value' => t('Новое мероприятие')),
                 array('value' => 'Добрый день!<br /><br />В разделе <a href="https://kccc.ru/agenda">Афиша</a> добавлено новое мероприятие <a href="[message:field-entity-ref:url]">[message:field-entity-ref:title]</a>.<br /><br />'),
             ),
         ),
@@ -108,7 +81,7 @@ function ext_message_install()
     // привязать поля к типу сообщения
     $instance = array(
         'field_name' => 'field_entity_ref',
-        'bundle' => 'node_agenda_create',
+        'bundle' => 'node__agenda__create',
         'entity_type' => 'message',
         'label' => t('Agenda reference'),
         'description' => '',
@@ -122,8 +95,6 @@ function ext_message_install()
                     'status' => 0,
                 ),
             ),
-            'entity_translation_sync' => FALSE,
-            'user_register_form' => FALSE,
         ),
         'display' => array(
             'default' => array(
@@ -165,7 +136,7 @@ function ext_message_install()
 
     $instance = array(
         'entity_type' => 'message',
-        'bundle' => 'node_agenda_create',
+        'bundle' => 'node__agenda__create',
         'field_name' => 'field_published',
         'label' => 'Published',
         'default_value' => array(
@@ -190,9 +161,6 @@ function ext_message_install()
             ),
         ),
         'required' => 0,
-        'settings' => array(
-            'user_register_form' => FALSE,
-        ),
         'widget' => array(
             'active' => 1,
             'module' => 'options',
@@ -204,6 +172,102 @@ function ext_message_install()
         ),
     );
     field_create_instance($instance);
+
+
+    // создание словаря с полем и терминами
+    // http://xandeadx.ru/blog/drupal/707
+    //
+    // словарь содержит список подписок, которые может подключить пользователь
+    // функционально подписка реализована через переключение флагов пользователем для каждого термина
+    if (!taxonomy_vocabulary_machine_name_load('subscribes')) {
+        // Create vocabulary
+        $vocabulary = (object)array(
+            'name' => 'Подписки пользователей',
+            'machine_name' => 'subscribes',
+            'module' => 'ext_message',
+        );
+        taxonomy_vocabulary_save($vocabulary);
+
+        // поле для хранения имени типа Сообщения, на которое выполняется подписка
+        field_create_field(array(
+            'active' => 1,
+            'cardinality' => 1,
+            'entity_types' => array(),
+            'field_name' => 'field_message_type_ref',
+            'indexes' => array(
+                'target_id' => array(
+                    0 => 'target_id',
+                ),
+            ),
+            'locked' => 0,
+            'module' => 'entityreference',
+            'settings' => array(
+                'entity_translation_sync' => FALSE,
+                'handler' => 'base',
+                'handler_settings' => array(
+                    'behaviors' => array(
+                        'views-select-list' => array(
+                            'status' => 0,
+                        ),
+                    ),
+                    'sort' => array(
+                        'direction' => 'ASC',
+                        'property' => 'name',
+                        'type' => 'property',
+                    ),
+                    'target_bundles' => array(
+                        'message_type' => 'message_type',
+                    ),
+                ),
+                'target_type' => 'message_type',
+            ),
+            'translatable' => 0,
+            'type' => 'entityreference',
+        ));
+        field_create_instance(array(
+            'bundle' => 'subscribes',
+            'description' => 'Если на событие можно подписываться, указать тип сообщения',
+            'display' => array(
+                'default' => array(
+                    'label' => 'above',
+                    'module' => 'entityreference',
+                    'settings' => array(
+                        'bypass_access' => FALSE,
+                        'link' => FALSE,
+                    ),
+                    'type' => 'entityreference_label',
+                    'weight' => 0,
+                ),
+                'term_teaser' => array(
+                    'label' => 'above',
+                    'settings' => array(),
+                    'type' => 'hidden',
+                    'weight' => 0,
+                ),
+            ),
+            'entity_type' => 'taxonomy_term',
+            'field_name' => 'field_message_type_ref',
+            'label' => 'Подписка',
+            'widget' => array(
+                'active' => 1,
+                'module' => 'options',
+                'type' => 'options_select',
+                'weight' => 41,
+            ),
+        ));
+
+        // создадим начальный термин для подписки на создание Мероприятия
+        $vid = $vocabulary->vid;
+        $term = (object)array(
+            'vid' => $vid,
+            'name' => t('Agenda add'),
+            'field_message_type_ref' => [LANGUAGE_NONE => [0 => ['target_id' => $message_type->id]]]
+        );
+        taxonomy_term_save($term);
+
+        // в дальнейшем можно добавлять подписки в словарь вручную
+        // с указанием в поле field_message_type_ref ссылку на Подписку
+    }
 }
 
 /**
@@ -211,25 +275,24 @@ function ext_message_install()
  */
 function ext_message_uninstall()
 {
+    if ($instance = field_info_instance('taxonomy_term', 'field_message_type_ref', 'node__agenda__create')) {
+        field_delete_instance($instance);
+        field_delete_field('field_message_type_ref');
+    }
     // Delete vocabulary
     if ($vocabulary = taxonomy_vocabulary_machine_name_load('subscribes')) {
         taxonomy_vocabulary_delete($vocabulary->vid);
     }
 
-    // удалить переменные
-    foreach(_ext_message_get_vars() as $index => $const) {
-        variable_del('ext_message_var_' . $index);
-    }
-
     // удалить поля
-    $instance_1 = field_info_instance('message_type', 'field_entity_ref', 'node_agenda_create');
-    $instance_2 = field_info_instance('message_type', 'field_published', 'node_agenda_create');
+    $instance_1 = field_info_instance('message_type', 'field_entity_ref', 'node__agenda__create');
+    $instance_2 = field_info_instance('message_type', 'field_published', 'node__agenda__create');
     field_delete_instance($instance_1);
     field_delete_instance($instance_2);
     field_delete_field('field_entity_ref');
     field_delete_field('field_published');
 
     // удалить типы сообщений
-    message_type_delete('node_agenda_create');
+    message_type_delete('node__agenda__create');
 }
 

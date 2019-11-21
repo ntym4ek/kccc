@@ -1,18 +1,5 @@
 <?php
 
-// константы терминов в словаре Подписки пользователей
-foreach(_ext_message_get_vars() as $index => $var) {
-    define($var['const'], 'ext_message_var_' . $index);
-}
-
-function _ext_message_get_vars()
-{
-    return [
-        0 => ['const' => 'EM_ADD_AGENDA',   'title' => 'Добавление мероприятия'],
-        1 => ['const' => 'EM_ADD_NEWS',     'title' => 'Добавление новости'],
-    ];
-}
-
 /**
  * Implements hook_views_api().
  */
@@ -23,32 +10,60 @@ function ext_message_views_api($module = NULL, $api = NULL) {
 /**
  * Implements hook_node_insert().
  */
-function ext_message_node_insert($node)
+//function ext_message_node_insert($node)
+//{
+//    // нижеследующие типы сообщений уже должны быть созданы в админке
+//    //  - node__agenda__create
+//    // с ссответствующими полями
+//    //  - field_entity_ref
+//    //  - field_published
+//    //
+//    // система именования типа сообщений
+//    // сущность_тип-сущности_действие
+//    // todo перенести настройки из кода в админку
+//
+//    if (false && in_array($node->type, ['agenda'])) {
+//        $message = message_create('node_' . $node->type . '_create', array('uid' => $node->uid));
+//        $wrapper = entity_metadata_wrapper('message', $message);
+//        $wrapper->field_entity_ref->set($node);
+//        $wrapper->field_published->set($node->status);
+//
+//        if (module_exists('message_subscribe')) {
+//            // If Message-subscribe exists, let this example module use it.
+//            message_subscribe_send_message('node', $node, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [variable_get(EM_ADD_AGENDA)]]);
+//        }
+//    }
+//}
+
+/**
+ * Implements hook_entity_insert().
+ *
+ *  универсальный метод создания сообщений
+ *  проверяет наличие типа сообщения для создаваемой сущности
+ */
+function ext_message_entity_insert($entity, $type)
 {
-    // нижеследующие типы сообщений уже должны быть созданы в админке
-    //  - node_agenda_create
-    //  - node_news_create
-    //  - node_blog_create
-    // с ссответствующими полями
-    //  - field_entity_ref
-    //  - field_published
-    //
-    // Контекст
-    //  - Добавление мероприятия - EM_ADD_AGENDA
-    //
-    // система именования типа сообщений
-    // сущность_тип-сущности_действие
-    // todo перенести настройки из кода в админку
+    $info = entity_get_info($type);
+    // если тип Сообщения существует
+    if (isset($entity->{$info['entity keys']['bundle']})) {
+        $message_type_name = $type . '__' . $entity->{$info['entity keys']['bundle']} . '__create';
+        if ($message_type = message_type_load($message_type_name)) {
 
-    if (in_array($node->type, ['agenda'])) {
-        $message = message_create('node_' . $node->type . '_create', array('uid' => $node->uid));
-        $wrapper = entity_metadata_wrapper('message', $message);
-        $wrapper->field_entity_ref->set($node);
-        $wrapper->field_published->set($node->status);
+            $uid = empty($entity->uid) ? 0 : $entity->uid;
+            $status = empty($entity->status) ? 1 : $entity->status;
 
-        if (module_exists('message_subscribe')) {
-            // If Message-subscribe exists, let this example module use it.
-            message_subscribe_send_message('node', $node, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [variable_get(EM_ADD_AGENDA)]]);
+            // создать Сообщение
+            $message = message_create($message_type_name, ['uid' => $uid]);
+            $wrapper = entity_metadata_wrapper('message', $message);
+            $wrapper->field_entity_ref->set($entity);
+            $wrapper->field_published->set($status);
+
+            if (module_exists('message_subscribe')) {
+                // If Message-subscribe exists, let this example module use it.
+                // извлечь термин словаря Подписки, чтобы определить кто подписан на Уведомления этого типа
+                $subscription_tid = ext_message_get_message_type_subscription_tid($message_type_name);
+                message_subscribe_send_message($type, $entity, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [$subscription_tid]]);
+            }
         }
     }
 }
@@ -152,4 +167,19 @@ function ext_message_flag_default_flags()
     );
 
     return $flags;
+}
+
+/**
+ * Вернуть tid подписки на указанный тип события
+ * @param $type
+ * @return mixed
+ */
+function ext_message_get_message_type_subscription_tid($type)
+{
+    $query = db_select('taxonomy_term_data', 't');
+    $query->innerJoin('field_data_field_message_type_ref', 'mtr', 't.tid = mtr.entity_id');
+    $query->innerJoin('message_type', 'mt', 'mtr.field_message_type_ref_target_id = mt.id');
+    $query->condition('mt.name', $type);
+    $query->addField('t', 'tid');
+    return $query->execute()->fetchField();
 }
