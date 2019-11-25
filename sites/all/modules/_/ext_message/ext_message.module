@@ -3,7 +3,8 @@
 /**
  * Implements hook_views_api().
  */
-function ext_message_views_api($module = NULL, $api = NULL) {
+function ext_message_views_api($module = NULL, $api = NULL)
+{
     return array("api" => "3.0");
 }
 

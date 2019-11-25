@@ -21,6 +21,7 @@ include 'includes/person.idea.inc';
 include 'includes/person.agenda.inc';
 include 'includes/person.reviews.inc';
 include 'includes/person.etc.inc';
+include 'includes/person.notifications.inc';
 
 /**
  * Implements hook_init().
@@ -384,6 +385,11 @@ function _person_actions($acid, $section) {
 //              'class' => array($section == 'orders' ? 'active' : NULL),
 //          );
 //        }
+
+        $user_actions[] = array(
+            'data' => l(t('Notifications'), "/person/$acid/notifications"),
+        );
+
 
         // Компания, добавление и редактирование (оставлено только для админа, тк не работает форма ввода адреса)
         if (in_array('administrator', $user->roles)) {
