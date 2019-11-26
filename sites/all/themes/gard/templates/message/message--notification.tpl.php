@@ -40,9 +40,9 @@
     </div>
     <div class="actions">
         <? if ($is_message_got): ?>
-            <a href="/message/%/ungot" title="<? print t('Set notification read'); ?>" class="m-got"><i class="fas fa-check"></i></a>
+            <a href="/message/<? print $message->mid; ?>/ungot?back=<? print $_GET['q']; ?>" title="<? print t('Set notification not read'); ?>" class="m-got"><i class="fas fa-check"></i></a>
         <? else: ?>
-            <a href="/message/%/got" title="<? print t('Set notification read'); ?>" class="m-ungot"><i class="fas fa-check"></i></a>
+            <a href="/message/<? print $message->mid; ?>/got?back=<? print $_GET['q']; ?>" title="<? print t('Set notification read'); ?>" class="m-ungot"><i class="fas fa-check"></i></a>
         <? endif; ?>
     </div>
 </div>

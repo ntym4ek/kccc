@@ -6,14 +6,14 @@
 function ext_message_got_menu()
 {
     $items['message/%/got'] = array(
-        'page callback' => 'ext_message_got_set_user_got_message',
-        'page arguments' => array(1),
+        'page callback' => 'ext_message_got_process_message_action',
+        'page arguments' => array(1, 'set'),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
     $items['message/%/ungot'] = array(
-        'page callback' => 'ext_message_got_unset_user_got_message',
-        'page arguments' => array(1),
+        'page callback' => 'ext_message_got_process_message_action',
+        'page arguments' => array(1, 'unset'),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -32,6 +32,22 @@ function ext_message_got_views_api()
         'api' => 3,
         'path' => drupal_get_path('module', 'ext_message_got') . '/views',
     );
+}
+
+/**
+ * message actions page callback
+ * @param $mid
+ * @param null $action
+ */
+function ext_message_got_process_message_action($mid, $action = null)
+{
+    if ($action) {
+        if ($action = 'set') ext_message_got_set_user_got_message($mid);
+        if ($action = 'unset') ext_message_got_unset_user_got_message($mid);
+    }
+
+    $path = empty($_GET['back']) ? drupal_not_found() : $_GET['back'];
+    drupal_goto($path);
 }
 
 /**
@@ -62,9 +78,10 @@ function ext_message_got_set_user_got_message($mid, $uid = null)
  * @param $mid - Message ID
  * @param $uid - User ID
  */
-function ext_message_got_unset_user_got_message($mid, $uid)
+function ext_message_got_unset_user_got_message($mid, $uid = null)
 {
     $deleted = false;
+    if (!$uid) $uid = $GLOBALS['user']->uid;
     if ($mid && $uid) {
         $deleted = db_delete('message_got')
             ->condition('mid', $mid)
