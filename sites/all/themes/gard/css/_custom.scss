@@ -662,7 +662,7 @@
 }
 .category-header {
   background: #0B99E6;
-  width: 100%; height: 140px;
+  width: 100%; height: 70px;
   position: relative;
   overflow: hidden;
   .category-title {
@@ -677,6 +677,7 @@
       }
     }
   }
+  @media #{$tablet} { height: 140px; }
   @media #{$normal} { height: 160px; }
 }
 
