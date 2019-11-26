@@ -153,9 +153,9 @@ a, a:hover, a:focus {
   box-shadow: 0 -10px 60px 20px rgba(0,0,0,.12);
   position: absolute; bottom: 0; left: 0; right: 0;
   padding-top: 10px; padding-bottom: 10px;
-  .logo img {
-    height: 40px;
-  }
+  text-align: center;
+
+  .logo img { height: 40px; }
 
   .social { padding-left: 30px; }
 
@@ -202,9 +202,9 @@ a, a:hover, a:focus {
   .region-footer {
     position: relative; z-index: -9999;
   }
-    .navbar-brand { text-align: right; }
 
   @media #{$normal} {
+      text-align: initial;
     .social-title { font-size: 19px; }
     .social-links {
       a {
@@ -212,6 +212,7 @@ a, a:hover, a:focus {
         i { font-size: 20px; line-height: 36px; }
       }
     }
+    .navbar-brand { text-align: right; }
   }
 
 }
