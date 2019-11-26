@@ -26,7 +26,6 @@ function person_notifications($acid) {
                 $fids[$flag->fid] = $flag->name;
             }
 
-            // запрос id Типов сообщений на которые подписан Пользователь
             $query = db_select('flagging', 'fc');
             $query->condition('entity_type', 'taxonomy_term');
             $query->condition('fid', array_keys($fids), 'IN');
@@ -40,7 +39,6 @@ function person_notifications($acid) {
             }
         }
 
-        // вывод списка Сообщений полученного выше Типа
         $output = views_embed_view('user_notifications', 'page', implode('+', $subscripted_notification_ids));
     }
 
