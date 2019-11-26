@@ -173,7 +173,7 @@ a, a:hover, a:focus {
     margin-top: 7px;
   }
   .menu {
-    float: right;
+      display: inline-block;
     padding: 10px 0;
     li {
       float: left;
@@ -205,6 +205,7 @@ a, a:hover, a:focus {
 
   @media #{$normal} {
       text-align: initial;
+      .menu { float: right; }
     .social-title { font-size: 19px; }
     .social-links {
       a {
