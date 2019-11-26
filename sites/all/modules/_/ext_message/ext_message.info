@@ -16,3 +16,5 @@ dependencies[] = views_bootstrap
 ; файл плагина
 files[] = plugins/notifier/MessageNotifierEmailWithRealname.class.php
 
+files[] = views/ext_message_got.views.inc
+files[] = views/ext_message_got_handler_timestamp.inc

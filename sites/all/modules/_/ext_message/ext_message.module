@@ -1,5 +1,18 @@
 <?php
 
+// константы терминов в словаре Подписки пользователей
+foreach(_ext_message_get_vars() as $index => $var) {
+    define($var['const'], 'ext_message_var_' . $index);
+}
+
+function _ext_message_get_vars()
+{
+    return [
+        0 => ['const' => 'EM_ADD_AGENDA',   'title' => 'Добавление мероприятия'],
+        1 => ['const' => 'EM_ADD_NEWS',     'title' => 'Добавление новости'],
+    ];
+}
+
 /**
  * Implements hook_views_api().
  */
@@ -9,32 +22,17 @@ function ext_message_views_api($module = NULL, $api = NULL)
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_entity_info_alter().
+ *
+ * Add a the notification view modes.
  */
-//function ext_message_node_insert($node)
-//{
-//    // нижеследующие типы сообщений уже должны быть созданы в админке
-//    //  - node__agenda__create
-//    // с ссответствующими полями
-//    //  - field_entity_ref
-//    //  - field_published
-//    //
-//    // система именования типа сообщений
-//    // сущность_тип-сущности_действие
-//    // todo перенести настройки из кода в админку
-//
-//    if (false && in_array($node->type, ['agenda'])) {
-//        $message = message_create('node_' . $node->type . '_create', array('uid' => $node->uid));
-//        $wrapper = entity_metadata_wrapper('message', $message);
-//        $wrapper->field_entity_ref->set($node);
-//        $wrapper->field_published->set($node->status);
-//
-//        if (module_exists('message_subscribe')) {
-//            // If Message-subscribe exists, let this example module use it.
-//            message_subscribe_send_message('node', $node, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [variable_get(EM_ADD_AGENDA)]]);
-//        }
-//    }
-//}
+function ext_message_entity_info_alter(&$entity_info)
+{
+    $entity_info['message']['view modes']['notification'] = array(
+        'label' => t('Notification'),
+        'custom settings' => TRUE,
+    );
+}
 
 /**
  * Implements hook_entity_insert().
@@ -68,6 +66,7 @@ function ext_message_entity_insert($entity, $type)
         }
     }
 }
+
 
 /**
  * Implements hook_node_update().
@@ -123,7 +122,8 @@ function ext_message_update_message_status($entity_type, $entity)
 /**
  * Implements hook_ctools_plugin_directory().
  */
-function ext_message_ctools_plugin_directory($module, $plugin) {
+function ext_message_ctools_plugin_directory($module, $plugin)
+{
     if ($module == 'message_notify') {
         return 'plugins/' . $plugin;
     }
@@ -183,4 +183,36 @@ function ext_message_get_message_type_subscription_tid($type)
     $query->condition('mt.name', $type);
     $query->addField('t', 'tid');
     return $query->execute()->fetchField();
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_message_preprocess_page(&$vars)
+{
+    drupal_add_css(drupal_get_path('module', 'ext_message') . '/css/messages.css');
+}
+
+/**
+ * Implements hook_preprocess_messag().
+ */
+function ext_message_preprocess_message(&$vars)
+{
+    /**
+     * ----- возможность создания отдельных шаблонов для разных view mode
+     *  ----- http://xandeadx.ru/blog/drupal/576 -----
+     */
+    $message_type_suggestion_key = array_search('message', $vars['theme_hook_suggestions']);
+    if ($message_type_suggestion_key !== FALSE) {
+        $message_view_mode_suggestion = 'message__' . $vars['view_mode'];
+        array_splice($vars['theme_hook_suggestions'], $message_type_suggestion_key + 1, 0, array($message_view_mode_suggestion));
+
+        $message_class = 'message-' . $vars['view_mode'];
+        $vars['classes_array'][] = $message_class;
+    }
+
+    if (isset($vars['message']->view) && $vars['message']->view->name == 'user_notifications') {
+        $row_index = $vars['message']->view->row_index;
+        $vars['is_message_got'] = empty($vars['message']->view->result[$row_index]->timestamp) ? false : true;
+    }
 }

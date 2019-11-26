@@ -1,0 +1,42 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/gard/css/_include";
+
+.profile {
+    .message-notification {
+        display: flex;
+    }
+    .main {
+        flex: auto;
+        background: $form-background;
+        padding: 5px 10px;
+        position: relative;
+
+        p { margin: 0; }
+        .line-item {
+            display: inline-block;
+            &:not(:last-child) { margin-right: $grid-gutter-width; }
+        }
+
+        i { margin-right: $grid-gutter-width/4; }
+    }
+    .m-header {
+        color: $text-muted; font-size: $font-size-small;
+    }
+    .m-date {
+        float: right;
+    }
+    .m-content {
+        a { color: $text-color; }
+    }
+    .m-footer {
+        a { color: $text-muted; font-size: $font-size-small; }
+    }
+    .actions {
+        flex: 0 0 auto;
+        background: $form-background;
+        border-left: 1px solid white;
+        padding: 5px 10px;
+        .m-got { color: $text-muted; }
+        .m-ungot { color: $brand-primary; }
+    }
+}
