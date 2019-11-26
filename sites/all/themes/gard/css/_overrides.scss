@@ -178,20 +178,24 @@ a, a:hover, a:focus {
     li {
       float: left;
       &:after {
-        content: "|"; color: $gray-light; padding-right: 15px;
+        content: "|"; color: $gray-light; padding-right: 5px;
       }
       &:last-child:after {
         content: none;
       }
       a {
         display: inline-block;
-        color: $gray-light; font-size: 14px; font-weight: 600;
-        padding: 0 15px 0 0;
+        color: $gray-light; font-size: 14px; font-weight: 400;
+        padding: 0 5px 0 0;
         &:hover,
         &:focus {
           text-decoration: underline;
           background: none;
         }
+      }
+      @media #{$tablet} {
+          &:after { padding-right: $grid-gutter-width/2; }
+        a { font-weight: 600; padding-right: $grid-gutter-width/2; }
       }
     }
   }
