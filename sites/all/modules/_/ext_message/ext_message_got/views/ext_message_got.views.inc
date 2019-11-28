@@ -25,10 +25,16 @@ function ext_message_got_views_data()
     $data['message_got']['timestamp'] = array(
         'title' => t('Message viewed timestamp'),
         'help' => t('Viewed by user timestamp'),
+        // свой обработчик, чтобы выбрать только для текущего пользователя
+        // https://knackforge.com/blog/selvam/drupal-7-exposing-pseudo-field-view-custom-table
         'field' => array(
-            // свой обработчик, чтобы выбрать только для текущего пользователя
             'handler' => 'ext_message_got_handler_timestamp',
             'click sortable' => FALSE,
+        ),
+        // свой обработчик, чтобы можно было задать аргумент
+        // для вывода всех, прочтенных и непрочтенных по отдельности
+        'argument' => array(
+            'handler' => 'ext_message_got_views_handler_argument_timestamp',
         ),
     );
 
@@ -45,6 +51,10 @@ function ext_message_got_views_handlers()
             'ext_message_got_handler_timestamp' => array(
                 'parent' => 'views_handler_field_date',
             ),
+            'ext_message_got_views_handler_argument_timestamp' => array(
+                'parent' => 'views_handler_argument',
+            ),
         ),
+
     );
 }

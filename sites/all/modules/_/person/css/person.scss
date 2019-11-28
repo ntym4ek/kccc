@@ -335,3 +335,20 @@
 /* таблицы */
 .profile th { padding: 9px 6px; text-align: center; }
 .profile td { border-bottom: 1px solid rgba(100, 100, 100, 0.1); padding: 9px 12px; }
+
+/* ------------------------------------------------- Уведомления ---------------------------------------------------- */
+.profile .notifications {
+    .n-controls {
+        display: flex; justify-content: space-between;
+        margin-bottom: $grid-gutter-width/2;
+        .n-filter { flex: auto; }
+        .n-read-all { flex: 0 0 auto; }
+        a {
+            color: $text-color; text-transform: uppercase; text-decoration: none;
+            display: inline-block;
+            margin-right: $grid-gutter-width/2;
+            &.active,
+            &:hover, &:focus { color: $brand-primary; }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 <?php
 
-// Определяем обработчик, наследуем от стандартного класса "числовое значение"
+// Определяем обработчик, наследуем от стандартного класса "дата"
 class ext_message_got_handler_timestamp extends views_handler_field_date
 {
     // Запрос к БД
@@ -12,5 +12,9 @@ class ext_message_got_handler_timestamp extends views_handler_field_date
         // Указываем название для возвращаемого поля
         $this->query->add_field('', "($sql)", 'timestamp');
         $this->field_alias = 'timestamp';
+    }
+
+    function render($values) {
+        return parent::render($values);
     }
 }

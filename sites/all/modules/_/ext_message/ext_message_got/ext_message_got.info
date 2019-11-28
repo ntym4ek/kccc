@@ -8,3 +8,4 @@ dependencies[] = ext_message
 
 files[] = views/ext_message_got.views.inc
 files[] = views/ext_message_got_handler_timestamp.inc
+files[] = views/ext_message_got_views_handler_argument_timestamp.inc

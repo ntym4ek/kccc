@@ -42,12 +42,17 @@ function ext_message_got_views_api()
 function ext_message_got_process_message_action($mid, $action = null)
 {
     if ($action) {
-        if ($action = 'set') ext_message_got_set_user_got_message($mid);
-        if ($action = 'unset') ext_message_got_unset_user_got_message($mid);
+        if ($action == 'set') {
+            if ($mid == 'all') ext_message_got_set_user_got_message_all();
+            else ext_message_got_set_user_got_message($mid);
+        }
+        if ($action == 'unset') ext_message_got_unset_user_got_message($mid);
     }
 
     $path = empty($_GET['back']) ? drupal_not_found() : $_GET['back'];
-    drupal_goto($path);
+    $options = [];
+    if (isset($_GET['status'])) $options['query'] = ['status' => $_GET['status']];
+    drupal_goto($path, $options);
 }
 
 /**
@@ -70,6 +75,27 @@ function ext_message_got_set_user_got_message($mid, $uid = null)
     }
 
     return isset($id) ? $id : false;
+}
+
+/**
+ * создать запись о прочтении Message by User
+ *
+ * @param $mid - Message ID
+ * @param $uid - User ID
+ */
+function ext_message_got_set_user_got_message_all($uid = null)
+{
+    if (!$uid) $uid = $GLOBALS['user']->uid;
+
+    $query = db_select('message', 'm');
+    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
+    $query->condition('mg.id', NULL, 'IS NULL');
+    $query->addField('m', 'mid');
+    if ($mids = $query->execute()->fetchAssoc()) {
+        foreach($mids as $mid) {
+            ext_message_got_set_user_got_message($mid, $uid);
+        }
+    }
 }
 
 /**
