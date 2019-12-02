@@ -355,5 +355,16 @@
 
 /* ------------------------------------------------- Подписки ------------------------------------------------------- */
 .profile .subscriptions {
-    .views-field-ops { width: 150px; }
+    .views-field-ops {
+        width: 150px;
+        vertical-align: middle;
+        a { color: $brand-primary; }
+        a.unflag-action { color: $brand-danger; }
+    }
+    .views-field-name-field-et {
+        span {
+            color: $text-muted; font-size: $font-size-small;
+            p { margin: 0; }
+        }
+    }
 }

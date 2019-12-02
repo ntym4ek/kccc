@@ -18,7 +18,7 @@ function ext_message_got_menu()
         'type' => MENU_CALLBACK,
     );
     $items['user/notifications'] = array(
-        'title' => 'Notifications',
+        'title' => t('Notifications'),
         'page callback' => 'person_account_callback',
         'access arguments' => array('access content'),
         'menu_name' => 'user-menu',
@@ -111,17 +111,17 @@ function ext_message_got_get_user_ungot_messages($uid)
     $mids = [];
 
     // получить id Типов сообщений, на которые подписан пользователь
-    $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid);
-
-    // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
-    $query = db_select('message', 'm');
-    $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
-    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
-    $query->condition('mt.id', $subscripted_notification_ids, 'IN');
-    $query->condition('mg.id', NULL, 'IS NULL');
-    $query->addField('m', 'mid');
-    if ($result = $query->execute()) {
-        $mids = $result->fetchCol();
+    if  ($subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid)) {
+        // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
+        $query = db_select('message', 'm');
+        $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
+        $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
+        $query->condition('mt.id', $subscripted_notification_ids, 'IN');
+        $query->condition('mg.id', NULL, 'IS NULL');
+        $query->addField('m', 'mid');
+        if ($result = $query->execute()) {
+            $mids = $result->fetchCol();
+        }
     }
 
     return $mids;

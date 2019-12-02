@@ -88,8 +88,7 @@ function ext_message_views_default_views()
     $handler->display->display_options['fields']['name']['field'] = 'name';
     $handler->display->display_options['fields']['name']['label'] = 'Subscription';
     $handler->display->display_options['fields']['name']['alter']['alter_text'] = TRUE;
-    $handler->display->display_options['fields']['name']['alter']['text'] = '[name]<br />
-<span class="color: #aaa; font-size: 13px;">[description]</span>';
+    $handler->display->display_options['fields']['name']['alter']['text'] = '[name]<br /><span>[description]</span>';
     $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
     $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
     $handler->display->display_options['fields']['name']['element_label_colon'] = FALSE;

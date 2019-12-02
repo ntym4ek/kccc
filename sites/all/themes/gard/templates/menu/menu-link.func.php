@@ -147,7 +147,7 @@ function gard_menu_link__user_menu(array $variables)
         $title .=  '</i>';
     }
 
-    if ($mlid == 15025) {
+    if ($mlid == 15030) {
         $mids = ext_message_got_get_user_ungot_messages($GLOBALS['user']->uid);
         if (count($mids)) $title .= ' (' . count($mids) . ')';
     }
