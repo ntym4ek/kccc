@@ -16,35 +16,16 @@ function person_notifications($acid) {
 
     // вернуть список только, если свой аккаунт
     if ($user->uid == $acid) {
-        $subscripted_notification_ids = [];
+        // получить id Типов сообщений, на которые подписан пользователь
+        $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($acid);
 
-        // если есть флаги, относящиеся к Подпискам
-        if (module_exists('message_subscribe') && $flags = message_subscribe_flag_get_flags('taxonomy_term')) {
-
-            $fids = array();
-            foreach ($flags as $flag) {
-                $fids[$flag->fid] = $flag->name;
-            }
-
-            $query = db_select('flagging', 'fc');
-            $query->condition('entity_type', 'taxonomy_term');
-            $query->condition('fid', array_keys($fids), 'IN');
-            $query->condition('fc.uid', $acid);
-            $query->addField('fc', 'entity_id');
-            if ($subscription_tids = $query->execute()->fetchCol()) {
-                $query = db_select('field_data_field_message_type_ref', 'mtr');
-                $query->condition('mtr.entity_id', $subscription_tids, 'IN');
-                $query->addField('mtr', 'field_message_type_ref_target_id');
-                $subscripted_notification_ids = $query->execute()->fetchCol();
-            }
-        }
-
-        // аргумент Статус
+        // определить фильтр, если установлен
         $status = '';
         if (isset($_GET['status'])) {
             if (strtolower($_GET['status']) == 'new') $status = 0;
         }
 
+        // сформировать вывод
         $output =   '<div class="notifications">' .
                         '<div class="n-controls">' .
                             '<div class="n-filter">' .
@@ -56,6 +37,8 @@ function person_notifications($acid) {
                             '</div>' .
                         '</div>' .
                     '</div>';
+
+        // списко Уведомлений по полученным Типам сообщений
         $output .= views_embed_view('user_notifications', 'page', implode('+', $subscripted_notification_ids), $status);
     }
 

@@ -136,7 +136,20 @@ function gard_menu_link__user_menu(array $variables)
     // вставить Иконки
     if (in_array($mlid, [14, 12880])) {
         $options['attributes']['class'][] = 'btn btn-header btn-s1';
-        $title =  '<i class="fa fa-user"></i>';
+        $title =  '<i class="fa fa-user">';
+
+        // вывести бейдж с количеством уведомлений
+        if (module_exists('ext_message_got')) {
+            $mids = ext_message_got_get_user_ungot_messages($GLOBALS['user']->uid);
+            if (count($mids)) $title .= '<span class="bubble bubble-red">' . count($mids) . '</span>';
+        }
+
+        $title .=  '</i>';
+    }
+
+    if ($mlid == 15025) {
+        $mids = ext_message_got_get_user_ungot_messages($GLOBALS['user']->uid);
+        if (count($mids)) $title .= ' (' . count($mids) . ')';
     }
 
     $href = $element['#href'];

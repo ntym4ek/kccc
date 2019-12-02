@@ -17,6 +17,13 @@ function ext_message_got_menu()
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+    $items['user/notifications'] = array(
+        'title' => 'Notifications',
+        'page callback' => 'person_account_callback',
+        'access arguments' => array('access content'),
+        'menu_name' => 'user-menu',
+        'type' => MENU_NORMAL_ITEM,
+    );
 
     return $items;
 }
@@ -87,15 +94,37 @@ function ext_message_got_set_user_got_message_all($uid = null)
 {
     if (!$uid) $uid = $GLOBALS['user']->uid;
 
-    $query = db_select('message', 'm');
-    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
-    $query->condition('mg.id', NULL, 'IS NULL');
-    $query->addField('m', 'mid');
-    if ($mids = $query->execute()->fetchAssoc()) {
+    if ($mids = ext_message_got_get_user_ungot_messages($uid)) {
         foreach($mids as $mid) {
             ext_message_got_set_user_got_message($mid, $uid);
         }
     }
+}
+
+/**
+ * найти все непрочтённые Сообщения
+ *
+ * @param $uid - User ID
+ */
+function ext_message_got_get_user_ungot_messages($uid)
+{
+    $mids = [];
+
+    // получить id Типов сообщений, на которые подписан пользователь
+    $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid);
+
+    // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
+    $query = db_select('message', 'm');
+    $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
+    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
+    $query->condition('mt.id', $subscripted_notification_ids, 'IN');
+    $query->condition('mg.id', NULL, 'IS NULL');
+    $query->addField('m', 'mid');
+    if ($result = $query->execute()) {
+        $mids = $result->fetchCol();
+    }
+
+    return $mids;
 }
 
 /**
