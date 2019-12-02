@@ -260,7 +260,8 @@ function ext_message_install()
         $vid = $vocabulary->vid;
         $term = (object)array(
             'vid' => $vid,
-            'name' => t('Agenda add'),
+            'name' => t('Agenda'),
+            'description' => t('Notifications about new events'),
             'field_message_type_ref' => [LANGUAGE_NONE => [0 => ['target_id' => $message_type->id]]]
         );
         taxonomy_term_save($term);

@@ -216,3 +216,38 @@ function ext_message_preprocess_message(&$vars)
         $vars['is_message_got'] = empty($vars['message']->view->result[$row_index]->timestamp) ? false : true;
     }
 }
+
+/**
+ * получить id Типов сообщений, на которые подписан пользователь
+ *
+ * @param $uid
+ * @return array
+ */
+function ext_message_get_user_subscription_notification_ids($uid)
+{
+    $subscripted_notification_ids = [];
+
+    // получаем список Флагов, относящихся к модулю Подписок на Сообщения (message_notify)
+    $fids = array();
+    $flags = message_subscribe_flag_get_flags('taxonomy_term');
+    foreach ($flags as $flag) {
+        $fids[$flag->fid] = $flag->name;
+    }
+
+    // получаем tids Подписок пользователя
+    $query = db_select('flagging', 'fc');
+    $query->condition('entity_type', 'taxonomy_term');
+    $query->condition('fid', array_keys($fids), 'IN');
+    $query->condition('fc.uid', $uid);
+    $query->addField('fc', 'entity_id');
+
+    // получаем Типы сообщений, на которые подписан пользователь
+    if ($subscription_tids = $query->execute()->fetchCol()) {
+        $query = db_select('field_data_field_message_type_ref', 'mtr');
+        $query->condition('mtr.entity_id', $subscription_tids, 'IN');
+        $query->addField('mtr', 'field_message_type_ref_target_id');
+        $subscripted_notification_ids = $query->execute()->fetchCol();
+    }
+
+    return $subscripted_notification_ids;
+}

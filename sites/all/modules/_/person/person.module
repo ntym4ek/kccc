@@ -22,6 +22,7 @@ include 'includes/person.agenda.inc';
 include 'includes/person.reviews.inc';
 include 'includes/person.etc.inc';
 include 'includes/person.notifications.inc';
+include 'includes/person.subscriptions.inc';
 
 /**
  * Implements hook_init().
@@ -63,12 +64,7 @@ function person_menu() {
         'access arguments' => array(1, 3),
         'type' => MENU_CALLBACK,
     );
-//    $items['person/%/%'] = array(
-//        'page callback' => 'person_account_callback',
-//        'page arguments' => array(1, 2, null, null),
-//        'access arguments' => array('access content'),
-//        'type' => MENU_CALLBACK,
-//    );
+
 //    $items['person/%/%/list'] = array(
 //        'title' => t('User account'),
 //        'page callback' => 'person_account_callback',
@@ -194,7 +190,7 @@ function person_account_callback($acid = NULL, $section = 'summary', $op = '', $
   } else {
       if ($user->uid) drupal_goto('person/' . $user->uid . '/summary');
       else {
-          drupal_set_message('Для доступа к странице необходимо войти в свой аккаунт');
+          drupal_set_message(t('You have to sign in to get access to account.'));
           drupal_goto('user/login');
       }
   }
@@ -388,6 +384,10 @@ function _person_actions($acid, $section) {
 
         $user_actions[] = array(
             'data' => l(t('Notifications'), "/person/$acid/notifications"),
+        );
+
+        $user_actions[] = array(
+            'data' => l(t('Subscriptions'), "/person/$acid/subscriptions"),
         );
 
 
@@ -615,13 +615,20 @@ function person_form_captcha_after_build($form, &$form_state) {
  *
  * изменить путь ссылки Мой аккаунт
  */
-function person_translated_menu_link_alter(&$item, $map) {
+function person_translated_menu_link_alter(&$item, $map)
+{
     global $user;
 
-    if($item['mlid']==3) {
+    // заглушки в Меню изменить на ссылки с реальными uid
+    if($item['link_path'] == 'person/1/summary') {
         $item['link_path'] = 'person/' . $user->uid . '/summary';
         $item['router_path'] = 'person/' . $user->uid . '/summary';
         $item['href'] = 'person/' . $user->uid . '/summary';
+    }
+    if ($item['link_path'] == 'user/notifications') {
+        $item['link_path'] = 'person/' . $user->uid . '/notifications';
+        $item['router_path'] = 'person/' . $user->uid . '/notifications';
+        $item['href'] = 'person/' . $user->uid . '/notifications';
     }
 }
 
@@ -644,15 +651,6 @@ function person_preprocess_page(&$vars)
     if (isset($user->roles[7])) {
         drupal_set_message(t('You have to confirm your account, otherwise it wound be deleted soon. Check your e-mail.'), 'warning');
     }
-
-//    switch (request_path()) {
-//        case 'user/register':
-//            drupal_set_message(t('Sign up to have full access'), 'warning');
-//            break;
-//        case 'user/login':
-//            drupal_set_message(t('Sign up to have full access'), 'warning');
-//            break;
-//    }
 }
 
 // массив с информацией о пользователе
