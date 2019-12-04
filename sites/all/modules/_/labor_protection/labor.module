@@ -97,15 +97,15 @@ function labor_send_mail() {
 
     // sergey.melnikov@kccc.ru
 
-    drupal_mail('system', 'mail', variable_get('lp_notification_email', 'sergey.melnikov@kccc.ru'), $lang, array(
-        'context' => array(
-            'subject' => 'Новый пользователь прошёл инструктаж по ТБ',
-            'message' => 'Данные пользователя<br/>'
-                        .'E-Mail: '. $user->mail . '<br/>'
-                        .'ФИО: '. $fio . '<br/>'
-                        .'Дата и время инструктажа: '. $datetime . '<br/>'
-        )
-    ));
+//    drupal_mail('system', 'mail', variable_get('lp_notification_email', 'sergey.melnikov@kccc.ru'), $lang, array(
+//        'context' => array(
+//            'subject' => 'Новый пользователь прошёл инструктаж по ТБ',
+//            'message' => 'Данные пользователя<br/>'
+//                        .'E-Mail: '. $user->mail . '<br/>'
+//                        .'ФИО: '. $fio . '<br/>'
+//                        .'Дата и время инструктажа: '. $datetime . '<br/>'
+//        )
+//    ));
 }
 
 function labor_page_1_form($form, $form_state) {
