@@ -16,42 +16,70 @@ function _ext_message_get_vars()
 /**
  * Implements hook_views_api().
  */
-function ext_message_views_api($module = NULL, $api = NULL) {
+function ext_message_views_api($module = NULL, $api = NULL)
+{
     return array("api" => "3.0");
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_entity_info_alter().
+ *
+ * Add a the notification view modes.
  */
-function ext_message_node_insert($node)
+function ext_message_entity_info_alter(&$entity_info)
 {
-    // нижеследующие типы сообщений уже должны быть созданы в админке
-    //  - node_agenda_create
-    //  - node_news_create
-    //  - node_blog_create
-    // с ссответствующими полями
-    //  - field_entity_ref
-    //  - field_published
-    //
-    // Контекст
-    //  - Добавление мероприятия - EM_ADD_AGENDA
-    //
-    // система именования типа сообщений
-    // сущность_тип-сущности_действие
-    // todo перенести настройки из кода в админку
+    $entity_info['message']['view modes']['notification'] = array(
+        'label' => t('Notification'),
+        'custom settings' => TRUE,
+    );
+}
 
-    if (in_array($node->type, ['agenda'])) {
-        $message = message_create('node_' . $node->type . '_create', array('uid' => $node->uid));
-        $wrapper = entity_metadata_wrapper('message', $message);
-        $wrapper->field_entity_ref->set($node);
-        $wrapper->field_published->set($node->status);
+/**
+ * Implements hook_entity_insert().
+ *
+ *  универсальный метод создания сообщений
+ *  проверяет наличие типа сообщения для создаваемой сущности
+ */
+function ext_message_entity_insert($entity, $type)
+{
+    $info = entity_get_info($type);
 
-        if (module_exists('message_subscribe')) {
-            // If Message-subscribe exists, let this example module use it.
-            message_subscribe_send_message('node', $node, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [variable_get(EM_ADD_AGENDA)]]);
+    // для Препаратов создан один Тип сообщений
+    $entity_bundle = $entity->{$info['entity keys']['bundle']};
+    if (in_array($entity_bundle, ['product_agro', 'product_chem', 'product_fert'])) $entity_bundle = 'product';
+
+    // если тип Сообщения существует
+    if (isset($entity->{$info['entity keys']['bundle']})) {
+        $message_type_name = $type . '__' . $entity_bundle . '__create';
+        if ($message_type = message_type_load($message_type_name)) {
+
+            $uid = empty($entity->uid) ? 0 : $entity->uid;
+            $status = empty($entity->status) ? 1 : $entity->status;
+
+            // для новостей Уведомления только для материалов из раздела События
+            if ($message_type_name == 'node__news__create') {
+                $entity_wr = entity_metadata_wrapper('node', $entity);
+                if ($entity_wr->field_news_category->target_id->value() != 5) {
+                    return;
+                }
+            }
+
+            // создать Сообщение
+            $message = message_create($message_type_name, ['uid' => $uid]);
+            $wrapper = entity_metadata_wrapper('message', $message);
+            $wrapper->field_entity_ref->set($entity);
+            $wrapper->field_published->set($status);
+
+            if (module_exists('message_subscribe')) {
+                // If Message-subscribe exists, let this example module use it.
+                // извлечь термин словаря Подписки, чтобы определить кто подписан на Уведомления этого типа
+                $subscription_tid = ext_message_get_message_type_subscription_tid($message_type_name);
+                message_subscribe_send_message($type, $entity, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [$subscription_tid]]);
+            }
         }
     }
 }
+
 
 /**
  * Implements hook_node_update().
@@ -107,7 +135,8 @@ function ext_message_update_message_status($entity_type, $entity)
 /**
  * Implements hook_ctools_plugin_directory().
  */
-function ext_message_ctools_plugin_directory($module, $plugin) {
+function ext_message_ctools_plugin_directory($module, $plugin)
+{
     if ($module == 'message_notify') {
         return 'plugins/' . $plugin;
     }
@@ -152,4 +181,152 @@ function ext_message_flag_default_flags()
     );
 
     return $flags;
+}
+
+/**
+ * Вернуть tid подписки на указанный тип события
+ * @param $type
+ * @return mixed
+ */
+function ext_message_get_message_type_subscription_tid($type)
+{
+    $query = db_select('taxonomy_term_data', 't');
+    $query->innerJoin('field_data_field_message_type_ref', 'mtr', 't.tid = mtr.entity_id');
+    $query->innerJoin('message_type', 'mt', 'mtr.field_message_type_ref_target_id = mt.id');
+    $query->condition('mt.name', $type);
+    $query->addField('t', 'tid');
+    return $query->execute()->fetchField();
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_message_preprocess_page(&$vars)
+{
+    drupal_add_css(drupal_get_path('module', 'ext_message') . '/css/messages.css');
+}
+
+/**
+ * Implements hook_preprocess_messag().
+ */
+function ext_message_preprocess_message(&$vars)
+{
+    /**
+     * ----- возможность создания отдельных шаблонов для разных view mode
+     *  ----- http://xandeadx.ru/blog/drupal/576 -----
+     */
+    $message_type_suggestion_key = array_search('message', $vars['theme_hook_suggestions']);
+    if ($message_type_suggestion_key !== FALSE) {
+        $message_view_mode_suggestion = 'message__' . $vars['view_mode'];
+        array_splice($vars['theme_hook_suggestions'], $message_type_suggestion_key + 1, 0, array($message_view_mode_suggestion));
+
+        $message_class = 'message-' . $vars['view_mode'];
+        $vars['classes_array'][] = $message_class;
+    }
+
+    if (isset($vars['message']->view) && $vars['message']->view->name == 'user_notifications') {
+        $row_index = $vars['message']->view->row_index;
+        $vars['is_message_got'] = empty($vars['message']->view->result[$row_index]->timestamp) ? false : true;
+    }
+}
+
+/**
+ * получить id Типов сообщений, на которые подписан пользователь
+ *
+ * @param $uid
+ * @return array
+ */
+function ext_message_get_user_subscription_notification_ids($uid)
+{
+    $subscripted_notification_ids = [];
+
+    // получаем список Флагов, относящихся к модулю Подписок на Сообщения (message_notify)
+    $fids = array();
+    $flags = message_subscribe_flag_get_flags('taxonomy_term');
+    foreach ($flags as $flag) {
+        $fids[$flag->fid] = $flag->name;
+    }
+
+    // получаем tids Подписок пользователя
+    $query = db_select('flagging', 'fc');
+    $query->condition('entity_type', 'taxonomy_term');
+    $query->condition('fid', array_keys($fids), 'IN');
+    $query->condition('fc.uid', $uid);
+    $query->addField('fc', 'entity_id');
+
+    // получаем Типы сообщений, на которые подписан пользователь
+    if ($subscription_tids = $query->execute()->fetchCol()) {
+        $query = db_select('field_data_field_message_type_ref', 'mtr');
+        $query->condition('mtr.entity_id', $subscription_tids, 'IN');
+        $query->addField('mtr', 'field_message_type_ref_target_id');
+        $subscripted_notification_ids = $query->execute()->fetchCol();
+    }
+
+    return $subscripted_notification_ids;
+}
+
+/** -------------------------------- Токены для уведомлений --------------------------------------------------------- */
+/**
+ * Implements hook_tokens().
+ */
+function ext_message_tokens($type, $tokens, array $data = array(), array $options = array())
+{
+    $replacements = array();
+
+    // Only handling message
+    if (!in_array($type, array('message'))) {
+        return;
+    }
+
+    $entity_wr = entity_metadata_wrapper($type, $data['message']);
+    foreach ($tokens as $name => $original) {
+
+        switch($name) {
+            case 'field_entity_ref:item_id':
+                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+                $replacements[$original] = $eid;
+                break;
+
+            case 'field_entity_ref:field_f_s_culture:title':
+                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+                $entity_ref = entity_metadata_wrapper('field_collection_item', $eid);
+
+                $replacements[$original] = $entity_ref->field_f_s_culture->title->value();
+                break;
+        }
+    }
+
+    return $replacements;
+}
+
+
+/** -------------------------------- Создание уведомлений на Custom события ----------------------------------------- */
+
+/**
+ * Уведомления при создании и обновлении Препаратов в поле
+ * @param $data[op] - create, update
+ * @param $data[sid] - season ID
+ */
+function ext_message_before_after_measurement_save_alter($data)
+{
+    // загружаем сезон, нужен для привязки
+    // todo и разрешения Токенов в письме (через custom токены или Field Collections Tokens)
+    $season = field_collection_item_load($data['sid']);
+
+    $type = 'custom__before_after__' . $data['op'];
+    if ($message_type = message_type_load($type)) {
+
+        // создать Сообщение
+        $message = message_create('custom__before_after__create', ['uid' => $GLOBALS['user']->uid]);
+        $wrapper = entity_metadata_wrapper('message', $message);
+        $wrapper->field_entity_ref->set($season);
+        $wrapper->field_published->set(1);
+
+        if (module_exists('message_subscribe')) {
+            // If Message-subscribe exists, let this example module use it.
+            // извлечь термин словаря Подписки, чтобы определить кто подписан на Уведомления этого типа
+            $subscription_tid = ext_message_get_message_type_subscription_tid($type);
+            message_subscribe_send_message('message', $message, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [$subscription_tid]]);
+        }
+    }
 }

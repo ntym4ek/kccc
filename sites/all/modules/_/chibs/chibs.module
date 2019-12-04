@@ -27,7 +27,7 @@ function chibs_init()
     if ($_GET['q'] == 'cart') drupal_goto('/checkout');
 
     // редирект с expo на en/expo
-    if (drupal_get_path_alias($_GET['q']) == 'expo' && $GLOBALS['language']->language == 'ru') drupal_goto('en/expo');
+//    if (drupal_get_path_alias($_GET['q']) == 'expo' && $GLOBALS['language']->language == 'ru') drupal_goto('en/expo');
 
     // редирект с expo на en/expo
     if (drupal_get_path_alias($_GET['q']) == 'china' && $GLOBALS['language']->language == 'ru') drupal_goto('en/china');

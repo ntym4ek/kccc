@@ -3,7 +3,7 @@
 function _registration_create($data)
 {
     $success = false;
-    $message = 'Заявка не зарегистрирована. Попробуйте позже.';
+    $message = t('Request was not registered. Try later.');
     if (!empty($data['nid'])) {
         $entity = node_load($data['nid']);
         $entity_type = 'node';

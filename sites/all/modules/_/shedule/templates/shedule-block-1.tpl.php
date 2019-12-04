@@ -1,4 +1,4 @@
-<div class="block-1 block<? print count($content[ROOM1]['events']) ? '' : ' disabled'; ?>">
+<div class="block-1 block<? print (isset($content[ROOM1]['events']) && count($content[ROOM1]['events'])) ? '' : ' disabled'; ?>">
     <div class="header">
         <div class="box1">1</div>
         <div class="box2">
@@ -8,16 +8,18 @@
         <? if ($content['admin']): ?><a href="/node/add/room-event" class="add-link"><i class="fas fa-plus"></i></a><? endif; ?>
     </div>
     <div class="content">
-        <?php foreach($content[ROOM1]['events'] as $eid => $event): ?>
-        <div class="event<? print $event['started']; ?>">
-            <div class="row1"><? print $event['start']; ?></div>
-            <div class="row2">
-                <div class="line1"><? print $event['title']; ?></div>
-                <div class="line2"><? print $event['description']; ?></div>
+        <? if (!empty($content[ROOM1]['events'])): ?>
+            <?php foreach($content[ROOM1]['events'] as $eid => $event): ?>
+            <div class="event<? print $event['started']; ?>">
+                <div class="row1"><? print $event['start']; ?></div>
+                <div class="row2">
+                    <div class="line1"><? print $event['title']; ?></div>
+                    <div class="line2"><? print $event['description']; ?></div>
+                </div>
+                <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
             </div>
-            <? if ($content['admin']): ?><a href="/node/<? print $eid; ?>/edit" class="edit-link"><i class="fas fa-pen"></i></a><? endif; ?>
-        </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
 

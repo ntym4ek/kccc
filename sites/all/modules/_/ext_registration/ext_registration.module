@@ -54,10 +54,10 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
             $form['#prefix'] = '<div id="registration-form-wrapper">';
             $form['#suffix'] = '</div>';
             $form['#attributes']['class'][] = 'form-embedded';
-            $form['title']['#markup'] = '<h4>Запланировать встречу</h4><p class="font-small text-muted">Наш представитель получит уведомление и свяжется в Вами</p>';
+            $form['title']['#markup'] = '<h4>' . t('Schedule a meeting') . '</h4><p class="font-small text-muted">' . t('Our representative will receive a notification and will contact you') . '</p>';
             if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#type'] == 'submit') {
                 // выводим сообщение о принятой заявке
-                $form['title']['#markup'] .= '<h2 class="text-center" style="margin: 100px 0;">Спасибо за уведомление!</h2>';
+                $form['title']['#markup'] .= '<h2 class="text-center" style="margin: 100px 0;">' . t('Thank you!') . '</h2>';
                 $form['actions']['submit']['#access'] = false;
                 $form['actions']['cancel']['#access'] = false;
                 $form['field_reg_sure']['#access'] = false;
@@ -73,25 +73,14 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
                 if (isset($form['fz152_agreement'])) $form['fz152_agreement']['#weight'] = 99;
 
                 unset($form['field_reg_sure']['und']['#title']);
-                $form['field_date_select']['und']['#options']['_none'] = 'Выберите день';
+                $form['field_date_select']['und']['#options']['_none'] = t('Choose a day');
                 unset($form['field_date_select']['und']['#title']);
 
-                $form['field_company']['und'][0]['value']['#attributes']['placeholder'] = $form['field_company']['und']['#title'];
-                unset($form['field_company']['und'][0]['value']['#title']);
-                $form['field_profile_post']['und'][0]['value']['#attributes']['placeholder'] = $form['field_profile_post']['und']['#title'];
-                unset($form['field_profile_post']['und'][0]['value']['#title']);
-
-                $form['field_phone']['und'][0]['value']['#attributes']['placeholder'] = $form['field_phone']['und']['#title'];
-                unset($form['field_phone']['und'][0]['value']['#title']);
-                $form['field_fullname']['und'][0]['value']['#attributes']['placeholder'] = $form['field_fullname']['und']['#title'];
-                unset($form['field_fullname']['und'][0]['value']['#title']);
-                $form['field_contact_message']['und'][0]['value']['#attributes']['placeholder'] = $form['field_contact_message']['und']['#title'];
-                unset($form['field_contact_message']['und'][0]['value']['#title']);
                 unset($form['registrant_self']);
 
                 $form['actions']['cancel']['#access'] = false;
                 $form['actions']['submit']['#attributes']['class'][] = 'btn-info btn-wide-full';
-                $form['actions']['submit']['#value'] = 'Отправить';
+                $form['actions']['submit']['#value'] = t('Submit');
                 $form['actions']['submit']['#ajax'] = array(
                     'callback' => 'ext_registration_form_refresh',
                     'wrapper' => 'registration-form-wrapper',
@@ -103,7 +92,7 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
 
                 $agenda_wr = entity_metadata_wrapper('node', $form['#entity']->entity_id);
                 $interval = ($agenda_wr->field_period->value2->value() - $agenda_wr->field_period->value->value()) / (3600 * 24);
-                $options = ['' => 'Выберите день'];
+                $options = ['' => t('Choose a day')];
                 for ($i = 1; $i <= $interval + 1; $i++) {
                     if (isset($form['field_date_select']['und']['#options'][$i]))
                         $options[$i] = $form['field_date_select']['und']['#options'][$i];

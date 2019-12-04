@@ -7,14 +7,12 @@
  */
 
 /**
- * функция, возвращающая контент страницы Блоги
+ * функция, возвращающая контент страницы Идей
  */
 function person_idea($acid)
 {
     global $user;
     
-    delBubbles(array('uid' => $user->uid, 'section' => BS_IDEA));
-
     $output = false;
 
     // вернуть список только, если свой аккаунт

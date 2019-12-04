@@ -12,8 +12,6 @@
 function person_company($acid) {
   global $user;
 
-  delBubbles(array('uid' => $user->uid, 'section' => BS_COMPANY));
-
   $output = false;
 
   // вернуть форму только, если свой аккаунт
@@ -691,7 +689,6 @@ function person_company_staff_confirm_form_submit($form, &$form_state) {
                       . 'Ваш запрос был одобрен.',
               ),
           ));
-          addBubble($staff_wrapper->user->uid->value(), 'staff', BL_GREEN, 'Запрос на добавление в список сотрудников одобрен');
           break;
         case 'cancel':
             $staff_wrapper->field_profile_company_approved->set(0);

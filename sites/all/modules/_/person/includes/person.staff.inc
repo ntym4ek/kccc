@@ -13,8 +13,6 @@
 function person_staff($acid) {
   global $user;
 
-  delBubbles(array('uid' => $user->uid, 'section' => BS_STAFF));
-
   $output = false;
 
   // вернуть форму только, если свой аккаунт
@@ -207,8 +205,6 @@ function person_staff_form_submit($form, &$form_state) {
             ),
         ));
 
-        // отправить bubble админу компании
-        addBubble($company->uid, 'company', BL_RED, 'Запрос на добавление сотрудника в вашу компанию');
       }
     }
 

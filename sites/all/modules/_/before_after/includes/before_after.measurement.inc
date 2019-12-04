@@ -414,9 +414,11 @@ function before_after_measurement_form_submit(&$form, &$form_state)
         $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $measurement);
         $season = field_collection_item_load($form_state['sid']);
         $measurement->setHostEntity('field_collection_item', $season);
+        $op = 'create';
     } else {
         $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $form_state['mid']);
         $measurement = $measurement_wrapper->value();
+        $op = 'update';
     }
 
     $date_elements = explode(".", $form_state['values']['date']);
@@ -511,8 +513,8 @@ function before_after_measurement_form_submit(&$form, &$form_state)
     $measurement_wrapper->save();
     $form_state['mid'] = $measurement_wrapper->item_id->value();
 
-    // обработать события на сохранение Замера (используется в Bubble)
-    $op = empty($form_state['mid']) ? 'create' : 'update';
+    // обработать события на сохранение Замера
+    // использовалось в Bubble, todo создание Уведомления
     $data = array('op' => $op, 'sid' => $measurement->hostEntityId());
     drupal_alter('before_after_measurement_save', $data);
 
