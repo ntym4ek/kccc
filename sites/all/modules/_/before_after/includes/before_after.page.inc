@@ -572,7 +572,7 @@ function before_after_get_atfield($sid)
 
                 if ($date_first_processing && $key_m) {
                     $diff = _seconds2times($measurement_wrapper->field_f_s_m_date->value() - $date_first_processing);
-                    $measurements[$key_m]['days_after'] = $diff['3'] . ' дней';
+                    $measurements[$key_m]['days_after'] = empty($diff['3']) ? 'Контроль' : ($diff['3'] . ' дней');
                 }
 
                 // состояние вредных объектов

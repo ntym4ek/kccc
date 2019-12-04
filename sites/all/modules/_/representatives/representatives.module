@@ -345,7 +345,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
@@ -369,7 +369,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
@@ -393,7 +393,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => true,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
@@ -410,7 +410,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
@@ -563,7 +563,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
@@ -708,7 +708,7 @@ function representatives_get_representatives_list()
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (83361) 2-23-49'),
+        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
         'emails' => array('kirov@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/kirov.png',
         'regions' => array(
