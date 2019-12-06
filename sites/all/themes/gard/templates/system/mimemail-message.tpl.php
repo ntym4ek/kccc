@@ -25,7 +25,7 @@
 */
 $lang = drupal_strtolower($GLOBALS['language']->language);
 $sign = empty($message['params']['context']['sign']) ? t('Postal robot') . ' ' . t('ООО Trade House "Kirovo-Chepetsk Chemical Company"') : $message['params']['context']['sign'];
-$auto = !isset($message['params']['context']['auto']) ? t('This message was generated automatically and does not require a response') : '';
+$auto = !isset($message['params']['context']['auto']) ? t('This message was generated automatically and does not require a response') : $message['params']['context']['auto'];
 ?>
 
 <html>
