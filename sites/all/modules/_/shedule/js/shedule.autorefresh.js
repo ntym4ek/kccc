@@ -25,7 +25,7 @@
                 // часы
                 setInterval(function () {
                     var date = new Date(),
-                        h = date.getHours()-2,
+                        h = date.getHours(),
                         m = date.getMinutes(),
                         s = date.getSeconds();
                     h = (h < 10) ? "0" + h : h;
