@@ -115,8 +115,8 @@ function checkout_contact_pane_checkout_form_submit($form, &$form_state, $checko
 
         $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
         $order_wrapper->mail = $pane_values['request']['forma']['email'];
-        $order_wrapper->field_email = $pane_values['request']['forma']['email'];
-        $order_wrapper->field_phone = $pane_values['request']['forma']['phone'];
+        $order_wrapper->language('ru')->field_email = $pane_values['request']['forma']['email'];
+        $order_wrapper->language('ru')->field_phone = $pane_values['request']['forma']['phone'];
         $order_wrapper->field_username = $pane_values['request']['forma']['name'];
         $order_wrapper->field_f_region = $pane_values['request']['forma']['region'];
         $order_wrapper->save();
