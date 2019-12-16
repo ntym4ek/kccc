@@ -1,0 +1,203 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function mailer_menu()
+{
+    $items['admin/config/administration/mailer'] = array(
+        'title' => 'Ручная рассылка писем',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mailer_manual_form'),
+        'access arguments' => array('access manager settings'),
+    );
+
+    return $items;
+}
+
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function mailer_cron_queue_info()
+{
+    $queues['manual_mails_queue'] = array(
+        'worker callback' => 'mailer_send_manual_mails',
+    );
+
+    return $queues;
+}
+
+/**
+ * form callback.
+ */
+function mailer_manual_form($form, $form_state)
+{
+    $form['filter'] = array(
+        '#type' => 'select',
+        '#title' => 'Фильтр получателей',
+        '#options' => [
+            1 => 'Все',
+            2 => 'Сотрудники',
+            3 => 'Зарегистрированные пользователи',
+        ],
+        '#default_value' => empty($form_state['values']['filter']) ? [1 => 1, 2 => 2, 3 => 3] : $form_state['values']['filter'],
+    );
+
+    $form['subject'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Тема письма',
+        '#required' => TRUE,
+        '#default_value' => empty($form_state['values']['subject']) ? '' : $form_state['values']['subject'],
+    );
+
+    $form['body'] = array(
+        '#type' => 'text_format',
+        '#title' => 'Тело письма',
+        '#description' => 'Письмо может содержать в тексте HTML разметку со встроенными стилями',
+        '#required' => TRUE,
+        '#default_value' => empty($form_state['values']['body']['value']) ? '' : $form_state['values']['body']['value'],
+    );
+
+    $form['test'] = [
+        '#type' => 'fieldset',
+        '#title' => 'Протестировать',
+    ];
+    $form['test']['email'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Email получателя',
+        '#required' => TRUE,
+        '#default_value' => empty($form_state['values']['subject']) ? '' : $form_state['values']['subject'],
+    );
+    $form['test']['send_test'] = [
+        '#type' => 'submit',
+        '#value' => 'Сначала тест!',
+        '#description' => 'Отправить письмо на указанный ящик',
+        '#validate' => ['mailer_manual_form_test_validate', 'mailer_manual_form_validate'],
+        '#submit' => ['mailer_manual_form_test_submit'],
+    ];
+
+    $form['actions'] = [
+        '#type' => 'container'
+    ];
+    $form['actions']['send_spam'] = [
+        '#type' => 'submit',
+        '#value' => 'Начать спамить',
+        '#description' => 'Отправить письма заданному контингенту',
+        '#validate' => ['mailer_manual_form_filter_validate', 'mailer_manual_form_validate'],
+        '#submit' => ['mailer_manual_form_spam_submit'],
+    ];
+
+    return $form;
+}
+
+/**
+ * form validate callback.
+ */
+function mailer_manual_form_filter_validate($form, $form_state)
+{
+    if (!$form_state['input']['filter'][1] && !$form_state['input']['filter'][2]) {
+        form_set_error('filter', 'Выберите одну или несколько категорий получателей.' );
+    }
+}
+
+/**
+ * form validate callback.
+ */
+function mailer_manual_form_validate($form, $form_state)
+{
+    if (empty($form_state['input']['subject'])) {
+        form_set_error('subject', 'Тема письма обязательна к заполнению.' );
+    }
+    if (empty($form_state['input']['body'])) {
+        form_set_error('body', 'Текст письма обязателен к заполнению.' );
+    }
+}
+
+/**
+ * form validate callback.
+ */
+function mailer_manual_form_test_validate($form, $form_state)
+{
+    if (empty($form_state['input']['email'])) {
+        form_set_error('email', 'Кому отправляем письмо?' );
+    }
+}
+/**
+ * form submit callback.
+ */
+function mailer_manual_form_test_submit($form, &$form_state)
+{
+    $params['subject'] = $form_state['values']['subject'];
+    $params['body'] = $form_state['values']['body']['value'];
+
+    // письмо тестовому Пользователю
+    drupal_mail('mailer', 'manual_mail', $form_state['values']['email'], 'RU', $params);
+
+    // оставляем значения в форме
+    $form_state['rebuild'] = true;
+}
+
+/**
+ * form submit callback.
+ */
+function mailer_manual_form_spam_submit($form, &$form_state)
+{
+    // определение пула получателей
+    $mails = [];
+    if ($form_state['values']['filter'][1]) {
+        $query = db_select('users', 'u');
+        $query->condition('u.status', 1);
+        $query->condition('u.mail', '', '!=');
+        if ($form_state['values']['filter'][2]) {
+            // только для Сотрудников
+            $query->innerJoin('user_roles', 'ur');
+            $query->condition('ur.rid', STAFF);
+        }
+        if ($form_state['values']['filter'][3]) {
+            // все кроме Сотрудников
+            $query->innerJoin('user_roles', 'ur');
+            $query->condition('ur.rid', STAFF, '!=');
+        }
+        $query->fields('u', ['mail']);
+        $mails = $query->execute()->fetchCol();
+    }
+
+    // добавление в очередь отправки
+    if ($mails) {
+        $params['subject'] = $form_state['values']['subject'];
+        $params['body'] = $form_state['values']['body']['value'];
+
+        $queue = DrupalQueue::get('manual_mails_queue');
+        foreach($mails as $mail) {
+            $params['mail'] = $mail;
+
+            $params['account'] = user_load_by_mail($mail);
+            $queue->createItem($params);
+        }
+    }
+
+    drupal_set_message('Письма поставлены в очередь и будут отправлены в ближайшее время');
+}
+
+function mailer_send_manual_mails($params)
+{
+     drupal_mail('mailer', 'manual_mail', $params['mail'], 'ru', $params);
+}
+
+
+/**
+ * Implements hook_mail
+ */
+function mailer_mail($key, &$message, $params)
+{
+    switch($key) {
+
+        case 'manual_mail':
+            $message['subject'] = $params['subject'];
+
+            $message['body'][] = '' .
+                '<h2>Здравствуйте!</h2>' . $params['body'];
+            break;
+    }
+}

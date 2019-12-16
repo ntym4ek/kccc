@@ -558,7 +558,45 @@ function chibs_order_total_amount($order) {
  *
  */
 
-// функция установки подзаголовка для страницы по аналогии с drupal_set_title
+/**
+ * Функции шифрования и дешифрования на базе OpenSSL
+ * https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files
+ */
+
+//$key is our base64 encoded 256bit key that we created earlier. You will probably store and define this key in a config file.
+// todo create new $key
+define('CRYPT_KEY', 'bRuD5WYw5wd0rdHR9yLlM6wt2vteuiniQBqE70nAuhU=');
+
+function my_encrypt($data, $key)
+{
+    // Remove the base64 encoding from our key
+    $encryption_key = base64_decode($key);
+    // Generate an initialization vector
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+    // Encrypt the data using AES 256 encryption in CBC mode using our encryption key and initialization vector.
+    $encrypted = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
+    // The $iv is just as important as the key for decrypting, so save it with our encrypted data using a unique separator (::)
+    return base64_encode($encrypted . '::' . $iv);
+}
+
+function my_decrypt($data, $key)
+{
+    // Remove the base64 encoding from our key
+    $encryption_key = base64_decode($key);
+    // To decrypt, split the encrypted data from our IV - our unique separator used was "::"
+    $list = explode('::', base64_decode($data), 2);
+    if (isset($list[1])) {
+        list($encrypted_data, $iv) = $list;
+        return openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
+    }
+
+    return false;
+}
+
+
+/**
+ * функция установки подзаголовка для страницы по аналогии с drupal_set_title
+ */
 function drupal_set_subtitle($title = NULL, $output = CHECK_PLAIN) {
     $stored_title = &drupal_static(__FUNCTION__);
 

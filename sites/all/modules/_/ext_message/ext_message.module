@@ -1,16 +1,20 @@
 <?php
 
-// константы терминов в словаре Подписки пользователей
-foreach(_ext_message_get_vars() as $index => $var) {
-    define($var['const'], 'ext_message_var_' . $index);
-}
-
-function _ext_message_get_vars()
+/**
+ *  Implementation of hook_menu()
+ */
+function ext_message_menu()
 {
-    return [
-        0 => ['const' => 'EM_ADD_AGENDA',   'title' => 'Добавление мероприятия'],
-        1 => ['const' => 'EM_ADD_NEWS',     'title' => 'Добавление новости'],
-    ];
+    // отписаться от всех писем
+    $items['unsubscribe/%'] = array(
+        'title' => t('Unsubscribe'),
+        'page callback' => 'ext_message_unsubscribe_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
 }
 
 /**
@@ -44,12 +48,12 @@ function ext_message_entity_insert($entity, $type)
 {
     $info = entity_get_info($type);
 
-    // для Препаратов создан один Тип сообщений
-    $entity_bundle = $entity->{$info['entity keys']['bundle']};
-    if (in_array($entity_bundle, ['product_agro', 'product_chem', 'product_fert'])) $entity_bundle = 'product';
-
     // если тип Сообщения существует
     if (isset($entity->{$info['entity keys']['bundle']})) {
+        // для Препаратов создан один Тип сообщений
+        $entity_bundle = $entity->{$info['entity keys']['bundle']};
+        if (in_array($entity_bundle, ['product_agro', 'product_chem', 'product_fert'])) $entity_bundle = 'product';
+
         $message_type_name = $type . '__' . $entity_bundle . '__create';
         if ($message_type = message_type_load($message_type_name)) {
 
@@ -204,6 +208,12 @@ function ext_message_get_message_type_subscription_tid($type)
 function ext_message_preprocess_page(&$vars)
 {
     drupal_add_css(drupal_get_path('module', 'ext_message') . '/css/messages.css');
+
+    // отключить заголовок на странице
+    if (arg(0) == 'unsubscribe') {
+        $vars['header']['title_off'] = true;
+        $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'ext_message') . '/images/header_image.jpg';
+    }
 }
 
 /**
@@ -240,22 +250,8 @@ function ext_message_get_user_subscription_notification_ids($uid)
 {
     $subscripted_notification_ids = [];
 
-    // получаем список Флагов, относящихся к модулю Подписок на Сообщения (message_notify)
-    $fids = array();
-    $flags = message_subscribe_flag_get_flags('taxonomy_term');
-    foreach ($flags as $flag) {
-        $fids[$flag->fid] = $flag->name;
-    }
-
-    // получаем tids Подписок пользователя
-    $query = db_select('flagging', 'fc');
-    $query->condition('entity_type', 'taxonomy_term');
-    $query->condition('fid', array_keys($fids), 'IN');
-    $query->condition('fc.uid', $uid);
-    $query->addField('fc', 'entity_id');
-
     // получаем Типы сообщений, на которые подписан пользователь
-    if ($subscription_tids = $query->execute()->fetchCol()) {
+    if ($uid && $subscription_tids = ext_message_get_user_subscriptions($uid)) {
         $query = db_select('field_data_field_message_type_ref', 'mtr');
         $query->condition('mtr.entity_id', $subscription_tids, 'IN');
         $query->addField('mtr', 'field_message_type_ref_target_id');
@@ -264,6 +260,57 @@ function ext_message_get_user_subscription_notification_ids($uid)
 
     return $subscripted_notification_ids;
 }
+
+/**
+ * Определить tids подписок пользователя на Уведомления
+ * @param $uid
+ * @return mixed
+ */
+function ext_message_get_user_subscriptions($uid)
+{
+    $subscription_tids = [];
+    if ($uid) {
+
+        // получаем список Флагов, относящихся к модулю Подписок на Сообщения (message_notify)
+        $fids = array();
+        $flags = message_subscribe_flag_get_flags('taxonomy_term');
+        foreach ($flags as $flag) {
+            $fids[$flag->fid] = $flag->name;
+        }
+
+        // получаем tids Подписок пользователя
+        $query = db_select('flagging', 'fc');
+        $query->condition('entity_type', 'taxonomy_term');
+        $query->condition('fid', array_keys($fids), 'IN');
+        $query->condition('fc.uid', $uid);
+        $query->addField('fc', 'entity_id');
+
+        // получаем Типы сообщений, на которые подписан пользователь
+        if ($result = $query->execute()) {
+            $subscription_tids = $result->fetchCol();
+        }
+    }
+
+    return $subscription_tids;
+}
+
+/**
+ * Отписка пользователя от всех Уведомлений
+ * @param $uid
+ */
+function ext_message_unsubscribe_all($uid)
+{
+    if ($account = user_load($uid)) {
+        // найти все подписки пользователя
+        if ($subscription_tids = ext_message_get_user_subscriptions($uid)) {
+            // отключить все
+            foreach($subscription_tids as $stid) {
+                flag('unflag', 'subscribe_subscribes', $stid, $account);
+            }
+        }
+    }
+}
+
 
 /** -------------------------------- Токены для уведомлений --------------------------------------------------------- */
 /**
@@ -310,7 +357,6 @@ function ext_message_tokens($type, $tokens, array $data = array(), array $option
 function ext_message_before_after_measurement_save_alter($data)
 {
     // загружаем сезон, нужен для привязки
-    // todo и разрешения Токенов в письме (через custom токены или Field Collections Tokens)
     $season = field_collection_item_load($data['sid']);
 
     $type = 'custom__before_after__' . $data['op'];
@@ -330,3 +376,73 @@ function ext_message_before_after_measurement_save_alter($data)
         }
     }
 }
+
+/**
+ * --------------------------------- Добавить в письмо Отписку ---------------------------------------------------------
+ *
+ * Implement hook_mail_alter().
+ */
+function ext_message_mail_alter(&$message)
+{
+    if ($message['module'] == 'message_notify') {
+        if (!empty($message['to']->uid) && $uid = $message['to']->uid) {
+            // криптованый uid для отписки пользователя
+            $refcode = my_encrypt($uid, CRYPT_KEY);
+
+            // добавить подпись об отписке
+            $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
+                [
+                    '!set_up' => l('set up subscriptions', "person/$uid/subscriptions", ['absolute' => true]),
+                    '!unsubscribe' => l('unsubscribe all', "unsubscribe/$refcode", ['absolute' => true])
+                ]
+            );
+        }
+    }
+}
+
+
+
+/**
+ * --------------------------------- Форма полной отписки от Уведомлений -----------------------------------------------
+ *
+ * menu callback
+ */
+function ext_message_unsubscribe_callback($crypted_uid)
+{
+    if ($crypted_uid && $uid = my_decrypt($crypted_uid, CRYPT_KEY)) {
+        $form = drupal_get_form('ext_message_unsubscribe_form', $uid);
+        return drupal_render($form);
+    } else {
+        drupal_goto('<front>');
+    }
+}
+
+/**
+ * форма подтверждения отписки
+ */
+function ext_message_unsubscribe_form($form, $form_state, $uid)
+{
+    $form['#attributes'] = ['class' => ['unsubscribe-form']];
+    $form['uid'] = ['#type' => 'hidden', '#value' => $uid];
+    $form['text'] = ['#markup' => '<h3 class="text-center">Вы хотите отписаться от получения писем с сайта <p>KCCC.RU</p></h3>'];
+    $form['actions'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['text-center']]
+    ];
+    $form['actions']['unsubscribe'] = [
+        '#type' => 'submit',
+        '#value' => t('Unsubscribe'),
+        '#attributes' => ['class' => ['btn-primary', 'btn-wide']]
+    ];
+    $form['actions']['setup'] = ['#markup' => '<div class="setup-link">' . l(t('Set up subscribes'), "/person/$uid/subscriptions") . '</div>'];
+
+    return $form;
+}
+
+function ext_message_unsubscribe_form_submit($form, &$form_state)
+{
+    ext_message_unsubscribe_all($form_state['values']['uid']);
+
+    $form_state['redirect'] = '<front>';
+}
+

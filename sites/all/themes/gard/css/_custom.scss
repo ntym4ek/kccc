@@ -635,7 +635,7 @@
     .block-content {
       color: #fff;
       margin-bottom: 0;
-      .block-body { background: darken($brand-green, 10%); }
+      .block-body { background: $brand-green; }
       h2 {
         color: #fff;
         padding: 25px 0 15px 0;
@@ -1278,10 +1278,11 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 /* ------------------------------------------------- Форма входа - */
 .toboggan-unified {
-  @include make-sm-column-offset(2);
-  @include make-sm-column(8);
-  @include make-md-column-offset(3);
-  @include make-md-column(6);
+    @include make-sm-column-offset(2);
+    @include make-sm-column(8);
+    @include make-md-column-offset(3);
+    @include make-md-column(6);
+    padding-left: 0; padding-right: 0;
 
   #login-message {
     text-indent: -9999px;
@@ -1293,7 +1294,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     background: $form-background;
     border-top: 6px solid $brand-info; border-left: 1px solid $gray-lighter; border-right: 1px solid $gray-lighter;
     font-size: 1em; text-align: right; line-height: inherit;
-    padding: $grid-gutter-width $grid-gutter-width*2;
+    padding: $grid-gutter-width/2;
     a {
       background: none; border: none;
         color: $text-muted;
@@ -1305,7 +1306,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   #register-form,
   #login-form {
     background: $form-background;
-    padding: 0 $grid-gutter-width*2 $grid-gutter-width $grid-gutter-width*2;
+    padding: 0 $grid-gutter-width/2 $grid-gutter-width/2;
     border: 1px solid $gray-lighter; border-top: none;
     .login-forgot {
       text-align: right;
@@ -1316,6 +1317,16 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     .btn { width: 100%; }
     .g-recaptcha > div { margin: 0 auto; }
   }
+    @media #{$tablet} {
+        padding-left: $grid-gutter-width/2; padding-right: $grid-gutter-width/2;
+        #login-links {
+            padding: $grid-gutter-width $grid-gutter-width*2;
+        }
+        #register-form,
+        #login-form {
+            padding: 0 $grid-gutter-width*2 $grid-gutter-width;
+        }
+    }
 }
 
 /* ------------------------------------------------- Форма восстановления пароля - */
