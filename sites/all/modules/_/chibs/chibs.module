@@ -70,6 +70,13 @@ function chibs_menu() {
 //        'access callback' => TRUE,
 //        'type' => MENU_CALLBACK,
 //    );
+    $items['video'] = array(
+        'title' => 'Video',
+        'description' => 'Video materials of OOO TD Kirovo-Chepetsk Chemical Company',
+        'page callback' => 'chibs_video_router_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
 
     $items['admin/config/administration/manager'] = array(
         'title' => 'Настройки страниц',
@@ -110,7 +117,50 @@ function chibs_js_alter(&$js) {
     }
 }
 
+/**
+ *  --------------------------------------------- Видеоматериалы -------------------------------------------------------
+ */
+/**
+ *  Страница маршрутизатор
+ */
+function chibs_video_router_page()
+{
+    $list = '';
+    foreach(_get_video_router_items() as $item) {
+        $list .= theme('router_card', ['item' => $item]);
+    }
 
+    $output = '' .
+        '<div class="video-router">' .
+            '<div class="row">' .
+                $list .
+            '</div>' .
+        '</div>';
+
+    return $output;
+}
+
+function _get_video_router_items()
+{
+    return [
+        0 => [
+            'title' => t('Our company video'),
+            'description' => t('Youtube channel with our video materials'),
+            'url' => 'http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w',
+            'nofollow' => true,
+            'image_url' => drupal_get_path('module', 'chibs') . '/images/video.jpg',
+            'button_text' => t('Go!'),
+        ],
+        1 => [
+            'title' => t('Video from fields'),
+            'description' => t('Materials of our specialists from the fields'),
+            'url' => 'https://www.youtube.com/channel/UCpV51WPvCXUKG4fBpPNkEdw',
+            'nofollow' => true,
+            'image_url' => drupal_get_path('module', 'chibs') . '/images/video-ex.jpg',
+            'button_text' => t('Go!'),
+        ],
+    ];
+}
 
 /**
  *  --------------------------------------------- Прочие изменения -----------------------------------------------------

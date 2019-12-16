@@ -72,22 +72,22 @@ function _get_agroexpert_router_items()
 {
     return [
         0 => [
-            'title' => 'Онлайн-консультация',
-            'description' => 'Специалисты помогут вам в онлайн-режиме',
+            'title' => t('Consultation online'),
+            'description' => t('Experts will help you online'),
             'url' => '/agro-expert/online',
             'image_url' => drupal_get_path('module', 'agroexpert') . '/images/expert_online.jpg',
             'button_text' => t('Go!'),
         ],
         1 => [
-            'title' => 'Форум',
-            'description' => 'Десятки специалистов и сотни различных мнений',
+            'title' => t('Forum'),
+            'description' => t('Dozens of experts and hundreds of different opinions'),
             'url' => '/forum',
             'image_url' => drupal_get_path('module', 'agroexpert') . '/images/expert_forum.jpg',
             'button_text' => t('Go!'),
         ],
         2 => [
-            'title' => 'Фото-заявка',
-            'description' => 'Подробный ответ по конретному вредителю',
+            'title' => t('Request with photo'),
+            'description' => t('Detailed answer for a specific pest'),
             'url' => '/agro-expert/form',
             'image_url' => drupal_get_path('module', 'agroexpert') . '/images/expert_photo.jpg',
             'button_text' => t('Go!'),
@@ -103,7 +103,7 @@ function agroexpert_preprocess_page(&$vars)
     // установить для страницы параметры шапки
     if (arg(0) == 'agro-expert') {
         $category_title = '';
-        $image = url('/' . drupal_get_path('module', 'agroexpert') . '/images/header_image.jpg');
+        $image = '/' . drupal_get_path('module', 'agroexpert') . '/images/header_image.jpg';
         if (arg(1) != '') {
             $category_title = '<a href="/agro-expert">' . t('Agro Expert') . '</a>';
         }
@@ -117,7 +117,7 @@ function agroexpert_preprocess_page(&$vars)
 
     if (drupal_get_path_alias($_GET['q']) == 'agro-expert/form') {
         $vars['header'] = array(
-            'image' => url('/' . drupal_get_path('module', 'agroexpert') . '/images/header_image.jpg'),
+            'image' => '/' . drupal_get_path('module', 'agroexpert') . '/images/header_image.jpg',
             'category_title' => '<a href="/agro-expert">' . t('Agro Expert') . '</a>',
             'print' => false,
         );
