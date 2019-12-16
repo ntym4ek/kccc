@@ -384,17 +384,19 @@ function ext_message_before_after_measurement_save_alter($data)
  */
 function ext_message_mail_alter(&$message)
 {
-    if ($uid = $message['to']->uid) {
-        // криптованый uid для отписки пользователя
-        $refcode = my_encrypt($uid, CRYPT_KEY);
+    if ($message['module'] == 'message_notify') {
+        if (!empty($message['to']->uid) && $uid = $message['to']->uid) {
+            // криптованый uid для отписки пользователя
+            $refcode = my_encrypt($uid, CRYPT_KEY);
 
-        // добавить подпись об отписке
-        $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
-            [
-                '!set_up' => l('set up subscriptions', "person/$uid/subscriptions", ['absolute' => true]),
-                '!unsubscribe' => l('unsubscribe all', "unsubscribe/$refcode", ['absolute' => true])
-            ]
-        );
+            // добавить подпись об отписке
+            $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
+                [
+                    '!set_up' => l('set up subscriptions', "person/$uid/subscriptions", ['absolute' => true]),
+                    '!unsubscribe' => l('unsubscribe all', "unsubscribe/$refcode", ['absolute' => true])
+                ]
+            );
+        }
     }
 }
 

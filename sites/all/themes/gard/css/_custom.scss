@@ -635,7 +635,7 @@
     .block-content {
       color: #fff;
       margin-bottom: 0;
-      .block-body { background: darken($brand-green, 10%); }
+      .block-body { background: $brand-green; }
       h2 {
         color: #fff;
         padding: 25px 0 15px 0;
