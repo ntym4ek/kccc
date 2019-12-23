@@ -63,7 +63,7 @@ function ext_message_entity_insert($entity, $type)
             // для новостей Уведомления только для материалов из раздела События
             if ($message_type_name == 'node__news__create') {
                 $entity_wr = entity_metadata_wrapper('node', $entity);
-                if ($entity_wr->field_news_category->target_id->value() != 5) {
+                if ($entity_wr->field_news_category->tid->value() != 5) {
                     return;
                 }
             }

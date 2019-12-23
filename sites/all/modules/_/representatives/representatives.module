@@ -264,33 +264,33 @@ function representatives_get_representatives_list()
             71692 => "Курская область",
         ),
     );
-    $representatives['head2'][] = array(
-        'office' => t('Area manager'),
-        'access' => true,
-        'surname' => 'Скодило', 'name' => 'Андрей', 'name2' => 'Алексеевич',
-        'phones' => array('+7 (8332) 76-15-32, доб. 1215', '+7 922 938-65-50'),
-        'emails' => array('td.sale21@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/skodilo.png',
-        'regions' => array(
-            71714 => "Тамбовская область",
-            71704 => "Пензенская область",
-        ),
-    );
-    $representatives['head2'][] = array(
-        'office' => t('Area manager'),
-        'access' => true,
-        'surname' => 'Ухарский', 'name' => 'Евгений', 'name2' => 'Андреевич',
-        'phones' => array('+7 (8332) 76-15-32, доб. 1219'),
-        'emails' => array('td.sale12@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/uharskiy.png',
-        'regions' => array(
-            71688 => "Кемеровская область",
-            71708 => "Рязанская область",
-            71713 => "Смоленская область",
-            71716 => "Томская область",
-            71686 => "Калужская область",
-        ),
-    );
+//    $representatives['head2'][] = array(
+//        'office' => t('Area manager'),
+//        'access' => true,
+//        'surname' => 'Скодило', 'name' => 'Андрей', 'name2' => 'Алексеевич',
+//        'phones' => array('+7 (8332) 76-15-32, доб. 1215', '+7 922 938-65-50'),
+//        'emails' => array('td.sale21@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/skodilo.png',
+//        'regions' => array(
+//            71714 => "Тамбовская область",
+//            71704 => "Пензенская область",
+//        ),
+//    );
+//    $representatives['head2'][] = array(
+//        'office' => t('Area manager'),
+//        'access' => true,
+//        'surname' => 'Ухарский', 'name' => 'Евгений', 'name2' => 'Андреевич',
+//        'phones' => array('+7 (8332) 76-15-32, доб. 1219'),
+//        'emails' => array('td.sale12@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/uharskiy.png',
+//        'regions' => array(
+//            71688 => "Кемеровская область",
+//            71708 => "Рязанская область",
+//            71713 => "Смоленская область",
+//            71716 => "Томская область",
+//            71686 => "Калужская область",
+//        ),
+//    );
 
     $representatives['altai'][] = array(
         // 'role' =>  'rep',
