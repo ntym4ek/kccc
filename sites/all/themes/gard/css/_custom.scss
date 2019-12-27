@@ -1810,7 +1810,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
 
   .v-card-summary {
-    font-size: 12px;
+    font-size: 12px;  white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     //min-height: 80px;
@@ -1821,6 +1821,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     text-align: left;
     width: 100%;
     position: relative;
+
     .fa { position: absolute; right: 15px; }
   }
   .v-card-btm { font-size: 12px; }
