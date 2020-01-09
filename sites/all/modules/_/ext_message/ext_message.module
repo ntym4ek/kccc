@@ -387,13 +387,13 @@ function ext_message_mail_alter(&$message)
     if ($message['module'] == 'message_notify') {
         if (!empty($message['to']->uid) && $uid = $message['to']->uid) {
             // криптованый uid для отписки пользователя
-            $refcode = my_encrypt($uid, CRYPT_KEY);
+            $refcode = rawurlencode(my_encrypt($uid, CRYPT_KEY));
 
             // добавить подпись об отписке
             $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
                 [
-                    '!set_up' => l('set up subscriptions', "person/$uid/subscriptions", ['absolute' => true]),
-                    '!unsubscribe' => l('unsubscribe all', "unsubscribe/$refcode", ['absolute' => true])
+                    '!set_up' => l(t('set up subscriptions'), "person/$uid/subscriptions", ['absolute' => true]),
+                    '!unsubscribe' => l(t('unsubscribe all'), "unsubscribe/$refcode", ['absolute' => true])
                 ]
             );
         }
@@ -409,7 +409,7 @@ function ext_message_mail_alter(&$message)
  */
 function ext_message_unsubscribe_callback($crypted_uid)
 {
-    if ($crypted_uid && $uid = my_decrypt($crypted_uid, CRYPT_KEY)) {
+    if ($crypted_uid && $uid = my_decrypt(rawurldecode($crypted_uid), CRYPT_KEY)) {
         $form = drupal_get_form('ext_message_unsubscribe_form', $uid);
         return drupal_render($form);
     } else {
