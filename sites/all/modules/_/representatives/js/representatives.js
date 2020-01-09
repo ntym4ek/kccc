@@ -1,16 +1,27 @@
 (function ($) {
     Drupal.behaviors.representatives = {
         attach: function (context, settings) {
-            // перенесено в common.js
-            // $('.popup-trigger-js').on("hover", function(e){
-            //     var win = $(this).parent().find('.popup');
-            //     if ($(win).hasClass('pop')) { $(win).removeClass('pop'); }
-            //     else { $(win).addClass('pop'); }
-            // });
-            // $('.popup .close').on("click", function(e){
-            //     var win = $(this).parent();
-            //     $(win).removeClass('pop');
-            // });
+
+            $('.popup-trigger-js').on("click", function(e){
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    $('.rep-item').show();
+                    $('.rep-list .clearfix').show();
+                }
+                else {
+                    $('.popup-trigger-js').removeClass('selected');
+                    $('.rep-item').show();
+
+                    $(this).addClass('selected');
+                    var region = $(this).data('region');
+                    $('.rep-item').each(function(){
+                        if(!$(this).hasClass(region)) {
+                            $(this).hide();
+                            $('.rep-list .clearfix').hide();
+                        }
+                    });
+                }
+            });
             return false;
         }
     };

@@ -2,13 +2,14 @@
     position: relative;
 }
 
-.r-separator {
-    background: #3A9027;
-    color: #fff; font-weight: 400;
-    padding: 10px 20px; margin: 0;
-    float: left;
-    width: 100%;
+.rep-title {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
 }
+.rep-title h3 {
+    font-weight: 400;
+}
+
 .map {
     position: relative;
     /*overflow: hidden; не видно часть всплывающих окон*/
@@ -22,7 +23,6 @@
 }
 .map-title h3 {
     font-weight: 400;
-    margin-bottom: 5px;
 }
 .map-title h3 i {
     color: #b3b3b3;
@@ -30,6 +30,7 @@
 }
 .map-title p {
     color: #b3b3b3;
+    margin-top: -5px;
 }
 
 
@@ -121,7 +122,8 @@
     -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out;
     max-width: inherit;
 }
-.rep .popup-trigger-js:hover .reg{ opacity: 1; }
+.rep .popup-trigger-js:hover .reg{ opacity: .5; }
+.rep .popup-trigger-js.selected .reg{ opacity: 1; }
 
 
 .reg.altai          { top: 6px; left: -32px; }
@@ -160,12 +162,11 @@
 
 .rep-box {
     border: 1px solid #eee; border-right: none; border-bottom: none;
+    margin-top: 15px;
     height: 235px;
     position: relative; top: initial; left: initial;
 }
-.rep-box:nth-child(3n+1) {
-    border-right: 1px solid #eee;
-}
+
 .rep-box .media-heading {
     color: #3A9126; font-size: 16px;
 }
@@ -194,6 +195,8 @@
     text-decoration: underline;
 }
 .rep-box.last a.mail { left: 30px; }
+
+.rep-item.contact-card { min-height: 150px; }
 
 @media only screen and (min-width : 0) and (max-width : 1440px) {
     .map > img { height: initial; width: 100%; }

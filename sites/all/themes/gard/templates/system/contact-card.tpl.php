@@ -27,6 +27,7 @@
             <?php endforeach; ?>
         </div>
         <? endif; ?>
+
         <? if (!empty($contact['emails'])): ?>
         <div class="contact-emails">
             <?php foreach ($contact['emails'] as $email): ?>

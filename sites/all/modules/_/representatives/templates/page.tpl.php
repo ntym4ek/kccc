@@ -6,22 +6,10 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
 
 <div class="representatives">
     <div class="row">
-        <div class="media user-card col-sm-6">
-            <div class="media-left">
-                <img class="media-object" src="<? print $rep00['photo']; ?>" alt="">
-            </div>
-            <div class="media-body">
-                <h4 class="user-name"><? print $rep00['surname']; ?> <span><? print $rep00['name'] . ' ' . $rep00['name2'] ; ?></span></h4>
-                <div class="dep"><? print $rep00['office']; ?></div>
-                <? if (!empty($rep00['phones'][0])): ?>
-                    <div class="phones">Телефон</div>
-                    <? foreach ($rep00['phones'] as $phone): ?>
-                        <? $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-                        <div class="phone"><? print $phone; ?><a href="tel:<? print $phone_raw; ?>" rel="nofollow"><i class="icon-phone"></i>Позвонить</a></div>
-                    <? endforeach; ?>
-                <? endif; ?>
-            </div>
-        </div>
+        <? print theme('contact_card', array(
+            'contact' => $rep00,
+            'options' => ['class' => 'col-md-12'])); ?>
+
         <? $i = 0; ?>
         <? foreach ($rep01 as $key_c => $rep): ?>
         <? $collapse = [];
@@ -34,15 +22,15 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
                 'contact' => $rep,
                 'collapse' => $collapse,
                 'options' => ['class' => 'col-md-6']));
-           if ((++$i) % 2) print '<div class="clearfix"></div>';
+           if (($i++) % 2) print '<div class="clearfix"></div>';
         ?>
 
         <? endforeach; ?>
 
         <div class="col-xs-12">
-            <div class="map-title ">
+            <div class="map-title">
                 <h3><? print t('Regional representatives map'); ?></h3>
-                <p><? print t('Point cursor to sprout at region'); ?></p>
+                <p><? print t('Click at sprout in region to filter representatives below'); ?></p>
             </div>
         </div>
 
@@ -51,79 +39,45 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
 
             <?php foreach ($representatives as $key_rs => $reps): ?>
                 <div class="rep <? print $key_rs; ?>">
-                    <div class="popup-trigger-js">
+                    <div class="popup-trigger-js" data-region="<? print $key_rs; ?>">
                         <img class="reg <? print $key_rs; ?>" src="/<? print $rep00['region_path'] . $key_rs . '.png'; ?>"/>
-
-                        <div class="popup popup-bottom-left popup-<? print count($reps); ?>x">
-                            <div class="header">
-                                <img class="icon" src="/<? print $rep00['icon_l_path'] . $key_rs . '.png'; ?>"/>
-                                <? print array_shift($reps[0]['regions']); ?>
-                            </div>
-                            <?php foreach ($reps as $key_r => $rep): ?>
-                                <?php print theme('contact_card', array('contact' => $rep)); ?>
-                            <?php endforeach; ?>
-                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
         <div class="clearfix"></div>
-<!--        <h2 class="r-separator col-xs-12">-->
-<!--            Официальные представители-->
-<!--        </h2>-->
-<!---->
-<!--        --><?php //$counter = 0; ?>
-<!--        --><?// foreach ($representatives as $key_rs => $reps): ?>
-<!--            --><?// foreach ($reps as $rep): ?>
-<!--                --><?// if ($rep['role'] == 'rep'): ?>
-<!--                --><?// $phones_arr = array(); ?>
-<!---->
-<!--                    <div class="media user-card rep-box --><?// print $key_rs; ?><!-- col-sm-6 col-md-4">-->
-<!--                        <div class="media-heading">-->
-<!--                            <img class="icon" src="/--><?// print $rep00['icon_d_path'] . $key_rs . '.png'; ?><!--"/>-->
-<!--                            --><?// print key_to_region($key_rs); ?>
-<!--                        </div>-->
-<!--                        <div class="media-body">-->
-<!--                            <h4 class="user-name">--><?// print $rep['surname']; ?><!--<br /><span>--><?// print $rep['name'] . ' ' . $rep['name2'] ; ?><!--</span></h4>-->
-<!--                            <div class="dep">--><?// print $rep['office']; ?><!--</div>-->
-<!--                        </div>-->
-<!--                        <div class="media-bottom">-->
-<!--                            --><?// if (!empty($rep['phones'][0])): ?>
-<!--                                --><?php //foreach ($rep['phones'] as $phone): ?>
-<!--                                    --><?// $phone_raw = str_replace(array('(', ')', '-',' '), '', $phone)?>
-<!--                                    <div class="phone"><a href="tel:--><?// print $phone_raw; ?><!--" rel="nofollow">--><?// print $phone; ?><!--</a></div>-->
-<!--                                --><?php //endforeach; ?>
-<!--                            --><?// endif; ?>
-<!--                            --><?// if (!empty($rep['emails'])): ?>
-<!--                                --><?// foreach ($rep['emails'] as $email): ?>
-<!--                                    <div class="email"><a href="e(--><?// print $email; ?><!--)" class="eAddr-encoded eAddr-html" rel="nofollow"></a></div>-->
-<!--                                --><?// endforeach; ?>
-<!--                            --><?// endif; ?>
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                --><?php //endif; ?>
-<!--                --><?php //$counter++; ?>
-<!--            --><?php //endforeach; ?>
-<!--        --><?php //endforeach; ?>
-<!---->
-<!--        --><?php //$counter = 3 - ($counter % 3); ?>
-<!--        --><?php //$counter = $counter > 2 ? 0 : $counter; ?>
-<!--        --><?php //for($i=0; $i < $counter; $i++): ?>
-<!--            <div class="media user-card rep-box --><?// print $key_rs; ?><!-- hidden-sm col-md-4">-->
-<!--            </div>-->
-<!--        --><?php //endfor; ?>
 
-        <div class="rep-box last col-sm-6 col-md-4">
-            <? print t('If there is no representative in your region, contact our central office.'); ?>
+        <div class="rep-list">
+            <div class="rep-title">
+                <h3>Официальные представители</h3>
+            </div>
+
+            <?php $counter = 0; ?>
+            <? foreach ($representatives as $key_rs => $reps): ?>
+                <? foreach ($reps as $rep): ?>
+                    <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
+                        $rep['office'] .= '<br />' . current($rep['regions']);
+                        print theme('contact_card', array(
+                            'contact' => $rep,
+                            'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . $key_rs]));
+                        if ($counter++ % 2) print '<div class="clearfix"></div>';
+                    } ?>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
         </div>
-        <div class="rep-box last col-sm-6 col-md-4">
-            <span style="display: inline-block; font-size: 14px; margin-bottom: 20px;">613048, <? print t('Kirov region'); ?>,<br /><? print t('Kirovo-Chepetsk'); ?>, <? print t('Proizvodstvennaya, 6'); ?></span>
-            +7 (8332) 76-15-20
-            <a href="e(<? print email_antibot_encode('td@kccc.ru'); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
-        </div>
-        <div class="rep-box last col-sm-6 col-md-4">
-            <? print t('<a href="/en/info/contacts" class="contacts">Contacts page <i class="icon-arrow_right"></i></a>'); ?>
-        </div>
+
+            <div class="clearfix"></div>
+
+            <div class="rep-box last col-sm-6 col-md-6">
+                <? print t('If there is no representative in your region, contact our central office.'); ?>
+                <? print t('<a href="/en/info/contacts" class="contacts">Contacts page <i class="icon-arrow_right"></i></a>'); ?>
+            </div>
+            <div class="rep-box last col-sm-6 col-md-6">
+                <span style="display: inline-block; font-size: 14px; margin-bottom: 20px;">613048, <? print t('Kirov region'); ?>,<br /><? print t('Kirovo-Chepetsk'); ?>, <? print t('Proizvodstvennaya, 6'); ?></span>
+                +7 (8332) 76-15-20
+                <a href="e(<? print email_antibot_encode('td@kccc.ru'); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
+            </div>
+
 
     </div>
 </div>
