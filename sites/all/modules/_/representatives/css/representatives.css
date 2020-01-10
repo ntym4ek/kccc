@@ -122,21 +122,21 @@
     -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out;
     max-width: inherit;
 }
-.rep .popup-trigger-js:hover .reg{ opacity: .5; }
+.rep .popup-trigger-js:hover .reg{ opacity: .7; }
 .rep .popup-trigger-js.selected .reg{ opacity: 1; }
 
 
 .reg.altai          { top: 6px; left: -32px; }
-.reg.amur           { top: 4px; left: -53px; }
+.reg.RU-AMU           { top: 4px; left: -53px; }
 .reg.bashkortostan  { top: -1px; left: -15px; }
-.reg.belgorod       { top: 27px; left: -11px; }
+.reg.RU-BEL       { top: 27px; left: -11px; }
 .reg.vladimir       { top: 15px; left: -2px; }
 .reg.voronezh       { top: 14px; left: -9px; }
-.reg.ivanovo        { top: 22px; left: -7px; }
+.reg.RU-IVA        { top: 22px; left: -7px; }
 .reg.kaliningrad    { top: 21px; left: -2px; }
 .reg.kirov          { top: 6px; left: -26px; }
 .reg.kostroma       { top: 18px; left: -21px; }
-.reg.krasnodar      { top: 28px; left: -21px; }
+.reg.RU-KDA      { top: 28px; left: -21px; }
 .reg.krasnoyarsk    { top: -191px; left: -54px; }
 .reg.kursk          { top: 1px; left: -50px; }
 .reg.lipetsk        { top: 24px; left: -5px; }
@@ -155,7 +155,7 @@
 .reg.tyumen         { top: -134px; left: -39px; }
 .reg.udmurtia       { top: 35px; left: -18px; }
 .reg.ulyanovsk      { top: 16px; left: -13px; }
-.reg.chelyabinsk    { top: 14px; left: -26px; }
+.reg.RU-CHE    { top: 14px; left: -26px; }
 .reg.chuvashiya     { top: 22px; left: -8px; }
 .reg.yaroslavl      { top: 25px; left: -6px; }
 

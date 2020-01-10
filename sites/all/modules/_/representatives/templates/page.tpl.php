@@ -1,22 +1,22 @@
 <?php
-$rep00 = $representatives['head'][0]; unset($representatives['head']);
-$rep01 = $representatives['head2']; unset($representatives['head2']);
 
 ?>
 
 <div class="representatives">
     <div class="row">
         <? print theme('contact_card', array(
-            'contact' => $rep00,
+            'contact' => $sales['director'],
             'options' => ['class' => 'col-md-12'])); ?>
 
         <? $i = 0; ?>
-        <? foreach ($rep01 as $key_c => $rep): ?>
+        <? foreach ($sales['heads'] as $key_c => $rep): ?>
         <? $collapse = [];
             if (isset($rep['regions'])) {
                 $collapse['id'] = $key_c;
                 $collapse['title'] = t('Regions list');
-                $collapse['content'] = implode(', ', $rep['regions']);
+                $regions = [];
+                foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
+                $collapse['content'] = implode(', ', $regions);
             }
            print theme('contact_card', array(
                 'contact' => $rep,
@@ -34,35 +34,35 @@ $rep01 = $representatives['head2']; unset($representatives['head2']);
             </div>
         </div>
 
-        <div class="map col-xs-12">
-            <img src="/<? print $rep00['region_path'] . 'map.png'; ?>" />
+<!--        <div class="map col-xs-12">-->
+<!--            <img src="/--><?// print $rep00['region_path'] . 'map.png'; ?><!--" />-->
+<!---->
+<!--            --><?php //foreach ($representatives as $key_rs => $reps): ?>
+<!--                <div class="rep --><?// print $key_rs; ?><!--">-->
+<!--                    <div class="popup-trigger-js" data-region="--><?// print $key_rs; ?><!--">-->
+<!--                        <img class="reg --><?// print $key_rs; ?><!--" src="/--><?// print $rep00['region_path'] . $key_rs . '.png'; ?><!--"/>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            --><?php //endforeach; ?>
+<!--        </div>-->
+        <div id="mapsvg" class="map col-xs-12"></div>
 
-            <?php foreach ($representatives as $key_rs => $reps): ?>
-                <div class="rep <? print $key_rs; ?>">
-                    <div class="popup-trigger-js" data-region="<? print $key_rs; ?>">
-                        <img class="reg <? print $key_rs; ?>" src="/<? print $rep00['region_path'] . $key_rs . '.png'; ?>"/>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
         <div class="clearfix"></div>
 
-        <div class="rep-list">
+        <div class="rep-list col-xs-12">
             <div class="rep-title">
                 <h3>Официальные представители</h3>
             </div>
 
             <?php $counter = 0; ?>
-            <? foreach ($representatives as $key_rs => $reps): ?>
-                <? foreach ($reps as $rep): ?>
-                    <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
-                        $rep['office'] .= '<br />' . current($rep['regions']);
-                        print theme('contact_card', array(
-                            'contact' => $rep,
-                            'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . $key_rs]));
-                        if ($counter++ % 2) print '<div class="clearfix"></div>';
-                    } ?>
-                <?php endforeach; ?>
+            <? foreach ($sales['reps'] as $rep): ?>
+                <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
+                    $rep['office'] .= '<br />' . current($rep['regions'])['name'];
+                    print theme('contact_card', array(
+                        'contact' => $rep,
+                        'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . current($rep['regions'])['iso']]));
+                    if ($counter++ % 2) print '<div class="clearfix"></div>';
+                } ?>
             <?php endforeach; ?>
         </div>
 
