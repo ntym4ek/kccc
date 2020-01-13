@@ -30,28 +30,16 @@
         <div class="col-xs-12">
             <div class="map-title">
                 <h3><? print t('Regional representatives map'); ?></h3>
-                <p><? print t('Click at sprout in region to filter representatives below'); ?></p>
+                <p><? print t('Click at region to filter representatives list below'); ?></p>
             </div>
         </div>
 
-<!--        <div class="map col-xs-12">-->
-<!--            <img src="/--><?// print $rep00['region_path'] . 'map.png'; ?><!--" />-->
-<!---->
-<!--            --><?php //foreach ($representatives as $key_rs => $reps): ?>
-<!--                <div class="rep --><?// print $key_rs; ?><!--">-->
-<!--                    <div class="popup-trigger-js" data-region="--><?// print $key_rs; ?><!--">-->
-<!--                        <img class="reg --><?// print $key_rs; ?><!--" src="/--><?// print $rep00['region_path'] . $key_rs . '.png'; ?><!--"/>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            --><?php //endforeach; ?>
-<!--        </div>-->
         <div id="mapsvg" class="map col-xs-12"></div>
-
         <div class="clearfix"></div>
 
         <div class="rep-list col-xs-12">
             <div class="rep-title">
-                <h3>Официальные представители</h3>
+                <h3><? print t('Representatives list'); ?></h3>
             </div>
 
             <?php $counter = 0; ?>
