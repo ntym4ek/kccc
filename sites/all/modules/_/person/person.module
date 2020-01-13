@@ -529,8 +529,9 @@ function person_user_register_form_validate($form, $form_state)
         form_set_error('surname', t('Surname is required'));
     }
 
-    // отсеять нежелательные email
-    foreach(['!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray.com!s', '!.*@.*\.dynainbox.com!s'] as $pattern) {
+    // отсеять нежелательные (спамерские) email
+    foreach(['!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray.com!s', '!.*@.*\.dynainbox.com!s'
+                , '!.*@.*\.mailsmail.ru!s', '!.*@.*\.mailyaha.ru!s', '!.*@.*\.aolmail.fun!s'] as $pattern) {
         if (preg_match($pattern, $form_state['values']['mail'])) {
             form_set_error('mail', t('E-mail is not valid.'));
         }
