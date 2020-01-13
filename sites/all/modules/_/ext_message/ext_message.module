@@ -6,10 +6,9 @@
 function ext_message_menu()
 {
     // отписаться от всех писем
-    $items['unsubscribe/%'] = array(
+    $items['unsubscribe'] = array(
         'title' => t('Unsubscribe'),
         'page callback' => 'ext_message_unsubscribe_callback',
-        'page arguments' => array(1),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -385,15 +384,14 @@ function ext_message_before_after_measurement_save_alter($data)
 function ext_message_mail_alter(&$message)
 {
     if ($message['module'] == 'message_notify') {
-        if (!empty($message['to']->uid) && $uid = $message['to']->uid) {
-            // криптованый uid для отписки пользователя
-            $refcode = rawurlencode(my_encrypt($uid, CRYPT_KEY));
+        if (!empty($message['to']) && $message['to']->mail && $uid = $message['to']->uid) {
+            $mail = $message['to']->mail;
 
             // добавить подпись об отписке
             $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
                 [
                     '!set_up' => l(t('set up subscriptions'), "person/$uid/subscriptions", ['absolute' => true]),
-                    '!unsubscribe' => l(t('unsubscribe all'), "unsubscribe/$refcode", ['absolute' => true])
+                    '!unsubscribe' => l(t('unsubscribe all'), "unsubscribe", ['absolute' => true, 'query' => ['mail' => $mail]])
                 ]
             );
         }
@@ -407,9 +405,10 @@ function ext_message_mail_alter(&$message)
  *
  * menu callback
  */
-function ext_message_unsubscribe_callback($crypted_uid)
+function ext_message_unsubscribe_callback()
 {
-    if ($crypted_uid && $uid = my_decrypt(rawurldecode($crypted_uid), CRYPT_KEY)) {
+    $mail = empty($_GET['mail']) ? '' : $_GET['mail'];
+    if ($mail && $uid = user_load_by_mail($mail)) {
         $form = drupal_get_form('ext_message_unsubscribe_form', $uid);
         return drupal_render($form);
     } else {

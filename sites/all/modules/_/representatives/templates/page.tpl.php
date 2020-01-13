@@ -1,5 +1,6 @@
 <?php
-
+    // карта России на базе SVG
+    // интерактив на карте на базе плагина https://mapsvg.com
 ?>
 
 <div class="representatives">
