@@ -489,7 +489,7 @@ function representatives_get_representatives_list()
         'surname' => 'Широкий', 'name' => 'Михаил', 'name2' => 'Николаевич',
         'phones' => array('+7 (922) 957-11-19'),
         'emails' => array(),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/shirokiy.png',
         'regions' => array(
             71669 => [], //Краснодарский край",
         ),
@@ -692,7 +692,7 @@ function representatives_get_representatives_list()
         'surname' => 'Агеев', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
         'phones' => array('+7 (922) 900-75-85'),
         'emails' => array('mordoviya@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/ageev_s.png',
         'regions' => array(
             71659 => [], //Республика Мордовия",
         ),

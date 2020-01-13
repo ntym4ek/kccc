@@ -35,6 +35,5 @@ hide($form['intro']);
     </div>
 
     <? print drupal_render_children($form); ?>
-
 </div>
 

@@ -54,7 +54,7 @@
                 source: "/sites/all/modules/_/representatives/images/map/russia.svg",
                 title: "Russia",
                 width: 1224.449, height: 760.6203,
-                colors: {baseDefault: "#000000", background: "transparent", directory: "#fafafa", status: {}, stroke: "#ac9d8f", hover: "rgba(187,230,87,0.5)", selected: "#bbe657"},
+                colors: {baseDefault: "#000000", background: "transparent", directory: "#fafafa", status: {}, stroke: "#DECEC1", hover: "#B0EB28", selected: "#134A07"},
                 viewBox: [0,0,1224.449,760.6203],
                 zoom: {on: true, limit: [0, 10], delta: 2, buttons: {on: true, location: "left"}, mousewheel: true},
                 scroll: {on: true, limit: false, background: false, spacebar: false},
@@ -63,15 +63,6 @@
                 tooltips: {mode: tooltip, on: false, priority: "local", position: "top-right"},
                 onClick: onClick,
                 afterLoad: afterLoad,
-
-                // markers: [
-                //     {
-                //         attached: true,
-                //         src: "/sites/all/modules/_/representatives/images/map/sprout.png",
-                //         width: 20, height: 48,
-                //         x: 536,y: 462,
-                //     }
-                // ]
             });
 
 
