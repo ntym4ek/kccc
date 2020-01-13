@@ -5,18 +5,21 @@
             var regions_by_iso = settings.representatives.sales.regions_by_iso;
 
             var tooltip = function(jQueryTooltipObj, mapObject, mapsvgInstance) {
-                return regions_by_iso[this.id].name;
-                // return  "<div>" +
-                //             "<h4>" + regions_by_iso[this.id].name + "</h4>" +
-                //             "<p>2 представителя</p>" +
-                //             "<span>нажмите, чтобы отфильтровать список ниже</span>" +
-                //         "</div>";
+                var content = "<p>" + Drupal.t("There are no representatives") + "</p>";
+                if (regions_by_iso[this.id].reps) {
+                    content = "<p>" + Drupal.formatPlural(regions_by_iso[this.id].reps, "@count representative", "@count representatives") + "</p>" +
+                                "<span>" + Drupal.t("Click to filter representatives list below") + "</span>";
+                }
+                return  "<div>" +
+                            "<h4>" + regions_by_iso[this.id].name + "</h4>" +
+                            content +
+                        "</div>";
             };
 
             var onClick = function(e){
                 if (this.data.selected) {
                     this.data.selected = false;
-                    $("#mapsvg").deselectRegion(this);
+                    this.mapsvg.deselectRegion(this);
                     $(".rep-item").show();
                     $(".rep-list .clearfix").show();
                 }
@@ -38,21 +41,12 @@
             var afterLoad = function () {
                 // данные карты, включая регионы
                 var data = this.getData();
-                var markers = [];
                 data.regions.forEach(function(r){
                     if (regions_by_iso[r.id] && regions_by_iso[r.id].reps) {
-                        var center = r.getCenter();
-                        markers.push({
-                            attached: true,
-                            src: "/sites/all/modules/_/representatives/images/map/sprout.png",
-                            width: 20, height: 48,
-                            x: center[0]-300,y: center[1]+250,
-                            tooltip: r.title,
-                        });
+                        // закрасить регионы присутствия
+                        r.setFill("#3a9027");
                     }
                 });
-
-                this.setMarkers(markers);
             };
 
             $("#mapsvg").mapSvg({
@@ -66,9 +60,9 @@
                 scroll: {on: true, limit: false, background: false, spacebar: false},
                 cursor: "pointer",
                 responsive: true,
-                tooltips: {mode: tooltip, on: false, priority: "local", position: "bottom-right"},
+                tooltips: {mode: tooltip, on: false, priority: "local", position: "top-right"},
                 onClick: onClick,
-                // afterLoad: afterLoad,
+                afterLoad: afterLoad,
 
                 // markers: [
                 //     {

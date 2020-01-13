@@ -1,0 +1,118 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/gard/css/_include";
+
+.representatives {
+    position: relative;
+}
+
+.rep-title {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+.rep-title h3 {
+    font-weight: 400;
+}
+
+.map {
+    position: relative;
+    /*overflow: hidden; не видно часть всплывающих окон*/
+}
+.map > img {
+    margin-left: -15px;
+    z-index: 0;
+}
+.map-title {
+    border-bottom: 1px solid #ddd;
+}
+.map-title h3 {
+    font-weight: 400;
+}
+.map-title h3 i {
+    color: #b3b3b3;
+    font-size: .7em;
+}
+.map-title p {
+    color: #b3b3b3;
+    margin-top: -5px;
+}
+
+
+.rep-box .header,
+.rep .header {
+    background: #3A9027;
+    border-top-left-radius: 4px; border-top-right-radius: 4px;
+    padding: 5px 15px;
+    width: 100%;
+    color: #fff; font-size: 16px; line-height: 28px;
+}
+.rep .header .icon  {
+    margin-right: 10px;
+    width: 30px;
+}
+.rep .contact-card {
+    padding: 20px;
+}
+
+
+.rep-box {
+    border: 1px solid #eee; border-right: none; border-bottom: none;
+    margin-top: 15px;
+    height: 235px;
+    position: relative; top: initial; left: initial;
+}
+
+.rep-box .media-heading {
+    color: #3A9126; font-size: 16px;
+}
+.rep-box .media-heading img { width: 30px; }
+
+.rep-box.user-card .phone a,
+.rep-box.user-card .email a {
+    float: none;
+    width: initial;
+}
+
+.rep-box.last {
+    color: #fff; font-size: 15px;
+    background: #3A9027;
+    border: none;
+    padding: 30px;
+}
+.rep-box.last a i {
+    font-size: 12px;
+    position: absolute; top: 5px; right: -20px;
+}
+.rep-box.last a {
+    color: #fff;
+    position: absolute;
+    bottom: 30px; right: 50px;
+    text-decoration: underline;
+}
+.rep-box.last a.mail { left: 30px; }
+
+.rep-item.contact-card { min-height: 150px; }
+
+@media only screen and (min-width : 0) and (max-width : 1440px) {
+    .map > img { height: initial; width: 100%; }
+    .rep { display: none; }
+}
+@media only screen and (min-width : 0) and (max-width : 768px) {
+    .rep-box.last {
+        padding: 15px 30px;
+        height: 110px;
+    }
+}
+
+.map .mapsvg-tooltip {
+    font-size: 1em;
+    padding: 10px 15px;
+    h4 {
+        border-bottom: 1px solid #ddd;
+        margin: 0 0 10px 0;
+        padding-bottom: 4px;
+    }
+    p { margin-bottom: 4px; }
+    span {
+        color: $text-muted; font-size: $font-size-small;
+    }
+}

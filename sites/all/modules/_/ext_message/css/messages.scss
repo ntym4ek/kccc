@@ -70,8 +70,10 @@
     }
     .setup-link {
         margin-top: $grid-gutter-width/6;
-        a { color: $text-muted;
+        a {
+            color: $text-muted;
             font-size: $font-size-small;
+            text-transform: lowercase;
         }
     }
     @media #{$tablet} {

@@ -900,7 +900,7 @@ function representatives_get_representatives_list()
                 foreach($rep['regions'] as $region_tid => &$region_arr) {
                     $region_arr = empty($regions_by_tid[$region_tid]) ? [] : $regions_by_tid[$region_tid];
                     if ($key_d == 'reps') {
-                        $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps'] = empty($regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']) ? 1 : $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']++;
+                        $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps'] = empty($regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']) ? 1 : $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']+1;
                     }
                 }
             }
