@@ -408,8 +408,8 @@ function ext_message_mail_alter(&$message)
 function ext_message_unsubscribe_callback()
 {
     $mail = empty($_GET['mail']) ? '' : $_GET['mail'];
-    if ($mail && $uid = user_load_by_mail($mail)) {
-        $form = drupal_get_form('ext_message_unsubscribe_form', $uid);
+    if ($mail && $user = user_load_by_mail($mail)) {
+        $form = drupal_get_form('ext_message_unsubscribe_form', $user->uid);
         return drupal_render($form);
     } else {
         drupal_goto('<front>');
