@@ -272,7 +272,7 @@ function ext_message_get_user_subscriptions($uid)
 
         // получаем список Флагов, относящихся к модулю Подписок на Сообщения (message_notify)
         $fids = array();
-        $flags = message_subscribe_flag_get_flags('taxonomy_term');
+        $flags = message_subscribe_flag_get_flags('taxonomy_term', 'subscribes');
         foreach ($flags as $flag) {
             $fids[$flag->fid] = $flag->name;
         }
@@ -284,7 +284,7 @@ function ext_message_get_user_subscriptions($uid)
         $query->condition('fc.uid', $uid);
         $query->addField('fc', 'entity_id');
 
-        // получаем Типы сообщений, на которые подписан пользователь
+        // получаем термины словаря Подписки, на которые подписан пользователь
         if ($result = $query->execute()) {
             $subscription_tids = $result->fetchCol();
         }
@@ -304,7 +304,7 @@ function ext_message_unsubscribe_all($uid)
         if ($subscription_tids = ext_message_get_user_subscriptions($uid)) {
             // отключить все
             foreach($subscription_tids as $stid) {
-                flag('unflag', 'subscribe_subscribes', $stid, $account);
+                flag('unflag', 'subscribe_subscribes_email', $stid, $account);
             }
         }
     }
@@ -423,7 +423,7 @@ function ext_message_unsubscribe_form($form, $form_state, $uid)
 {
     $form['#attributes'] = ['class' => ['unsubscribe-form']];
     $form['uid'] = ['#type' => 'hidden', '#value' => $uid];
-    $form['text'] = ['#markup' => '<h3 class="text-center">Вы хотите отписаться от получения писем с сайта <p>KCCC.RU</p></h3>'];
+    $form['text'] = ['#markup' => '<h3 class="text-center">' . t('You going to unsubscribe from our E-Mails') . '</h3>']; // Вы хотите отписаться от получения писем с сайта <p>KCCC.RU</p>
     $form['actions'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['text-center']]
@@ -445,3 +445,46 @@ function ext_message_unsubscribe_form_submit($form, &$form_state)
     $form_state['redirect'] = '<front>';
 }
 
+/**
+ * --------------------------------- Всех подписать и отправить письма -------------------------------------------------
+ */
+function ext_message_spam_subscribe()
+{
+    global $user;
+
+    // todo список всех пользователей
+    $users = [$user];
+
+    // подписать пользователя на все подписки
+    foreach ($users as $user) {
+        ext_message_subscribe_all($user->uid);
+
+        // отправить письмо (через очередь)
+        $params['subject'] = 'Обновление функционала на сайте kccc.ru';
+        $params['body'] = '<p>На нашем сайте <a href="https://kccc.ru">kccc.ru</a> появилась возможность получать уведомления о появлении новых материалов в разделах <a href="https://kccc.ru/catalog/agrochemicals">Препараты</a>, <a href="https://kccc.ru/agenda">Афиша</a>, <a href="https://kccc.ru/info/job">Вакансии</a>, <a href="https://kccc.ru/reviews">Отзывы</a>, <a href="https://kccc.ru/blogs">Блоги</a>, <a href="https://kccc.ru/news/events">Новости</a>, <a href="https://kccc.ru/survey">Опросы</a> и <a href="https://kccc.ru/before-after">Препараты в поле</a>.</p>' .
+                          '<p>Уведомления будут приходить в Личный кабинет и на электронную почту.</p>' .
+                          '<p>Мы подписали Вас на все уведомления, но если Вам интересны только часть из них, настроить можно в Личном кабинете в разделе <a href="https://kccc.ru/person/' . $user->uid . '/subscriptions">Подписки</a>.</p>';
+
+        $queue = DrupalQueue::get('manual_mails_queue');
+        $params['mail'] = $user->mail;
+
+        $params['account'] = $user;
+        $queue->createItem($params);
+    }
+}
+
+/**
+ * Подписать пользователя на все Уведомления
+ */
+function ext_message_subscribe_all($uid)
+{
+    if ($account = user_load($uid)) {
+        // пройтись по всем подпискам
+        if ($subscription_terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('subscribes')->vid)) {
+            foreach($subscription_terms as $sterm) {
+                flag('flag', 'subscribe_subscribes', $sterm->tid, $account);
+                flag('flag', 'subscribe_subscribes_email', $sterm->tid, $account);
+            }
+        }
+    }
+}

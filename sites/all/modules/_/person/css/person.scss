@@ -355,7 +355,8 @@
 
 /* ------------------------------------------------- Подписки ------------------------------------------------------- */
 .profile .subscriptions {
-    .views-field-ops {
+    .views-field-ops,
+    .views-field-ops-1 {
         width: 150px;
         vertical-align: middle;
         a { color: $brand-primary; }
