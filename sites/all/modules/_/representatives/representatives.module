@@ -778,7 +778,7 @@ function representatives_get_representatives_list()
         'surname' => 'Дёмин', 'name' => 'Андрей', 'name2' => 'Дмитриевич',
         'phones' => array('+7 (922) 665-01-07'),
         'emails' => array('tambov1@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/demin.png',
         'regions' => array(
             71714 => [], //Тамбовская область",
         ),
@@ -850,7 +850,7 @@ function representatives_get_representatives_list()
         'surname' => 'Антонов', 'name' => 'Александр', 'name2' => 'Викторович',
         'phones' => array('+7 (922) 747-26-40'),
         'emails' => array('chelyabinsk1@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/antonov.png',
         'regions' => array(
             71720 => [], //Челябинская область",
         ),

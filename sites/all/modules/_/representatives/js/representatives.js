@@ -16,7 +16,7 @@
                         "</div>";
             };
 
-            var onClick = function(e){
+            var onClick = function(){
                 if (this.data.selected) {
                     this.data.selected = false;
                     this.mapsvg.deselectRegion(this);
@@ -64,8 +64,6 @@
                 onClick: onClick,
                 afterLoad: afterLoad,
             });
-
-
 
             return false;
         }
