@@ -11,8 +11,6 @@
  */
 function person_subscriptions($acid)
 {
-    global $user;
-    
     $output = false;
     $output .= views_embed_view('user_subscribes', 'page');
 

@@ -9,7 +9,8 @@
 /**
  * функция, возвращающая контент страницы Уведомления
  */
-function person_notifications($acid) {
+function person_notifications($acid)
+{
     global $user;
     
     $output = false;

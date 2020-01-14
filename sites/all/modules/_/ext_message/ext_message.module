@@ -441,7 +441,7 @@ function ext_message_unsubscribe_form($form, $form_state, $uid)
 {
     $form['#attributes'] = ['class' => ['unsubscribe-form']];
     $form['uid'] = ['#type' => 'hidden', '#value' => $uid];
-    $form['text'] = ['#markup' => '<h3 class="text-center">' . t('You going to unsubscribe from our E-Mails') . '</h3>']; // Вы хотите отписаться от получения писем с сайта <p>KCCC.RU</p>
+    $form['text'] = ['#markup' => '<h3 class="text-center">' . t('You going to unsubscribe from our E-Mails') . '</h3>'];
     $form['actions'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['text-center']]

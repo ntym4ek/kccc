@@ -8,7 +8,8 @@
 /**
  * Settings.
  */
-function chibs_settings($form, &$form_state) {
+function chibs_settings($form, &$form_state)
+{
     /** - Ограничение доступа к страницам --------------------------------------------------------------------------- */
     $form['authorized_access'] = array(
         '#type' => 'fieldset',
