@@ -155,7 +155,7 @@
         .price-list {
             flex: auto;
             display: flex; align-items: flex-end;
-            margin: 0 0 25px 40px;
+            margin: 0 0 15px 40px; padding: 10px 0;
             a { color: $text-color; }
         }
         h3, h4 { padding-left: 40px; }
