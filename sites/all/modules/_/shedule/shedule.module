@@ -94,7 +94,7 @@ function shedule_page($ajax)
         if ($events = shedule_get_events_by_date(time(), false)) {
             foreach ($events as $eid => $event) {
                 $room_id = $event->field_room_tid;
-                if (count($content[$room_id]['events']) < 3) {
+                if (!isset($content[$room_id]['events']) || count($content[$room_id]['events']) < 3) {
                     $content[$room_id]['events'][$eid] = [
                         'title' => $event->title,
                         'description' => $event->body_value,
