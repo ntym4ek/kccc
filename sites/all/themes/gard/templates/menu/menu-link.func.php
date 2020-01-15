@@ -287,6 +287,11 @@ function gard_menu_link__menu_main_d(array $variables) {
                             $category_subtitle_url = url('taxonomy/term/' . $parents[0]->tid);
                         }
                         $chevron_color = $category_subtitle_color ? $category_subtitle_color : $category_title_color;
+
+                        // выводить ли прайс-лист
+                        $szr = false;
+                        if (in_array($parents[0]->tid, [AGRO_CATEGORY_FERT_TID, AGRO_CATEGORY_SURFACTANTS_TID, AGRO_CATEGORY_DESICCANTS_TID, AGRO_CATEGORY_HERBICIDES_TID, AGRO_CATEGORY_DISINFECTANTS_TID, AGRO_CATEGORY_FUNGICIDES_TID, AGRO_CATEGORY_INSECTICIDES_TID])) $szr = true;
+
                     // если ссылка на раздел
                     } else {
                         $category_title = $element['#title'];
@@ -314,9 +319,10 @@ function gard_menu_link__menu_main_d(array $variables) {
                     $sub_menu =   '<div class="level-3-wrapper">'
                                     . '<div class="col-sm-12">'
                                         . '<div class="row fix-heights">'
-                                            . '<div class="col-sm-3">'
-                                                . '<a href="' . $category_title_url . '"><h3 style="color: #' . $category_title_color . '">' . $category_title . '</h3></a>'
+                                            . '<div class="col-sm-3 col-first">'
+                                                . '<a href="' . $category_title_url . '" class="category-title" ><h3 style="color: #' . $category_title_color . '">' . $category_title . '</h3></a>'
                                                 . '<a href="' . $category_subtitle_url . '" class="show-more" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
+                                                . ($szr ? '<div class="price-list"><a href="/catalog/agrochemicals/price-list">' . t('Price-list') . '</a></div>' : '')
                                             . '</div>'
                                             . '<div class="col-sm-6">'
                                                 . $list_html

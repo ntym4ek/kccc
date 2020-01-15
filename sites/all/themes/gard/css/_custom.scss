@@ -142,9 +142,21 @@
             border-bottom-left-radius: 7px;
             border-bottom-right-radius: 7px;
         }
+        .col-first {
+            display: flex; flex-direction: column; justify-content: flex-start;
+            .category-title,
+            .show-more { flex: 0 auto; }
+        }
         a.show-more {
             color: $text-color;
+            flex: auto;
             &:hover { text-decoration: underline; }
+        }
+        .price-list {
+            flex: auto;
+            display: flex; align-items: flex-end;
+            margin: 0 0 25px 40px;
+            a { color: $text-color; }
         }
         h3, h4 { padding-left: 40px; }
         h3 { margin-top: 50px; }
