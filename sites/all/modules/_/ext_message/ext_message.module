@@ -465,29 +465,34 @@ function ext_message_unsubscribe_form_submit($form, &$form_state)
 
 /**
  * --------------------------------- Всех подписать и отправить письма -------------------------------------------------
+ * --------------------------------- единоразово -------------------------------------------------
  */
 function ext_message_spam_subscribe()
 {
-    global $user;
+    // список всех пользователей
+    $query = db_select('users', 'u');
+    $query->condition('mail', '', '<>');
+    $query->fields('u', ['uid', 'mail']);
 
-    // todo список всех пользователей
-    $users = [$user];
+    // получаем термины словаря Подписки, на которые подписан пользователь
+    if ($users = $query->execute()->fetchAll()) {
 
-    // подписать пользователя на все подписки
-    foreach ($users as $user) {
-        ext_message_subscribe_all($user->uid);
+        // подписать пользователя на все подписки
+        foreach ($users as $user) {
+            ext_message_subscribe_all($user->uid);
 
-        // отправить письмо (через очередь)
-        $params['subject'] = 'Обновление функционала на сайте kccc.ru';
-        $params['body'] = '<p>На нашем сайте <a href="https://kccc.ru">kccc.ru</a> появилась возможность получать уведомления о появлении новых материалов в разделах <a href="https://kccc.ru/catalog/agrochemicals">Препараты</a>, <a href="https://kccc.ru/agenda">Афиша</a>, <a href="https://kccc.ru/info/job">Вакансии</a>, <a href="https://kccc.ru/reviews">Отзывы</a>, <a href="https://kccc.ru/blogs">Блоги</a>, <a href="https://kccc.ru/news/events">Новости</a>, <a href="https://kccc.ru/survey">Опросы</a> и <a href="https://kccc.ru/before-after">Препараты в поле</a>.</p>' .
-                          '<p>Уведомления будут приходить в Личный кабинет и на электронную почту.</p>' .
-                          '<p>Мы подписали Вас на все уведомления, но если Вам интересны только часть из них, настроить можно в Личном кабинете в разделе <a href="https://kccc.ru/person/' . $user->uid . '/subscriptions">Подписки</a>.</p>';
+            // отправить письмо (через очередь)
+            $params['subject'] = 'Обновление функционала на сайте kccc.ru';
+            $params['body'] = '<p>На нашем сайте <a href="https://kccc.ru">kccc.ru</a> появилась возможность получать уведомления о публикации новых материалов в разделах <a href="https://kccc.ru/catalog/agrochemicals">Препараты</a>, <a href="https://kccc.ru/agenda">Афиша</a>, <a href="https://kccc.ru/info/job">Вакансии</a>, <a href="https://kccc.ru/reviews">Отзывы</a>, <a href="https://kccc.ru/blogs">Блоги</a>, <a href="https://kccc.ru/news/events">Новости</a>, <a href="https://kccc.ru/survey">Опросы</a> и <a href="https://kccc.ru/before-after">Препараты в поле</a>.</p>' .
+                '<p>Уведомления будут приходить в <a href="https://kccc.ru/person/' . $user->uid . '/notifications">Личный кабинет</a> и на электронную почту.</p>' .
+                '<p>Мы подписали Вас на все уведомления, но если Вам интересны только часть из них, настройки можно найти в Личном кабинете в разделе <a href="https://kccc.ru/person/' . $user->uid . '/subscriptions">Подписки</a>.</p>';
 
-        $queue = DrupalQueue::get('manual_mails_queue');
-        $params['mail'] = $user->mail;
+            $queue = DrupalQueue::get('manual_mails_queue');
+            $params['mail'] = $user->mail;
 
-        $params['account'] = $user;
-        $queue->createItem($params);
+            $params['account'] = $user;
+            $queue->createItem($params);
+        }
     }
 }
 

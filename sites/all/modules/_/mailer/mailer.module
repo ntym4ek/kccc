@@ -78,6 +78,17 @@ function mailer_manual_form($form, $form_state)
         '#submit' => ['mailer_manual_form_test_submit'],
     ];
 
+//    $form['subs'] = [
+//        '#type' => 'fieldset',
+//        '#title' => 'Подписка',
+//    ];
+//    $form['subs']['send_subs'] = [
+//        '#type' => 'submit',
+//        '#value' => 'Подписать!',
+//        '#limit_validation_errors' => [],
+//        '#submit' => ['mailer_manual_form_send_subs_submit'],
+//    ];
+
     $form['actions'] = [
         '#type' => 'container'
     ];
@@ -137,6 +148,15 @@ function mailer_manual_form_test_submit($form, &$form_state)
 
     // оставляем значения в форме
     $form_state['rebuild'] = true;
+}
+
+
+/**
+ * form submit callback.
+ */
+function mailer_manual_form_send_subs_submit($form, &$form_state)
+{
+    ext_message_spam_subscribe();
 }
 
 /**
