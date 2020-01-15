@@ -136,64 +136,70 @@ function person_account_callback($acid = NULL, $section = 'summary', $op = '', $
 {
     global $user;
 
-  if ($acid && $account = user_load($acid)) {
-    $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
+    // если аноним, перекинуть на авторизацию
+    if (!$user->uid && $section != 'summary') {
+        drupal_set_message(t('You have to sign in to get access to account.'));
+        drupal_goto('user/login', ['query' => ['current' => $_GET['q']]]);
+    }
 
-    if ($is_own_account) drupal_set_title(t('User account'));
-    else                 drupal_set_title(person_get_user_name($acid));
+    if ($acid && $account = user_load($acid)) {
+        $is_own_account = ($user->uid == $account->uid) || $user->uid == 1;
 
-    $section = $section ? $section : 'summary';
+        if ($is_own_account) drupal_set_title(t('User account'));
+        else                 drupal_set_title(person_get_user_name($acid));
 
-    // определить контент
-    $function = 'person_' . str_replace('-', '_', $section);
+        $section = $section ? $section : 'summary';
 
-    //if (!(function_exists($function) && $body = $function($acid, $op, $item_id))) $body = 'Содержимое не определено.';
-    $body = t('No content');
-    if (function_exists($function)) $body = $function($acid, $op, $item_id);
+        // определить контент
+        $function = 'person_' . str_replace('-', '_', $section);
 
-    // доступные пользователю ссылки в ЛК
-    $menu = _person_actions($acid, $section);
+        //if (!(function_exists($function) && $body = $function($acid, $op, $item_id))) $body = 'Содержимое не определено.';
+        $body = t('No content');
+        if (function_exists($function)) $body = $function($acid, $op, $item_id);
 
-    // завернуть контент и меню
-    $message = theme('status_messages');
-    $output = theme('person_wrap', array('content' => array(
-        'menu' => $menu,
-        'body' => $body,
-        'account' => person_get_user_array($acid),
-        'edit_link' => $is_own_account ? '<a href="/person/' . $acid . '/main/edit"><i class="fas fa-pencil-alt"></i></a>' : '',
-        'class' => $section,
-        'message' => $message ? $message : '',
-    )));
+        // доступные пользователю ссылки в ЛК
+        $menu = _person_actions($acid, $section);
+
+        // завернуть контент и меню
+        $message = theme('status_messages');
+        $output = theme('person_wrap', array('content' => array(
+            'menu' => $menu,
+            'body' => $body,
+            'account' => person_get_user_array($acid),
+            'edit_link' => $is_own_account ? '<a href="/person/' . $acid . '/main/edit"><i class="fas fa-pencil-alt"></i></a>' : '',
+            'class' => $section,
+            'message' => $message ? $message : '',
+        )));
 
 
-    // доставка содержимого
+        // доставка содержимого
         // если разрешен JS и уже на странице аккаунта, обновить через ajax
-    if ($mode == 'ajax') {
-        $commands[] = ajax_command_replace('#profile', $output);
-        ajax_deliver(
-            array(
-                '#type' => 'ajax',
-                '#commands' => $commands
-            )
-        );
-    }
+        if ($mode == 'ajax') {
+            $commands[] = ajax_command_replace('#profile', $output);
+            ajax_deliver(
+                array(
+                    '#type' => 'ajax',
+                    '#commands' => $commands
+                )
+            );
+        }
         // если только открывают кабинет, загрузить страницу полностью вместе с библиотеками, js и css
-    else {
-        drupal_add_library('system', 'drupal.ajax');
-        drupal_add_js(drupal_get_path('module', 'person') . '/js/person.js');
-        drupal_add_css(drupal_get_path('module', 'person') . '/css/person.css');
+        else {
+            drupal_add_library('system', 'drupal.ajax');
+            drupal_add_js(drupal_get_path('module', 'person') . '/js/person.js');
+            drupal_add_css(drupal_get_path('module', 'person') . '/css/person.css');
 
-        chibs_include_modal();
+            chibs_include_modal();
 
-        return $output;
+            return $output;
+        }
+    } else {
+        if ($user->uid) drupal_goto('person/' . $user->uid . '/summary');
+        else {
+            drupal_set_message(t('You have to sign in to get access to account.'));
+            drupal_goto('user/login');
+        }
     }
-  } else {
-      if ($user->uid) drupal_goto('person/' . $user->uid . '/summary');
-      else {
-          drupal_set_message(t('You have to sign in to get access to account.'));
-          drupal_goto('user/login');
-      }
-  }
 }
 
 
