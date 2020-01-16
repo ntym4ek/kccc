@@ -327,8 +327,8 @@ function representatives_get_representatives_list()
         'access' => false,
         'surname' => 'Хаустов', 'name' => 'Сергей', 'name2' => 'Витальевич',
         'phones' => array('+7 (922) 927-68-80'),
-        'emails' => array('sergey.haustov@kccc.ru'),
-        'photo' => $no_photo,
+        'emails' => array('altai2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/haustov.png',
         'regions' => array(
             71668 => [], //Алтайский край",
         ),
