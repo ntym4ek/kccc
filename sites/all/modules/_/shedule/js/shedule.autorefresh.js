@@ -28,7 +28,7 @@
                         dateS = new Date(dateSText),
                         hs = dateS.getHours(),
                         date = new Date(),
-                        h = date.getHours() + (hs !== h ? hs-h : 0),
+                        h = date.getHours() + (hs !== h ? hs-h : 0), // если есть разница между временем на сервере и телевизоре - скорректировать
                         m = date.getMinutes(),
                         s = date.getSeconds();
                     h = (h < 10) ? "0" + h : h;
