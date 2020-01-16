@@ -24,9 +24,11 @@
 
                 // часы
                 setInterval(function () {
-                    var date = new Date(),
-                        // h = date.getHours(),
-                        h = date.getHours()-2,
+                    var dateSText = $(".time").html(),
+                        dateS = new Date(dateSText),
+                        hs = dateS.getHours(),
+                        date = new Date(),
+                        h = date.getHours() + (hs !== h ? hs-h : 0),
                         m = date.getMinutes(),
                         s = date.getSeconds();
                     h = (h < 10) ? "0" + h : h;
