@@ -44,13 +44,23 @@
             </div>
 
             <?php $counter = 0; ?>
-            <? foreach ($sales['reps'] as $rep): ?>
+            <? foreach ($sales['reps'] as $key_r => $rep): ?>
                 <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
-                    $rep['office'] .= '<br />' . current($rep['regions'])['name'];
+                    $collapse = [];
+                    if (count($rep['regions']) > 1) {
+                        $collapse['id'] = $key_r;
+                        $collapse['title'] = t('Regions list');
+                        $regions = [];
+                        foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
+                        $collapse['content'] = implode(', ', $regions);
+                    } else {
+                        $rep['office'] .= '<br />' . current($rep['regions'])['name'];
+                    }
                     $rep_iso = [];
                     foreach($rep['regions'] as $reg) { $rep_iso[] = $reg['iso']; }
                     print theme('contact_card', array(
                         'contact' => $rep,
+                        'collapse' => $collapse,
                         'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . implode(' ', $rep_iso)]));
                     if ($counter++ % 2) print '<div class="clearfix"></div>';
                 } ?>
