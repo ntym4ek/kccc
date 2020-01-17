@@ -130,7 +130,7 @@ function shedule_page($ajax)
                 ajax_command_invoke('.block-4', 'replaceWith', [theme('shedule_block_4', ['content' => $content])]),
                 ajax_command_invoke('.block-5', 'replaceWith', [theme('shedule_block_5', ['content' => $content])]),
                 ajax_command_invoke('.block-6', 'replaceWith', [theme('shedule_block_6', ['content' => $content])]),
-                ajax_command_html('.time', time()),
+                ajax_command_invoke('.time', 'html', [time()]),
             ],
         );
         ajax_deliver($result);

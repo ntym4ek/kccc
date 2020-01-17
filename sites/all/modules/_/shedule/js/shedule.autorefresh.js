@@ -24,13 +24,14 @@
 
                 // часы
                 setInterval(function () {
-                    var dateSText = $(".time").html(),
+                    var dateSText = parseInt($(".time").html()),
                         dateS = new Date(dateSText),
                         hs = dateS.getHours(),
                         date = new Date(),
-                        h = date.getHours() + (hs !== h ? hs-h : 0), // если есть разница между временем на сервере и телевизоре - скорректировать
+                        h = date.getHours(),
                         m = date.getMinutes(),
                         s = date.getSeconds();
+                    h = h + (hs !== h ? hs-h : 0); // если есть разница между временем на сервере и телевизоре - скорректировать
                     h = (h < 10) ? "0" + h : h;
                     m = (m < 10) ? "0" + m : m;
                     s = (s < 10) ? "0" + s : s;
