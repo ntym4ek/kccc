@@ -1,4 +1,7 @@
 (function ($) {
+    // отследить клик по карте и за её пределами
+    var mapClick = false;
+
     Drupal.behaviors.representatives = {
         attach: function (context, settings) {
 
@@ -16,12 +19,12 @@
                         "</div>";
             };
 
-            var onClick = function(){
+            var onClick = function(e){
                 if (this.mapsvg.selectedRegion && this.id === this.mapsvg.selectedRegion) {
-                    this.mapsvg.selectedRegion = null;
                     this.mapsvg.deselectRegion(this);
                     $(".rep-item").show();
                     $(".rep-list .clearfix").show();
+                    this.mapsvg.selectedRegion = null;
                 }
                 else {
                     $(".rep-item").hide();
@@ -29,6 +32,7 @@
                     $(".rep-list .clearfix").hide();
                     this.mapsvg.selectedRegion = this.id;
                 }
+                mapClick = true;
             };
 
             var afterLoad = function () {
@@ -56,6 +60,19 @@
                 tooltips: {mode: tooltip, on: false, priority: "local", position: "top-right"},
                 onClick: onClick,
                 afterLoad: afterLoad,
+            });
+
+            // клик за пределами карты
+            $("#mapsvg").on("click", function() {
+                if (!mapClick) {
+                    // var mapsvg = MapSVG.get(0);
+                    var mapsvg = $(this).eq(0).mapSvg();
+                    mapsvg.deselectAllRegions();
+                    $(".rep-item").show();
+                    $(".rep-list .clearfix").show();
+                    mapsvg.selectedRegion = null;
+                }
+                mapClick = false;
             });
 
             return false;
