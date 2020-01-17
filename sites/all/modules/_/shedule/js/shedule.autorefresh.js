@@ -24,7 +24,7 @@
 
                 // часы
                 setInterval(function () {
-                    var dateSText = parseInt($(".time").html()),
+                    var dateSText = parseInt($(".time").html() + "000"),
                         dateS = new Date(dateSText),
                         hs = dateS.getHours(),
                         date = new Date(),
