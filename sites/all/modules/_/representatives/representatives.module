@@ -662,18 +662,18 @@ function representatives_get_representatives_list()
         ),
     );
 
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
-        'phones' => array('+7 (922) 900-14-43', '+7 (909) 435-82-89'),
-        'emails' => array('rostov2@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/shvets.png',
-        'regions' => array(
-            71707 => [], //Ростовская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'role' =>  'rep',
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
+//        'phones' => array('+7 (922) 900-14-43', '+7 (909) 435-82-89'),
+//        'emails' => array('rostov2@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/shvets.png',
+//        'regions' => array(
+//            71707 => [], //Ростовская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'role' =>  'rep',
         'office' => t('Representative'),
@@ -771,18 +771,18 @@ function representatives_get_representatives_list()
             71718 => [], //Тюменская область",
         ),
     );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Основин', 'name' => 'Александр', 'name2' => 'Анатольевич',
-        'phones' => array('+7 (922) 966-60-16'),
-        'emails' => array('tyumen2@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/osnovin.png',
-        'regions' => array(
-            71718 => [], //Тюменская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'role' =>  'rep',
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Основин', 'name' => 'Александр', 'name2' => 'Анатольевич',
+//        'phones' => array('+7 (922) 966-60-16'),
+//        'emails' => array('tyumen2@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/osnovin.png',
+//        'regions' => array(
+//            71718 => [], //Тюменская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'role' =>  'rep',
         'office' => t('Representative'),
