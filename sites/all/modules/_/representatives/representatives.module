@@ -371,18 +371,6 @@ function representatives_get_representatives_list()
     );
     $sales['reps'][] = array(
         'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
-        'emails' => array('kirov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kirov.png',
-        'regions' => array(
-            71679 => [], //Владимирская область",
-        ),
-    );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Асадов', 'name' => 'Кирилл', 'name2' => 'Низамович',
@@ -403,18 +391,6 @@ function representatives_get_representatives_list()
         'photo' => '/' . $module_path . '/images/photos/khaletskiy.png',
         'regions' => array(
             71682 => [], //Воронежская область",
-        ),
-    );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
-        'emails' => array('kirov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kirov.png',
-        'regions' => array(
-            71683 => [], //Ивановская область",
         ),
     );
 //    $representatives['reps'][] = array(
@@ -444,18 +420,6 @@ function representatives_get_representatives_list()
             71679 => [], //Владимирская область",
             71690 => [], //Костромская область",
             71705 => [], //Пермский край",
-        ),
-    );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
-        'emails' => array('kirov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kirov.png',
-        'regions' => array(
-            71690 => [], //Костромская область",
         ),
     );
     $sales['reps'][] = array(
@@ -665,18 +629,6 @@ function representatives_get_representatives_list()
         'role' =>  'rep',
         'office' => t('Representative'),
         'access' => false,
-        'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
-        'emails' => array('kirov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kirov.png',
-        'regions' => array(
-            71705 => [], //Пермский край",
-        ),
-    );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
         'surname' => 'Тураев', 'name' => 'Радик', 'name2' => 'Галиевич',
         'phones' => array('+7 (922) 900-74-77'),
         'emails' => array('bashkortostan@kccc.ru'),
@@ -867,18 +819,6 @@ function representatives_get_representatives_list()
             71720 => [], //Челябинская область",
         ),
     );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
-        'phones' => array('+7 (912) 825-47-45', '8 (8332) 75-20-55'),
-        'emails' => array('kirov@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kirov.png',
-        'regions' => array(
-            71722 => [], //"Ярославская область",
-        ),
-    );
 
     // получаем список регионов
     $regions_by_tid = $regions_by_iso = [];
@@ -943,23 +883,24 @@ function _representatives_source($region_id = null)
  */
 function _get_representative($tid)
 {
-    $reps = representatives_get_representatives_list();
+    $sales = representatives_get_representatives_list();
     if ($tid) {
         $representatives = [];
-        foreach ($reps as $region => $reg) {
-            foreach ($reg as $rep) {
-                if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
-                    $representatives['region'][$tid] = $rep;
-                }
+        foreach ($sales['reps'] as $rep) {
+            if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
+                $representatives['region'][$tid] = $rep;
             }
         }
         if (empty($representatives)) {
-            // todo sales_head?
-            $representatives['region'][] = $reps['heads']['sales_head'];
+            foreach ($sales['heads'] as $head) {
+                if (isset($head['regions'][$tid]) && !empty($head['access'])) {
+                    $representatives['region'][$tid] = $head;
+                }
+            }
         }
         return $representatives;
     }
-    return $reps;
+    return $sales;
 }
 
 /**

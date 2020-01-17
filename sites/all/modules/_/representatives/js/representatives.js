@@ -17,24 +17,17 @@
             };
 
             var onClick = function(){
-                if (this.data.selected) {
-                    this.data.selected = false;
+                if (this.mapsvg.selectedRegion && this.id === this.mapsvg.selectedRegion) {
+                    this.mapsvg.selectedRegion = null;
                     this.mapsvg.deselectRegion(this);
                     $(".rep-item").show();
                     $(".rep-list .clearfix").show();
                 }
                 else {
-                    this.data.selected = true;
-
-                    $(".rep-item").show();
-
-                    var region_iso = this.id;
-                    $(".rep-item").each(function(index, el){
-                        if(!$(el).hasClass(region_iso)) {
-                            $(el).hide();
-                            $(".rep-list .clearfix").hide();
-                        }
-                    });
+                    $(".rep-item").hide();
+                    $(".rep-item." + this.id).show();
+                    $(".rep-list .clearfix").hide();
+                    this.mapsvg.selectedRegion = this.id;
                 }
             };
 

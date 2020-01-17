@@ -47,9 +47,11 @@
             <? foreach ($sales['reps'] as $rep): ?>
                 <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
                     $rep['office'] .= '<br />' . current($rep['regions'])['name'];
+                    $rep_iso = [];
+                    foreach($rep['regions'] as $reg) { $rep_iso[] = $reg['iso']; }
                     print theme('contact_card', array(
                         'contact' => $rep,
-                        'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . current($rep['regions'])['iso']]));
+                        'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . implode(' ', $rep_iso)]));
                     if ($counter++ % 2) print '<div class="clearfix"></div>';
                 } ?>
             <?php endforeach; ?>
