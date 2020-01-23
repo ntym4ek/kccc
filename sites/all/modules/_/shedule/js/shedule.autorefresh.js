@@ -36,6 +36,11 @@
                     m = (m < 10) ? "0" + m : m;
                     s = (s < 10) ? "0" + s : s;
                     $(".clock").html("<span class=\"hours\">" + h + "</span><span class=\"minutes\">:" + m + "</span><span class=\"seconds\"> " + s + "</span>");
+
+                    $(".timeL").html(Date.now());
+                    $(".timeFS").html(hs);
+                    $(".timeFL").html(h);
+
                 }, 1000);
 
             });
