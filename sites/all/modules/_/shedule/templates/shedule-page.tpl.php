@@ -54,9 +54,4 @@
             </div>
         </div>
     </div>
-
-    <div class="time"></div>
-    <div class="timeL">timeL</div>
-    <div class="timeFS">timeFS</div>
-    <div class="timeFL">timeFL</div>
 </div>
