@@ -643,7 +643,7 @@ function representatives_get_representatives_list()
         'surname' => 'Зарипов', 'name' => 'Эльвир', 'name2' => 'Зарипович',
         'phones' => array('+7 (922) 665-00-15'),
         'emails' => array('bashkortostan1@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/zaripov.png',
         'regions' => array(
             71648 => [], //Республика Башкортостан",
         ),
@@ -825,7 +825,7 @@ function representatives_get_representatives_list()
         'surname' => 'Красножон', 'name' => 'Сергей', 'name2' => 'Михайлович',
         'phones' => array('+7 (922) 747-26-46'),
         'emails' => array('chelyabinsk2@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/krasnozhon.png',
         'regions' => array(
             71720 => [], //Челябинская область",
         ),
