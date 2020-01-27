@@ -899,13 +899,13 @@ function _get_representative($tid)
         $representatives = [];
         foreach ($sales['reps'] as $rep) {
             if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
-                $representatives['region'][$tid] = $rep;
+                $representatives['reps'][$tid] = $rep;
             }
         }
         if (empty($representatives)) {
             foreach ($sales['heads'] as $head) {
                 if (isset($head['regions'][$tid]) && !empty($head['access'])) {
-                    $representatives['region'][$tid] = $head;
+                    $representatives['heads'][$tid] = $head;
                 }
             }
         }
