@@ -698,7 +698,8 @@ function get_product_main_cultures($nid) {
  */
 function ext_product_node_view_alter(&$build) {
     if ($build['#view_mode'] == 'full'
-        && in_array($build['#bundle'], array('product_agro', 'product_fert', 'product_mix', 'product_chem'))) {
+        && in_array($build['#bundle'], array('product_agro', 'product_fert', 'product_mix', 'product_chem'))
+        && isset($build['body'][0]['#markup'])) {
 
         $ba = explode('<h4>', $build['body'][0]['#markup']);
         $expanded = true;

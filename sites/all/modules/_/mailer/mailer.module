@@ -217,8 +217,7 @@ function mailer_mail($key, &$message, $params)
         case 'manual_mail':
             $message['subject'] = $params['subject'];
 
-            $message['body'][] = '' .
-                '<h2>Здравствуйте!</h2>' . $params['body'];
+            $message['body'][] = $params['body'];
             break;
     }
 }
