@@ -281,10 +281,11 @@ function before_after_get_atfield_list($region = null, $culture = null)
                             $footer = 'Культура перед обработкой';
                         } else {
                             $diff = _seconds2times($processes[$count_processes - 1]['date'] - $processes[$count_processes - 2]['date']);
-                            $footer = $diff['3'] . ' дней после';
+//                            $footer = $diff['3'] . ' дней после';
+                            $footer = format_plural($diff['3'], '@count day', '@count days') .  ' ' . t('after', [], ['context' => 'B&A']);
 
-                            if ($processes[$count_processes - 2]['type'] == 'processing') $footer .= ' обработки';
-                            else                                                            $footer .= ' предыдущего замера';
+                            if ($processes[$count_processes - 2]['type'] == 'processing') $footer .= ' ' . t('processing', [], ['context' => 'B&A']);
+                            else                                                            $footer .= ' ' . t('last control', [], ['context' => 'B&A']);
                         }
                         $output['footer'] = $footer;
                         //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
@@ -575,7 +576,7 @@ function before_after_get_atfield($sid)
 
                 if ($date_first_processing && $key_m) {
                     $diff = _seconds2times($measurement_wrapper->field_f_s_m_date->value() - $date_first_processing);
-                    $measurements[$key_m]['days_after'] = empty($diff['3']) ? 'Контроль' : ($diff['3'] . ' дней');
+                    $measurements[$key_m]['days_after'] = empty($diff['3']) ? 'Контроль' : (' ' . format_plural($diff['3'], '@count day', '@count days'));
                 }
 
                 // состояние вредных объектов
