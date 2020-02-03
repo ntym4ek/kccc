@@ -640,7 +640,7 @@ function representatives_get_representatives_list()
         'role' =>  'rep',
         'office' => t('Representative'),
         'access' => false,
-        'surname' => 'Зарипов', 'name' => 'Эльвир', 'name2' => 'Зарипович',
+        'surname' => 'Зарипов', 'name' => 'Эльвир', 'name2' => 'Зирякович',
         'phones' => array('+7 (922) 665-00-15'),
         'emails' => array('bashkortostan1@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/zaripov.png',
