@@ -36,7 +36,7 @@ function before_after_season_callback($fid, $op = 'list', $sid = 0)
                     $output['items'][$sid]['link']          = "/season/$sid/processing/list";
                     $output['items'][$sid]['image']         = "";
                     $output['items'][$sid]['title1']        = 'Сезон ' . $season . ' ' . $year;
-                    $output['items'][$sid]['title2']        = $season_wrapper->field_f_s_culture->title->value();
+                    $output['items'][$sid]['title2']        = $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '');
                     $output['items'][$sid]['link_edit']     = "/field/$fid/season/edit/$sid";
                     $output['items'][$sid]['link_delete']   = "/field/$fid/season/del/$sid";
                 }
@@ -67,7 +67,8 @@ function before_after_season_callback($fid, $op = 'list', $sid = 0)
 /**
  * форма добавления/редактирования СЕЗОНА
  */
-function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
+function before_after_season_form($form, &$form_state, $fid, $sid = 0)
+{
     $form_state['fid'] = $fid;
 
     // если нажата кнопка Удалить ВО, удалить соответствующий элемент формы
@@ -109,7 +110,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
 
     // ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ
     // задать переменные для заполненных элементов формы
-    $culture    = empty($form_state['values']['culture'])     ? '' : $form_state['values']['culture'];
+    $culture    = $culture_note = '';
     $subculture = empty($form_state['values']['subculture'])  ? '' : $form_state['values']['subculture'];
     $area       = empty($form_state['values']['area'])        ? '' : $form_state['values']['area'];
 //    $seeding    = empty($form_state['values']['seeding'])     ? '' : $form_state['values']['seeding'];
@@ -134,11 +135,12 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
     if ($sid && empty($form_state['triggering_element'])) {
         $form_state['sid'] = $sid;
         $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-        $culture    = $season_wrapper->field_f_s_culture->nid->value();
-        $subculture = $season_wrapper->field_f_s_subculture->value() ? $season_wrapper->field_f_s_subculture->nid->value() : 0;
-        $area       = $season_wrapper->field_f_s_area->value();
-        $season     = $season_wrapper->field_f_s_season->value();
-        $year       = $season_wrapper->field_f_s_year->value();
+        $culture      = $season_wrapper->field_f_s_culture->nid->value();
+        $culture_note = $season_wrapper->field_f_s_culture_note->value();
+        $subculture   = $season_wrapper->field_f_s_subculture->value() ? $season_wrapper->field_f_s_subculture->nid->value() : 0;
+        $area         = $season_wrapper->field_f_s_area->value();
+        $season       = $season_wrapper->field_f_s_season->value();
+        $year         = $season_wrapper->field_f_s_year->value();
 
         // при открытии формы загрузить массив ВО в form_state
         $hobjects = array();
@@ -206,6 +208,13 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0) {
         '#chosen' => true,
         '#default_value' => $subculture,
         '#prefix' => '<div class="col-md-6">',
+        '#suffix' => '</div></div>',
+    );
+    $form['fs1']['culture_note'] = array(
+        '#type' => 'textfield',
+        '#default_value' => $culture_note,
+        '#description' => 'Уточнения, напр.: мягкие сорта, на зерно, маточники, семенные посевы',
+        '#prefix' => '<div class="row"><div class="col-md-6">',
         '#suffix' => '</div></div>',
     );
 
@@ -393,6 +402,7 @@ function before_after_season_form_submit(&$form, &$form_state) {
 
     // задать Культуру, Субкультуру и площадь
     $season_wrapper->field_f_s_culture->set($form_state['values']['culture']);
+    $season_wrapper->field_f_s_culture_note->set($form_state['values']['culture_note']);
     if (!empty($form_state['values']['subculture'])) {
         if ($form_state['values']['subculture'] == '_none') $season_wrapper->field_f_s_subculture->set(null);
         else $season_wrapper->field_f_s_subculture->set($form_state['values']['subculture']);

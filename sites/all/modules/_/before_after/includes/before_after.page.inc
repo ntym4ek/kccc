@@ -81,7 +81,6 @@ function before_after_get_atfield_list($region = null, $culture = null)
             $region = $field_wrapper->field_f_region->name->value();
 
             $farm = $field_wrapper->field_f_farm->value();
-            $culture = $season_wrapper->field_f_s_culture->title->value();
 
             $output['region'] = $region;
 
@@ -150,7 +149,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                 }
 
                 // заголовки
-                $output['culture'] = $culture;
+                $output['culture'] = $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '');
                 $output['link'] = "/before-after/$sid";
                 $output['sid'] = $sid;
                 $output['farm_title'] = 'Хозяйство: ';
@@ -162,7 +161,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                 switch ($process['type']) {
                     // если последним процессом является ОБРАБОТКА
                     case 'processing':
-                        $output['culture'] = $season_wrapper->field_f_s_culture->title->value();
+                        $output['culture'] = $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '');
 
                         $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
                         $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
@@ -428,7 +427,8 @@ function before_after_page($sid)
 {
     $season = before_after_get_atfield($sid);
 
-    drupal_set_title($season['culture']);
+    $title = $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '');
+    drupal_set_title($title);
     drupal_set_subtitle($season['farm'] . ', ' . $season['region']);
 
     drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
@@ -457,6 +457,7 @@ function before_after_get_atfield($sid)
 
     $output['farm']     = $field_wrapper->field_f_farm->value();
     $output['culture']  = $season_wrapper->field_f_s_culture->title->value();
+    $output['culture_note']  = $season_wrapper->field_f_s_culture_note->value();
     $output['region']   = $field_wrapper->field_f_region->name->value();
     $output['author']   = person_get_user_array($user);
 

@@ -439,7 +439,7 @@ function representatives_get_representatives_list()
         'access' => false,
         'surname' => 'Домницкая', 'name' => 'Виктория', 'name2' => 'Николаевна',
         'phones' => array('+7 (922) 900-05-73'),
-        'emails' => array(),
+        'emails' => array('krasnodar@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/domnitskaya.png',
         'regions' => array(
             71669 => [], //Краснодарский край",
@@ -451,7 +451,7 @@ function representatives_get_representatives_list()
         'access' => false,
         'surname' => 'Широкий', 'name' => 'Михаил', 'name2' => 'Николаевич',
         'phones' => array('+7 (922) 957-11-19'),
-        'emails' => array(),
+        'emails' => array('krasnodar4@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/shirokiy.png',
         'regions' => array(
             71669 => [], //Краснодарский край",

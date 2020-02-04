@@ -2094,35 +2094,31 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 /* ------------------------------------------------- Ввод диапазона дат (field_period) ------------------------------ */
 .date-form-element-content-multiline {
-  border: none;
-  padding: 0;
-  @include make-row();
-  .start-date-wrapper.container-inline-date,
-  .end-date-wrapper.container-inline-date {
-      .form-item,
-      .form-item input { width: 98%; }
-      .date-padding {
-          display: flex;
-          > div { flex: auto; }
-          [class*=-time] {
-              margin-left: $grid-gutter-width/4;
-              flex: 0 0 5em;
-          }
-      }
-      @include make-sm-column(3);
-    clear: none;
-    > .end-date-wrapper > .control-label {
-        line-height: 35px;
-        position: absolute;
-        left: -4px;
-        .form-required { display: none; }
+    border: none;
+    padding: 0;
+    @include make-row();
+    .container-inline-date {
+        .form-item,
+        .form-item input { width: 98%; }
+        .date-padding {
+            display: flex;
+            > div { flex: auto; }
+            [class*=-time] {
+                margin-left: $grid-gutter-width/4;
+                flex: 0 0 5em;
+            }
+        }
+        @include make-sm-column(3);
+        clear: none;
+        > .end-date-wrapper > .control-label {
+            line-height: 35px;
+            position: absolute;
+            left: -4px;
+            .form-required { display: none; }
+        }
+        .end-date-wrapper label[for*=-date]{ display: none; }
+        .help-block { display: none; }
     }
-      .end-date-wrapper label[for*=-date]{ display: none; }
-    .help-block { display: none; }
-  }
-  .start-date-wrapper.container-inline-date {
-    @include make-sm-column(3);
-  }
 }
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */

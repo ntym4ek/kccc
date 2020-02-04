@@ -21,7 +21,7 @@ function before_after_processing_callback($sid = 0, $type = 'processing', $op = 
                 'title1' => $field_wrapper->title->value(),
                 'title2' => $field_wrapper->field_f_farm->value(),
                 'title3' => 'Сезон ' . $year_time . ' ' . $year,
-                'title4' => $season_wrapper->field_f_s_culture->title->value(),
+                'title4' => $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : ''),
             );
             $menu = array();
 
