@@ -252,6 +252,7 @@ function _reglaments_get_protection_system2($parameters)
                 'weight' => $herb_term->weight->value(),
                 'name' => $herb_term->name->value(),
                 'bkg' => $herb_term->field_image_mobile->file->url->value(),
+                'bkg_desk' => $herb_term->field_shop_category_image->file->url->value(),
                 'icon' => $herb_term->field_icon->file->url->value(),
             );
         } else $parameters['weeds_arr'] = [];
@@ -267,6 +268,7 @@ function _reglaments_get_protection_system2($parameters)
                 'weight' => $insect_term->weight->value(),
                 'name' => $insect_term->name->value(),
                 'bkg' => $insect_term->field_image_mobile->file->url->value(),
+                'bkg_desk' => $insect_term->field_shop_category_image->file->url->value(),
                 'icon' => $insect_term->field_icon->file->url->value(),
             );
 
@@ -283,6 +285,7 @@ function _reglaments_get_protection_system2($parameters)
                 'weight' => $fung_term->weight->value(),
                 'name' => $fung_term->name->value(),
                 'bkg' => $fung_term->field_image_mobile->file->url->value(),
+                'bkg_desk' => $fung_term->field_shop_category_image->file->url->value(),
                 'icon' => $fung_term->field_icon->file->url->value(),
             );
         } else $parameters['diseases_arr'] = [];

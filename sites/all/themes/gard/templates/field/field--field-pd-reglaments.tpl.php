@@ -6,23 +6,15 @@
 $node_wrapper = entity_metadata_wrapper('node', $element['#object']);
 
 $category = $node_wrapper->field_pd_category[0]->tid->value();
-$prices = array();
+$prices = [];
 $show_calculation = true;
-// для баковой смеси определяем единицы для всех компонент
-if ($category == AGRO_CATEGORY_MIX_TID) {
-    $units_arr = array();
-    foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
-        $value = $node_wrapper->{$field};
-        if (!$prices[] = $value->field_pd_price_per_unit->amount->value()) $show_calculation = false;
-        $unit_arr = get_product_units($value->nid->value());
-        $units_arr[] = $unit_arr['cons_unit'];
-    }
-    $units = implode('+', $units_arr);
-} else {
-    if (!$prices[] = $node_wrapper->field_pd_price_per_unit->amount->value()) $show_calculation = false;;
-    $unit_arr = get_product_units($element['#object']->nid);
-    $units = $unit_arr['cons_unit'];
+// составляем строку единиц
+$units_arr = [];
+foreach (get_product_info($element['#object']->nid)['items'] as $item) {
+    if (!$prices[] = $item['price']) $show_calculation = false;
+    $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
 }
+$units = implode('+', $units_arr);
 
 //  для Протравителей вывести 'Вес обрабатываемых семян', для остальных
 if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_FUNGICIDES_TID) {
@@ -296,7 +288,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
                     <td width="50%" class="area">
                         <input id="area" type="text" value="100"/>
                         <? foreach($prices as $p_key => $price): ?>
-                            <input id="price_<? print $p_key; ?>" type="hidden" value="<?  print ($price/100); ?>">
+                            <input id="price_<? print $p_key; ?>" type="hidden" value="<?  print ($price); ?>">
                         <? endforeach;?>
                     </td>
                 </tr>
