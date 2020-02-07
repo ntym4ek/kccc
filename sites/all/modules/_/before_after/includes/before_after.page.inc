@@ -78,11 +78,10 @@ function before_after_get_atfield_list($region = null, $culture = null)
 
             $fid = $season->hostEntityId();
             $field_wrapper = entity_metadata_wrapper('node', $fid);
-            $region = $field_wrapper->field_f_region->name->value();
 
             $farm = $field_wrapper->field_f_farm->value();
 
-            $output['region'] = $region;
+            $output['region'] = $field_wrapper->field_f_region->name->value();
 
             // процессы сезона
             // обработки
@@ -304,6 +303,61 @@ function before_after_get_atfield_list($region = null, $culture = null)
     return $atf_array;
 }
 
+
+function _before_after_filters($rid = null, $cid = null)
+{
+    $rid = (int)$rid;
+    $cid = (int)$cid;
+
+    // опция Регион
+    $query = db_select('taxonomy_term_data', 't');
+    $query->condition('t.vid', 29); // словарь 'regions'
+    $query->distinct();
+    $query->innerJoin('field_data_field_f_region', 'fr', 't.tid = fr.field_f_region_tid');
+    $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
+
+    // если уже выбрана культура, добавить её в условия
+    if ($cid) {
+        $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.entity_id = n.nid');
+        $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = fs.field_f_sowing_value');
+        $query->condition('fc.field_f_s_culture_target_id', $cid);
+    }
+    $query->condition('n.type', 'field');
+    $query->fields('t', array('tid', 'name'));
+    $region_options = $query->execute()->fetchAllKeyed();
+    asort($region_options);
+
+//    if ($regions = $query->execute()->fetchAll()) {
+//        foreach ($regions as $region) {
+//            $region_options[$region->tid] = $region->name;
+//        }
+//        asort($region_options);
+//    }
+
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'main_cultures');
+    $query->distinct();
+    $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
+    $query->condition('fc.bundle', 'field_f_sowing');
+    $query->orderBy('n.title', 'ASC');
+    $query->fields('n', array('nid', 'title'));
+
+    // если уже выбран регион, добавить его в условия
+    if ($rid) {
+        $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.field_f_sowing_value = fc.entity_id');
+        $query->innerJoin('node', 'nf', 'nf.nid = fs.entity_id');
+        $query->innerJoin('field_data_field_f_region', 'fr', 'fr.entity_id = nf.nid');
+        $query->condition('fr.field_f_region_tid', $rid);
+    }
+    $culture_options = $query->execute()->fetchAllKeyed();
+    asort($culture_options);
+
+    return [
+        'regions' => $region_options,
+        'cultures' => $culture_options,
+    ];
+}
+
 function before_after_exposed_filters_form($form, &$form_state)
 {
     $form = array(
@@ -321,36 +375,23 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#attributes' => array('class' => array('views-exposed-widgets', 'clearfix')), // <div class="views-exposed-form"><div class="">
     );
 
-    // опция Регион
-    $region_options = array();
-    $query = db_select('taxonomy_term_data', 't');
-    $query->condition('t.vid', 29); // словарь 'regions'
-    $query->distinct();
-    $query->innerJoin('field_data_field_f_region', 'fr', 't.tid = fr.field_f_region_tid');
-    $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
-
-    // если уже выбрана культура, добавить её в условия
-    $culture_selected = '';
+    $culture_selected = null;
     if (isset($_POST['culture']) && $_POST['culture'] != 'All') {
         $culture_selected = $_POST['culture'];
     }
     elseif (isset($_GET['culture']) && $_GET['culture'] != 'All') {
         $culture_selected = $_GET['culture'];
     }
-    if ($culture_selected) {
-        $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.entity_id = n.nid');
-        $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = fs.field_f_sowing_value');
-        $query->condition('fc.field_f_s_culture_target_id', $culture_selected);
+    $region_selected = null;
+    if (isset($_POST['region']) && $_POST['region'] != 'All') {
+        $region_selected = $_POST['region'];
     }
-    $query->condition('n.type', 'field');
-    $query->fields('t', array('tid', 'name'));
-    if ($regions = $query->execute()->fetchAll()) {
-        foreach ($regions as $region) {
-            $region_options[$region->tid] = $region->name;
-        }
-        asort($region_options);
+    elseif (isset($_GET['region']) && $_GET['region'] != 'All') {
+        $region_selected = $_GET['region'];
     }
-    $region_options = array('All' => '- ' . t('Any') . ' -') + $region_options;
+    $options = _before_after_filters($region_selected, $culture_selected);
+
+    $region_options = array('All' => '- ' . t('Any') . ' -') + $options['regions'];
     $form['c']['c1']['region'] = array(
         '#type' => 'select',
         '#title' => t('Region'),
@@ -360,33 +401,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#default_value' => empty($_GET['region']) ? 'All' : $_GET['region'],
     );
 
-
-    $culture_options = [];
-    $query = db_select('node', 'n');
-    $query->condition('n.type', 'main_cultures');
-    $query->distinct();
-    $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
-    $query->condition('fc.bundle', 'field_f_sowing');
-    $query->orderBy('n.title', 'ASC');
-    $query->fields('n', array('nid', 'title'));
-
-    // если уже выбран регион, добавить его в условия
-    $region_selected = '';
-    if (isset($_POST['region']) && $_POST['region'] != 'All') {
-        $region_selected = $_POST['region'];
-    }
-    elseif (isset($_GET['region']) && $_GET['region'] != 'All') {
-        $region_selected = $_GET['region'];
-    }
-    if ($region_selected) {
-        $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.field_f_sowing_value = fc.entity_id');
-        $query->innerJoin('node', 'nf', 'nf.nid = fs.entity_id');
-        $query->innerJoin('field_data_field_f_region', 'fr', 'fr.entity_id = nf.nid');
-        $query->condition('fr.field_f_region_tid', $region_selected);
-    }
-    $culture_options = $query->execute()->fetchAllKeyed();
-    $culture_options = array('All' => '- ' . t('Any') . ' -') + $culture_options;
-
+    $culture_options = array('All' => '- ' . t('Any') . ' -') + $options['cultures'];
     $form['c']['c1']['culture'] = array(
         '#type' => 'select',
         '#title' => t('Culture'),

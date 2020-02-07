@@ -53,8 +53,16 @@ function before_after_menu() {
     );
 
         // источник данных для мобильного приложения
-    $items['source/atfield.json'] = array(
+    $items['source/atfield.json/%/%'] = array(
         'page callback' => 'before_after_atfield_source',
+        'page arguments' => [2, 3],
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK
+    );
+
+    $items['source/atfield-filters.json/%/%'] = array(
+        'page callback' => 'before_after_atfield_filters_source',
+        'page arguments' => [2, 3],
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK
     );
@@ -71,7 +79,8 @@ function before_after_permission() {
     );
 }
 
-function before_after_theme() {
+function before_after_theme()
+{
     return array(
         'before_after_user' => array(
             'variables' => array('content' => NULL),
@@ -91,7 +100,8 @@ function before_after_theme() {
 /**
  * Implements hook_ctools_plugin_api().
  */
-function before_after_ctools_plugin_api($owner, $api) {
+function before_after_ctools_plugin_api($owner, $api)
+{
     if ($owner == 'services' && $api == 'services') {
         return array(
             'version' => 3,
@@ -104,7 +114,8 @@ function before_after_ctools_plugin_api($owner, $api) {
  * удаление ЛЮБЫХ объектов
  *
  */
-function before_after_del_show_modal($type, $id, $js) {
+function before_after_del_show_modal($type, $id, $js)
+{
     if (!$js) {
         return drupal_get_form('before_after_del_form', $type, $id);
     }
@@ -125,7 +136,8 @@ function before_after_del_show_modal($type, $id, $js) {
 }
 
 
-function before_after_del_form($form, &$form_state, $type, $parent_id, $id) {
+function before_after_del_form($form, &$form_state, $type, $parent_id, $id)
+{
     $form_state['type'] = $type;
     $form_state['id'] = $id;
 
@@ -238,9 +250,63 @@ function before_after_field_collection_item_delete($item)
 /**
  * callback function
  * источник данных о сезонах для мобильного приложения
+ * вывод подогнан по вывод стандартного service views
  */
-function before_after_atfield_source() {
-    $results = before_after_get_atfield_list();
-    drupal_json_output(['atfield' => $results]);
+function before_after_atfield_source($region, $culture)
+{
+    if ($region == 'null') $region = null;
+    if ($culture == 'null') $culture = null;
+    $seasons_all = before_after_get_atfield_list($region, $culture);
+    $count = count($seasons_all);
+    $limit = 10;
+    $pages = ceil($count/$limit);
+    $page = 0;
+    $seasons = [];
+
+    if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+        $page = $_GET['page'];
+        $i = 0;
+        foreach ($seasons_all as $season) {
+            if ($i >= $page*$limit && $i < ($page+1)*$limit) {
+                $seasons[]['season'] = $season;
+            }
+            $i++;
+        }
+    }
+
+    $results = [
+        'seasons' => $seasons,
+        'pager' => [
+            'pages' => $pages,
+            'page' => $page,
+            'count' => $count,
+            'limit' => $limit,
+        ],
+        'view' => [
+            'name' => 'atfield',
+            'display' => 'page',
+            'root' => 'seasons',
+            'child' => 'season',
+            'pages' => $pages,
+            'page' => $page,
+            'count' => $count,
+            'limit' => $limit,
+        ],
+    ];
+    drupal_json_output($results);
+    drupal_exit();
+}
+
+/**
+ * callback function
+ * списки для фильтров в ПвП
+ */
+function before_after_atfield_filters_source($rid, $cid)
+{
+    if ($rid == 'null') $rid = null;
+    if ($cid == 'null') $cid = null;
+
+    $options = _before_after_filters($rid, $cid);
+    drupal_json_output($options);
     drupal_exit();
 }

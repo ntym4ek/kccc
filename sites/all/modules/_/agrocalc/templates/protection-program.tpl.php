@@ -192,9 +192,9 @@ $path = drupal_get_path('module', 'agrocalc');
                     <?php endif; ?>
 
                     <?php if (isset($category['hobjects'])):
-                        $phase = $program['header']['phase'] ? ' на этапе "' . $program['header']['phase'] . '"' : '';  ?>
+                        $phase = $program['header']['phase'] ? ' ' . t('on stage') . ' ' . $program['header']['phase'] : '';  ?>
                         <div class="view-item col-xs-12">
-                            <? print t('To get information about preparations against harmful objects: '); ?>"<?php print $category['hobjects'] . '"' . $phase; ?> <?php print t('contact our ') . l(t('Representatives'), 'info/representatives', ['attributes' => ['target' => '_blank']]); ?>
+                            <? print t('To get information about preparations against harmful objects: @hobjects @phase contact our <a href="@url" target="_blank">Representatives</a>', ['@url' => url('info/representatives'), '@hobjects' => $category['hobjects'], '@phase' => $phase]); ?>
                         </div>
                     <?php endif; ?>
                     </div>
