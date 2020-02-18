@@ -70,23 +70,6 @@
                 <div class="panel-body">
                     <div class="media contact-card col-md-6">
                         <div class="media-left">
-                            <img class="media-object" src="/sites/all/modules/_/contacts/images/photo/zhuikova.png" alt="">
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">Жуйкова<br>Елена Анатольевна</h4>
-                            <div class="contact-dep">Менеджер по персоналу</div>
-
-
-                            <div class="contact-phones">
-                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-22, доб. 1114</a></div>
-                            </div>
-                            <div class="contact-emails">
-                                <div class="contact-email"><a href="mailto:elena.zhuykova@kccc.ru" class="" rel="nofollow">elena.zhuykova@kccc.ru</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="media contact-card col-md-6">
-                        <div class="media-left">
                             <img class="media-object" src="/sites/all/modules/_/contacts/images/photo/ogorodova.png" alt="">
                         </div>
                         <div class="media-body">

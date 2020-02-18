@@ -45,7 +45,7 @@
 
             <?php $counter = 0; ?>
             <? foreach ($sales['reps'] as $key_r => $rep): ?>
-                <? if (isset ($rep['role']) && $rep['role'] == 'rep') {
+                <? if (isset ($rep['roles']) && in_array('rep', $rep['roles'])) {
                     $collapse = [];
                     if (count($rep['regions']) > 1) {
                         $collapse['id'] = $key_r;

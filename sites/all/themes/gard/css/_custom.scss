@@ -1438,6 +1438,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         .logo-on,
         .logo-off {
           position: absolute; top: 0; left: 0;
+            max-height: 40px;
           @include transition(all 0.3s ease-in-out);
         }
         span { padding-left: 30px; }

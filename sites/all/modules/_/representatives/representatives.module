@@ -126,7 +126,9 @@ function representatives_form_refresh($form, $form_state)
     return $form;
 }
 
-
+/**
+ * roles => c_head, r_head, rep, exp
+ */
 function representatives_get_representatives_list()
 {
     $module_path = drupal_get_path('module', 'representatives');
@@ -143,6 +145,7 @@ function representatives_get_representatives_list()
         'photo' => '/' . $module_path . '/images/photos/potapov.png',
     );
     $sales['heads'][] = array(
+        'roles' =>  ['c_head'],
         'office' => t('Head of cluster'),
         'access' => true,
         'surname' => 'Рудяк', 'name' => 'Дмитрий', 'name2' => 'Вячеславович',
@@ -150,6 +153,7 @@ function representatives_get_representatives_list()
         'emails' => array('td.sale5@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/rudyak.png',
         'regions' => array(
+            71675 => [], //Архангельская область",
             71677 => [], //Белгородская область",
             71678 => [], //Брянская область",
             71679 => [], //Владимирская область",
@@ -166,6 +170,7 @@ function representatives_get_representatives_list()
             71692 => [], //Курская область",
             71694 => [], //Липецкая область",
             71696 => [], //Москва и Московская область",
+            71697 => [], //Мурманская область",
             71698 => [], //Нижегородская область",
             71699 => [], //Новгородская область",
             71703 => [], //Орловская область",
@@ -189,65 +194,70 @@ function representatives_get_representatives_list()
 
 
 
-//            71687 => [], //Камчатский край",
-//            71695 => [], //Магаданская область",
-//            71697 => [], //Мурманская область",
-//            71650 => [], //Республика Алтай",
-//            71649 => [], //Республика Бурятия",
-//            71663 => [], //Республика Тыва",
-//            71665 => [], //Республика Хакасия",
-//            71660 => [], //Республика Саха (Якутия)",
-//            71711 => [], //Сахалинская область",
-//            71731 => [], //Севастополь",
+//
+//
+//
+//
+//
+//
+//
 
         ),
     );
-//    $sales['heads'][] = array(
-//        'office' => t('Head of cluster'),
-//        'access' => true,
-//        'surname' => 'Соколов', 'name' => 'Иван', 'name2' => 'Андреевич',
-//        'phones' => array('+7 (8332) 76-15-31, доб. 1208', '+7 (909) 139-59-68'),
-//        'emails' => array('td.sale18@kccc.ru'),
-//        'photo' => '/' . $module_path . '/images/photos/sokolov.png',
-//        'regions' => array(
-//            71668 => [], //Алтайский край",
-//            71674 => [], //Амурская область",
-//            71676 => [], //Астраханская область",
-//            71680 => [], //Волгоградская область",
-//            71725 => [], //Еврейская АО",
-//            71721 => [], //Забайкальский край",
-//            71684 => [], //Иркутская область",
-//            71688 => [], //Кемеровская область",
-//            71670 => [], //Красноярский край",
-//            71691 => [], //Курганская область",
-//            71700 => [], //Новосибирская область",
-//            71701 => [], //Омская область",
-//            71702 => [], //Оренбургская область",
-//            71704 => [], //Пензенская область",
-//            71671 => [], //Приморский край",
-//            71648 => [], //Республика Башкортостан",
-//            71654 => [], //Республика Калмыкия",
-//            71658 => [], //Республика Марий Эл",
-//            71659 => [], //Республика Мордовия",
-//            71662 => [], //Республика Татарстан,
-//            71709 => [], //Самарская область',
-//            71710 => [], //Саратовская область',
-//            71712 => [], //Свердловская область",
-//            71716 => [], //Томская область",
-//            71718 => [], //Тюменская область",
-//            71664 => [], //Удмуртская Республика",
-//            71719 => [], //Ульяновская область',
-//            71673 => [], //Хабаровский край",
-//            71720 => [], //Челябинская область",
-//            71667 => [], //Чувашская Республика",
-//
-////            71675 => [], //Архангельская область",
-////            71727 => [], //Ханты-Мансийский АО - Югра",
-////            71728 => [], //Чукотский АО",
-////            71729 => [], //Ямало-Ненецкий АО",
-//        ),
-//    );
     $sales['heads'][] = array(
+        'roles' =>  ['c_head'],
+        'office' => t('Head of cluster'),
+        'access' => true,
+        'surname' => 'Устюжанин', 'name' => 'Данила', 'name2' => 'Игоревич',
+        'phones' => array('+7 (8332) 76-15-31, доб. 1154', '+7 (912) 738-11-11'),
+        'emails' => array('td.sale1@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/ustyuzhanin.png',
+        'regions' => array(
+            71668 => [], //Алтайский край",
+            71674 => [], //Амурская область",
+            71676 => [], //Астраханская область",
+            71680 => [], //Волгоградская область",
+            71725 => [], //Еврейская АО",
+            71721 => [], //Забайкальский край",
+            71684 => [], //Иркутская область",
+            71687 => [], //Камчатский край",
+            71688 => [], //Кемеровская область",
+            71670 => [], //Красноярский край",
+            71691 => [], //Курганская область",
+            71695 => [], //Магаданская область",
+            71700 => [], //Новосибирская область",
+            71701 => [], //Омская область",
+            71702 => [], //Оренбургская область",
+            71704 => [], //Пензенская область",
+            71671 => [], //Приморский край",
+            71650 => [], //Республика Алтай",
+            71648 => [], //Республика Башкортостан",
+            71649 => [], //Республика Бурятия",
+            71654 => [], //Республика Калмыкия",
+            71658 => [], //Республика Марий Эл",
+            71659 => [], //Республика Мордовия",
+            71660 => [], //Республика Саха (Якутия)",
+            71662 => [], //Республика Татарстан,
+            71663 => [], //Республика Тыва",
+            71665 => [], //Республика Хакасия",
+            71709 => [], //Самарская область',
+            71710 => [], //Саратовская область',
+            71711 => [], //Сахалинская область",
+            71712 => [], //Свердловская область",
+            71716 => [], //Томская область",
+            71718 => [], //Тюменская область",
+            71664 => [], //Удмуртская Республика",
+            71719 => [], //Ульяновская область',
+            71673 => [], //Хабаровский край",
+            71727 => [], //Ханты-Мансийский АО - Югра",
+            71720 => [], //Челябинская область",
+            71667 => [], //Чувашская Республика",
+            71728 => [], //Чукотский АО",
+            71729 => [], //Ямало-Ненецкий АО",
+        ),
+    );
+    $sales['heads'][] = array(
+        'roles' =>  ['r_head'],
         'office' => t('Head of region'),
         'access' => true,
         'surname' => 'Князев', 'name' => 'Алексей', 'name2' => 'Юрьевич',
@@ -264,11 +274,13 @@ function representatives_get_representatives_list()
             71730 => [], //Республика Крым",
             71661 => [], //Республика Северная Осетия - Алания",
             71707 => [], //Ростовская область",
+            71731 => [], //Севастополь",
             71672 => [], //Ставропольский край",
             71666 => [], //Чеченская Республика",
         ),
     );
     $sales['heads'][] = array(
+        'roles' =>  ['r_head'],
         'office' => t('Head of region'),
         'access' => true,
         'surname' => 'Якимов', 'name' => 'Евгений', 'name2' => 'Леонидович',
@@ -281,16 +293,25 @@ function representatives_get_representatives_list()
             71725 => [], //Еврейская АО",
             71721 => [], //Забайкальский край",
             71684 => [], //Иркутская область",
+            71687 => [], //Камчатский край",
             71688 => [], //Кемеровская область",
             71670 => [], //Красноярский край",
+            71695 => [], //Магаданская область",
             71700 => [], //Новосибирская область",
             71671 => [], //Приморский край",
             71650 => [], //Республика Алтай",
+            71649 => [], //Республика Бурятия",
+            71660 => [], //Республика Саха (Якутия)",
+            71663 => [], //Республика Тыва",
+            71665 => [], //Республика Хакасия",
+            71711 => [], //Сахалинская область",
             71716 => [], //Томская область",
             71673 => [], //Хабаровский край",
+            71728 => [], //Чукотский АО",
         ),
     );
     $sales['heads'][] = array(
+        'roles' =>  ['r_head'],
         'office' => t('Head of region'),
         'access' => true,
         'surname' => 'Попов', 'name' => 'Виктор', 'name2' => 'Михайлович',
@@ -309,7 +330,7 @@ function representatives_get_representatives_list()
 
     /** ------------------------ Представители --------------------------------------------------------------------- */
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Маринина', 'name' => 'Лариса', 'name2' => 'Валентиновна',
@@ -321,7 +342,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Хаустов', 'name' => 'Сергей', 'name2' => 'Витальевич',
@@ -333,7 +354,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Цыбань', 'name' => 'Антон', 'name2' => 'Александрович',
@@ -345,7 +366,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Левшин', 'name' => 'Петр', 'name2' => 'Иванович',
@@ -356,20 +377,20 @@ function representatives_get_representatives_list()
             71677 => [], //Белгородская область",
         ),
     );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Головин', 'name' => 'Александр', 'name2' => 'Николаевич',
+//        'phones' => array('+7 (922) 908-44-10'),
+//        'emails' => array('belgorod1@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/golovin.png',
+//        'regions' => array(
+//            71677 => [], //Белгородская область",
+//        ),
+//    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Головин', 'name' => 'Александр', 'name2' => 'Николаевич',
-        'phones' => array('+7 (922) 908-44-10'),
-        'emails' => array('belgorod1@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/golovin.png',
-        'regions' => array(
-            71677 => [], //Белгородская область",
-        ),
-    );
-    $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Асадов', 'name' => 'Кирилл', 'name2' => 'Низамович',
@@ -381,7 +402,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => 'Представитель',
         'access' => false,
         'surname' => 'Халецкий', 'name' => 'Александр', 'name2' => 'Викторович',
@@ -393,7 +414,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $representatives['reps'][] = array(
-//        'role' =>  'rep',
+//        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
 //        'access' => false,
 //        'surname' => '', 'name' => '', 'name2' => '',
@@ -405,7 +426,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => true,
         'surname' => 'Иосипчук', 'name' => 'Андрей', 'name2' => 'Викторович',
@@ -422,7 +443,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Савенко', 'name' => 'Алексей', 'name2' => 'Михайлович',
@@ -434,7 +455,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Домницкая', 'name' => 'Виктория', 'name2' => 'Николаевна',
@@ -446,7 +467,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Широкий', 'name' => 'Михаил', 'name2' => 'Николаевич',
@@ -458,7 +479,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $representatives['reps'][] = array(
-//        'role' =>  'rep',
+//        'roles' =>  ['rep'],
 //        'office' => 'Представитель',
 //        'access' => false,
 //        'surname' => 'Журавлев', 'name' => 'Дмитрий', 'name2' => 'Валерьевич',
@@ -470,7 +491,7 @@ function representatives_get_representatives_list()
 //      ),
 //    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Плешков', 'name' => 'Владимир', 'name2' => 'Геннадьевич',
@@ -482,7 +503,7 @@ function representatives_get_representatives_list()
         )
     );
     $sales['reps'][] =  array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'surname' => 'Бекасова', 'name' => 'Марина', 'name2' => 'Викторовна',
         'phones' => array('+7 (922) 999-11-47'),
@@ -492,8 +513,19 @@ function representatives_get_representatives_list()
             71700 => [], //Новосибирская область",
         ),
     );
+    $sales['reps'][] =  array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'surname' => 'Дамоевский', 'name' => 'Алексей', 'name2' => 'Владимирович',
+        'phones' => array('+7 (922) 966-64-34'),
+        'emails' => array('novosibirsk2@kccc.ru'),
+        'photo' => $no_photo,
+        'regions' => array(
+            71700 => [], //Новосибирская область",
+        ),
+    );
 //    $representatives['reps'][] =  array(
-//        'role' =>  'rep',
+//        'roles' =>  ['rep'],
 //        'office' => 'Представитель',
 //        'surname' => '', 'name' => '', 'name2' => '',
 //        'phones' => array('+7 (922) 966-60-12'),
@@ -504,7 +536,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Усатов', 'name' => 'Валерий', 'name2' => 'Васильевич',
@@ -516,7 +548,20 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['exp'],
+        'office' => t('Scientific consultant'),
+        'access' => false,
+        'surname' => 'Пелипас', 'name' => 'Николай', 'name2' => 'Николаевич',
+        'phones' => array('+7 (922) 900-02-01'),
+        'emails' => array('omsk1@kccc.ru'),
+        'expert' => '+7 (922) 900-02-01',
+        'photo' => $no_photo,
+        'regions' => array(
+            71701 => [], //Омская область",
+        ),
+    );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Рыбин', 'name' => 'Александр', 'name2' => 'Петрович',
@@ -528,7 +573,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep', 'exp'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Токарев', 'name' => 'Виктор', 'name2' => 'Анатольевич',
@@ -541,7 +586,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Неверов', 'name' => 'Владимир', 'name2' => 'Николаевич',
@@ -553,7 +598,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Неретин', 'name' => 'Максим', 'name2' => 'Сергеевич',
@@ -565,19 +610,19 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Боронкин', 'name' => 'Андрей', 'name2' => 'Михайлович',
         'phones' => array('+7 (922) 970-60-55'),
         'emails' => array('orenburg5@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/boronkin.png',
         'regions' => array(
             71702 => [], //Оренбургская область",
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Юдин', 'name' => 'Сергей', 'name2' => 'Васильевич',
@@ -589,7 +634,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Кобозев', 'name' => 'Сергей', 'name2' => 'Валерьевич',
@@ -601,7 +646,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Калинин', 'name' => 'Александр', 'name2' => 'Александрович',
@@ -613,7 +658,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Агеев', 'name' => 'Дмитрий', 'name2' => 'Анатольевич',
@@ -625,7 +670,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Тураев', 'name' => 'Радик', 'name2' => 'Галиевич',
@@ -637,7 +682,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Зарипов', 'name' => 'Эльвир', 'name2' => 'Зирякович',
@@ -649,7 +694,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Агеев', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
@@ -662,7 +707,7 @@ function representatives_get_representatives_list()
     );
 
 //    $sales['reps'][] = array(
-//        'role' =>  'rep',
+//        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
 //        'access' => false,
 //        'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
@@ -674,7 +719,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Четвертаков', 'name' => 'Максим', 'name2' => 'Викторович',
@@ -686,19 +731,19 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Сейранов', 'name' => 'Карен', 'name2' => 'Николаевич',
         'phones' => array('+7 (922) 957-10-20'),
         'emails' => array('rostov4@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/seiranov.png',
         'regions' => array(
             71707 => [], //Ростовская область",
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Русанов', 'name' => 'Алексей', 'name2' => 'Владимирович',
@@ -710,7 +755,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Епифанов', 'name' => 'Александр', 'name2' => 'Владимирович',
@@ -722,7 +767,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'expert' => '+7 (902) 730-80-22',
@@ -735,7 +780,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Дёмин', 'name' => 'Андрей', 'name2' => 'Дмитриевич',
@@ -747,7 +792,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Знаменщиков', 'name' => 'Василий', 'name2' => 'Александрович',
@@ -759,7 +804,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Пиленков', 'name' => 'Михаил', 'name2' => 'Владимирович',
@@ -771,7 +816,7 @@ function representatives_get_representatives_list()
         ),
     );
 //    $sales['reps'][] = array(
-//        'role' =>  'rep',
+//        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
 //        'access' => false,
 //        'surname' => 'Основин', 'name' => 'Александр', 'name2' => 'Анатольевич',
@@ -783,7 +828,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Микряшов', 'name' => 'Владислав', 'name2' => 'Вячеславович',
@@ -795,7 +840,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Коновалов', 'name' => 'Вячеслав', 'name2' => 'Юрьевич',
@@ -807,7 +852,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
+        'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
         'surname' => 'Антонов', 'name' => 'Александр', 'name2' => 'Викторович',
@@ -819,11 +864,12 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'role' =>  'rep',
-        'office' => t('Representative'),
+        'roles' =>  ['exp'],
+        'office' => t('Scientific consultant'),
         'access' => false,
         'surname' => 'Красножон', 'name' => 'Сергей', 'name2' => 'Михайлович',
         'phones' => array('+7 (922) 747-26-46'),
+        'expert' => '+7 (922) 747-26-46',
         'emails' => array('chelyabinsk2@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/krasnozhon.png',
         'regions' => array(
@@ -873,7 +919,6 @@ function representatives_get_representatives_list()
     $sales['regions_by_tid'] = $regions_by_tid;
     $sales['regions_by_iso'] = $regions_by_iso;
 
-
     return $sales;
 }
 
@@ -897,16 +942,16 @@ function _get_representative($tid)
     $sales = representatives_get_representatives_list();
     if ($tid) {
         $representatives = [];
-        foreach ($sales['reps'] as $rep) {
-            if (isset($rep['regions'][$tid]) && !empty($rep['access'])) {
-                $representatives['reps'][$tid] = $rep;
+        // сначала руководителей
+        foreach ($sales['heads'] as $head) {
+            if (isset($head['regions'][$tid])) {
+                $representatives['heads'][] = $head;
             }
         }
-        if (empty($representatives)) {
-            foreach ($sales['heads'] as $head) {
-                if (isset($head['regions'][$tid]) && !empty($head['access'])) {
-                    $representatives['heads'][$tid] = $head;
-                }
+        // потом представителей
+        foreach ($sales['reps'] as $rep) {
+            if (isset($rep['regions'][$tid])) {
+                $representatives['reps'][] = $rep;
             }
         }
         return $representatives;
