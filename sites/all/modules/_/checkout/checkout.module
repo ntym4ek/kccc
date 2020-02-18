@@ -92,6 +92,7 @@ function checkout_preprocess_page(&$vars)
 
 function checkout_form_alter(&$form, &$form_state, $form_id)
 {
+    /** -------------------------------------------- Форма оформления заказа ---------------------------------------- */
     if ($form_id == 'commerce_checkout_form_checkout') {
         $form['#attributes']['class'] = array('commerce-checkout-form-checkout');
 
@@ -108,7 +109,8 @@ function checkout_form_alter(&$form, &$form_state, $form_id)
 }
 
 /**
- * Implementation of hook_form_FORMID_alter().
+ * Implementation of hook_form_FORM_ID_alter().
+ * форма добавления в корзину
  */
 function checkout_form_commerce_cart_add_to_cart_form_alter(&$form, $form_state)
 {
@@ -120,8 +122,50 @@ function checkout_form_commerce_cart_add_to_cart_form_alter(&$form, $form_state)
             $form['attributes']['field_p_tare']['#options'][$tid] = $term_wr->language($GLOBALS['language']->language)->name->value();
         }
     }
+
+    // выводить элементы в одну строку с метками
+    $form['#attributes']['class'][] = 'form-horizontal';
+    $form['submit']['#prefix'] = '<div class="form-item form-action-wrapper">';
+    $form['submit']['#suffix'] = '</div>';
+    $form['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('add_to_cart'); return true;";
+    $form['submit']['#attributes']['class'][] = "btn-info";
+
+    // если установлен в товаре флаг Out_of_stock, сделать Добавление в корзину неактивным
+    $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
+    if (strpos($form_state['default_product']->type, 'product_') === 0) {
+        if (isset($form['product_id']['#value']))
+            $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
+        elseif (isset($form['product_id']['#default_value']))
+            $product_display = _get_product_display_by_product_id($form['product_id']['#default_value'], false);
+
+        $form['submit']['#value'] = t('Add to list');
+    }
+
+    // сферу и таблетку перенаправить на страду через кнопку Купить
+    if ($product_display->field_pd_category['und'][0]['tid'] == '72785') {
+        $form['submit']['#value'] = t('Buy');
+        array_unshift($form['#submit'], 'checkout_cart_add_to_cart_form_submit');
+        foreach($form['submit']['#attributes']['class'] as $index => $class) {
+            if ($class == 'use-ajax-submit') unset($form['submit']['#attributes']['class'][$index]);
+        }
+    }
+
+    if ((isset($product_display->out_of_stock) && $product_display->out_of_stock == 1)
+        || (isset($product_display->field_pd_price_per_unit['und']) && (($product_display->field_pd_price_per_unit['und'][0]['amount'] == 0)))
+    ) {
+        $form['submit']['#disabled'] = true;
+        $form['submit']['#value'] = t('Out of stock');
+    }
 }
 
+function checkout_cart_add_to_cart_form_submit($form, $form_state)
+{
+    // если это сфера или таб, перейти на сайт страды
+    if (isset($form_state['context']['entity_id'])) {
+        if ($form_state['context']['entity_id'] == 8505) drupal_goto('https://joy-magazin.ru/product/finfire-sfera');
+        if ($form_state['context']['entity_id'] == 8770) drupal_goto('https://joy-magazin.ru/product/finfire-tab');
+    }
+}
 
 /**
  * ------------- При добавлении в корзину обновить блок корзины -------------------

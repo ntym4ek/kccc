@@ -126,33 +126,6 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
                 $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
             }
     }
-
-    /** -------------------------------------------- Форма добавления в корзину (Add to Cart) ----------------------- */
-    if (commerce_form_callback($form_id, $form_state) == "commerce_cart_add_to_cart_form") {
-        // выводить элементы в одну строку с метками
-        $form['#attributes']['class'][] = 'form-horizontal';
-        $form['submit']['#prefix'] = '<div class="form-item form-action-wrapper">';
-        $form['submit']['#suffix'] = '</div>';
-        $form['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('add_to_cart'); return true;";
-        $form['submit']['#attributes']['class'][] = "btn-info";
-
-        // если установлен в товаре флаг Out_of_stock, сделать Добавление в корзину неактивным
-        $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
-        if (strpos($form_state['default_product']->type, 'product_') === 0) {
-            if (isset($form['product_id']['#value']))
-                $product_display = _get_product_display_by_product_id($form['product_id']['#value'], false);
-            elseif (isset($form['product_id']['#default_value']))
-                $product_display = _get_product_display_by_product_id($form['product_id']['#default_value'], false);
-
-            $form['submit']['#value'] = t('Add to list');
-        }
-        if ((isset($product_display->out_of_stock) && $product_display->out_of_stock == 1)
-            || (isset($product_display->field_pd_price_per_unit['und']) && (($product_display->field_pd_price_per_unit['und'][0]['amount'] == 0)))
-        ) {
-            $form['submit']['#disabled'] = true;
-            $form['submit']['#value'] = t('Out of stock');
-        }
-    }
 }
 
 
