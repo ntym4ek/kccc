@@ -5,7 +5,7 @@
  * Date: 20.07.2015
  * Time: 14:27
  */
-$order = $variables['order'];
+$data = $variables['data'];
 ?>
 
 <div class="row checkout-complete">
@@ -14,27 +14,27 @@ $order = $variables['order'];
 
         <dl class="dl-horizontal">
             <dt><?php print t('Request number')?></dt>
-            <dd>№ <?php print $order['number']; ?><br /><p class="text-muted"><?php print t('For tracking in your account')?></p></dd>
+            <dd>№ <?php print $data['number']; ?><br /><p class="text-muted"><?php print t('For tracking in your account')?></p></dd>
 
             <dt><?php print t('User data')?></dt>
             <dd>
-                <?php print $order['user_region']; ?><br />
-                <?php print $order['user_name']; ?><br />
-                <?php print $order['user_phone']; ?><br />
-                <?php print $order['user_email']; ?><br />
+                <?php print $data['user_region']; ?><br />
+                <?php print $data['user_name']; ?><br />
+                <?php print $data['user_phone']; ?><br />
+                <?php print $data['user_email']; ?><br />
 
             </dd>
 
             <dt><?php print t('Preparations')?></dt>
             <dd>
-                <?php print $order['items_count']; ?><br />
-                <?php if (is_array($order['weight'])): ?><?php print t('Weight') . ': ' . $order['weight']['weight'] . ' ' . t($order['weight']['unit']); endif; ?>
-                <?php if (is_array($order['volume'])): ?><?php print t('Volume') . ': ' . number_format($order['volume']['volume'], 2) . ' ' . t('m<span class="sup">3</span>'); endif; ?>
+                <?php print $data['items_count']; ?><br />
+                <?php if (is_array($data['weight'])): ?><?php print t('Weight') . ': ' . $data['weight']['weight'] . ' ' . t($data['weight']['unit']); endif; ?>
+                <?php if (is_array($data['volume'])): ?><?php print t('Volume') . ': ' . number_format($data['volume']['volume'], 2) . ' ' . t('m<span class="sup">3</span>'); endif; ?>
             </dd>
 
             <dt><?php print t('Representative')?></dt>
             <dd>
-                <?php print $order['contact_card']; ?>
+                <?php print $data['contact_card']; ?>
             </dd>
         </dl>
     </div>

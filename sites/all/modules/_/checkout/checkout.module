@@ -46,15 +46,16 @@ function checkout_commerce_checkout_pane_info() {
 /**
  * Implementation of hook_module_implements_alter().
  */
-function checkout_module_implements_alter(&$implementations, $hook) {
+function checkout_module_implements_alter(&$implementations, $hook)
+{
     //  Если хук - hook_form_alter, то переносим нашу реализацию этого хука в конец очереди
-    if ($hook == 'form_alter') {
+    if ($hook == 'form_alter' && isset($implementations['checkout'])) {
         $group = $implementations['checkout'];
         unset($implementations['checkout']);
         $implementations['checkout'] = $group;
     }
     //  Если хук - hook_theme, то переносим нашу реализацию этого хука в конец очереди
-    if ($hook == 'theme') {
+    if ($hook == 'theme' && isset($implementations['checkout'])) {
         $group = $implementations['checkout'];
         unset($implementations['checkout']);
         $implementations['checkout'] = $group;
@@ -90,21 +91,76 @@ function checkout_preprocess_page(&$vars)
     }
 }
 
-function checkout_form_alter(&$form, &$form_state, $form_id)
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ * форма Оформления заказа
+ */
+function checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_state, $form_id)
 {
-    /** -------------------------------------------- Форма оформления заказа ---------------------------------------- */
-    if ($form_id == 'commerce_checkout_form_checkout') {
-        $form['#attributes']['class'] = array('commerce-checkout-form-checkout');
+    $form['#attributes']['class'][] = 'commerce-checkout-form-checkout';
 
-        // отключить отмену, переименовать оформление
-        unset($form['buttons']['cancel']);
-        $form['buttons']['continue']['#value'] = t('Send request');
-        $form['buttons']['continue']['#attributes']['class'][] = 'pull-right btn-wide';
-        $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
+    // отключить отмену, переименовать оформление
+    unset($form['buttons']['cancel']);
+    $form['buttons']['continue']['#value'] = t('Send request');
+    $form['buttons']['continue']['#attributes']['class'][] = 'pull-right btn-wide';
+    $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
+    $form['buttons']['continue']['#submit'][] = 'checkout_commerce_checkout_form_submit';
+    // подавить общее сообщение о наличии ошибок в форме
+    // выводить ошибки на соотв. панели
+    // unset($form['error_message']);  // при длинном списке не видно ошибки после обновления страницы
+}
 
-        // подавить общее сообщение о наличии ошибок в форме
-        // выводить ошибки на соотв. панели
-        // unset($form['error_message']);  // при длинном списке не видно ошибки после обновления страницы
+/**
+ * commerce_checkout_form submit callback
+ */
+function checkout_commerce_checkout_form_submit($form, $form_state)
+{
+    $region_tid = $form_state['values']['checkout_contact']['request']['forma']['region'];
+    $rep_mail = $form_state['values']['checkout_contact']['request']['forma']['rep'];
+
+    $sales = _get_representative($region_tid);
+    // если выбран Представитель, найти его по email
+    // todo Представителей связать с пользователем сайта
+    $rep = [];
+    foreach($sales['reps'] as $rep) {
+        if (in_array($rep_mail, $rep['emails'])) {
+            break;
+        }
+    }
+
+    // отправить письма
+    $params = [];
+    $params['data'] = [
+        'order' => $form_state['order'],
+        'user' => [
+            'region' => taxonomy_term_load($region_tid)->name,
+            'email' => $form_state['values']['checkout_contact']['request']['forma']['email'],
+            'name' => $form_state['values']['checkout_contact']['request']['forma']['name'],
+            'phone' => $form_state['values']['checkout_contact']['request']['forma']['phone'],
+        ],
+        'rep' => $rep
+    ];
+    $params['mail_to'] = 'manager';
+
+    if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
+        // отправить письмо Представителю, дублировать Руководителю и Рудяк попросил отправлять ещё на td.sale3@kccc.ru
+        if ($rep) {
+            drupal_mail('mailer', 'order_creation', $rep_mail, $GLOBALS['language'], $params);
+        }
+        if (!empty($sales['heads'])) {
+            $head = array_pop($sales['heads']);
+            drupal_mail('mailer', 'order_creation', $head['emails'][0], $GLOBALS['language'], $params);
+        }
+
+        drupal_mail('mailer', 'order_creation', 'td.sale3@kccc.ru', $GLOBALS['language'], $params);
+
+        // отправить письмо пользователю
+        $params['mail_to'] = 'user';
+        $user_mail = $form_state['values']['checkout_contact']['request']['forma']['email'];
+        drupal_mail('mailer', 'order_creation', $user_mail, $GLOBALS['language']->language, $params);
+
+    } else {
+        drupal_mail('mailer', 'order_creation', 'mega_comp@mail.ru', 'ru', $params);
     }
 }
 
@@ -228,151 +284,27 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
     $data['user_name'] = $order_wrapper->field_username->value();
     $data['user_phone'] = $order_wrapper->field_phone->value();
     $data['user_email'] = $order_wrapper->field_email->value();
+    $data['rep_email'] = $order_wrapper->field_representative_mail->value();
 
     // физические данные
     $data['weight'] = commerce_physical_order_weight($order, 'kg');
     $data['volume'] = commerce_physical_order_volume($order, 'm');
 
     // кол-во наименований
-    $data['items_count'] = format_plural($order_wrapper->commerce_line_items->count(), '1 item', '@count items', array(), array('context' => 'Checkout'));
-
+    $data['items_count'] = format_plural($order_wrapper->commerce_line_items->count(), '@count item', '@count items', array(), array('context' => 'Checkout'));
 
     // представитель
-        // берем контакты из модуля Contacts, ищем представителя по региону
-    $rep = _get_representative($data['user_region_tid']);
-    if ($rep = array_shift($rep['region'])) {
-        $data['representative'] = $rep;
-        $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
-    }
-
-    $vars['order'] = $data;
-
-    /** --------------------------------- сформировать и отправить письма - */
-        // todo перенести в другое место иначе каждый просмотр вызовет отправку писем
-        // отправить письмо представителю
-    $message = checkout_get_checkout_complete_email_text($data, 'manager');
-    drupal_mail('system', 'mail', $data['representative']['emails'][0], $GLOBALS['language'], array(
-        'context' => array(
-            'subject' => t('There is a new request from TradeHouse website visitor.'),
-            'message' => $message,
-        ),
-    ));
-
-    // дублировать Рудяку
-    drupal_mail('system', 'mail', 'td.sale5@kccc.ru', $GLOBALS['language'], array(
-        'context' => array(
-            'subject' => t('There is a new request from TradeHouse website visitor.'),
-            'message' => $message,
-        ),
-    ));
-    // Рудяк попросил отправлять ещё на td.sale3@kccc.ru
-    drupal_mail('system', 'mail', 'td.sale3@kccc.ru', $GLOBALS['language'], array(
-        'context' => array(
-            'subject' => t('There is a new request from TradeHouse website visitor.'),
-            'message' => $message,
-        ),
-    ));
-
-        // отправить письмо пользователю
-    $message = checkout_get_checkout_complete_email_text($data, 'user');
-    drupal_mail('system', 'mail', $data['user_email'], $GLOBALS['language'], array(
-        'context' => array(
-            'subject' => t('You made request at TradeHouse website.'),
-            'message' => $message,
-        ),
-    ));
-}
-
-function checkout_get_checkout_complete_email_text($data, $recipient = 'manager')
-{
-    $order_wrapper = entity_metadata_wrapper('commerce_order', $data['order']);
-
-    // повторяющиеся стили
-    $dt = 'width: 160px; text-align: right; color: #bbb; padding-right: 15px; vertical-align: top;';
-    $dd = 'padding-bottom: 15px;';
-    $td = 'border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; padding: 4px 8px;';
-
-    // список препаратов для письма
-    $data['prep_table'] = t('No preparations selected');
-    if ($order_wrapper->commerce_line_items->count()) {
-        $table = array(
-            'header' => array(
-                array('data' => t('Product'),   'style' => $td . 'width: 150px; text-align:center;'),
-                array('data' => t('Tare'),      'style' => $td . 'width: 100px; text-align:center;'),
-                array('data' => t('Price'),     'style' => $td . 'width: 120px; text-align:center;'),
-                array('data' => t('Qty'),       'style' => $td . 'width: 50px; text-align:center;'),
-                array('data' => t('Total'),     'style' => $td . 'width: 150px; text-align:center;'),
-            ),
-        );
-        $total = 0;
-        foreach ($order_wrapper->commerce_line_items as $item_wrapper) {
-            $pid = $item_wrapper->commerce_product->product_id->value();
-            $nid = _get_product_display_by_product_id($pid);
-            $tare = $item_wrapper->commerce_product->field_p_tare->name->value();
-            $prep_info = array_shift(get_product_info($nid)['items']);
-
-            $table['rows'][] = array(
-                array('data' => $prep_info['title'], 'style' => $td),
-                array('data' => $tare, 'style' => $td),
-                array('data' => commerce_currency_format($item_wrapper->commerce_total->amount->value(), 'RUB', NULL, true), 'style' => $td . ' text-align: right;'),
-                array('data' => (int)$item_wrapper->quantity->value(), 'style' => $td . ' text-align: center;'),
-                array('data' => commerce_currency_format($item_wrapper->commerce_total->amount->value() * $item_wrapper->quantity->value(), 'RUB', NULL, true), 'style' => $td . ' text-align: right;'),
-            );
-            $total += $item_wrapper->commerce_total->amount->value() * $item_wrapper->quantity->value();
+    $sales = _get_representative($data['user_region_tid']);
+    // если выбран Представитель, найти его по email
+    // todo Представителей связать с пользователем сайта
+    foreach($sales['reps'] as $rep) {
+        if (in_array($data['rep_email'], $rep['emails'])) {
+            $data['rep'] = $rep;
+            $data['contact_card'] = theme('contact_card', array('contact' => $rep, 'options' => ['class' => 'col-md-6']));
+            break;
         }
-        // добавить в таблицу вес, объём, сумму
-        $table['rows'][] = array(
-            array('data' => t('Weight') . ': ' . $data['weight']['weight'] . ' ' . t($data['weight']['unit']) . '&nbsp;&nbsp;&nbsp;' . t('Volume') . ': ' . number_format($data['volume']['volume'], 2) . t('m') . '3' , 'colspan' => 4, 'style' => $td),
-            array('data' => commerce_currency_format($total, 'RUB', NULL, true) , 'style' => $td . ' text-align: right;'),
-        );
-
-        $data['prep_table'] = theme('table', array(
-            'header' => $table['header'],
-            'rows' => $table['rows'],
-            'attributes' => array('cellspacing' => 0, 'style' => 'font-size: .8em; border-top: 1px solid #ccc; border-left: 1px solid #ccc;'),
-        ));
     }
 
-    // содержимое письма
-    $message = '<h2>' . t('Good day!') . '</h2>'
-        . ($recipient == 'manager' ? '<p>' . t('There is a new request from TradeHouse website visitor.') . '</p>' : '<p>' . t('You made request on TradeHouse website <a href="https://kccc.ru" target="_blank">https://kccc.ru</a>.<br />Our representative will contact you as soon as possible.') . '</p>')
-        . '<table style="margin-bottom: 15px;">'
-            . '<tr>'
-                . '<td style="' . $dt . '">' . t('Request number') . '</td>'
-                . '<td style="' . $dd . '">№ ' . $data['number'] . '</td>'
-            . '</tr>'
-
-            . '<tr>'
-                . '<td style="' . $dt . '">' . t('User data') . '</td>'
-                . '<td style="' . $dd . '">'
-                    . $data['user_region'] . '<br />'
-                    . $data['user_name'] . '<br />'
-                    . $data['user_phone'] . '<br />'
-                    . $data['user_email']
-                . '</td>'
-            . '</tr>'
-
-            . '<tr>'
-                . '<td style="' . $dt . '">' . t('Preparations') . '</td>'
-                . '<td style="' . $dd . '">'
-                    . $data['prep_table']
-                . '</td>'
-            . '</tr>'
-
-            . '<tr>'
-                . '<td style="' . $dt . '">'
-                    . ($recipient == 'manager' ? t('Representative sent') : t('Representative'))
-                . '</td>'
-                . '<td style="' . $dd . '">'
-                    . $data['representative']['surname'] . ' ' . $data['representative']['name'] . ' ' . $data['representative']['name2'] . '<br />'
-                    . '<span style="color: #bbb; font-size: .9em;">' . $data['representative']['office']
-                    . (!empty($data['representative']['regions']) ? ' ('. implode(', ', $data['representative']['regions']) . ')' : '')
-                    . '</span><br />'
-                    . implode('<br />', $data['representative']['phones']) . '<br />'
-                    . implode('<br />', $data['representative']['emails']) . '<br />'
-                . '</td>'
-            . '</tr>'
-        . '</table>';
-
-    return $message;
+    $vars['data'] = $data;
 }
+

@@ -216,8 +216,123 @@ function mailer_mail($key, &$message, $params)
 
         case 'manual_mail':
             $message['subject'] = $params['subject'];
-
             $message['body'][] = $params['body'];
+
+            break;
+
+        case 'order_creation':
+            if ($params['mail_to'] == 'manager') {
+                $message['subject'] = t('There is a new request from TradeHouse website visitor.');
+                $message['body'][] = mailer_get_checkout_complete_email_text($params['data'], 'manager');
+            }
+            if ($params['mail_to'] == 'user') {
+                $message['subject'] = t('You made request at TradeHouse website.');
+                $message['body'][] = mailer_get_checkout_complete_email_text($params['data'], 'user');
+            }
             break;
     }
+}
+
+function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
+{
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $data['order']);
+    $weight = commerce_physical_order_weight($data['order'], 'kg');
+    $volume = commerce_physical_order_volume($data['order'], 'm');
+
+    // повторяющиеся стили
+    $dt = 'width: 160px; text-align: right; color: #bbb; padding-right: 15px; vertical-align: top;';
+    $dd = 'padding-bottom: 15px;';
+    $td = 'border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; padding: 4px 8px;';
+
+    // список препаратов для письма
+    $data['prep_table'] = t('No preparations selected');
+    if ($order_wrapper->commerce_line_items->count()) {
+        $table = array(
+            'header' => array(
+                array('data' => t('Product'),   'style' => $td . 'width: 150px; text-align:center;'),
+                array('data' => t('Tare'),      'style' => $td . 'width: 100px; text-align:center;'),
+                array('data' => t('Price'),     'style' => $td . 'width: 120px; text-align:center;'),
+                array('data' => t('Qty'),       'style' => $td . 'width: 50px; text-align:center;'),
+                array('data' => t('Total'),     'style' => $td . 'width: 150px; text-align:center;'),
+            ),
+        );
+        $total = 0;
+        foreach ($order_wrapper->commerce_line_items as $item_wrapper) {
+            $pid = $item_wrapper->commerce_product->product_id->value();
+            $nid = _get_product_display_by_product_id($pid);
+            $tare = $item_wrapper->commerce_product->field_p_tare->name->value();
+            $prep_info = array_shift(get_product_info($nid)['items']);
+
+            $table['rows'][] = array(
+                array('data' => $prep_info['title'], 'style' => $td),
+                array('data' => $tare, 'style' => $td),
+                array('data' => commerce_currency_format($item_wrapper->commerce_total->amount->value(), 'RUB', NULL, true), 'style' => $td . ' text-align: right;'),
+                array('data' => (int)$item_wrapper->quantity->value(), 'style' => $td . ' text-align: center;'),
+                array('data' => commerce_currency_format($item_wrapper->commerce_total->amount->value() * $item_wrapper->quantity->value(), 'RUB', NULL, true), 'style' => $td . ' text-align: right;'),
+            );
+            $total += $item_wrapper->commerce_total->amount->value() * $item_wrapper->quantity->value();
+        }
+        // добавить в таблицу вес, объём, сумму
+        $table['rows'][] = array(
+            array('data' => t('Weight') . ': ' . $weight['weight'] . ' ' . t($weight['unit']) . '&nbsp;&nbsp;&nbsp;' . t('Volume') . ': ' . number_format($volume['volume'], 2) . t('m') . '3' , 'colspan' => 4, 'style' => $td),
+            array('data' => commerce_currency_format($total, 'RUB', NULL, true) , 'style' => $td . ' text-align: right;'),
+        );
+
+        $data['prep_table'] = theme('table', array(
+            'header' => $table['header'],
+            'rows' => $table['rows'],
+            'attributes' => array('cellspacing' => 0, 'style' => 'font-size: .8em; border-top: 1px solid #ccc; border-left: 1px solid #ccc;'),
+        ));
+    }
+
+    // регионы
+    $regions = [];
+    if ($data['rep']['regions']) {
+        foreach ($data['rep']['regions'] as $item) {
+            $regions[] = $item['name'];
+        }
+    }
+
+    // содержимое письма
+    $message = '<h2>' . t('Good day!') . '</h2>'
+        . ($recipient == 'manager' ? '<p>' . t('There is a new request from TradeHouse website visitor.') . '</p>' : '<p>' . t('You made request on TradeHouse website <a href="https://kccc.ru" target="_blank">https://kccc.ru</a>.<br />Our representative will contact you as soon as possible.') . '</p>')
+        . '<table style="margin-bottom: 15px;">'
+        . '<tr>'
+        . '<td style="' . $dt . '">' . t('Request number') . '</td>'
+        . '<td style="' . $dd . '">№ ' . $data['order']->order_number . '</td>'
+        . '</tr>'
+
+        . '<tr>'
+        . '<td style="' . $dt . '">' . t('User data') . '</td>'
+        . '<td style="' . $dd . '">'
+        . $data['user']['region'] . '<br />'
+        . $data['user']['name'] . '<br />'
+        . $data['user']['phone'] . '<br />'
+        . $data['user']['email']
+        . '</td>'
+        . '</tr>'
+
+        . '<tr>'
+        . '<td style="' . $dt . '">' . t('Preparations') . '</td>'
+        . '<td style="' . $dd . '">'
+        . $data['prep_table']
+        . '</td>'
+        . '</tr>'
+
+        . '<tr>'
+        . '<td style="' . $dt . '">'
+        . ($recipient == 'manager' ? t('Representative sent') : t('Representative'))
+        . '</td>'
+        . '<td style="' . $dd . '">'
+        . $data['rep']['surname'] . ' ' . $data['rep']['name'] . ' ' . $data['rep']['name2'] . '<br />'
+        . '<span style="color: #bbb; font-size: .9em;">' . $data['rep']['office']
+        . (!empty($regions) ? ' ('. implode(', ', $regions) . ')' : '')
+        . '</span><br />'
+        . implode('<br />', $data['rep']['phones']) . '<br />'
+        . implode('<br />', $data['rep']['emails']) . '<br />'
+        . '</td>'
+        . '</tr>'
+        . '</table>';
+
+    return $message;
 }

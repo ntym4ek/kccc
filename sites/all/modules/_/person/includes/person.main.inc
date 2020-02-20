@@ -30,7 +30,8 @@ function person_main($acid) {
 /**
  * форма добавления/редактирования компании
  */
-function person_main_form($form, &$form_state, $acid) {
+function person_main_form($form, &$form_state, $acid)
+{
     $user = user_load($acid);
 
     $form_state['acid'] = $acid;
@@ -124,7 +125,7 @@ function person_main_form($form, &$form_state, $acid) {
         if ($staff = profile2_load_by_user($user, 'staff')) {
             $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
 
-            $office = $staff_wrapper->field_profile_post->value();
+            $office = $staff_wrapper->language($GLOBALS['user']->language)->field_profile_post->value();
         }
 
         $form['office'] = array(
@@ -245,7 +246,8 @@ function person_main_form_validate($form, &$form_state) {
     }
 }
 
-function person_main_form_submit($form, &$form_state) {
+function person_main_form_submit($form, &$form_state)
+{
     $user = $form_state['user'];
 
     if(!$main = profile2_load_by_user($user, 'main')) {
@@ -298,9 +300,8 @@ function person_main_form_submit($form, &$form_state) {
             $staff->save();
         }
         $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
-
         $company = profile2_load(KCCC_COMPANY_PID);
-        $staff_wrapper->field_profile_post->set($form_state['values']['office']);
+        $staff_wrapper->language($GLOBALS['user']->language)->field_profile_post->set($form_state['values']['office']);
         $staff_wrapper->field_profile_company2->set($company);
         $staff_wrapper->field_profile_company_approved->set(1);
         $staff_wrapper->save();

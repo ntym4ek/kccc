@@ -103,7 +103,8 @@ function representatives_form($from, &$form_state)
 
     $contact = '';
     if (!empty($form_state['values']['region']) && $rep = _get_representative($form_state['values']['region'])) {
-        $contact = theme('contact_card', ['contact' => array_shift($rep['region']), 'options' => ['class' => 'col-md-6']]);
+        // выбираем руководителя региона, если нет, то кластера
+        $contact = theme('contact_card', ['contact' => array_pop($rep['heads']), 'options' => ['class' => 'col-md-6']]);
     }
 
     $form['selector']['contact'] = [
@@ -991,3 +992,12 @@ function _get_experts($tid)
     return $representatives;
 
 }
+
+/**
+ * тк у представителей нет постоянных id
+ * сформируем по фио
+ */
+//function _get_rep_id($rep)
+//{
+//    return drupal_strtolower(translit($rep['surname']) . '_' . translit(drupal_substr($rep['name'], 0, 1)) . '_' . translit(drupal_substr($rep['name2'], 0, 1)));
+//}

@@ -54,7 +54,30 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#type' => 'select',
         '#options' => $options,
         '#default_value' => 'All',
+        '#ajax' => array(
+            'callback' => 'checkout_contact_pane_checkout_form_ajax_refresh',
+            'wrapper' => 'checkout-contact',
+            'effect' => 'fade',
+            'method' => 'replace',
+        ),
     );
+    if (!empty($form_state['values']['checkout_contact']['request']['forma']['region'])) {
+        $options_rep = [];
+        if ($sales = _get_representative($form_state['values']['checkout_contact']['request']['forma']['region'])) {
+            foreach ($sales['reps'] as $rep) {
+                if (!empty($rep['emails'][0])) {
+                    $options_rep[$rep['emails'][0]] = $rep['surname'] . ' ' . $rep['name'] . ' ' . $rep['name2'];
+                }
+            }
+            if ($options_rep) {
+                $checkout_form['request']['forma']['rep'] = array(
+                    '#type' => 'select',
+                    '#title' => t('Representative'),
+                    '#options' => $options_rep,
+                );
+            }
+        }
+    }
     $checkout_form['request']['forma']['name'] = array(
         '#type' => 'textfield',
         '#attributes' => array('placeholder' => t('Your name or organization')),
@@ -72,6 +95,11 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
     );
 
     return $checkout_form;
+}
+
+function checkout_contact_pane_checkout_form_ajax_refresh($form, $form_values)
+{
+    return $form['checkout_contact'];
 }
 
 /**
@@ -119,6 +147,7 @@ function checkout_contact_pane_checkout_form_submit($form, &$form_state, $checko
         $order_wrapper->language('ru')->field_phone = $pane_values['request']['forma']['phone'];
         $order_wrapper->field_username = $pane_values['request']['forma']['name'];
         $order_wrapper->field_f_region = $pane_values['request']['forma']['region'];
+        $order_wrapper->field_representative_mail = empty($pane_values['request']['forma']['rep']) ? '' : $pane_values['request']['forma']['rep'];
         $order_wrapper->save();
     }
 }
