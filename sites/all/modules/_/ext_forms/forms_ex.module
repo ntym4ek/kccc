@@ -65,6 +65,7 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
             if ($GLOBALS['user']->uid != 1) {
                 $form['language']['#access'] = false;
                 $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме события</i>';
+                $form['field_registration']['#access'] = false;
             }
             $form['#validate'][] = 'forms_ex_agenda_node_form_validate';
             break;
