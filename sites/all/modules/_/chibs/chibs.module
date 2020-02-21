@@ -230,18 +230,29 @@ function chibs_node_submit($node, $form, &$form_state)
     }
 }
 
+/**
+ * hook_node_insert
+ */
 function chibs_node_insert($node)
 {
     if ($node->type == 'news') _chibs_check_and_place_news_to_front();
+    if ($node->type == 'agenda') _chibs_check_and_place_agenda_to_front($node);
 }
+
+/**
+ * hook_node_update
+ */
 function chibs_node_update($node)
 {
     if ($node->type == 'news') _chibs_check_and_place_news_to_front();
+    if ($node->type == 'agenda') _chibs_check_and_place_agenda_to_front($node);
 }
 
+/**
+ * --------------------------------------------- Авторазмещение новостей на главной -
+ */
 function _chibs_check_and_place_news_to_front()
 {
-    /** --------------------------------------------- Авторазмещение новостей на главной - */
     // получить список новостей с галками На главную
     $query = db_select('node', 'n');
     $query->fields('n', array('nid'));
@@ -280,6 +291,81 @@ function _chibs_check_and_place_news_to_front()
                           ($index ? '<div class="clearfix"></div>' : '');
             db_update('block_custom')->fields(array('body' => $block_html))->condition('bid', 18 + $index)->execute();
         }
+    }
+}
+
+function _chibs_check_and_place_agenda_to_front($node)
+{
+    $voc = taxonomy_vocabulary_machine_name_load('slider_category');
+    $parent = 72758;
+
+    // найти Слайдер, относящийся к этому Материалу
+    $query = db_select('taxonomy_term_data', 't');
+    $query->fields('t', array('tid'));
+    $query->condition('t.vid', $voc->vid);
+    $query->innerJoin('field_data_field_entity_ref', 'er', 'er.entity_id = t.tid');
+    $query->condition('er.field_entity_ref_target_id', $node->nid);
+    $query->innerJoin('taxonomy_term_hierarchy', 'th', 'th.tid = t.tid');
+    $query->condition('th.parent', $parent);
+    $tid = $query->execute()->fetchField();
+
+    if ($node->promote) {
+        if (!$tid) {
+            $term = (object)array(
+                'vid' => $voc->vid,
+                'parent' => $parent,
+                'name' => 'Подробнее о мероприятии',
+            );
+            taxonomy_term_save($term);
+            $tid = $term->tid;
+        } else {
+            $term = taxonomy_term_load($tid);
+        }
+
+        $term_wr = entity_metadata_wrapper('taxonomy_term', $term);
+
+        $url = drupal_get_path_alias('node/' . $node->nid);
+        $term_wr->language('ru')->name_field = 'Подробнее о мероприятии';
+        $term_wr->language('en')->name_field = 'More about event';
+        $term_wr->language('ru')->description_field->format = 'full_html';
+        $term_wr->language('en')->description_field->format = 'full_html';
+        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="/' . $url . '">' .
+                                                                    '<i class="fa fa-chevron-right" aria-hidden="true"></i>' .
+                                                                '</a>';
+        $term_wr->language('en')->description_field->value =    '<a class="btn btn-danger" href="/en/' . $url . '">' .
+                                                                    '<i class="fa fa-chevron-right" aria-hidden="true"></i>' .
+                                                                '</a>';
+        $term_wr->field_link = $url;
+        $term_wr->field_promo_image->set($node->field_promo_image['und'][0]);
+        $term_wr->field_period->value->set($node->field_period['und'][0]['value']-2*7*24*3600);
+        $term_wr->field_period->value2->set($node->field_period['und'][0]['value2']);
+        $term_wr->field_entity_ref = $node;
+        $term_wr->save();
+
+        // установить новый порядок
+        if (isset($node->field_textfield_1['und'][0]['value']) && is_numeric($node->field_textfield_1['und'][0]['value'])) {
+            $query = db_select('taxonomy_term_data', 't');
+            $query->fields('t', array('tid'));
+            $query->condition('t.vid', $voc->vid);
+            $query->innerJoin('taxonomy_term_hierarchy', 'th', 'th.tid = t.tid');
+            $query->condition('th.parent', $parent);
+            $query->orderBy('t.weight');
+            $tids = $query->execute()->fetchCol();
+
+            $key = $node->field_textfield_1['und'][0]['value']-1;
+            $key = $key < 0 ? 0 : $key;
+            if ($tids) {
+                $tids = array_diff($tids, [$tid]);
+                array_splice($tids, $key, 0, $tid);
+
+                foreach($tids as $key => $w_tid) {
+                    db_update('taxonomy_term_data')->fields(array('weight' => $key))->condition('tid', $w_tid)->execute();
+                }
+            }
+        }
+
+    } else {
+        if ($tid) taxonomy_term_delete($tid);
     }
 }
 

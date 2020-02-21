@@ -61,6 +61,14 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
             }
             break;
 
+        case 'agenda_node_form':
+            if ($GLOBALS['user']->uid != 1) {
+                $form['language']['#access'] = false;
+                $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме события</i>';
+            }
+            $form['#validate'][] = 'forms_ex_agenda_node_form_validate';
+            break;
+
         case 'views_exposed_form':
             // убрать выбор региона для Агрохимиката в Вакансиях
             if ( $form['#id'] == 'views-exposed-form-vacancies-page' && isset($form_state['input']['employer']) && $form_state['input']['employer'] == 'ag' ) {
@@ -125,6 +133,18 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
             if (empty($form['body']['ru'][0]['summary']['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['summary'])) {
                 $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
             }
+    }
+}
+
+/**
+ * agenda edit validate callback
+ */
+function forms_ex_agenda_node_form_validate($form, $form_values)
+{
+    // если установлена галка Опубликовать на главной, то проверить наличие баннера
+    if ($form_values['values']['promote'] && empty($form_values['values']['field_promo_image']['und'][0]['fid'])) {
+        form_set_error('field_promo_image][und][0][fid', 'Если планируется публикация баннера на главной, то нужно добавить изображение баннера. Если нет, то нужно убрать галочку Опубликовать на главной');
+        return false;
     }
 }
 
@@ -220,7 +240,8 @@ function forms_ex_product_calc_price($form, &$form_state) {
 /**
  * hook_form_alter
  */
-function forms_ex_form_ad_node_form_alter( &$form, &$form_state, $form_id ) {
+function forms_ex_form_ad_node_form_alter( &$form, &$form_state, $form_id )
+{
     // предзаполнить телефон номером из профиля
     global $user;
     $user_array = person_get_user_array($user);
