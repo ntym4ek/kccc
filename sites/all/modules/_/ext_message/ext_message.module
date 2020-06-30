@@ -343,21 +343,25 @@ function ext_message_tokens($type, $tokens, array $data = array(), array $option
     }
 
     $entity_wr = entity_metadata_wrapper($type, $data['message']);
-    foreach ($tokens as $name => $original) {
+    if ($entity_wr->value()) {
+      foreach ($tokens as $name => $original) {
 
-        switch($name) {
-            case 'field_entity_ref:item_id':
-                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
-                $replacements[$original] = $eid;
-                break;
+        switch ($name) {
+          case 'field_entity_ref:item_id':
+            $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+            $replacements[$original] = $eid;
+            break;
 
-            case 'field_entity_ref:field_f_s_culture:title':
-                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
-                $entity_ref = entity_metadata_wrapper('field_collection_item', $eid);
+          case 'field_entity_ref:field_f_s_culture:title':
+            $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+            $entity_ref = entity_metadata_wrapper('field_collection_item', $eid);
 
-                $replacements[$original] = $entity_ref->field_f_s_culture->title->value();
-                break;
+            if ($entity_ref->value()) {
+              $replacements[$original] = $entity_ref->field_f_s_culture->title->value();
+            }
+            break;
         }
+      }
     }
 
     return $replacements;
