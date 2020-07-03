@@ -93,18 +93,17 @@ $brand-fertilizers-hover:   darken($brand-fertilizers, 10%);
 $brand-mixes-hover:         darken($brand-mixes, 10%);
 $brand-finfire-hover:       darken($brand-finfire, 10%);
 
+$brand-green:           #36AA3D;
+$brand-blue:            #293F82;
+$brand-l-blue:          #01b0f1;
+$brand-red:             #CF142B;
+$brand-orange:          #f2a500;
 
-$brand-primary:         #2b8aff;
-$brand-success:         #006338;
+$brand-primary:         $brand-blue;
+$brand-success:         $brand-green;
 $brand-info:            #01b0f1;
 $brand-warning:         #f2a500;
-$brand-danger:          #de242a;
-
-$brand-green:           #006338;
-$brand-blue:            #2b8aff;
-$brand-l-blue:          #01b0f1;
-$brand-red:             #de242a;
-$brand-orange:          #f2a500;
+$brand-danger:          $brand-red;
 
 $brand-green-hover:     darken($brand-green, 10%);
 $brand-blue-hover:      darken($brand-blue, 10%);

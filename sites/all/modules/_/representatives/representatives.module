@@ -147,7 +147,7 @@ function representatives_get_representatives_list()
     );
     $sales['heads'][] = array(
         'roles' =>  ['c_head'],
-        'office' => t('Head of cluster'),
+        'office' => t('Head of department'),
         'access' => true,
         'surname' => 'Рудяк', 'name' => 'Дмитрий', 'name2' => 'Вячеславович',
         'phones' => array('+7 (8332) 76-15-31, доб. 1187', '+7 (912) 726-36-23'),
@@ -192,17 +192,6 @@ function representatives_get_representatives_list()
             71717 => [], //Тульская область",
             71666 => [], //Чеченская Республика",
             71722 => [], //Ярославская область",
-
-
-
-//
-//
-//
-//
-//
-//
-//
-
         ),
     );
     $sales['heads'][] = array(
@@ -366,18 +355,18 @@ function representatives_get_representatives_list()
             71674 => [], //Амурская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Левшин', 'name' => 'Петр', 'name2' => 'Иванович',
-        'phones' => array('+7 (922) 927-80-90'),
-        'emails' => array('belgorod@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/belgorod.png',
-        'regions' => array(
-            71677 => [], //Белгородская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Левшин', 'name' => 'Петр', 'name2' => 'Иванович',
+//        'phones' => array('+7 (922) 927-80-90'),
+//        'emails' => array('belgorod@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/belgorod.png',
+//        'regions' => array(
+//            71677 => [], //Белгородская область",
+//        ),
+//    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
@@ -471,10 +460,10 @@ function representatives_get_representatives_list()
         'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
-        'surname' => 'Широкий', 'name' => 'Михаил', 'name2' => 'Николаевич',
+        'surname' => 'Петров', 'name' => 'Николай', 'name2' => 'Викторович',
         'phones' => array('+7 (922) 957-11-19'),
         'emails' => array('krasnodar4@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/shirokiy.png',
+        'photo' => '/' . $module_path . '/images/photos/petrov_n.png',
         'regions' => array(
             71669 => [], //Краснодарский край",
         ),
@@ -503,6 +492,18 @@ function representatives_get_representatives_list()
             71694 => [], //Липецкая область",
         )
     );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Соломахин', 'name' => 'Николай', 'name2' => 'Викторович',
+        'phones' => array('+7 (922) 966-60-12'),
+        'emails' => array('lipetsk2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/solomahin_n.png',
+        'regions' => array(
+            71694 => [], //Липецкая область",
+        )
+    );
     $sales['reps'][] =  array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -520,7 +521,7 @@ function representatives_get_representatives_list()
         'surname' => 'Дамоевский', 'name' => 'Алексей', 'name2' => 'Владимирович',
         'phones' => array('+7 (922) 966-64-34'),
         'emails' => array('novosibirsk2@kccc.ru'),
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/damoevskiy_a.png',
         'regions' => array(
             71700 => [], //Новосибирская область",
         ),
@@ -556,23 +557,23 @@ function representatives_get_representatives_list()
         'phones' => array('+7 (922) 900-02-01'),
         'emails' => array('omsk1@kccc.ru'),
         'expert' => '+7 (922) 900-02-01',
-        'photo' => $no_photo,
+        'photo' => '/' . $module_path . '/images/photos/pelipas.png',
         'regions' => array(
             71701 => [], //Омская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Рыбин', 'name' => 'Александр', 'name2' => 'Петрович',
-        'phones' => array('+7 (922) 900-74-64'),
-        'emails' => array('omsk2@kccc.ru'),
-        'photo' => $no_photo,
-        'regions' => array(
-            71701 => [], //Омская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Рыбин', 'name' => 'Александр', 'name2' => 'Петрович',
+//        'phones' => array('+7 (922) 900-74-64'),
+//        'emails' => array('omsk2@kccc.ru'),
+//        'photo' => $no_photo,
+//        'regions' => array(
+//            71701 => [], //Омская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep', 'exp'],
         'office' => t('Representative'),
@@ -586,42 +587,42 @@ function representatives_get_representatives_list()
             71702 => [], //Оренбургская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Неверов', 'name' => 'Владимир', 'name2' => 'Николаевич',
-        'phones' => array('+7 (922) 909-20-33'),
-        'emails' => array('orenburg2@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/neverov.png',
-        'regions' => array(
-            71702 => [], //Оренбургская область",
-        ),
-    );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Неретин', 'name' => 'Максим', 'name2' => 'Сергеевич',
-        'phones' => array('+7 (922) 970-65-00'),
-        'emails' => array('orenburg4@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/neretin.png',
-        'regions' => array(
-            71702 => [], //Оренбургская область",
-        ),
-    );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Боронкин', 'name' => 'Андрей', 'name2' => 'Михайлович',
-        'phones' => array('+7 (922) 970-60-55'),
-        'emails' => array('orenburg5@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/boronkin.png',
-        'regions' => array(
-            71702 => [], //Оренбургская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Неверов', 'name' => 'Владимир', 'name2' => 'Николаевич',
+//        'phones' => array('+7 (922) 909-20-33'),
+//        'emails' => array('orenburg2@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/neverov.png',
+//        'regions' => array(
+//            71702 => [], //Оренбургская область",
+//        ),
+//    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Неретин', 'name' => 'Максим', 'name2' => 'Сергеевич',
+//        'phones' => array('+7 (922) 970-65-00'),
+//        'emails' => array('orenburg4@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/neretin.png',
+//        'regions' => array(
+//            71702 => [], //Оренбургская область",
+//        ),
+//    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Боронкин', 'name' => 'Андрей', 'name2' => 'Михайлович',
+//        'phones' => array('+7 (922) 970-60-55'),
+//        'emails' => array('orenburg5@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/boronkin.png',
+//        'regions' => array(
+//            71702 => [], //Оренбургская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -634,18 +635,18 @@ function representatives_get_representatives_list()
             71704 => [], //Пензенская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Кобозев', 'name' => 'Сергей', 'name2' => 'Валерьевич',
-        'phones' => array('+7 (922) 900-07-73'),
-        'emails' => array('penza2@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/kobozev.png',
-        'regions' => array(
-            71704 => [], //Пензенская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Кобозев', 'name' => 'Сергей', 'name2' => 'Валерьевич',
+//        'phones' => array('+7 (922) 900-07-73'),
+//        'emails' => array('penza2@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/kobozev.png',
+//        'regions' => array(
+//            71704 => [], //Пензенская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -658,18 +659,18 @@ function representatives_get_representatives_list()
             71704 => [], //Пензенская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Агеев', 'name' => 'Дмитрий', 'name2' => 'Анатольевич',
-        'phones' => array('+7 (929) 209-00-90'),
-        'emails' => array('penza4@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/ageev_da.png',
-        'regions' => array(
-            71704 => [], //Пензенская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Агеев', 'name' => 'Дмитрий', 'name2' => 'Анатольевич',
+//        'phones' => array('+7 (929) 209-00-90'),
+//        'emails' => array('penza4@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/ageev_da.png',
+//        'regions' => array(
+//            71704 => [], //Пензенская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -755,18 +756,18 @@ function representatives_get_representatives_list()
             71672 => [], //Ставропольский край",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Епифанов', 'name' => 'Александр', 'name2' => 'Владимирович',
-        'phones' => array('+7 (922) 970-66-46'),
-        'emails' => array('stavropol1@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/epifanov.png',
-        'regions' => array(
-            71672 => [], //Ставропольский край",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Епифанов', 'name' => 'Александр', 'name2' => 'Владимирович',
+//        'phones' => array('+7 (922) 970-66-46'),
+//        'emails' => array('stavropol1@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/epifanov.png',
+//        'regions' => array(
+//            71672 => [], //Ставропольский край",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -804,18 +805,18 @@ function representatives_get_representatives_list()
             71718 => [], //Тюменская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Пиленков', 'name' => 'Михаил', 'name2' => 'Владимирович',
-        'phones' => array('+7 (922) 900-23-43'),
-        'emails' => array('tyumen1@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/pilenkov.png',
-        'regions' => array(
-            71718 => [], //Тюменская область",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Пиленков', 'name' => 'Михаил', 'name2' => 'Владимирович',
+//        'phones' => array('+7 (922) 900-23-43'),
+//        'emails' => array('tyumen1@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/pilenkov.png',
+//        'regions' => array(
+//            71718 => [], //Тюменская область",
+//        ),
+//    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),

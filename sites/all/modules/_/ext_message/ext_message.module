@@ -343,21 +343,25 @@ function ext_message_tokens($type, $tokens, array $data = array(), array $option
     }
 
     $entity_wr = entity_metadata_wrapper($type, $data['message']);
-    foreach ($tokens as $name => $original) {
+    if ($entity_wr->value()) {
+      foreach ($tokens as $name => $original) {
 
-        switch($name) {
-            case 'field_entity_ref:item_id':
-                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
-                $replacements[$original] = $eid;
-                break;
+        switch ($name) {
+          case 'field_entity_ref:item_id':
+            $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+            $replacements[$original] = $eid;
+            break;
 
-            case 'field_entity_ref:field_f_s_culture:title':
-                $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
-                $entity_ref = entity_metadata_wrapper('field_collection_item', $eid);
+          case 'field_entity_ref:field_f_s_culture:title':
+            $eid = $entity_wr->value()->field_entity_ref['und'][0]['target_id'];
+            $entity_ref = entity_metadata_wrapper('field_collection_item', $eid);
 
-                $replacements[$original] = $entity_ref->field_f_s_culture->title->value();
-                break;
+            if ($entity_ref->value()) {
+              $replacements[$original] = $entity_ref->field_f_s_culture->title->value();
+            }
+            break;
         }
+      }
     }
 
     return $replacements;
@@ -374,10 +378,10 @@ function ext_message_tokens($type, $tokens, array $data = array(), array $option
 function ext_message_before_after_measurement_save_alter($data)
 {
     // загружаем сезон, нужен для привязки
-    $season = field_collection_item_load($data['sid']);
+    if ($season = field_collection_item_load($data['sid'])) {
 
-    $type = 'custom__before_after__' . $data['op'];
-    if ($message_type = message_type_load($type)) {
+      $type = 'custom__before_after__' . $data['op'];
+      if ($message_type = message_type_load($type)) {
 
         // создать Сообщение
         $message = message_create('custom__before_after__create', ['uid' => $GLOBALS['user']->uid]);
@@ -386,11 +390,12 @@ function ext_message_before_after_measurement_save_alter($data)
         $wrapper->field_published->set(1);
 
         if (module_exists('message_subscribe')) {
-            // If Message-subscribe exists, let this example module use it.
-            // извлечь термин словаря Подписки, чтобы определить кто подписан на Уведомления этого типа
-            $subscription_tid = ext_message_get_message_type_subscription_tid($type);
-            message_subscribe_send_message('message', $message, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [$subscription_tid]]);
+          // If Message-subscribe exists, let this example module use it.
+          // извлечь термин словаря Подписки, чтобы определить кто подписан на Уведомления этого типа
+          $subscription_tid = ext_message_get_message_type_subscription_tid($type);
+          message_subscribe_send_message('message', $message, $message, array('email_with_realname' => []), [], ['taxonomy_term' => [$subscription_tid]]);
         }
+      }
     }
 }
 
