@@ -442,7 +442,7 @@
     @include transition(all .3s linear);
     @media #{$tablet} {
         background: url(../images/bkg_px.png);
-      padding-top: $header-sm-height; padding-bottom: 132px;
+      padding-top: $header-sm-height; padding-bottom: 169px;
         box-shadow: 0 -10px 60px 20px rgba(0, 0, 0, 0.12);
     }
     @media print {
@@ -652,7 +652,7 @@
         color: #fff;
         padding: 25px 0 15px 0;
       }
-      p { margin-bottom: 70px; }
+      p { margin-bottom: 60px; }
     }
   }
   .row-1, .row-2, .row-3, .row-4  {
