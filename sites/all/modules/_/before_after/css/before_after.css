@@ -221,7 +221,7 @@
           /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
           grid-template-rows: repeat(auto-fit, 20px); }
           .season .content .processings .text dt {
-            color: #5c88da;
+            color: #0C6099;
             font-weight: 100;
             min-width: 0;
             /* более привычное поведение при переполнении */ }
