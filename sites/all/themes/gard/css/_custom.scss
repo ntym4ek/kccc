@@ -606,7 +606,7 @@
   padding: 15px;
   a ~ p { margin-top: 20px; }
   h2 {
-    color: $brand-green; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+    color: $brand-blue; font-size: 22px; font-weight: 700; letter-spacing: -1px;
     margin: 0 0 0 0;
     &:hover,
     a:focus { color: $brand-green-hover; }
@@ -647,7 +647,7 @@
     .block-content {
       color: #fff;
       margin-bottom: 0;
-      .block-body { background: $brand-green; }
+      .block-body { background: $brand-blue; }
       h2 {
         color: #fff;
         padding: 25px 0 15px 0;
@@ -663,7 +663,7 @@
 
   .block {
     a.btn {
-      @include button-variant(#fff, $brand-blue, $brand-blue);
+      @include button-variant(#fff, $brand-green, $brand-green);
     }
   }
 }

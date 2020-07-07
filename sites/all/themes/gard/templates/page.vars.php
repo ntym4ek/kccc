@@ -25,6 +25,7 @@ function gard_preprocess_page(&$vars)
 
     $vars['search_input_placeholder'] = t('Enter your search query');
     $vars['logo'] = file_create_url('public://images/logo/logo.svg');
+    $vars['logo_bl'] = file_create_url('public://images/logo/logo_bl.svg');
     $vars['site_name'] = t('Trading House Kirovo-Chepetsk Chemical Company'); //ООО ТД Кирово-Чепецкая Химическая Компания
     $vars['site_slogan'] = t('Production and selling of fertilizers, plant protection and fire-fighting products');//Производство и продажа удобрений, средств защиты растений и пожаротушения
 
