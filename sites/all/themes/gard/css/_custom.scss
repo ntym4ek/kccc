@@ -663,7 +663,7 @@
 
   .block {
     a.btn {
-      @include button-variant(#fff, $brand-blue, $brand-l-blue);
+      @include button-variant(#fff, $brand-blue, $brand-blue);
     }
   }
 }
