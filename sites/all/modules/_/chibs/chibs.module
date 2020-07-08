@@ -244,22 +244,24 @@ function chibs_node_insert($node)
  */
 function chibs_node_update($node)
 {
-    if ($node->type == 'news') _chibs_check_and_place_news_to_front();
-    if ($node->type == 'agenda') _chibs_check_and_place_agenda_to_front($node);
+    if (in_array($node->type, ['news', 'review'])) {
+      _chibs_check_and_place_news_to_front($node);
+    }
+    if ($node->type == 'agenda') {
+      _chibs_check_and_place_agenda_to_front($node);
+    }
 }
 
 /**
  * --------------------------------------------- Авторазмещение новостей на главной -
  */
-function _chibs_check_and_place_news_to_front()
+function _chibs_check_and_place_news_to_front($node_updated)
 {
     // получить список новостей с галками На главную
     $query = db_select('node', 'n');
     $query->fields('n', array('nid'));
-    $query->condition('n.type', 'news');
+    $query->condition('n.type', ['news', 'review'], 'IN');
     $query->condition('n.promote', 1);
-    $query->innerJoin('field_data_field_news_category', 'nc', 'n.nid = nc.entity_id');
-    $query->condition('nc.field_news_category_tid', 5);
     $query->orderBy('n.created', 'DESC');
     $query->range(0, 2);
     $nodes = $query->execute()->fetchAll();
@@ -268,12 +270,20 @@ function _chibs_check_and_place_news_to_front()
     // и заполнить два блока на главной (18 и 19)
     if (!empty($nodes)) {
         foreach ($nodes as $index => $node) {
+          if ($node_updated->nid == $node->nid) {
+            $node_wr = entity_metadata_wrapper('node', $node_updated);
+          }  else {
             $node_wr = entity_metadata_wrapper('node', $node->nid);
-            $title = $node_wr->title->value();
-            $url = url('node/' . $node->nid);
-            $image_uri = empty($node_wr->field_promo_image->value()) ? image_style_url('720_465', 'public://default_images/no_photo.png') : $node_wr->field_promo_image->file->value()->uri;
+          }
+
+            $title = $node_wr->label();
+            $url = url('node/' . $node_wr->getIdentifier());
+            $image = $node_wr->field_promo_image->value();
+            $uri = $image['uri'];
+            $image_uri = empty($image) ? image_style_url('720_465', 'public://default_images/no_photo.png') : $uri;
 //            $image_url = image_style_url('720_465', $image_uri);
             $image_url = file_create_url($image_uri);
+            $section =  $node_wr->getBundle() == 'news' ? 'События' : t('Reviews');
             $block_html = '<div class="block-content no-gutters">' .
                             '<div class="block-image image-valign-center">' .
                                 '<a href="' . $url . '">' .
@@ -282,7 +292,7 @@ function _chibs_check_and_place_news_to_front()
                             '</div>' .
                             '<div class="block-body">' .
                                 '<a href="' . $url . '"><h2>' . $title . '</h2></a>' .
-                                    '<p>' . t('Events section') . '</p>' .
+                                    '<p>' . $section . '</p>' .
                                 '<a class="btn btn-danger" href="' . $url . '">' .
                                     t('More') . '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>' .
                                 '</a>' .

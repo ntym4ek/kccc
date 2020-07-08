@@ -10,7 +10,7 @@ function forms_ex_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     return $items;
 }
 
@@ -54,6 +54,17 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
                 $form['revision_information']['#access'] = false;
                 $form['author']['#access'] = false;
             }
+          break;
+        case 'review_node_form':
+          if ($GLOBALS['user']->uid != 1) {
+            $form['language']['#access'] = false;
+            $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме записи</i>';
+          }
+          if (!user_has_role(STAFF_EDITOR, $GLOBALS['user']) && $GLOBALS['user']->uid != 1 ) {
+            $form['field_promo_image']['#access'] = false;
+            $form["options"]["promote"]["#access"] = false;
+          }
+          break;
         case 'news_node_form':
             if ($GLOBALS['user']->uid != 1) {
                 $form['language']['#access'] = false;
@@ -77,7 +88,7 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
                 $form['#info']['filter-field_region_value']['label'] = '';
             }
             break;
-        
+
         case 'product_agro_node_form':
         case 'product_mix_node_form':
         case 'product_fert_node_form':
@@ -153,7 +164,7 @@ function forms_ex_agenda_node_form_validate($form, $form_values)
 
 /**
  * ------------------------------------------------------ Темизация  ---------------------------------------------------
- * 
+ *
  */
 function forms_ex_theme() {
     return array(
@@ -201,7 +212,7 @@ function theme_forms_ex_thumb_upload(&$variables) {
 
 /**
  * ------------------------------------------------------ Продукция  ------------------------------------------------
- * 
+ *
  */
 
 /**
