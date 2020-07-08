@@ -235,8 +235,7 @@ function chibs_node_submit($node, $form, &$form_state)
  */
 function chibs_node_insert($node)
 {
-    if ($node->type == 'news') _chibs_check_and_place_news_to_front();
-    if ($node->type == 'agenda') _chibs_check_and_place_agenda_to_front($node);
+  _chibs_check_and_place_node_to_front($node);
 }
 
 /**
@@ -244,12 +243,17 @@ function chibs_node_insert($node)
  */
 function chibs_node_update($node)
 {
-    if (in_array($node->type, ['news', 'review'])) {
-      _chibs_check_and_place_news_to_front($node);
-    }
-    if ($node->type == 'agenda') {
-      _chibs_check_and_place_agenda_to_front($node);
-    }
+  _chibs_check_and_place_node_to_front($node);
+}
+
+function _chibs_check_and_place_node_to_front($node)
+{
+  if (in_array($node->type, ['news', 'review'])) {
+    _chibs_check_and_place_news_to_front($node);
+  }
+  if ($node->type == 'agenda') {
+    _chibs_check_and_place_agenda_to_front($node);
+  }
 }
 
 /**
