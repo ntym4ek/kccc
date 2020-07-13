@@ -243,7 +243,7 @@ function gard_menu_link__menu_main_d(array $variables) {
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
                 $image_url = image_style_url('thumbnail', $image_uri);
-                $title =  '<div class="category-img"><img src="' . $image_url . '" /></div>'
+                $title =  '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . '"/></div>'
                         . '<div class="category-link">' . $title . '</div>';
 
                 // формируем при необходимости меню третьего уровня
@@ -462,7 +462,7 @@ function _get_banner_html($element)
         if ($image_uri = empty($term_wr->field_shop_category_image->value()) ? '' : $term_wr->field_shop_category_image->file->value()->uri) {
             $image_url = image_style_url('menu_banner', $image_uri);
             $html = '<div class="row category-banner">' .
-                        '<div class="col-xs-12 banner-img"><img src="' . $image_url . '" /></div>' .
+                        '<div class="col-xs-12 banner-img"><img src="' . $image_url . '"  alt="' . $link_title . '"/></div>' .
                         '<div class="col-xs-12 banner-text">' .
                             '<p>' . $desc . '</p>' .
                             '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
