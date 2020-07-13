@@ -31,7 +31,7 @@
         <? if (!empty($contact['emails'])): ?>
         <div class="contact-emails">
             <?php foreach ($contact['emails'] as $email): ?>
-                <div class="contact-email"><a href="e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded eAddr-html" rel="nofollow">e(<? print email_antibot_encode($email); ?>)</a></div>
+                <div class="contact-email"><a href="mailto:e(<? print email_antibot_encode($email); ?>)" class="eAddr-encoded eAddr-html" rel="nofollow">e(<? print email_antibot_encode($email); ?>)</a></div>
             <?php endforeach; ?>
         </div>
         <? endif; ?>

@@ -10,7 +10,7 @@
         <div class="cu-title"><? print t('Phone'); ?></div>
         <div class="cu-content"><? print '+7 (8332) 76-15-20 ' . t('add.') . ' 1107'; ?><a href="tel:+78332761520"><i class="icon-phone"></i><? print t('Call');?></a></div>
         <div class="cu-title"><? print 'Email'; ?></div>
-        <div class="cu-content eAddr-encoded">e(td[s1]kc/cc[s2]ru)<a href="e(td[s1]kc/cc[s2]ru)" class="eAddr-encoded"><i class="icon-mail"></i><? print t('Email us');?></a></div>
+        <div class="cu-content eAddr-encoded">e(td[s1]kc/cc[s2]ru)<a href="mailto:e(td[s1]kc/cc[s2]ru)" class="eAddr-encoded"><i class="icon-mail"></i><? print t('Email us');?></a></div>
         <div class="hr"></div>
         <div class="cu-link"><i class="fas fa-user"></i><a href="/info/contacts"><? print t('Central office departments contacts'); ?></a></div>
         <div class="cu-link"><i class="fas fa-download"></i><a href="/sites/default/files/etc/contact_us/card_th_kccc.pdf" target="_blank"><? print t('Download OOO TD "KCCC" requisites'); ?></a></div>
