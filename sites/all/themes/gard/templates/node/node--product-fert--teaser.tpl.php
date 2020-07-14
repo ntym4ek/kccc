@@ -83,7 +83,7 @@
 <div class="v-card product">
     <div class="v-card-image">
         <a href="<?php print $product_url; ?>">
-            <img src="<?php print $images[0]; ?>" class="img-responsive" title="<?php print $title; ?>">
+            <img src="<?php print $images[0]; ?>" class="img-responsive" title="<?php print $title; ?>" alt="<?php print $title; ?>" />
         </a>
     </div>
 

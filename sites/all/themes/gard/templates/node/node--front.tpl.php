@@ -91,7 +91,7 @@ $node_url = url('node/' . $node->nid);
 <div class="block-content no-gutters">
     <div class="block-image image-valign-center">
         <a href="<?php print $node_url; ?>">
-            <img src="<?php print $image; ?>">
+            <img src="<?php print $image; ?>" alt="<?php print $title; ?>" />
         </a>
     </div>
     <div class="block-body">
