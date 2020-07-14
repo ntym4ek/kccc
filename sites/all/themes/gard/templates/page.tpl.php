@@ -129,7 +129,7 @@
             <header class="row content-header" role="banner" >
                 <div class="category-header hidden-print">
                     <?php if (!empty($header['image'])):?>
-                    <img src="<?php print $header['image']; ?>">
+                    <img src="<?php print $header['image']; ?>" alt="<?php print $header['category_title']; ?>">
                     <? endif; ?>
                     <?php if (!empty($header['category_title'])):?>
                     <div class="category-title">

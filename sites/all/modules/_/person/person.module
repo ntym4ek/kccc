@@ -30,7 +30,7 @@ include 'includes/person.subscriptions.inc';
 function person_init() {
     global $base_url;
     // переадресовать /user на /person и /user/$uid на /person/$uid
-    if (!in_array($GLOBALS['user']->uid, [1, 2737, 6334])) {
+    if (!in_array($GLOBALS['user']->uid, [0, 1, 2737, 6334])) {
         if (arg(0) == 'user') {
             if (preg_match('|^user/{0,1}$|', $_GET['q'], $matches)) {
                 drupal_goto($base_url . '/person');
