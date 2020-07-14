@@ -1086,7 +1086,9 @@ function format_date2($timestamp, $type = 'medium', $format = '', $timezone = NU
  *
  */
 function _seconds2times($seconds){
-  $times = array();
+  $times = [
+    0,0,0,0
+  ];
 
   // считать нули в значениях
   $count_zero = false;

@@ -442,9 +442,13 @@ function before_after_page($sid)
 {
     $season = before_after_get_atfield($sid);
 
-    $title = $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '');
+    $title = 'Защита культуры ' . $season['culture'] . '. ' . $season['region'] . '. ' . $season['farm'];
     drupal_set_title($title);
-    drupal_set_subtitle($season['farm'] . ', ' . $season['region']);
+    $hobjects = [];
+    foreach($season['hobjects'] as $hobject) {
+      $hobjects[] = $hobject['name'];
+    }
+    drupal_set_subtitle('Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.');
 
     drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
     drupal_add_js(drupal_get_path('module', 'before_after') . '/js/before_after.js');
@@ -473,6 +477,8 @@ function before_after_get_atfield($sid)
     $output['farm']     = $field_wrapper->field_f_farm->value();
     $output['culture']  = $season_wrapper->field_f_s_culture->title->value();
     $output['culture_note']  = $season_wrapper->field_f_s_culture_note->value();
+    $output['season']  = $season_wrapper->field_f_s_season->value();
+    $output['year']  = $season_wrapper->field_f_s_year->value();
     $output['region']   = $field_wrapper->field_f_region->name->value();
     $output['author']   = person_get_user_array($user);
 
@@ -566,6 +572,7 @@ function before_after_get_atfield($sid)
             }
         }
 
+        $output['hobjects'] = $arr_hobjects;
         $output['date_last'] = $processes[$count_processes - 1]['date'];
 
 

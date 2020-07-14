@@ -35,6 +35,7 @@ function ext_forum_preprocess_page(&$vars)
         $vars['wrapper_off'] = false;
         $vars['header']['print'] = false;
         $vars['header']['url'] = false;
+        drupal_set_title('Section ' . drupal_get_title());
     }
     if (strpos(drupal_get_path_alias($_GET['q']), 'node/add/forum') === 0) {
         $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_forum') . '/images/header_image.jpg', array('absolute' => true));
@@ -46,7 +47,7 @@ function ext_forum_preprocess_page(&$vars)
 
         // определяем родительскую категорию для термина
         if ($parent_term = current(taxonomy_get_parents($term->tid))) {
-            $vars['header']['category_title'] = '<a href="' . url('forum/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
+            $vars['header']['category_title'] = '<a href="' . '/forum' . '">' . t('Forum') . '</a>' . ' / ' . '<a href="' . url('forum/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
         }
     }
     if (arg(0) == 'comment' && !empty($vars['page']['content']['system_main']['#bundle']) && $vars['page']['content']['system_main']['#bundle'] == 'comment_node_forum') {
