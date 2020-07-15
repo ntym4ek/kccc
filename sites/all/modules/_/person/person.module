@@ -27,25 +27,29 @@ include 'includes/person.subscriptions.inc';
 /**
  * Implements hook_init().
  */
-function person_init() {
-    global $base_url;
-    // переадресовать /user на /person и /user/$uid на /person/$uid
-    if (!in_array($GLOBALS['user']->uid, [0, 1, 2737, 6334])) {
-        if (arg(0) == 'user') {
-            if (preg_match('|^user/{0,1}$|', $_GET['q'], $matches)) {
-                drupal_goto($base_url . '/person');
-            }
-
-            if (arg(2) == 'edit') {
-                drupal_goto($base_url . '/person/' . $GLOBALS['user']->uid . '/main/edit');
-            }
-
-            // переадресовать /user на /person и /user/$uid на /person/$uid
-            if (preg_match('|^user(/\d+.*)$|', $_GET['q'], $matches)) {
-                drupal_goto($base_url . '/person' . $matches[1]);
-            }
-        }
+function person_init()
+{
+  global $base_url;
+  if ($GLOBALS['user']->uid == 0) {
+    if (arg(0) == 'user' && !in_array(arg(1), ['login', 'register']) || arg(0) == 'person') {
+      drupal_goto($base_url . '/user/login');
     }
+  } else if (!in_array($GLOBALS['user']->uid, [1, 2737, 6334])) {
+    if (arg(0) == 'user') {
+      // переадресовать /user на /person/$uid/summary
+      if (preg_match('/^user\/{0,1}$/', $_GET['q'], $matches)) {
+        drupal_goto($base_url . '/person/' . $GLOBALS['user']->uid . 'summary');
+      }
+
+      if (arg(2) == 'edit') {
+        drupal_goto($base_url . '/person/' . $GLOBALS['user']->uid . '/main/edit');
+      }
+      // /user/$uid на /person/$uid/summary
+      if (preg_match('|^user(/\d+.*)$|', $_GET['q'], $matches)) {
+        drupal_goto($base_url . '/person' . $matches[1] . '/summary');
+      }
+    }
+  }
 }
 
 /**
