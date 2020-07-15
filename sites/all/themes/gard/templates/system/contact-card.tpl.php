@@ -1,6 +1,6 @@
 <div class="media contact-card<?php print isset($options['class']) ? ' ' . $options['class'] : ''; ?>">
     <div class="media-left">
-        <img class="media-object" src="<? print $contact['photo']; ?>" alt="">
+        <img class="media-object" src="<? print $contact['photo']; ?>" alt="<? print $contact['office']; ?>">
     </div>
     <div class="media-body">
         <h4 class="media-heading"><? print $contact['surname']; ?><br /><? print $contact['name'] . ' ' . $contact['name2'] ; ?></h4>
