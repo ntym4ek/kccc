@@ -141,6 +141,9 @@ function gard_preprocess_page(&$vars)
             break;
         case 'handbook/cultures':
             $subtitle = t('Handbook of cultivated plants');
+          if (!empty(arg(2))) {
+            $subtitle = t('Cultivated plants starting with letter ') . arg(2);
+          }
             $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/diseases':
@@ -149,6 +152,9 @@ function gard_preprocess_page(&$vars)
             break;
         case 'handbook/weeds':
             $subtitle = t('Handbook of weeds');
+            if (!empty(arg(2))) {
+              $subtitle = t('Weeds starting with letter ')  . arg(2);
+            }
             $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/pests':

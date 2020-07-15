@@ -209,6 +209,7 @@ function before_after_preprocess_page(&$vars) {
         // установить изображение
         $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
     }
+
 }
 
 
@@ -309,4 +310,15 @@ function before_after_atfield_filters_source($rid, $cid)
     $options = _before_after_filters($rid, $cid);
     drupal_json_output($options);
     drupal_exit();
+}
+
+/**
+ * hook_after_metatag_metatags_view_alter()
+ *
+ * свой метатег Description для ПвП
+ */
+function before_after_metatag_metatags_view_alter(&$output, $instance, $options) {
+  if (arg(0) == 'before-after' && is_numeric(arg(1))) {
+    $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = before_after_page_description(arg(1));
+  }
 }

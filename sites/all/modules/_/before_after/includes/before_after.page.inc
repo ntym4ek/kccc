@@ -438,22 +438,33 @@ function before_after_exposed_filters_form_submit($form, &$form_state)
 /**
  * страница СЕЗОНА
  */
-function before_after_page($sid)
+function before_after_page($season_id)
 {
-    $season = before_after_get_atfield($sid);
+    $season = before_after_get_atfield($season_id);
 
     $title = 'Защита культуры ' . $season['culture'] . '. ' . $season['region'] . '. ' . $season['farm'];
     drupal_set_title($title);
-    $hobjects = [];
-    foreach($season['hobjects'] as $hobject) {
-      $hobjects[] = $hobject['name'];
-    }
-    drupal_set_subtitle('Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.');
+    drupal_set_subtitle(before_after_page_description($season_id));
 
     drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
     drupal_add_js(drupal_get_path('module', 'before_after') . '/js/before_after.js');
 
     return theme('before_after_page', array('content' => $season));
+}
+
+/**
+ * Генерирует описание страницы сезона для ПвП
+ * @param $sid - season
+ * @return string
+ */
+function before_after_page_description($season_id)
+{
+  $season = before_after_get_atfield($season_id);
+  $hobjects = [];
+  foreach($season['hobjects'] as $hobject) {
+    $hobjects[] = $hobject['name'];
+  }
+  return 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.';
 }
 
 /**
@@ -463,6 +474,8 @@ function before_after_page($sid)
  */
 function before_after_get_atfield($sid)
 {
+  $output = &drupal_static(__FUNCTION__);
+  if (empty($output)) {
     $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
     $season = $season_wrapper->value();
 
@@ -474,35 +487,35 @@ function before_after_get_atfield($sid)
     $user_wrapper = entity_metadata_wrapper('user', $uid);
     $user = $user_wrapper->value();
 
-    $output['farm']     = $field_wrapper->field_f_farm->value();
-    $output['culture']  = $season_wrapper->field_f_s_culture->title->value();
-    $output['culture_note']  = $season_wrapper->field_f_s_culture_note->value();
-    $output['season']  = $season_wrapper->field_f_s_season->value();
-    $output['year']  = $season_wrapper->field_f_s_year->value();
-    $output['region']   = $field_wrapper->field_f_region->name->value();
-    $output['author']   = person_get_user_array($user);
+    $output['farm'] = $field_wrapper->field_f_farm->value();
+    $output['culture'] = $season_wrapper->field_f_s_culture->title->value();
+    $output['culture_note'] = $season_wrapper->field_f_s_culture_note->value();
+    $output['season'] = $season_wrapper->field_f_s_season->value();
+    $output['year'] = $season_wrapper->field_f_s_year->value();
+    $output['region'] = $field_wrapper->field_f_region->name->value();
+    $output['author'] = person_get_user_array($user);
 
     // user
     $img = 'default_images/ru-default-thickbox_default.jpg';
 
     if ($profile_main = profile2_load_by_user($user, 'main')) {
-        if (isset($profile_main->field_profile_photo['und'][0]['uri'])) $img = $profile_main->field_profile_photo['und'][0]['uri'];
+      if (isset($profile_main->field_profile_photo['und'][0]['uri'])) $img = $profile_main->field_profile_photo['und'][0]['uri'];
     }
     $output['author_img'] = image_style_url('user_photo', $img);
 
     // если утвержденный сотрудник вывести регалии
     if ($staff = profile2_load_by_user($user, 'staff')) {
-        $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
+      $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
 
-        if ($staff_wrapper->field_profile_company_approved->value() == 1) {
-            $output['author_company'] = person_get_user_company_name($staff_wrapper->field_profile_company2->pid->value());
-            $output['author_post'] = $staff_wrapper->field_profile_post->value();
-        }
+      if ($staff_wrapper->field_profile_company_approved->value() == 1) {
+        $output['author_company'] = person_get_user_company_name($staff_wrapper->field_profile_company2->pid->value());
+        $output['author_post'] = $staff_wrapper->field_profile_post->value();
+      }
     }
 
 
     // процессы сезона
-        // обработки
+    // обработки
     $query = db_select('field_data_field_f_s_processings', 'p');
     $query->condition('p.entity_id', $sid);
     $query->innerJoin('field_data_field_f_s_p_date', 'd', 'd.entity_id = p.field_f_s_processings_value');
@@ -510,7 +523,7 @@ function before_after_get_atfield($sid)
     $query->fields('d', array('field_f_s_p_date_value'));
     $result_p = $query->execute()->fetchAll();
 
-        // замеры
+    // замеры
     $query = db_select('field_data_field_f_s_measurements', 'm');
     $query->condition('m.entity_id', $sid);
     $query->innerJoin('field_data_field_f_s_m_date', 'd', 'd.entity_id = m.field_f_s_measurements_value');
@@ -518,163 +531,163 @@ function before_after_get_atfield($sid)
     $query->fields('d', array('field_f_s_m_date_value'));
     $result_m = $query->execute()->fetchAll();
 
-        // собрать все процессы сезона
+    // собрать все процессы сезона
     $processes = array();
     $date_first_processing = '';
     $count_processings = 0;
-    foreach($result_p as $key_p => $item_p) {
-        $date = $item_p->field_f_s_p_date_value;
-        if (!$date_first_processing) $date_first_processing = $date;
-        $processes[$date . 'p' . $key_p]['type'] = 'processing';
-        $processes[$date . 'p' . $key_p]['id'] = $item_p->field_f_s_processings_value;
-        $processes[$date . 'p' . $key_p]['date'] = $item_p->field_f_s_p_date_value;
-        $count_processings++;
+    foreach ($result_p as $key_p => $item_p) {
+      $date = $item_p->field_f_s_p_date_value;
+      if (!$date_first_processing) $date_first_processing = $date;
+      $processes[$date . 'p' . $key_p]['type'] = 'processing';
+      $processes[$date . 'p' . $key_p]['id'] = $item_p->field_f_s_processings_value;
+      $processes[$date . 'p' . $key_p]['date'] = $item_p->field_f_s_p_date_value;
+      $count_processings++;
     }
     $count_measurements = 0;
-    foreach($result_m as $key_m => $item_m) {
-        $date = $item_m->field_f_s_m_date_value;
-        if (!$date_first_processing) $date_first_processing = $date;
-        $processes[$date . 'm' . $key_m]['type'] = 'measurement';
-        $processes[$date . 'm' . $key_m]['id'] = $item_m->field_f_s_measurements_value;
-        $processes[$date . 'm' . $key_m]['date'] = $item_m->field_f_s_m_date_value;
-        $count_measurements++;
+    foreach ($result_m as $key_m => $item_m) {
+      $date = $item_m->field_f_s_m_date_value;
+      if (!$date_first_processing) $date_first_processing = $date;
+      $processes[$date . 'm' . $key_m]['type'] = 'measurement';
+      $processes[$date . 'm' . $key_m]['id'] = $item_m->field_f_s_measurements_value;
+      $processes[$date . 'm' . $key_m]['date'] = $item_m->field_f_s_m_date_value;
+      $count_measurements++;
     }
 
-        // отсортировать по возрастанию даты и заменить ключи на цифровые
+    // отсортировать по возрастанию даты и заменить ключи на цифровые
     if ($processes) {
-        ksort($processes);
-        $processes = array_values($processes);
-        $count_processes = count($processes);
+      ksort($processes);
+      $processes = array_values($processes);
+      $count_processes = count($processes);
 
-        // список вредных объектов сезона
-        $output['weeds_d'] = $output['weeds_o'] = $output['pests'] = $output['fungis'] = 0;
-        $arr_hobjects = array();
-        foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
-            if ($item_ho->field_f_s_h_hobject->value()) {
-                $nid = $item_ho->field_f_s_h_hobject->nid->value();
-                $arr_hobjects[$nid] = array(
-                    'name' => $item_ho->field_f_s_h_hobject->title->value(),
-                    'link' => drupal_get_path_alias('node/' . $item_ho->field_f_s_h_hobject->nid->value()),
-                    'phase' => $item_ho->field_f_s_h_phase->value(),
-                    'dominant' => $item_ho->field_f_s_h_dominant->value() ? $item_ho->field_f_s_h_dominant->value() : 0,
-                    'type' => $item_ho->field_f_s_h_hobject->type->value(),
-                    'percent' => '-',
-                    'photo' => '',
-                );
+      // список вредных объектов сезона
+      $output['weeds_d'] = $output['weeds_o'] = $output['pests'] = $output['fungis'] = 0;
+      $arr_hobjects = array();
+      foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
+        if ($item_ho->field_f_s_h_hobject->value()) {
+          $nid = $item_ho->field_f_s_h_hobject->nid->value();
+          $arr_hobjects[$nid] = array(
+            'name' => $item_ho->field_f_s_h_hobject->title->value(),
+            'link' => drupal_get_path_alias('node/' . $item_ho->field_f_s_h_hobject->nid->value()),
+            'phase' => $item_ho->field_f_s_h_phase->value(),
+            'dominant' => $item_ho->field_f_s_h_dominant->value() ? $item_ho->field_f_s_h_dominant->value() : 0,
+            'type' => $item_ho->field_f_s_h_hobject->type->value(),
+            'percent' => '-',
+            'photo' => '',
+          );
 
-                // посчитать количество каждого вида вредителей
-                if ($arr_hobjects[$nid]['type'] == 'weed') {
-                    if ($arr_hobjects[$nid]['dominant']) $output['weeds_d']++;
-                    else $output['weeds_o']++;
-                }
-                if ($arr_hobjects[$nid]['type'] == 'pest') $output['pests']++;
-                if ($arr_hobjects[$nid]['type'] == 'disease') $output['fungis']++;
-            }
+          // посчитать количество каждого вида вредителей
+          if ($arr_hobjects[$nid]['type'] == 'weed') {
+            if ($arr_hobjects[$nid]['dominant']) $output['weeds_d']++;
+            else $output['weeds_o']++;
+          }
+          if ($arr_hobjects[$nid]['type'] == 'pest') $output['pests']++;
+          if ($arr_hobjects[$nid]['type'] == 'disease') $output['fungis']++;
         }
+      }
 
-        $output['hobjects'] = $arr_hobjects;
-        $output['date_last'] = $processes[$count_processes - 1]['date'];
+      $output['hobjects'] = $arr_hobjects;
+      $output['date_last'] = $processes[$count_processes - 1]['date'];
 
 
-        $measurements = $processings = array();
-        $key_m = $key_p = 0;
-        foreach ($processes as $process) {
-            if ($process['type'] == 'measurement') {
-                $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
-                $image_f_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
-                $image_f = file_load($image_f_fid);
-                $measurements[$key_m]['image_field_thumb'] = $image_f ? image_style_url('news_teaser', $image_f->uri) : '';
-                $measurements[$key_m]['image_field_full'] = $image_f ? file_create_url($image_f->uri) : '';
-                $image_c_fid = $measurement_wrapper->field_f_s_m_foto_culture->value();
-                $image_c = $image_c_fid ? file_load($image_c_fid) : false;
-                $measurements[$key_m]['image_culture_thumb'] = $image_c ? image_style_url('news_teaser', $image_c->uri) : '';
-                $measurements[$key_m]['image_culture_full'] = $image_c ? file_create_url($image_c->uri) : '';
-                $measurements[$key_m]['condition'] = drupal_strtolower($measurement_wrapper->field_f_s_m_condition_mc->value());
-                $measurements[$key_m]['phase'] = $measurement_wrapper->field_f_s_m_phase_mc->value() ? drupal_strtolower($measurement_wrapper->field_f_s_m_phase_mc->name->value()) : '';
-                $measurements[$key_m]['date'] = date('d.m.Y', $measurement_wrapper->field_f_s_m_date->value());
-                $comment = trim($measurement_wrapper->field_f_s_m_comment->value());
-                $comment_short = _cropStr($comment, 150, '... <span class="s1">развернуть</span>');
-                $measurements[$key_m]['comment'] = $comment;
-                $measurements[$key_m]['comment_short'] = $comment_short;
+      $measurements = $processings = array();
+      $key_m = $key_p = 0;
+      foreach ($processes as $process) {
+        if ($process['type'] == 'measurement') {
+          $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
+          $image_f_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
+          $image_f = file_load($image_f_fid);
+          $measurements[$key_m]['image_field_thumb'] = $image_f ? image_style_url('news_teaser', $image_f->uri) : '';
+          $measurements[$key_m]['image_field_full'] = $image_f ? file_create_url($image_f->uri) : '';
+          $image_c_fid = $measurement_wrapper->field_f_s_m_foto_culture->value();
+          $image_c = $image_c_fid ? file_load($image_c_fid) : false;
+          $measurements[$key_m]['image_culture_thumb'] = $image_c ? image_style_url('news_teaser', $image_c->uri) : '';
+          $measurements[$key_m]['image_culture_full'] = $image_c ? file_create_url($image_c->uri) : '';
+          $measurements[$key_m]['condition'] = drupal_strtolower($measurement_wrapper->field_f_s_m_condition_mc->value());
+          $measurements[$key_m]['phase'] = $measurement_wrapper->field_f_s_m_phase_mc->value() ? drupal_strtolower($measurement_wrapper->field_f_s_m_phase_mc->name->value()) : '';
+          $measurements[$key_m]['date'] = date('d.m.Y', $measurement_wrapper->field_f_s_m_date->value());
+          $comment = trim($measurement_wrapper->field_f_s_m_comment->value());
+          $comment_short = _cropStr($comment, 150, '... <span class="s1">развернуть</span>');
+          $measurements[$key_m]['comment'] = $comment;
+          $measurements[$key_m]['comment_short'] = $comment_short;
 
-                if ($date_first_processing && $key_m) {
-                    $diff = _seconds2times($measurement_wrapper->field_f_s_m_date->value() - $date_first_processing);
-                    $measurements[$key_m]['days_after'] = empty($diff['3']) ? 'Контроль' : (' ' . format_plural($diff['3'], '@count day', '@count days'));
+          if ($date_first_processing && $key_m) {
+            $diff = _seconds2times($measurement_wrapper->field_f_s_m_date->value() - $date_first_processing);
+            $measurements[$key_m]['days_after'] = empty($diff['3']) ? 'Контроль' : (' ' . format_plural($diff['3'], '@count day', '@count days'));
+          }
+
+          // состояние вредных объектов
+          $arr_ho = $arr_hobjects;
+          foreach ($measurement_wrapper->field_f_s_m_condition_ho as $item_ho) {
+            if ($item_ho->field_f_s_m_c_hobject->value()) {
+              $nid = $item_ho->field_f_s_m_c_hobject->nid->value();
+              $photo_fid = $item_ho->field_f_s_m_c_foto->value();
+              if (isset($arr_ho[$nid])) {
+                $arr_ho[$nid]['photo'] = '';
+                if ($photo_fid && $photo = file_load($photo_fid)) {
+                  $arr_ho[$nid]['photo'] = $photo ? file_create_url($photo->uri) : '';
                 }
 
-                // состояние вредных объектов
-                $arr_ho = $arr_hobjects;
-                foreach ($measurement_wrapper->field_f_s_m_condition_ho as $item_ho) {
-                    if ($item_ho->field_f_s_m_c_hobject->value()) {
-                        $nid = $item_ho->field_f_s_m_c_hobject->nid->value();
-                        $photo_fid = $item_ho->field_f_s_m_c_foto->value();
-                        if (isset($arr_ho[$nid])) {
-                            $arr_ho[$nid]['photo'] = '';
-                            if ($photo_fid && $photo = file_load($photo_fid)) {
-                                $arr_ho[$nid]['photo'] = $photo ? file_create_url($photo->uri) : '';
-                            }
-
-                            $arr_ho[$nid]['percent'] = $item_ho->field_f_s_m_c_percent->value() ? $item_ho->field_f_s_m_c_percent->value() : '-';
-                        }
-                    }
-                }
-
-                $measurements[$key_m]['hobjects'] = $arr_ho;
-
-                $key_m++;
-            } else {
-                $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
-                $processings[$key_p]['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
-                $processings[$key_p]['time'] = $processing_wr->field_f_s_p_time->value();
-                $processings[$key_p]['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
-                $processings[$key_p]['consumption'] = $processing_wr->field_f_s_p_consumption->value();
-                if ($processing_wr->field_f_s_p_preparation2->value()) {
-                    $processings[$key_p]['consumption2'] = $processing_wr->field_f_s_p_consumption2->value();
-                }
-                $processings[$key_p]['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
-                $processings[$key_p]['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
-                $processings[$key_p]['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
-                $processings[$key_p]['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
-                $processings[$key_p]['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
-                $processings[$key_p]['humidity'] = $processing_wr->field_f_s_p_humidity->value();
-
-                $image_fid = $processing_wr->field_f_s_p_photo->value();
-                $image = file_load($image_fid);
-                $processings[$key_p]['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
-                $processings[$key_p]['image_full'] = $image ? file_create_url($image->uri) : '';
-
-                // препарат
-                $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
-                $processings[$key_p]['preparation'] = $preparation['title'] . ($preparation['form_short'] ? ', ' . $preparation['form_short'] : '');
-                $processings[$key_p]['ingredients'] = implode(' + ', $preparation['ingredients']);
-                $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation['id']);
-                $processings[$key_p]['prep_nid'] = $preparation['id'];
-
-                $image_prep = $processing_wr->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
-                $processings[$key_p]['image_prep_thumb'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
-                $processings[$key_p]['image_prep_full'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
-
-                // препарат2
-                $processings[$key_p]['preparation2'] = '';
-                if ($processing_wr->field_f_s_p_preparation2->value()) {
-                    $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
-                    $processings[$key_p]['preparation2'] = $preparation['title'] . ', ' . $preparation['form_short'];
-                    $processings[$key_p]['ingredients2'] = implode(' + ', $preparation['ingredients']);
-                    $processings[$key_p]['prep_link2'] = drupal_get_path_alias('node/' . $preparation['id']);
-                    $processings[$key_p]['prep_nid2'] = $preparation['id'];
-
-                    $image_prep = $processing_wr->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
-                    $processings[$key_p]['image_prep_thumb2'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
-                    $processings[$key_p]['image_prep_full2'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
-                }
-
-                $key_p++;
+                $arr_ho[$nid]['percent'] = $item_ho->field_f_s_m_c_percent->value() ? $item_ho->field_f_s_m_c_percent->value() : '-';
+              }
             }
-        }
+          }
 
-        $output['measurements'] = $measurements;
-        $output['processings'] = $processings;
+          $measurements[$key_m]['hobjects'] = $arr_ho;
+
+          $key_m++;
+        } else {
+          $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
+          $processings[$key_p]['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
+          $processings[$key_p]['time'] = $processing_wr->field_f_s_p_time->value();
+          $processings[$key_p]['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
+          $processings[$key_p]['consumption'] = $processing_wr->field_f_s_p_consumption->value();
+          if ($processing_wr->field_f_s_p_preparation2->value()) {
+            $processings[$key_p]['consumption2'] = $processing_wr->field_f_s_p_consumption2->value();
+          }
+          $processings[$key_p]['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
+          $processings[$key_p]['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
+          $processings[$key_p]['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
+          $processings[$key_p]['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
+          $processings[$key_p]['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
+          $processings[$key_p]['humidity'] = $processing_wr->field_f_s_p_humidity->value();
+
+          $image_fid = $processing_wr->field_f_s_p_photo->value();
+          $image = file_load($image_fid);
+          $processings[$key_p]['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
+          $processings[$key_p]['image_full'] = $image ? file_create_url($image->uri) : '';
+
+          // препарат
+          $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
+          $processings[$key_p]['preparation'] = $preparation['title'] . ($preparation['form_short'] ? ', ' . $preparation['form_short'] : '');
+          $processings[$key_p]['ingredients'] = implode(' + ', $preparation['ingredients']);
+          $processings[$key_p]['prep_link'] = drupal_get_path_alias('node/' . $preparation['id']);
+          $processings[$key_p]['prep_nid'] = $preparation['id'];
+
+          $image_prep = $processing_wr->field_f_s_p_preparation->field_product[0]->field_p_images[0]->value();
+          $processings[$key_p]['image_prep_thumb'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
+          $processings[$key_p]['image_prep_full'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
+
+          // препарат2
+          $processings[$key_p]['preparation2'] = '';
+          if ($processing_wr->field_f_s_p_preparation2->value()) {
+            $preparation = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
+            $processings[$key_p]['preparation2'] = $preparation['title'] . ', ' . $preparation['form_short'];
+            $processings[$key_p]['ingredients2'] = implode(' + ', $preparation['ingredients']);
+            $processings[$key_p]['prep_link2'] = drupal_get_path_alias('node/' . $preparation['id']);
+            $processings[$key_p]['prep_nid2'] = $preparation['id'];
+
+            $image_prep = $processing_wr->field_f_s_p_preparation2->field_product[0]->field_p_images[0]->value();
+            $processings[$key_p]['image_prep_thumb2'] = empty($image_prep['fid']) ? '' : image_style_url('medium', $image_prep['uri']);
+            $processings[$key_p]['image_prep_full2'] = empty($image_prep['fid']) ? '' : file_create_url($image_prep['uri']);
+          }
+
+          $key_p++;
+        }
+      }
+
+      $output['measurements'] = $measurements;
+      $output['processings'] = $processings;
     }
-
-    return $output;
+  }
+  return $output;
 }
