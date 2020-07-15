@@ -30,9 +30,9 @@ $path = drupal_get_path('module', 'agrocalc');
                         <div id="category-<?php print $category['tid']; ?>" class="list-category-header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
                             <div class="box">
                                 <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
-                                <img class="icon" src="<?php print $category['icon']; ?>">
+                                <img class="icon" src="<?php print $category['icon']; ?>" alt="help icon">
                                 <?php if ($cnt_cat == 1): ?>
-                                    <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" />
+                                    <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" alt="<? print 'help'; ?>"  />
                                 <?php endif; ?>
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
@@ -82,10 +82,10 @@ $path = drupal_get_path('module', 'agrocalc');
                                             }
 
                                             $block = $min == $max ? 'true' : 'false';
-                                            $rates[$pid] = '<input  type="text" 
-                                                                    id="range_' . $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg . '_' . $key_prep . '" 
+                                            $rates[$pid] = '<input  type="text"
+                                                                    id="range_' . $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg . '_' . $key_prep . '"
                                                                     name="range_' . $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg . '_' . $key_prep . '"
-                                                                    data-values="' . $min . ', ' . $mid . ', ' . $max . '" 
+                                                                    data-values="' . $min . ', ' . $mid . ', ' . $max . '"
                                                                     data-from="' . $from . '"
                                                                     data-block="' . $block . '"
                                                                     >';
@@ -99,9 +99,9 @@ $path = drupal_get_path('module', 'agrocalc');
                                     <div class="view-item col-xs-4 reglament-print hidden-print" data-print="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                         <div class="v-card">
                                             <div class="v-card-image">
-                                                <img src="<?php print $photos[0]; ?>" class="img-responsive" title="<?php print ''; ?>">
+                                                <img src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                 <?php if (isset($photos[1])): ?>
-                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" title="<?php print ''; ?>">
+                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                 <?php endif; ?>
                                             </div>
                                             <div class="v-card-content">
@@ -113,7 +113,7 @@ $path = drupal_get_path('module', 'agrocalc');
 
                                     <div class="view-item col-xs-12 col-sm-6 col-md-4 col-lg-4 hidden-print">
                                         <?php if ($area && $cnt_reg == 1 && $cnt_cat == 1): ?>
-                                            <img class="help5 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/<?php print $path; ?>/images/help/5.png" />
+                                            <img class="help5 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/<?php print $path; ?>/images/help/5.png" alt="<? print 'help'; ?>"  />
                                         <?php endif; ?>
                                         <div class="v-card reglament gray<?php print $reglament['state'] == 'on' ? " is-active" : ""; ?> hidden-print" data-cat="category-<?php print $category['tid']; ?>" id="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                             <?php if ($area): ?>
@@ -135,9 +135,9 @@ $path = drupal_get_path('module', 'agrocalc');
 
                                             <div class="v-card-image">
                                                 <a href="<?php print $product_url; ?>" target="_blank">
-                                                    <img src="<?php print $photos[0]; ?>" class="img-responsive" title="<?php print ''; ?>">
+                                                    <img src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                     <?php if (isset($photos[1])): ?>
-                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" title="<?php print ''; ?>">
+                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                     <?php endif; ?>
                                                 </a>
                                             </div>
@@ -174,7 +174,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                             </footer>
                                         </div>
                                         <?php if ($area && $cnt_reg == 2 && $cnt_cat == 1): ?>
-                                            <img class="help6 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/6.png" />
+                                            <img class="help6 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/6.png" alt="<? print 'help'; ?>" />
                                         <?php endif; ?>
                                     </div>
                                     <?php
@@ -205,7 +205,7 @@ $path = drupal_get_path('module', 'agrocalc');
                 <?php if ($area): ?>
                 <div class="row">
                     <div class="list-category-header col-xs-12 calculation-total category-17">
-                        <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" />
+                        <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" alt="<? print 'help'; ?>"  />
                         <div class="box">
                             <div class="bkg"></div>
                             <div class="amountByProgram">
