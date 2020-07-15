@@ -986,6 +986,25 @@ function chibs_galleryformatter_styles() {
     return $gallerystyles;
 }
 
+/**
+ * Implements hook_field_attach_view_alter().
+ */
+function chibs_field_attach_view_alter(&$output, $context)
+{
+  // для поля field_image_gallery установить аттр alt, если пустой
+  if (isset($output["field_image_gallery"])) {
+      foreach ($output["field_image_gallery"][0]['#slides'] as $key => &$item) {
+        if (empty($item['alt'])) {
+          $item['image'] = str_replace('alt=""', 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image') . ' ' . ($key + 1) . '"', $item['image']);
+        }
+      }
+      foreach ($output["field_image_gallery"][0]['#thumbs'] as $key => &$item) {
+        if (empty($item['alt'])) {
+          $item['image'] = str_replace('alt=""', 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image preview') . ' ' . ($key + 1) . '"', $item['image']);
+        }
+      }
+  }
+}
 
 /** ------------------------------------------ Кодировка email -----------------------------------------------------
  * защита от ботов, парсящих email  fi/nfire[s1]kccc[s2]ru

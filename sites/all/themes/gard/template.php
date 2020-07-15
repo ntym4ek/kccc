@@ -62,3 +62,9 @@ function theme_tabular_form($vars)
         'rows' => $rows,
     ));
 }
+
+function gard_preprocess_field(&$variables, $hook) {
+  if ($variables['element']['#field_name'] == 'field_image_gallery') {
+
+  }
+}
