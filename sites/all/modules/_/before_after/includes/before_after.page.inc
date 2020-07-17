@@ -442,7 +442,7 @@ function before_after_page($season_id)
 {
     $season = before_after_get_atfield($season_id);
 
-    $title = 'Защита культуры ' . $season['culture'] . '. ' . $season['region'] . '. ' . $season['farm'];
+    $title = htmlspecialchars_decode('Защита культуры ' . $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '') . '. '  . $season['region'] . '. ' . $season['farm']);
     drupal_set_title($title);
     drupal_set_subtitle(before_after_page_description($season_id));
 

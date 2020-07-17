@@ -135,7 +135,6 @@ function before_after_del_show_modal($type, $id, $js)
     exit;
 }
 
-
 function before_after_del_form($form, &$form_state, $type, $parent_id, $id)
 {
     $form_state['type'] = $type;
