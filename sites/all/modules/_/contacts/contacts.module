@@ -253,7 +253,7 @@ function contacts_get_contacts_list() {
                             'name' => 'Анастасия',
                             'name2' => 'Владимировна',
                             'phones' => array('+7 (8332) 76-15-28, доб. 1215', '+7 922 963-15-77'),
-                            'emails' => array('td.sale9@kccc.ru'),
+                            'emails' => array('td.sale4@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/logunova.jpg',
                         ),
                         array(
@@ -262,7 +262,7 @@ function contacts_get_contacts_list() {
                             'name' => 'Ирина',
                             'name2' => 'Владимировна',
                             'phones' => array('+7 (8332) 76-15-28, доб. 1171', '+7 922 941-17-00'),
-                            'emails' => array('td.sale4@kccc.ru'),
+                            'emails' => array('td.sale9@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/peretyagina.png',
                         ),
                         array(
