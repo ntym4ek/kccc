@@ -492,18 +492,18 @@ function representatives_get_representatives_list()
             71694 => [], //Липецкая область",
         )
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
-        'access' => false,
-        'surname' => 'Соломахин', 'name' => 'Николай', 'name2' => 'Викторович',
-        'phones' => array('+7 (922) 966-60-12'),
-        'emails' => array('lipetsk2@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/solomahin_n.png',
-        'regions' => array(
-            71694 => [], //Липецкая область",
-        )
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Соломахин', 'name' => 'Николай', 'name2' => 'Викторович',
+//        'phones' => array('+7 (922) 966-60-12'),
+//        'emails' => array('lipetsk2@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/solomahin_n.png',
+//        'regions' => array(
+//            71694 => [], //Липецкая область",
+//        )
+//    );
     $sales['reps'][] =  array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
