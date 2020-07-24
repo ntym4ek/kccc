@@ -350,8 +350,8 @@
                 <div role="tabpanel" class="tab-pane fade<? if (!$key) print ' in active'; ?>" id="tab<? print $key; ?>">
                     <div class="tab-pane-wrapper">
                         <div class="image">
-                            <a href="<? print $processing['image_full']; ?>" class="fancybox">
-                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработк поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                            <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                             </a>
                             <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
                         </div>
@@ -371,12 +371,12 @@
 
                         <div class="preparation">
                             <div class="pr-images">
-                                <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox">
-                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?>">
+                                <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox" title="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                                 <? if ($processing['preparation2']): ?>
-                                <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox">
-                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation2"]; ?>">
+                                <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox" title="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                                 <? endif; ?>
                             </div>
