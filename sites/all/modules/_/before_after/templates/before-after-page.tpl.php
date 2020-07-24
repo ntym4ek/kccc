@@ -6,7 +6,7 @@
 <article class="season node">
 
     <div class="node-author">
-        <img src="<? print $content['author']['photo']; ?>" alt="" class="img-circle">
+        <img src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle">
         <div class="author-body">
             <div class="author-title"><? print $content['author']['surname'] . ' ' . $content['author']['name'] . ' ' . $content['author']['name2']; ?></div>
             <div class="author-subtitle"><? print $content['author']['role']; ?></div>
@@ -22,7 +22,7 @@
                 <div class="image">
                     <div class="date">Поле <? print $before['date']; ?></div>
                     <a href="<? print $before['image_field_full']; ?>" class="fancybox">
-                        <img src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive">
+                        <img src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                     </a>
                 </div>
                 <div class="text c1">
@@ -86,7 +86,7 @@
                     <div class="image">
                         <div class="date">Культура <? print $before['date']; ?></div>
                         <a href="<? print $before['image_culture_full']; ?>" class="fancybox">
-                            <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
+                            <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                         </a>
                     </div>
                     <div class="text">
@@ -175,7 +175,7 @@
                             <div class="image">
                                 <div class="date">Поле <? print $measurement['date']; ?></div>
                                 <a href="<? print $measurement['image_field_full']; ?>" class="fancybox">
-                                    <img src="<? print $measurement['image_field_thumb']; ?>" property="dc:image"  class="img-responsive">
+                                    <img src="<? print $measurement['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                             </div>
                             <div class="text c1">
@@ -221,7 +221,7 @@
                                                         <td align="center"><? print $hobject['percent']; ?></td>
                                                         <td>
                                                             <? if ($hobject['photo']): ?>
-                                                                <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                                <a href="<? print $hobject['photo']; ?>"  title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                     <i class="fa fa-camera" aria-hidden="true"></i>
                                                                 </a>
                                                             <? else: ?>
@@ -243,7 +243,7 @@
                             <div class="image">
                                 <div class="date">Культура на <? print $measurement['date']; ?></div>
                                 <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox">
-                                    <img src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
+                                    <img src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                             </div>
                             <div class="text">
@@ -290,7 +290,7 @@
                                                     <td align="center"><? print $hobject['percent']; ?></td>
                                                     <td>
                                                         <? if ($hobject['photo']): ?>
-                                                            <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                            <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                 <i class="fa fa-camera" aria-hidden="true"></i>
                                                             </a>
                                                             <? $ho_photo_message = true; ?>
@@ -343,7 +343,7 @@
                     <div class="tab-pane-wrapper">
                         <div class="image">
                             <a href="<? print $processing['image_full']; ?>" class="fancybox">
-                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive">
+                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработк поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                             </a>
                             <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
                         </div>
@@ -364,11 +364,11 @@
                         <div class="preparation">
                             <div class="pr-images">
                                 <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox">
-                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive">
+                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?>">
                                 </a>
                                 <? if ($processing['preparation2']): ?>
                                 <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox">
-                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive">
+                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation2"]; ?>">
                                 </a>
                                 <? endif; ?>
                             </div>
