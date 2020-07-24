@@ -214,7 +214,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
 
                         $output['footer'] = 'Проведена обработка ' . $category;
 
-                        $atf_array[$process['date']] = $output;
+                        $atf_array[$process['date'] . $sid] = $output;
 
                         break;
 
@@ -289,7 +289,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
                         //                        if ($count_processings) $output['h3'] .= '<span>' . format_plural($count_processings, '1 processing', '@count processings') . '</span>';
 
-                        $atf_array[$process['date']] = $output;
+                        $atf_array[$process['date'] . $sid] = $output;
 
                         break;
                 }
