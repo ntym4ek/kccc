@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="kccc.ru" showNewOnSourceInSync="false">
+  <component name="PublishConfigData" serverName="kccc.ru" uploadOnCheckin="c3fe1336-81c7-48ee-bc8f-a594b22a515b" showNewOnSourceInSync="false">
     <serverData>
       <paths name="corp.local">
         <serverdata>
@@ -52,5 +52,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="kccc.ru" />
   </component>
 </project>
