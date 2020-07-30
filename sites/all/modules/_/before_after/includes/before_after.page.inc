@@ -133,12 +133,15 @@ function before_after_get_atfield_list($region = null, $culture = null)
                 $preps = $preps_w_links = array();
                 foreach ($processes as $item_p) {
                     if ($item_p['type'] == 'processing') {
-                        $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-                        $preparation = $processing_wr->field_f_s_p_preparation->title->value();
+                      $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
+                      $preparation = $processing_wr->field_f_s_p_preparation->title->value();
+                      $prep_form = '';
+                      if ($processing_wr->field_f_s_p_preparation->getBundle() != 'product_fert') {
                         $prep_form = $processing_wr->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
-                        $nid = $processing_wr->field_f_s_p_preparation->nid->value();
-                        $preps[$nid] = $preparation . ', ' . $prep_form;
-                        $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wr->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
+                      }
+                      $nid = $processing_wr->field_f_s_p_preparation->nid->value();
+                      $preps[$nid] = $preparation . ($prep_form ? ', ' . $prep_form : '');
+                      $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wr->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
                     }
                 }
                 $output['preps_title'] = 'Обработка препаратами: ';
