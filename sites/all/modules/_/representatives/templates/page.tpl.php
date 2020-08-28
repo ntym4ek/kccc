@@ -13,7 +13,7 @@
         <? foreach ($sales['heads'] as $key_c => $rep): ?>
         <? $collapse = [];
             if (isset($rep['regions'])) {
-                $collapse['id'] = $key_c;
+                $collapse['id'] = 'head-' . $key_c;
                 $collapse['title'] = t('Regions list');
                 $regions = [];
                 foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
@@ -48,7 +48,7 @@
                 <? if (isset ($rep['roles']) && in_array('rep', $rep['roles'])) {
                     $collapse = [];
                     if (count($rep['regions']) > 1) {
-                        $collapse['id'] = $key_r;
+                        $collapse['id'] = 'rep-' . $key_r;
                         $collapse['title'] = t('Regions list');
                         $regions = [];
                         foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
