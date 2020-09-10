@@ -54,10 +54,10 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
             $form['#prefix'] = '<div id="registration-form-wrapper">';
             $form['#suffix'] = '</div>';
             $form['#attributes']['class'][] = 'form-embedded';
-            $form['title']['#markup'] = '<h4>' . t('Schedule a meeting') . '</h4><p class="font-small text-muted">' . t('Our representative will receive a notification and will contact you') . '</p>';
+            $form['title']['#markup'] = '<h3>' . t('Schedule a meeting') . '</h3><p class="font-small text-muted">' . t('Our representative will receive a notification and will contact you') . '</p>';
             if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#type'] == 'submit') {
                 // выводим сообщение о принятой заявке
-                $form['title']['#markup'] .= '<h2 class="text-center" style="margin: 100px 0;">' . t('Thank you!') . '</h2>';
+                $form['title']['#markup'] .= '<p class="text-center" style="margin: 100px 0;">' . t('Thank you!') . '</p>';
                 $form['actions']['submit']['#access'] = false;
                 $form['actions']['cancel']['#access'] = false;
                 $form['field_reg_sure']['#access'] = false;
@@ -79,7 +79,7 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
                 unset($form['registrant_self']);
 
                 $form['actions']['cancel']['#access'] = false;
-                $form['actions']['submit']['#attributes']['class'][] = 'btn-info btn-wide-full';
+                $form['actions']['submit']['#attributes']['class'][] = 'btn-primary btn-wide-100';
                 $form['actions']['submit']['#value'] = t('Submit');
                 $form['actions']['submit']['#ajax'] = array(
                     'callback' => 'ext_registration_form_refresh',

@@ -1,0 +1,850 @@
+// --------------------------------------- Общие стили -----------------------------------------------------------------
+* {
+  outline: 0 !important;
+}
+a {
+  @include transition(all 0.2s ease-in-out);
+}
+.field {
+  margin-bottom: $grid-gutter-width/2;
+}
+.form-group > label {
+  color: $text-muted; font-weight: 100; text-align: right;
+}
+fieldset.panel {
+  border: 0; box-shadow: none;
+  margin-bottom: $grid-gutter-width;
+  position: relative;
+  legend.panel-heading {
+    background: 0;
+    float: left;
+    line-height: 1em;
+    margin: 0; padding: $grid-gutter-width/2 0;
+    span.panel-title { font-size: $font-size-h3; }
+    a.panel-title {
+      color: inherit; font-size: $font-size-h3;
+      display: block;
+      margin: -10px -15px;
+      padding: 10px 15px;
+      &:hover { text-decoration: none; }
+    }
+    i { color: $text-muted; font-size: .7em; }
+  }
+  .panel-body {
+    clear: both;
+    display: inherit;
+    padding: $grid-gutter-width/2 0 0;
+  }
+  &.panel-shadow {
+    box-shadow: 1px 6px 50px rgba(100, 100, 100, 0.3);
+    padding: 8px $grid-gutter-width $grid-gutter-width;
+    margin-top: -8px;
+  }
+}
+
+
+// --------------------------------------- Flexslider
+.flexslider {
+  border: none;
+  .flex-viewport {
+    @include make-row();
+  }
+  ul > li {
+    padding: 0 $grid-gutter-width/2;
+  }
+}
+
+
+// --------------------------------------- Сетка
+.col-screen-wide {
+  position: relative;
+  min-width: 100vw;
+  padding: 0;
+}
+.background {
+  position: absolute; top: 0; left: 0; bottom: 0; right: 0;  z-index: -1;
+  background-size: cover; background-repeat: no-repeat; background-position: center;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row-screen-wide {
+  justify-content: center;
+}
+.spot {
+  flex: 0 1 auto;
+  max-width: 480px;
+  margin: $grid-gutter-width*2 0; padding: 40px;
+  background: $brand-green-transparent;
+  h2 {
+    color: #fff; font-size: 5rem; font-weight: 400;
+    margin: 0 0 $grid-gutter-width;
+  }
+  p {
+    color: #fff; font-size: $font-size-large;
+    margin-bottom: $grid-gutter-width;
+  }
+}
+
+// --------------------------------------- Кнопки
+.btn {
+  @include transition(all 0.2s ease-in-out);
+}
+.btn-lg {
+  font-size: 1.6em; line-height: 1;
+}
+.btn-wide {
+  padding-left: 4em; padding-right: 4em;
+}
+.btn-wide-100 {
+  width: 100%;
+}
+.btn-clear {
+  @include button-variant($gray-lighter, transparent, $gray-lighter);
+}
+.btn-gray {
+  @include button-variant(#fff, $gray-lighter, $gray-lighter);
+}
+.btn-white {
+  @include button-variant($brand-green, #fff, #fff);
+}
+
+// --------------------------------------- Задний фон для модальных окон
+#modalBackdrop {
+  background: #000000;
+  position: fixed; top: 0; left: 0; z-index: 5;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  @include transition(opacity 0.2s ease-in-out);
+  @include square(0);
+  &.show {
+    visibility: visible;
+    opacity: .5;
+  }
+}
+
+// --------------------------------------- Шапка
+.header {
+  position: relative;
+  min-height: 50vh;
+  margin-bottom: $grid-gutter-width*2;
+  .front & {
+    min-height: 80vh;
+    margin-bottom: 0;
+  }
+  .header-gradient {
+    position: absolute; top: 0; left: 0; bottom: 0; right: 0; z-index: 2;
+    background: linear-gradient(to bottom, rgba(0,32,91,0.75) 0%, rgba(255,255,255,0) 75%);
+    height: 50vh;
+  }
+  .header-logo {
+    background: $block-background-color;
+    position: absolute; left: 100px; top: 0;
+    text-align: center;
+    max-width: 200px;
+    a {
+      display: inline-block;
+      margin-top: $grid-gutter-width*2;
+    }
+    .site-slogan {
+      color: $brand-blue; font-size: 30px; font-weight: 500; line-height: 1.1;
+      margin: $grid-gutter-width 0;
+    }
+  }
+  .header-spot {
+    .container {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  .header-title {
+    position: absolute; bottom: $grid-gutter-width*2; left: 0; right: 0;
+    text-align: center;
+    .title-block {
+      background: $brand-green;
+      color: #fff;
+      display:inline-block;
+      padding: $grid-gutter-width $grid-gutter-width*6;
+      .category-title {
+        font-size: $font-size-h1;
+        margin: 0;
+      }
+    }
+  }
+}
+// --------------------------------------- Popup
+.popup {
+  text-align: left; text-indent: 0; cursor: default;
+  height: auto;
+  background: #fff; border-radius: 4px;
+  position: absolute; z-index: 101;
+  opacity: 0;
+  @include transition(all 0.3s ease-in-out);
+  pointer-events: none;
+  box-shadow: 1px 1px 10px #999;
+}
+.popup .close {
+  color: #fff;
+  font-size: 35px; line-height: 0; font-weight: 100;
+  position: absolute; top: 24px; right: 20px;
+  cursor: pointer;
+}
+.popup-content {
+  color: $text-color;
+  padding: 0 10px;
+}
+.popup:before,
+.popup:after {
+  content: '';
+  position: absolute;
+  margin-left: -9px;
+  @include square(0);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+.popup.popup-top-left:before,
+.popup.popup-top-left:after {
+  top: -10px; left: 20px;
+  border-bottom: 10px solid #fff;
+}
+.popup.popup-top-center:before,
+.popup.popup-top-center:after {
+  top: -10px; left: 50%;
+  border-bottom: 10px solid #fff;
+}
+.popup.popup-top-right:before,
+.popup.popup-top-right:after {
+  top: -10px; right: 20px;
+  border-bottom: 10px solid #fff;
+}
+.popup.popup-bottom-left:before,
+.popup.popup-bottom-left:after {
+  bottom: -10px; left: 11%;
+  border-top: 10px solid #fff;
+}
+.popup.popup-bottom-right:before,
+.popup.popup-bottom-right:after {
+  bottom: -10px; right: 20px;
+  border-top: 10px solid #fff;
+}
+.popup-trigger-js,
+.popup-trigger {
+  position: relative;
+}
+.popup-trigger:hover .popup,
+.popup-trigger-js .popup.pop,
+.popup-trigger .popup.pop {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.popup-trigger:hover .popup { bottom : -50px; }
+.popup {
+  font-size: 13px; line-height: 20px; white-space: nowrap;
+  bottom: -80px;
+  padding: 3px 20px;
+}
+.btn-s1 .popup { left: 3px; }
+.btn-s2 .popup { left: -55px; }
+.btn-s3 .popup { left: -58px; }
+
+
+
+// --------------------------------------- Меню в шапке
+.navbar {
+  &.container {
+    margin-top: 0;
+  }
+  .menu-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    &.first {
+      margin-top: $grid-gutter-width*2;
+    }
+  }
+}
+.menu {
+  padding: 0; margin: 0;
+  > li {
+    display: inline-block;
+    > a {
+      color: #fff;
+      display: block;
+      padding: $nav-link-padding;
+      position: relative; z-index: 10;
+    }
+  }
+}
+.top-menu,
+.user-menu {
+  > li { font-size: $font-size-base; }
+}
+.user-menu {
+  > li > a {
+    padding: 0; margin-left: $grid-gutter-width/2; margin-top: -8px;
+    img { width: 40px; }
+  }
+}
+.top-menu {
+  flex: 1;
+  > li > a:hover,
+  > li > a:focus { text-decoration: underline; }
+}
+
+/* ------------------------------------------------- Главное меню --------------------------------------------------- */
+.dropdown-menu {
+  transition: all 0.2s ease-in-out;
+  visibility: hidden;
+  opacity: 0;
+  display: block;
+}
+.open .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*
+    Десктопное представление
+*/
+.main-menu {
+  flex: 1;
+  @media #{$tablet} {
+    > .dropdown-menu { display: block; }
+  }
+  @media #{$normal} {
+    > .dropdown-menu { display: flex; }
+  }
+  a i { font-size: .7em; }
+  a:hover,
+  a:focus { text-decoration: none; }
+  > li {
+    font-size: $font-size-h3;
+    position: initial;
+    > a {
+      border-bottom: 5px solid transparent;
+      padding-bottom: 5px;
+      @include transition(all 0.2s ease-in-out);
+      &:hover {
+        border-color: #fff;
+      }
+    }
+    &.open {
+      > a,
+      > a:hover,
+      > a:focus {
+        border-color: #fff;
+      }
+    }
+  }
+  .level-2-wrapper {
+    border: none;
+    padding: 0;
+    @media #{$tablet} {
+      position: absolute; top: 100%; left: 0; z-index: 1035;
+      width: 100%;
+      margin: 0;
+    }
+    @media #{$normal} {
+      left: 50%;
+      max-width: 1200px; min-width: 1200px;
+      overflow: visible!important;
+      -ms-transform: translateX(-50%); transform: translateX(-50%);
+      width: 100%;
+    }
+  }
+  .level-2 {
+    display: flex; flex-wrap: nowrap; justify-content: center;
+    background-color: #fff;
+    width: 100%;
+    padding-left: 0;
+    > li.level-2-item {
+      align-items: stretch;
+      display: flex;
+      -ms-flex-positive: 1;
+      flex-grow: 1;
+      max-width: 200px;
+      width: 100%;
+      > a {
+        color: #000; font-weight: 500;
+        display: block;
+        line-height: 18px;
+        min-height: 50px;
+        padding: 5px 10px 5px 20px;
+        width: 100%; height: 100%;
+        position: relative;
+        &:hover {
+          background-color: $block-background-color;
+          color: $link-color;
+        }
+        @media #{$normal} {
+          display: block;
+          height: auto;
+          padding: 20px 5px;
+        }
+      }
+      &:not(.last) > a:after {
+        border-right: 1px solid $block-border-color;
+        bottom: 0;
+        content: "";
+        display: block;
+        height: 20px;
+        position: absolute; left: 0;
+        width: 100%;
+      }
+      .category-img {
+        text-align: center;
+        margin-bottom: 10px; margin-left: auto; margin-right: auto;
+        display: block;
+        width: 100px; height: 70px;
+        img { max-height: 100%; }
+      }
+      .category-link {
+        text-align: center;
+      }
+      &.visible > a {
+        background-color: $block-background-color;
+      }
+    }
+  }
+  .level-3-wrapper {
+    background-color: #fff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    display: none;
+    position: absolute; left: 33.333%; top: 0;
+    width: 66.666%; min-height: 300px;
+    margin: 0;
+    a { @include transition(none); }
+    @media #{$normal} {
+      left: 0; top: 100%;
+      width: 100%;
+      border-top: 1px solid $block-border-color;
+      border-bottom-left-radius: 7px;
+      border-bottom-right-radius: 7px;
+    }
+    .col-first {
+      display: flex; flex-direction: column; justify-content: flex-start;
+      .category-title,
+      .show-more { flex: 0 auto; }
+    }
+    a.show-more {
+      color: $text-color;
+      flex: auto;
+      &:hover { text-decoration: underline; }
+    }
+    .price-list {
+      flex: auto;
+      display: flex; align-items: flex-end;
+      margin: 0 0 15px 40px; padding: 10px 0;
+      a {
+        color: $text-color;
+        &:hover { text-decoration: underline; }
+      }
+    }
+    h3, h4 { padding-left: 40px; }
+    h3 { margin-top: 50px; }
+    h4 {
+      margin-top: 25px;
+      i { font-size: .7em; }
+    }
+    .menu-banner {
+      a:hover { color: $link-color; text-decoration: underline; }
+      border-left: 1px solid $block-border-color;
+      .banner-img {
+        padding: 0;
+        overflow: hidden;
+      }
+      .banner-text {
+        padding: 30px;
+        p { margin-bottom: 20px; }
+      }
+    }
+  }
+  .level-3 {
+    padding: 0;
+    @include clearfix();
+    @media #{$normal} { margin: 50px 0 15px 15px; }
+    > li {
+      float: left;
+      width: 50%;
+      margin-bottom: 10px;
+      position: relative;
+      list-style: none;
+      > a {
+        color: #000;
+        padding-left: 12px;
+        &:hover { color: $link-color; }
+      }
+      > i { color: $brand-blue; font-size: 10px; position: absolute; top: 6px; }
+    }
+  }
+  .visible .level-3-wrapper { display: block; }
+
+}
+
+// --------------------------------------- Меню пользователя
+.user-menu {
+  padding: 0; margin: 0;
+  > li { padding: $grid-gutter-width 0; }
+  .dropdown-menu {
+    right: 0; left: initial;
+    min-width: 200px;
+    list-style: none;
+    border: none;
+    border-top: 1px solid #e1e1e1;
+    margin: 0; padding: 8px 0 14px;
+    @include transition(all 0.3s ease-in-out);
+    ul {
+      padding: 0;
+      > li {
+        &.with-icon i { display: none; }
+        &.panel {
+          box-shadow: none;
+          border: none;
+          margin-bottom: 0;
+          &.visible {  }
+          .panel-body { padding: 0; }
+        }
+        .title-link {
+          display: flex;
+          justify-content: space-between;
+        }
+        > a,
+        > div > a {
+          display: inline-block;
+          background: none;
+          color: $text-color; text-decoration: none;
+          line-height: 35px;
+          padding: 0 20px;
+          &:hover { color: $link-color; }
+          &.dropdown-link {
+            padding-left: 0;
+            span { @include transition(all 0.3s ease-in-out); }
+          }
+          &:not(.collapsed) span {
+            @include rotate(-180deg);
+          }
+          //&.dropdown-link { float: right; }
+        }
+        ul.navbar-nav {
+          float: none;
+          padding-left: 20px;
+          > li { float: none; }
+        }
+      }
+    }
+    .level-2:before {
+      content: " ";
+      margin: 10px 20px;
+      height: 1px;
+      background: #e1e1e1;
+      display: block;
+    }
+
+  }
+  .user-info {
+    font-weight: 500;
+    margin: 11px 0 14px; padding: 0 20px;
+    span {
+      display: block;
+      color: $text-muted; font-weight: 400;
+    }
+  }
+}
+
+
+// --------------------------------------- Контент
+.main {
+  .content {
+    margin-bottom: $grid-gutter-width;
+  }
+  .block {
+    margin-bottom: $grid-gutter-width;
+  }
+  // --------------------- Меню в контенте
+  .block-menu {
+    text-align: center;
+    .menu {
+      li > a {
+        color: $brand-blue; font-size: $font-size-h2;
+        border-bottom: 3px solid transparent;
+        &:hover,
+        &:focus,
+        &.active {
+          border-color: $brand-blue;
+          background: none;
+        }
+      }
+    }}
+}
+
+// --------------------------------------- Top Banner
+.banner-top {
+  margin-bottom: $grid-gutter-width*2;
+  .banner {
+    .container {
+      display: flex;
+    }
+  }
+}
+
+// --------------------------------------- Bottom Banner
+.banner-bottom {
+  #block-block-26 {
+    padding-top: $grid-gutter-width;
+  }
+  .we-covenient-content {
+    display: flex;
+    text-align: center;
+    > div {
+      border: 3px solid transparent;
+      border-radius: $border-radius-base;
+      flex: 0 1 200px;
+      padding: $grid-gutter-width/2;
+      @include transition(all 0.2s ease-in-out);
+      &:hover {
+        border-color: #fff;
+        background: $gray-lighter;
+      }
+    }
+    img {
+      min-height: 80px; width: 80px;
+      display: inline-block;
+      margin-bottom: $grid-gutter-width;
+    }
+    p {
+      font-size: $font-size-large;
+    }
+    @media #{$phone} {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+
+// --------------------------------------- Списки, Views, Представления
+.view {
+  .view-filters {
+    margin-bottom: $grid-gutter-width;
+  }
+  .views-exposed-widget {
+    width: 50%;
+  }
+}
+
+// --------------------------------------- Карточка Новость, Вакансия, Афиша
+article {
+  &.full,
+  &.teaser {
+    .divider {
+      background: $block-border-color;
+      width: 100px; height: 3px;
+      margin: $grid-gutter-width 0;
+    }
+  }
+
+  &.teaser {
+    display: flex; flex-wrap: wrap;
+    //padding: $grid-gutter-width 0;
+    margin-bottom: $grid-gutter-width;
+    .top {
+      flex: 100%;
+      margin-bottom: $grid-gutter-width/2;
+      .submitted {
+        display: inline-block;
+        margin-left: $grid-gutter-width;
+      }
+    }
+    .left-side {
+      flex: 0 0 70%;
+      padding-right: $grid-gutter-width;
+      .submitted {
+        line-height: 20px;
+      }
+      h2 {
+        font-weight: 400;
+        margin-top: 0;
+      }
+    }
+    .right-side {
+      flex: 0 0 30%;
+    }
+    .bottom {
+      color: $text-muted;
+    }
+  }
+  .teaser:not(.vacancy) {
+    border-bottom: 2px solid $block-border-color;
+  }
+
+
+  &.full {
+    width: 100%;
+    h1 { color: $brand-blue; }
+    h3 { color: $brand-blue; }
+    .backstep { margin-bottom: $grid-gutter-width; }
+    .node-stuff {
+      > span {
+        color: $gray-light;
+        display: inline-block;
+        margin-right: $grid-gutter-width;
+        i { margin-right: $grid-gutter-width/4; }
+      }
+    }
+    .summary {
+      margin-bottom: $grid-gutter-width;
+    }
+    .node-image {
+      margin-bottom: $grid-gutter-width;
+    }
+  }
+
+  /* ------------------------------------------------- Форма, встраиваемая в ноду - */
+  .form-embedded {
+    box-shadow: 1px 6px 50px rgba(100, 100, 100, 0.3);
+    padding: 8px $grid-gutter-width $grid-gutter-width;
+    h3 {
+      border-bottom: 1px solid $block-border-color;
+      color: $text-color; font-weight: 400;
+      padding: $grid-gutter-width/2 0; margin: 0 0 $grid-gutter-width/2;
+    }
+  }
+
+}
+
+// --------------------------------------- ASide
+aside {
+  .block {
+    border: 1px solid $block-border-color;
+  }
+  .block-content {
+    padding: $grid-gutter-width;
+    text-align: center;
+    img {
+      width: 100%;
+    }
+    h3 { color: $brand-blue; }
+  }
+}
+
+
+// --------------------------------------- Подвал
+.footer {
+  border-top: 10px solid $block-background-color;
+  h3 { color: $brand-blue; }
+  .brand {
+    text-align: right;
+  }
+  .social-links {
+    a {
+      display: inline-block;
+      border: 2px solid $gray-light; border-radius: 20px;
+      color: $gray-light; text-align: center;
+      @include square(35px);
+      margin-right: 7px;
+      &:last-child { margin-right: 0; }
+      @include transition(all 0.2s ease-in-out);
+      i {
+        vertical-align: middle;
+        font-size: 18px; line-height: 34px;
+        @include transition(all 0.2s ease-in-out);
+      }
+      &:hover {
+        border-color: $gray;
+        i { color: $gray; }
+      }
+      @media #{$normal} {
+        @include square(40px);
+        i { font-size: 20px; line-height: 36px; }
+      }
+    }
+  }
+}
+
+// --------------------------------------- Главная ---------------------------------------------------------------------
+.front {
+  .block {
+      h2.block-title {
+        color: $brand-blue; font-size: 4rem; font-weight: 400; text-align: center;
+        margin: 0 0 $grid-gutter-width*2;
+      }
+    .promo-block-content {
+      text-align: center;
+      border: 1px solid $block-border-color;
+      border-radius: $border-radius-base;
+      padding: $grid-gutter-width;
+      h3 {
+        color: $brand-blue; font-weight: 400;
+        max-height: 2.2em; min-height: 2.2em;
+        overflow: hidden;
+        margin-bottom: $grid-gutter-width;
+      }
+      .block-image {
+        min-height: 190px;
+      }
+      .block-summary {
+        color: $gray;
+        max-height: 5.5em; min-height: 5.5em;
+        overflow: hidden;
+        margin-bottom: $grid-gutter-width;
+      }
+    }
+  }
+}
+
+// --------------------------------------- Внутренние ------------------------------------------------------------------
+/* ------------------------------------------------- Форма входа - */
+.toboggan-unified {
+  @include make-sm-column-offset(2);
+  @include make-sm-column(8);
+  @include make-md-column-offset(3);
+  @include make-md-column(5);
+  padding-left: 0; padding-right: 0;
+
+  #login-message {
+    text-indent: -9999px;
+    width: 60px; height: 67px;
+    background: url(../../../../default/files/images/logo/logo.svg); background-repeat: no-repeat; background-size: cover;
+    margin: 0 auto 20px;
+  }
+  #login-links {
+    background: $gray-lightest;
+    border-top: 6px solid $brand-blue; border-left: 1px solid $gray-lighter; border-right: 1px solid $gray-lighter;
+    font-size: 1em; text-align: right; line-height: inherit;
+    padding: $grid-gutter-width/2;
+    a {
+      background: none; border: none;
+      color: $text-muted;
+      padding: 0;
+      &.lt-active { display: none; }
+      &:hover { background: none; }
+    }
+  }
+  #register-form,
+  #login-form {
+    background: $gray-lightest;
+    padding: 0 $grid-gutter-width/2 $grid-gutter-width/2;
+    border: 1px solid $gray-lighter; border-top: none;
+    .login-forgot {
+      text-align: right;
+      margin-bottom: 10px;
+      a { color: $text-muted; }
+    }
+    .form-group:not(.form-actions) { margin-bottom: $grid-gutter-width; }
+    .btn { width: 100%; }
+    .g-recaptcha > div { margin: 0 auto; }
+  }
+  @media #{$tablet} {
+    padding-left: $grid-gutter-width/2; padding-right: $grid-gutter-width/2;
+    #login-links {
+      padding: $grid-gutter-width $grid-gutter-width*2;
+    }
+    #register-form,
+    #login-form {
+      padding: 0 $grid-gutter-width*2 $grid-gutter-width;
+    }
+  }
+}

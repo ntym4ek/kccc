@@ -46,7 +46,8 @@ function chibs_init()
 /**
  *  Implementation of hook_menu()
  */
-function chibs_menu() {
+function chibs_menu()
+{
     // команды для текущего модального окна (закрыть, обновить страницу)
     $items['ctools_modal/%/cmd/%'] = array(
         'page callback' => 'ctools_modal_ajax_cmd',
@@ -88,7 +89,34 @@ function chibs_menu() {
     return $items;
 }
 
+/**
+ * Implements hook_menu_alter()
+ */
+function chibs_menu_alter(&$items)
+{
+  // убрать материалы с Главной
+  $items['node']['page callback'] = 'chibs_empty_front_page_callback';
 
+  // "Удалить" в локальные задачи материала
+  // http://xandeadx.ru/blog/drupal/339
+  $items['node/%node/delete']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
+
+  // убрать закладки со страницы входа
+  // https://eureka.ykyuen.info/2011/01/31/drupal-remove-the-tabs-in-user-registration-form/
+  $items['user']['type'] = MENU_CALLBACK;
+  $items['user/register']['type'] = MENU_CALLBACK;
+  $items['user/password']['type'] = MENU_CALLBACK;
+}
+
+/**
+ * menu callback
+ * убрать материалы с главной
+ */
+function chibs_empty_front_page_callback()
+{
+  drupal_set_title('');
+  return array();
+}
 
 
 /**
@@ -968,19 +996,17 @@ function _get_product_categories($node)
  *   select or radios form element. Each key must be the location of a css
  *   file for a gallery formatter style. Each value should be the name of the style.
  */
-function chibs_galleryformatter_styles() {
-    $gallerystyles_directory = drupal_get_path('module', 'chibs') . '/gallerystyles';
+function chibs_galleryformatter_styles()
+{
+    $gallerystyles_directory = drupal_get_path('theme', variable_get('theme_default')) . '/gallerystyles';
     $files = file_scan_directory($gallerystyles_directory, '/\.css$/');
     $gallerystyles = array();
     foreach ($files as $file) {
-        // Skip RTL files.
-        if (!strpos($file->name, '-rtl')) {
             $gallerystyles[$file->uri] = drupal_ucfirst($file->name);
-        }
     }
 
     // если фотка одна, то скрипт в самомо модуле не подключается
-    // а он нужен для адаптивного дополнения в gard.js
+    // нужен для дополнительного кода по добавлению галерее адаптивности в js текущей темы
     drupal_add_js(drupal_get_path('module', 'galleryformatter') . '/theme/galleryformatter.js');
 
     return $gallerystyles;
@@ -992,7 +1018,7 @@ function chibs_galleryformatter_styles() {
 function chibs_field_attach_view_alter(&$output, $context)
 {
   // для поля field_image_gallery установить аттр alt, если пустой
-  if (isset($output["field_image_gallery"])) {
+  if (isset($output["field_image_gallery"]) && !empty(["field_image_gallery"][0]['#slides'])) {
       foreach ($output["field_image_gallery"][0]['#slides'] as $key => &$item) {
         if (empty($item['alt'])) {
           $item['image'] = str_replace('alt=""', 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image') . ' ' . ($key + 1) . '"', $item['image']);
@@ -1240,15 +1266,7 @@ function chibs_block_list_alter(&$blocks) {
 //  $GLOBALS['block_build_microtime'] = microtime(TRUE);
 //}
 
-/**
- * Preprocess function for block.tpl.php.
- */
-//function chibs_preprocess_block(&$vars) {
-//  if (isset($vars['block']->build_time)) {
-//    $build_time = intval($vars['block']->build_time * 100000) / 100;
-//    $vars['content'] .= "\n<!-- Block build time: $build_time ms -->\n";
-//  }
-//}
+
 /**
  * http://xandeadx.ru/blog/drupal/848
  * Implements hook_views_post_render().
@@ -1319,8 +1337,8 @@ function chibs_libraries_info()
  * http://sanchiz.net/blog/node-view-modes
  */
 function chibs_entity_info_alter(&$entity_info) {
-    $entity_info['node']['view modes']['front'] = array(
-        'label' => t('Front', array(), array('context' => 'view mode')),
+    $entity_info['node']['view modes']['front_block'] = array(
+        'label' => t('Front Block', array(), array('context' => 'view mode')),
         'custom settings' => TRUE,
     );
 }
@@ -1330,15 +1348,14 @@ function chibs_entity_info_alter(&$entity_info) {
 
 /**
  * разрешаить открытие сайта в iframe для сторонних сайтов
- * http://www.unmoscerinonelweb.com/blog/drupal-7-blocks-external-frame-due-to-x-frame-options/
+ * https://www.unmoscerinonelweb.com/blog/drupal-7-blocks-external-frame-due-to-x-frame-options/
  */
 function chibs_page_delivery_callback_alter(&$delivery_callback) {
   $domains = variable_get('ur_com_xframe_allowed', array(
       'http://77.72.142.170:8081/',
       'http://77.72.142.170/',
-//      'https://youtu.be/',
-//      'https://youtube.com/',
-//      'https://www.youtube.com/',
+    'https://metrika.yandex.ru/',
+    'https://webvisor.com/',
   ));
   // removing frameset limitation for certain referrers
   if (in_array($_SERVER['HTTP_REFERER'], $domains)){
