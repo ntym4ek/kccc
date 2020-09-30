@@ -147,21 +147,30 @@
 <!--            --><?php //print $breadcrumb; ?>
 <!--          --><?php //endif;?>
 
+        <?php if (!$header['title_off'] || !empty($header['subtitle'])): ?>
+        <div class="page-header">
+          <?php if (!empty($header['title']) && !$header['title_off']): ?>
+          <h1 class="page-title"><?php print $header['title']; ?></h1>
+        <?php endif; ?>
+        <?php if (!empty($header['subtitle'])): ?>
+          <h2 class="page-subtitle"><?php print $header['subtitle']; ?></h2>
+        <? endif; ?>
+        </div>
+        <? endif; ?>
 
+        <?php if (!empty($tabs) && !$is_front): ?>
+          <?php print render($tabs); ?>
+        <?php endif; ?>
 
-          <?php if (!empty($tabs) && !$is_front): ?>
-            <?php print render($tabs); ?>
-          <?php endif; ?>
+        <?php if (!empty($page['help'])): ?>
+          <?php print render($page['help']); ?>
+        <?php endif; ?>
 
-          <?php if (!empty($page['help'])): ?>
-            <?php print render($page['help']); ?>
-          <?php endif; ?>
+        <?php if (!empty($action_links)): ?>
+          <ul class="action-links"><?php print render($action_links); ?></ul>
+        <?php endif; ?>
 
-          <?php if (!empty($action_links)): ?>
-            <ul class="action-links"><?php print render($action_links); ?></ul>
-          <?php endif; ?>
-
-          <?php print render($page['content']); ?>
+        <?php print render($page['content']); ?>
       </section>
 
       <?php if (!empty($page['sidebar_second'])): ?>

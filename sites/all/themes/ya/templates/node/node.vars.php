@@ -22,18 +22,22 @@ function ya_preprocess_node(&$vars)
    */
   $node_type_suggestion_key = array_search('node__' . $vars['type'], $vars['theme_hook_suggestions']);
   if ($node_type_suggestion_key !== FALSE) {
-      $node_view_mode_suggestion = 'node__' . $vars['view_mode'];
-      array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + 1, 0, array($node_view_mode_suggestion));
+    $i = 1;
+    $node_view_mode_suggestion = 'node__' . $vars['view_mode'];
+    array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + $i++, 0, array($node_view_mode_suggestion));
 
-      $node_type_view_mode_suggestion = 'node__' . $vars['type'] . '__' . $vars['view_mode'];
-      array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + 2, 0, array($node_type_view_mode_suggestion));
+    if (strpos($vars['type'], 'product') === 0) {
+      array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + $i++, 0, ['node__product' . '__' . $vars['view_mode']]);
+    }
+
+    $node_type_view_mode_suggestion = 'node__' . $vars['type'] . '__' . $vars['view_mode'];
+    array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + $i, 0, array($node_type_view_mode_suggestion));
   }
 
   $vars['title'] = drupal_ucfirst($vars['title']);
 
 
   /** -------------------------------------- Изображения ------------------------------------------------------------ */
-
     /** ------------------------------------ Тизеры и Блок на главной */
     if(in_array($vars['view_mode'], ['teaser', 'front_block'])) {
         if (empty($vars['image'])) {
@@ -239,6 +243,17 @@ function ya_preprocess_node(&$vars)
             }
         }
 
+      $vars['subtitle'] = '';
+        switch ($vars['type']) {
+          case 'product_agro':
+            $vars['title'] = $vars['titles_arr'][0];
+            $vars['subtitle'] = implode(' + ', $vars['ingredients_arr']);
+            break;
+          case 'product_fert':
+            $vars['title'] = explode('|', $vars['titles_arr'][0])[0];
+            $vars['subtitle'] = explode('|', $vars['titles_arr'][0])[1];
+            break;
+        }
 
         if ($vars['type'] == 'product_mix') {
             $vars['addtocart_form'] = drupal_get_form('product_mix_add_to_cart_form', $preparations);
@@ -264,6 +279,7 @@ function ya_preprocess_node(&$vars)
             drupal_add_library($vars['field_page_lib'][0]['#markup'], $vars['field_page_lib'][0]['#markup']);
         }
     }
+
 }
 
 

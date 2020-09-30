@@ -251,8 +251,10 @@ function ya_menu_link__menu_main_d(array $variables) {
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
                 $image_url = image_style_url('thumbnail', $image_uri);
-                $title =  '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . '"/></div>'
-                        . '<div class="category-link">' . $title . '</div>';
+                $title =  '<div class="category-item">' .
+                            '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . '"/></div>' .
+                            '<div class="category-link">' . $title . '</div>' .
+                          '</div>';
 
                 // формируем при необходимости меню третьего уровня
                 // тащим экземпляры заданной сущности
@@ -327,12 +329,12 @@ function ya_menu_link__menu_main_d(array $variables) {
                     $sub_menu =   '<div class="level-3-wrapper">'
                                     . '<div class="col-sm-12">'
                                         . '<div class="row">'
-                                            . '<div class="col-sm-3 col-first">'
-                                                . '<a href="' . $category_title_url . '" class="category-title" ><h3 style="color: #' . $category_title_color . '">' . $category_title . '</h3></a>'
-                                                . '<a href="' . $category_subtitle_url . '" class="show-more" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
-                                                . (!empty($szr) ? '<div class="price-list"><a href="/catalog/agrochemicals/price-list">' . t('Price-list') . '</a></div>' : '')
+                                            . '<div class="col-sm-3 col-1">'
+                                                . '<a href="' . $category_title_url . '" class="category-title" >' . $category_title . '</a>'
+                                                . '<a href="' . $category_subtitle_url . '" class="show-more" ' . '>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>'
+                                                . (!empty($szr) ? '<div class="price-list"><a href="/catalog/agrochemicals/price-list" class="btn btn-gray">' . t('Price-list') . '</a></div>' : '')
                                             . '</div>'
-                                            . '<div class="col-sm-6">'
+                                            . '<div class="col-sm-6 col-2">'
                                                 . $list_html
                                             . '</div>'
                                             . '<div class="col-sm-3' . ($banner_html ? ' menu-banner' : '') . '">' . $banner_html . '</div>'
@@ -446,9 +448,7 @@ function ya_pack_list_to_html($items, $options)
         $list .= '<ul class="level-3">';
         foreach ($items as $item) {
             $title = $item['title'] . (empty($item['formulation']) ? '' : ', ' . $item['formulation']);
-            $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
-            $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#000\';"' : '';
-            $list .= '<li><i class="fa fa-chevron-right"' . $color_style . '></i><a href="' . $item['url'] . '"' . $hover_style . '>' . $title . '</a></li>';
+            $list .= '<li><i class="fa fa-chevron-right"></i><a href="' . $item['url'] . '">' . $title . '</a></li>';
         }
         $list .= '</ul>';
     }
@@ -473,7 +473,7 @@ function ya_get_banner_html($element)
                         '<div class="col-xs-12 banner-img"><img src="' . $image_url . '"  alt="' . $link_title . '"/></div>' .
                         '<div class="col-xs-12 banner-text">' .
                             '<p>' . $desc . '</p>' .
-                            '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
+                            '<a href="' . $href . '" class="btn btn-primary">' . $link_title . '<i class="fa fa-chevron-right"></i></a>' .
                         '</div>' .
                     '</div>';
         }

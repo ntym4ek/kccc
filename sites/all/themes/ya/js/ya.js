@@ -77,14 +77,6 @@
                 $(win).removeClass("pop");
             });
 
-            /* ------------------------------------- print & share -------------------------------------------------- */
-            $(".btn-print").on("click", function() {
-                window.print();
-            });
-            $(".btn-share").on("click", function() {
-                $(".header-share").toggleClass("closed");
-            });
-
             /* ------------------------------------- e-address decode ----------------------------------------------- */
             /* <a href="e(supp/ort[s1]kcc/c[s2]ru)" class="eAddr-encoded"></a> */
             $("a.eAddr-encoded").each(function() {
