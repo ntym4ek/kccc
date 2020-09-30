@@ -31,7 +31,7 @@ function person_init()
 {
   global $base_url;
   if ($GLOBALS['user']->uid == 0) {
-    if (arg(0) == 'user' && !in_array(arg(1), ['login', 'register']) || arg(0) == 'person') {
+    if (arg(0) == 'user' && !in_array(arg(1), ['login', 'register', 'password', 'reset']) || arg(0) == 'person') {
       drupal_goto($base_url . '/user/login');
     }
   } else if (!in_array($GLOBALS['user']->uid, [1, 2737, 6334])) {
