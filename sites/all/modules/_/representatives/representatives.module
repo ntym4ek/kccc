@@ -160,7 +160,7 @@ function representatives_get_representatives_list()
         'office' => t('Deputy head of sales department'),
         'access' => true,
         'surname' => 'Шуклина', 'name' => 'Наталья', 'name2' => 'Геннадьевна',
-        'phones' => array('+7 (8332) 76-15-28, доб. 1151', '+7 922 936-16-62'),
+        'phones' => array('+7 (8332) 76-15-28, доб. 1154', '+7 922 936-16-62'),
         'emails' => array('natalia.shuklina@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/shuklina_n.png',
         'regions' => array(
