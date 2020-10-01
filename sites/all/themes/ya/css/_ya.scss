@@ -5,12 +5,81 @@
 a {
   @include transition(all 0.2s ease-in-out);
 }
+// --------------------------------------- Поля
 .field {
   margin-bottom: $grid-gutter-width/2;
+  .field-label {
+    font-weight: 100;
+  }
 }
+.field-type-file {
+  .field-item {
+    border: 1px solid transparentize($brand-primary, .8);
+    border-right: 10px solid $brand-primary;
+    padding: 0 38px 0 20px; margin: $grid-gutter-width/2 0;
+    .file {
+      background: url('../images/icons/file_sheet.png') 0 13px no-repeat;
+      padding: $grid-gutter-width/2 0 $grid-gutter-width/2 $grid-gutter-width*2;
+      line-height: 1.2em;
+      display: flex;
+      flex-wrap: wrap;
+      .file-info {
+        flex: 1 1 350px;
+        padding-bottom: 3px;
+        span {
+          display: block;
+          color: $text-muted;
+          margin-top: 4px;
+        }
+      }
+      .file-download {  flex: 0 0 170px; padding-top: 3px; }
+    }
+  }
+}
+
+// --------------------------------------- Формы
 .form-group > label {
-  color: $text-muted; font-weight: 100; text-align: right;
+  color: $text-muted; font-weight: 100;
 }
+.form-horizontal {
+  .form-group {
+    label {
+      position: relative;
+      min-height: 1px;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 7px;
+      padding-left: ($grid-gutter-width / 2);
+      padding-right: ($grid-gutter-width / 2);
+
+      @media (min-width: $screen-sm-min) {
+        float: left;
+        width: percentage((3 / $grid-columns));
+      }
+    }
+
+    .form-textarea-wrapper,
+    .form-input-wrapper {
+      min-height: 1px;
+      @media (min-width: $screen-sm-min) {
+        float: left;
+        width: percentage((9 / $grid-columns));
+      }
+    }
+  }
+  .form-action-wrapper {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    @media (min-width: $screen-sm-min) {
+      margin-left: percentage((3 / $grid-columns));
+    }
+  }
+}
+
+
+
 fieldset.panel {
   border: 0; box-shadow: none;
   margin-bottom: $grid-gutter-width;
@@ -732,6 +801,297 @@ article {
   }
 
 }
+
+/* ------------------------------------------------- Страница препарата - */
+.product-intro {
+  .product-image {
+  }
+  .product-brief {
+    background-color: $block-background-color;
+    padding: $grid-gutter-width;
+
+    .field {
+      @include make-row();
+      margin-bottom: $grid-gutter-width/2;
+      .field-label {
+        text-align: right;
+        @include make-sm-column(5);
+      }
+      .field-items { @include make-sm-column(7); }
+    }
+
+    .field-name-commerce-price {
+      .field-items { @include make-sm-column(12); }
+      .field-item {
+        background-color: #fff;
+        border-radius: 2px;
+        font-size: 24px; text-align: center;
+        padding: 5px;
+      }
+    }
+
+    .field-name-field-product .field-items { @include make-sm-column(12); }
+
+
+    .form-horizontal {
+      & > div { @include make-row(); }
+      .control-label { @include make-sm-column(5);}
+      .form-input-wrapper   { @include make-sm-column(7); }
+      .form-action-wrapper  { @include make-sm-column-offset(5); }
+    }
+
+    .field-name-field-pd-mix-components {
+      .field-item { margin-bottom: 5px; }
+      .ingredients { color: $text-muted; font-size: $font-size-small; }
+    }
+    #edit-line-item-fields { display: none; }
+
+    .field .field-label,
+    .form-item .control-label {
+      color: $brand-blue;
+    }
+
+    @media #{$phone} {
+      padding: 20px;
+    }
+  }
+}
+
+.product-description {
+  padding-top: 60px;
+  overflow: hidden;
+
+  .table {
+    th {
+      font-size: .9em; font-weight: 100; text-align: center;
+      background-color: $brand-blue;
+      color: #fff;
+    }
+    td {
+      font-size: .85em;
+      vertical-align: middle;
+    }
+    h5 { font-size: 1em; }
+    @media #{$phone} {
+      font-size: 6px; line-height: 7px;
+    }
+  }
+
+  div.horizontal-tabs {
+    border: none;
+    position: relative;
+    &::after {
+      content: '';
+      display: block;
+      position: absolute; top: 0; right: 0; z-index: 1;
+      width: 30px; height: 27px;
+      visibility: visible;
+      @include gradient-directional(#fff, transparent, -90deg);
+    }
+
+    .horizontal-tabs-list {
+      background: none;
+      border: none;
+      border-bottom: 1px solid $block-border-color;
+      font-size: $font-size-h3; line-height: $font-size-h3;
+
+      display: -webkit-box; display: -ms-flexbox; display: flex;
+      flex-wrap: nowrap;
+      -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start;
+      overflow-x: scroll; overflow-y: hidden;
+      @include user-select(none);
+      &::-webkit-scrollbar { display: none; }
+      li {
+        background: none;
+        border: none;
+        min-width: initial;
+        padding: 0;
+        a {
+          color: $text-color;
+          white-space: nowrap;
+          padding: $grid-gutter-width/2 $grid-gutter-width $grid-gutter-width/2 0;
+          strong { font-weight: 400; }
+          &:hover {
+            background: none;
+            color: $link-hover-color;
+          }
+        }
+        &:last-child {
+          border: none; margin-right: 0;
+          a { padding-right: 0; }
+        }
+      }
+      .selected strong {
+        color: $link-color;
+        &:hover { color: $link-hover-color; }
+      }
+    }
+    fieldset.horizontal-tabs-pane {
+      background: none;
+      padding: 15px 0;
+      box-shadow: none;
+      & > .panel-body { padding: 0; }
+    }
+    h4 {
+      cursor: pointer;
+      color: $brand-blue; font-weight: 400;
+      i {
+        margin-left: 5px;
+        font-size: .8em;
+        @include transition(all 0.3s ease-in-out);
+      }
+      &:not(.collapsed) i {
+        @include rotate(-180deg);
+      }
+    }
+
+    .group-tab-descr {
+      p, ul {
+        font-size: 17px;
+        margin: 0 0 $grid-gutter-width;
+      }
+
+      /* ----------------------------------------------- Микроэлементы (Microelements) - */
+      .fc-micronutrients { margin-bottom: 20px; }
+      .fc-micronutrient {
+        background: $brand-primary;  border-radius: 4px;
+        float: left;
+        color: #fff;
+        height: 80px; width: 80px;
+        margin: 0 15px 15px 0;
+      }
+      .fc-micronutrient,
+      .fc-mn-number,
+      .fc-mn-percent,
+      .fc-mn-element,
+      .fc-mn-name {
+        text-align: center;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;
+      }
+      .fc-mn-number {
+        font-size: 11px; text-align: right;
+        height: 25%;
+        padding: 3px 10px;
+      }
+      .fc-mn-percent {
+        font-size: 17px; font-weight: 100;
+        height: 60%;
+        overflow: hidden;
+        margin-top: -60%;
+      }
+      .fc-mn-element {
+        font-size: 28px; font-weight: 100;
+        height: 50%;
+      }
+      .fc-mn-name {
+        font-size: 11px;
+        height: 25%;
+        padding: 3px 5px;
+      }
+      //.fc-micronutrient:hover { background: #b36500; }
+      .fc-micronutrient:hover .fc-mn-number {
+        opacity: 0;
+        height: 0;
+      }
+      .fc-micronutrient:hover .fc-mn-name { height: 0; }
+      .fc-micronutrient:hover .fc-mn-percent {
+        margin-top: 0;
+        padding-top: 30px;
+      }
+      .fc-micronutrient:hover .fc-mn-element { font-size: 18px; }
+    }
+
+    /* спектр активности */
+    .group-tab-activity {
+      .field {
+        .field-collection-view { margin: 0; padding: 0; }
+        .panel {
+          margin-bottom: 15px;
+          .panel-heading {
+            color: #fff;
+            h3 { margin: 0; }
+          }
+          .panel-body {
+            padding: 20px;
+            .act-class h4 { color: $text-color; margin-bottom: 5px; }
+            .act-life-time { margin-bottom: 10px; }
+            .act-life-time h5 {
+              text-decoration: underline;
+              margin-bottom: 2px;
+            }
+          }
+          &.panel-72347 .panel-heading { @include gradient-vertical($start-color: $brand-success, $end-color: darken($brand-success, 5%)); }
+          &.panel-72348 .panel-heading { @include gradient-vertical($start-color: $brand-warning, $end-color: darken($brand-warning, 5%)); }
+          &.panel-72349 .panel-heading { @include gradient-vertical($start-color: $brand-danger, $end-color: darken($brand-danger, 5%)); }
+          &.panel-72350 .panel-heading { @include gradient-vertical($start-color: $brand-danger, $end-color: darken($brand-danger, 5%)); }
+
+          &.panel-72347 { border-color: $brand-success; }
+          &.panel-72348 { border-color: $brand-warning; }
+          &.panel-72349 { border-color: $brand-danger; }
+          &.panel-72350 { border-color: $brand-danger; }
+        }
+      }
+    }
+
+    /* регламенты */
+    .group-tab-reglaments {
+      .field-collection-container {
+        @include make-row();
+        border: none;
+      }
+      .reg-category div {
+        @include rotate(-90deg);
+        font-size: 1.1em; letter-spacing: 1px; line-height: 1em;
+        width: 20px;
+        margin-top: 60px;
+      }
+      .reg-text {
+        text-align: justify;
+      }
+      h5 { margin-bottom: 5px; }
+      a { color: $text-color; }
+      .calculation .table {
+        border: none;
+        h3 { margin-bottom: 5px; }
+        th {
+          background: none; border: none;
+          span { color: $text-muted; }
+        }
+      }
+    }
+
+    // Применение
+    .group-tab-app {
+      .classes {
+        padding-bottom: $grid-gutter-width;
+        img {
+          margin: $grid-gutter-width/2 auto;
+          width: 80%;
+        }
+      }
+      .application {
+        font-size: .8em;
+        padding-bottom: $grid-gutter-width;
+        & > div > div { height: 40px; }
+      }
+      .instruction {
+        font-size: .8em;
+        padding-bottom: $grid-gutter-width;
+        img { width: 70%; }
+        & > div > div { padding-top: $grid-gutter-width; }
+      }
+    }
+
+    .group-tab-certificate {
+      .field-name-field-pd-certificate {
+        .field-items { display: flex; }
+        .field-item { flex: 1 1 350px; }
+      }
+    }
+  }
+}
+
 
 // --------------------------------------- ASide
 aside {

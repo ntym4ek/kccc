@@ -104,7 +104,7 @@ function ya_preprocess_page(array &$vars)
     $vars['title_off'] = true;
   }
 
-  /** -------------------------------------------- Подзаголовок - */
+  /** -------------------------------------------- Категория, Заголовок, Подзаголовок - */
   /**  для таксономии - */
   if (arg(0) == 'taxonomy' && arg(1) == 'term' && $term = taxonomy_term_load(arg(2))) {
     $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
@@ -127,10 +127,12 @@ function ya_preprocess_page(array &$vars)
 
   switch (arg(0) . (arg(1) ? '/' . arg(1) : '')) {
     case 'agenda':
-      $subtitle = t('Exhibitions with Trade House participation');
+      $title_off = true;
+//      $subtitle = t('Exhibitions with Trade House participation');
       break;
     case 'blogs':
-      $subtitle = t('Our representatives and staff posts');
+      $title_off = true;
+//      $subtitle = t('Our representatives and staff posts');
       break;
     case 'reviews':
       $subtitle = t('Feedback from Trade House customers');
@@ -180,13 +182,13 @@ function ya_preprocess_page(array &$vars)
       break;
   }
 
-  /** -------------------------------------- Категория страницы */
   if (strpos(url($_GET['q']), '/news') === 0) {
-    $category_title = t('News');
+    $title_off = true;
+//    $category_title = t('News');
   }
-  if (strpos(url($_GET['q']), '/info/job') === 0) {
-    $category_title = t('Careers');
-  }
+//  if (strpos(url($_GET['q']), '/info/job') === 0) {
+//    $category_title = t('Careers');
+//  }
 
   /** -------------------------------------- Натройки ноды */
   // отключить заголовок на странице

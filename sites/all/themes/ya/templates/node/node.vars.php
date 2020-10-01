@@ -104,6 +104,9 @@ function ya_preprocess_node(&$vars)
     if (strpos($path_alias, '/blogs') === 0) $vars['backstep_url'] = '/blogs';
     if (strpos($path_alias, '/agenda') === 0) $vars['backstep_url'] = '/agenda';
     if (strpos($path_alias, '/info/job/') === 0) $vars['backstep_url'] = '/info/job';
+    if (in_array($vars['type'], ['product_agro', 'product_chem', 'product_fert', 'product_mix']) && !empty($vars["field_pd_category"]["und"][0]["tid"])) {
+      $vars['backstep_url'] = url('taxonomy/term/' . $vars["field_pd_category"]["und"][0]["tid"]);
+    }
   }
 
   /** -------------------------------------- Краткое содержание ----------------------------------------------------- */
@@ -113,8 +116,8 @@ function ya_preprocess_node(&$vars)
       $vars['summary'] = $vars["content"]["body"][0]["#markup"];
     }
   } elseif ($vars['view_mode'] == 'full') {
-    if (!empty($vars["content"]["body"]["#items"][0]["safe_summary"])) {
-      $vars['summary'] = $vars["content"]["body"]["#items"][0]["safe_summary"];
+    if (!empty($vars["body"][0]["safe_summary"])) {
+      $vars['summary'] = $vars["body"][0]["safe_summary"];
     }
   }
 
@@ -230,10 +233,10 @@ function ya_preprocess_node(&$vars)
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
         if ($product = get_product_info($vars['node'])) {
             foreach ($product['items'] as $nid => $item) {
-                $vars['titles_arr'][] = $item['title'] . ($item['form_short'] ? ', ' . $item['form_short'] : '');
-                $vars['ingredients_arr'][] = implode(' + ', $item['ingredients']);
-                $vars['prices_arr'][] = $item['price'];
-                $vars['units'][] = $item['unit_short'];
+                if ($item['title']) $vars['titles_arr'][] = $item['title'] . ($item['form_short'] ? ', ' . $item['form_short'] : '');
+                if ($item['ingredients']) $vars['ingredients_arr'][] = implode(' + ', $item['ingredients']);
+                if ($item['price']) $vars['prices_arr'][] = $item['price'];
+                if ($item['unit_short']) $vars['units'][] = $item['unit_short'];
                 $preparations[] = $nid;
                 $vars['images'][] = image_style_url('large', $item['photo_url']);
 
@@ -250,8 +253,10 @@ function ya_preprocess_node(&$vars)
             $vars['subtitle'] = implode(' + ', $vars['ingredients_arr']);
             break;
           case 'product_fert':
-            $vars['title'] = explode('|', $vars['titles_arr'][0])[0];
-            $vars['subtitle'] = explode('|', $vars['titles_arr'][0])[1];
+            if ($vars['view_mode'] == 'teaser') {
+              $vars['title'] = explode('|', $vars['titles_arr'][0])[0];
+              $vars['subtitle'] = explode('|', $vars['titles_arr'][0])[1];
+            }
             break;
         }
 

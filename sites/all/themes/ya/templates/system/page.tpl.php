@@ -147,9 +147,9 @@
 <!--            --><?php //print $breadcrumb; ?>
 <!--          --><?php //endif;?>
 
-        <?php if (!$header['title_off'] || !empty($header['subtitle'])): ?>
+        <?php if (!$header['title_off']): ?>
         <div class="page-header">
-          <?php if (!empty($header['title']) && !$header['title_off']): ?>
+          <?php if (!empty($header['title'])): ?>
           <h1 class="page-title"><?php print $header['title']; ?></h1>
         <?php endif; ?>
         <?php if (!empty($header['subtitle'])): ?>

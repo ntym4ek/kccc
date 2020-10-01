@@ -21,3 +21,18 @@ function ya_theme()
     ),
   );
 }
+
+
+/**
+ * Implements hook_pre_render().
+ */
+function ya_pre_render($element)
+{
+  // добавить для элементов обёртку div, чтобы можно было темизировать с помощью css
+  if (in_array($element['#type'], ['select', 'textfield'])) {
+    $element['#field_prefix'] = '<div class="form-input-wrapper">';
+    $element['#field_suffix'] = '</div>';
+  }
+
+  return $element;
+}
