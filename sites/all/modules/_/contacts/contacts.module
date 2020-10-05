@@ -286,6 +286,15 @@ function contacts_get_contacts_list() {
                             'emails' => array('snab2@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/butorina.png',
                         ),
+                        array(
+                            'office' => t('Manager'),
+                            'surname' => 'Мальцев',
+                            'name' => 'Дмитрий',
+                            'name2' => 'Александрович',
+                            'phones' => array('+7(8332) 76-15-27, доб. 1227', '+7 922 924-35-82'),
+                            'emails' => array('snab3@kccc.ru'),
+                            'photo' => '/' . $module_path . '/images/photos/maltsev_d.png',
+                        ),
                     ),
                 ),
                 'marketing' => array(

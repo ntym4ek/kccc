@@ -77,7 +77,7 @@ function representatives_form($from, &$form_state)
         '#prefix' => '<div id="representatives-form-wrapper">',
         '#suffix' => '</div>',
         '#attributes' => ['class' => ['representatives-form']],
-        'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>')],
+        'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>'), '#attributes' => ['id' => ['selector-wr']]],
         'list' => ['#type' => 'fieldset', '#title' => t('The list<i> of area managers</i>')],
     ];
 
@@ -97,12 +97,12 @@ function representatives_form($from, &$form_state)
         '#prefix' => '<div class="row">',
         '#ajax' => array(
             'callback' => 'representatives_form_refresh',
-            'wrapper' => 'representatives-form-wrapper',
+            'wrapper' => 'selector-wr',
         ),
     ];
 
     $contact = '';
-    if (!empty($form_state['values']['region']) && $rep = _get_representative($form_state['values']['region'])) {
+    if (!empty($form_state['values']['region']) && $rep = representatives_get_representative($form_state['values']['region'])) {
         // выбираем руководителя региона, если нет, то кластера
         $contact = theme('contact_card', ['contact' => array_pop($rep['heads']), 'options' => ['class' => 'col-md-6']]);
     }
@@ -124,7 +124,7 @@ function representatives_form($from, &$form_state)
 
 function representatives_form_refresh($form, $form_state)
 {
-    return $form;
+    return $form['selector'];
 }
 
 /**
@@ -364,6 +364,18 @@ function representatives_get_representatives_list()
             71674 => [], //Амурская область",
         ),
     );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Мизюков', 'name' => 'Владимир', 'name2' => 'Александрович',
+        'phones' => array('+7 (922) 903-02-57'),
+        'emails' => array('amur.region2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/mizukov_v.png',
+        'regions' => array(
+            71674 => [], //Амурская область",
+        ),
+    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
@@ -502,14 +514,19 @@ function representatives_get_representatives_list()
 //        )
 //    );
     $sales['reps'][] =  array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
+        'roles' =>  ['exp'],
+        'office' => t('Plant protection expert'),
         'surname' => 'Бекасова', 'name' => 'Марина', 'name2' => 'Викторовна',
         'phones' => array('+7 (922) 999-11-47'),
+        'expert' => '+7 (922) 999-11-47',
         'emails' => array('novosibirsk1@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/bekasova.png',
         'regions' => array(
-            71700 => [], //Новосибирская область",
+          71674 => [], //Амурская область",
+          71670 => [], //Красноярский край",
+          71700 => [], //Новосибирская область",
+          71701 => [], //Омская область",
+          71668 => [], //Алтайский край",
         ),
     );
     $sales['reps'][] =  array(
@@ -731,15 +748,18 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'roles' =>  ['rep'],
-        'office' => t('Representative'),
+        'roles' =>  ['exp'],
+        'office' => t('Plant protection expert'),
         'access' => false,
         'surname' => 'Четвертаков', 'name' => 'Максим', 'name2' => 'Викторович',
         'phones' => array('+7 (922) 955-60-07'),
+        'expert' => '+7 (922) 955-60-07',
         'emails' => array('rostov3@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/chetvertakov.png',
         'regions' => array(
-            71707 => [], //Ростовская область",
+          71707 => [], //Ростовская область",
+          71672 => [], //Ставропольский край",
+          71669 => [], //Краснодарский край",
         ),
     );
     $sales['reps'][] = array(
@@ -779,7 +799,7 @@ function representatives_get_representatives_list()
 //        ),
 //    );
     $sales['reps'][] = array(
-        'roles' =>  ['rep'],
+        'roles' =>  ['rep', 'exp'],
         'office' => t('Representative'),
         'access' => false,
         'expert' => '+7 (902) 730-80-22',
@@ -851,6 +871,18 @@ function representatives_get_representatives_list()
             71664 => [], //Удмуртская Республика",
         ),
     );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Гималов', 'name' => 'Радик', 'name2' => 'Ревгатович',
+        'phones' => array('+7 (922) 903-02-46'),
+        'emails' => array('ulyanovsk@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/gimalov_r.png',
+        'regions' => array(
+          71719 => [], //Ульяновская область',
+        ),
+    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
@@ -920,7 +952,7 @@ function representatives_get_representatives_list()
             if (!empty($rep['regions'])) {
                 foreach($rep['regions'] as $region_tid => &$region_arr) {
                     $region_arr = empty($regions_by_tid[$region_tid]) ? [] : $regions_by_tid[$region_tid];
-                    if ($key_d == 'reps') {
+                    if ($key_d == 'reps' && in_array('rep', $rep['roles'])) {
                         $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps'] = empty($regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']) ? 1 : $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']+1;
                     }
                 }
@@ -941,7 +973,7 @@ function representatives_get_representatives_list()
  */
 function _representatives_source($region_id = null)
 {
-    drupal_json_output(['representatives' => _get_representative($region_id)]);
+    drupal_json_output(['representatives' => representatives_get_representative($region_id)]);
     drupal_exit();
 }
 
@@ -949,7 +981,7 @@ function _representatives_source($region_id = null)
  * используется в корзине
  * @return array|mixed
  */
-function _get_representative($tid)
+function representatives_get_representative($tid = null)
 {
     $sales = representatives_get_representatives_list();
     if ($tid) {
@@ -962,7 +994,7 @@ function _get_representative($tid)
         }
         // потом представителей
         foreach ($sales['reps'] as $rep) {
-            if (isset($rep['regions'][$tid])) {
+            if (in_array('rep', $rep['roles']) && isset($rep['regions'][$tid])) {
                 $representatives['reps'][] = $rep;
             }
         }
@@ -977,31 +1009,29 @@ function _get_representative($tid)
  */
 function _experts_source($region_id = null)
 {
-    drupal_json_output(['representatives' => _get_experts($region_id)]);
+    drupal_json_output(['representatives' => representatives_get_experts($region_id)]);
     drupal_exit();
 }
 
-function _get_experts($tid)
+function representatives_get_experts($tid = null)
 {
     $reps = representatives_get_representatives_list();
 
-    $representatives = [];
+    $experts = [];
     foreach ($reps as $region => $reg) {
         foreach ($reg as $rep) {
-            if (!empty($rep['expert'])) {
+            if (in_array('exp', $rep['roles'])) {
                 if (empty($tid) || isset($rep['regions'][$tid])) {
-                    unset($rep['regions']);
-                    $rep['office'] = 'Научный консультант';
-                    $representatives['expert'][] = $rep;
+                    $rep['office'] = 'Эксперт по защите растений';
+                    $experts['expert'][] = $rep;
                 }
             }
         }
     }
-    if (empty($representatives)) {
-        $representatives['expert'][] = $reps['tambov'][0];
+    if (empty($experts)) {
+        $experts['expert'][] = $reps['tambov'][0];
     }
-    return $representatives;
-
+    return $experts;
 }
 
 /**
