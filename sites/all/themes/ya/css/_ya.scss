@@ -201,6 +201,30 @@ fieldset.panel {
   @include button-variant($brand-green, #fff, #fff);
 }
 
+// ------------------------------------------------- Закладки меню (Tabs)
+.admin-tabs {
+  position: absolute; bottom: 0; left: 0; right: 0;
+}
+.tabs--primary {
+  float: right;
+  margin-bottom: 0; border-bottom: 0;
+  > li {
+    margin-bottom: 0;
+    > a {
+      color: $text-color;
+      background-color: $block-background-color;
+      padding: 5px 15px;
+    }
+    &:last-child > a {
+      margin-right: 0;
+    }
+  }
+
+
+}
+
+
+
 // --------------------------------------- Задний фон для модальных окон
 #modalBackdrop {
   background: #000000;
@@ -224,6 +248,7 @@ fieldset.panel {
   margin-bottom: $grid-gutter-width*2;
   .front & {
     min-height: 80vh;
+    height: auto;
     margin-bottom: 0;
   }
   .header-gradient {
@@ -256,7 +281,7 @@ fieldset.panel {
     text-align: center;
     .title-block {
       background: $brand-green;
-      color: #fff;
+      &, a, a:hover { color: #fff; }
       display:inline-block;
       padding: $grid-gutter-width $grid-gutter-width*6;
       .category-title {
@@ -1179,7 +1204,7 @@ aside {
   @include make-sm-column-offset(2);
   @include make-sm-column(8);
   @include make-md-column-offset(3);
-  @include make-md-column(5);
+  @include make-md-column(6);
   padding-left: 0; padding-right: 0;
 
   #login-message {

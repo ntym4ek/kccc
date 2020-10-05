@@ -1,0 +1,50 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/ya/css/_include";
+
+.sec-about {
+  h3, h4 { color: $brand-blue; }
+}
+.counters {
+  display: flex;
+  > div { }
+  .c-block {
+    border: 1px solid $block-border-color;
+    height: 100%;
+    padding: 0 $grid-gutter-width*2;
+  }
+  .c-num {
+    color: $brand-blue;
+    font-size: 55px; font-weight: 800;
+    padding: $grid-gutter-width*1.5 0;
+  }
+  .c-img {
+    padding: 40px 64px;
+  }
+  .c-txt {
+    padding: 0 0 $grid-gutter-width 0;
+  }
+}
+.mission {
+  background: $block-background-color;
+  padding: $grid-gutter-width*2 0;
+}
+.points {
+  text-align: justify;
+  .image-wr {
+    border: 1px solid $block-border-color;
+    padding: $grid-gutter-width;
+    text-align: center;
+    margin-bottom: $grid-gutter-width/2;
+  }
+  @media #{$tablet} {
+    > div {
+      flex: 0 0 50%;
+    }
+  }
+}
+p {
+  text-align: justify;
+}
+.mb30 { margin-bottom: $grid-gutter-width; }
+.mb60 { margin-bottom: $grid-gutter-width*2; }
+

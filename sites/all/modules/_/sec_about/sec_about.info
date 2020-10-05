@@ -1,0 +1,5 @@
+name = Раздел | О Компании
+description = Страница О Компании
+package = custom
+core = 7.x
+

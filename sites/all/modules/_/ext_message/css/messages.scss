@@ -1,5 +1,5 @@
 // подключаем миксины и переменные темы
-@import "../../../../themes/gard/css/_include";
+@import "../../../../themes/ya/css/_include";
 
 .profile {
     .message-notification {
@@ -9,7 +9,7 @@
     }
     .main {
         flex: auto;
-        background: $form-background;
+        background: $block-background-color;
         padding: 5px $grid-gutter-width/2;
         position: relative;
 
@@ -35,7 +35,7 @@
     }
     .actions {
         flex: 0 0 auto;
-        background: $form-background;
+        background: $block-background-color;
         border-left: 2px solid white;
         padding: 5px 15px;
         display: flex;
@@ -55,7 +55,7 @@
     @include make-md-column-offset(3);
     @include make-md-column(6);
 
-    background: $form-background;
+    background: $block-background-color;
     border-top: 6px solid $brand-info; border-left: 1px solid $gray-lighter; border-right: 1px solid $gray-lighter;
     margin-top: $grid-gutter-width*2;
     padding: 0 $grid-gutter-width/2 $grid-gutter-width/2;

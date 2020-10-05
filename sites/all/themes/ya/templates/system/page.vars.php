@@ -190,13 +190,11 @@ function ya_preprocess_page(array &$vars)
 //    $category_title = t('Careers');
 //  }
 
-  /** -------------------------------------- Натройки ноды */
+  /** -------------------------------------- Нода */
   // отключить заголовок на странице
   if (strpos($_GET['q'], 'node') === 0) {
     $title_off = true;
   }
-
-
 
   $vars['header'] = array(
     'image' => $image,
@@ -207,6 +205,10 @@ function ya_preprocess_page(array &$vars)
     'print' => $print,
     'url' => $url,
   );
+
+  /** -------------------------------------- Наcтройки контента ------------------------------------------------------*/
+  $wide_content = empty($vars['wide_content']) ? false : $vars['wide_content'];
+  $vars['wide_content'] = $wide_content;
 }
 
 /**

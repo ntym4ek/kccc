@@ -1,0 +1,49 @@
+<?
+
+define('ABOUT_URL', 'info/about');
+
+function sec_about_menu()
+{
+  $items[ABOUT_URL] = array(
+    'title' => 'О компании',
+    'description' => '',
+    'page callback' => 'sec_about_main_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function sec_about_theme()
+{
+  return array(
+    'page_about' => array(
+      'template' => 'templates/page-about',
+    ),
+  );
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function sec_about_preprocess_page(&$vars)
+{
+  // установить для страницы параметры шапки
+  if ($_GET['q'] == ABOUT_URL) {
+    $vars['header'] = array(
+//        'image' => url('/' . drupal_get_path('module', 'sec_about') . '/images/header_image.jpg', array('absolute' => true)),
+      'category_title' => t('About company'),
+      'title_off' => true,
+    );
+    $vars['wide_content'] = true;
+  }
+}
+
+// главная страница
+function sec_about_main_page()
+{
+  $module_path = drupal_get_path('module', 'sec_about');
+  drupal_add_css($module_path . '/css/about.css');
+
+  return theme('page_about');
+};

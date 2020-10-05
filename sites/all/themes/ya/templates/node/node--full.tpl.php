@@ -35,11 +35,13 @@
     </div>
   <? endif; ?>
 
+  <? if (!empty($node_title_off)): ?>
   <h1 class="node-title">
     <? print $title; ?>
   </h1>
 
   <div class="divider"></div>
+  <? endif; ?>
 
   <div class="summary">
     <?php print $summary; ?>

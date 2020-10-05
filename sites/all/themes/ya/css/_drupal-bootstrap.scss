@@ -1,17 +1,3 @@
-// Media query variables.
-$phone:               "screen and (max-width: #{$screen-xs-max})";
-$tablet:              "screen and (min-width: #{$screen-sm-min})";
-$normal:              "screen and (min-width: #{$screen-md-min})";
-$wide:                "screen and (min-width: #{$screen-lg-min})";
-$grid-breakpoint:     "screen and (min-width: #{$grid-float-breakpoint})";
-
-// Drop shadows.
-@mixin box-shadow($shadow) {
-  -webkit-box-shadow: $shadow;
-     -moz-box-shadow: $shadow;
-          box-shadow: $shadow;
-}
-
 html {
   &.overlay-open .navbar-fixed-top {
     z-index: 400;
@@ -173,10 +159,6 @@ body {
   margin-right: -15px;
   padding-left: 15px;
   padding-right: 15px;
-  @media #{$grid-breakpoint} {
-    margin-right: 0;
-    padding-left: 0;
-  }
 }
 
 // Navigation.
