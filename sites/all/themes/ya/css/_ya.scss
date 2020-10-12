@@ -219,8 +219,6 @@ fieldset.panel {
       margin-right: 0;
     }
   }
-
-
 }
 
 
@@ -367,7 +365,97 @@ fieldset.panel {
 .btn-s2 .popup { left: -55px; }
 .btn-s3 .popup { left: -58px; }
 
+/* ------------------------------------------------- Вертикальная карточка (Product, Field) - */
+.v-card {
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid $block-border-color;
+  padding: $grid-gutter-width;
+  header, footer {}
+  .divider {
+    background: $block-border-color;
+    display: inline-block;
+    width: 50px; height: 3px;
+    margin: $grid-gutter-width/2 0;
+  }
 
+  .v-card-image {
+    padding: 0 20px;
+  }
+  .v-card-content {
+    .btn {
+      margin-bottom: $grid-gutter-width/2;
+    }
+  }
+  .v-card-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: $grid-gutter-width/2;
+  }
+  .v-card-subtitle {
+    color: $gray-light;
+    margin: 0 0 10px 0;
+    min-height: 1em;
+  }
+  .v-card-more {
+    text-align: left;
+    width: 100%;
+    position: relative;
+  }
+
+  &.product .v-card-summary {
+    height: 9.1em;
+  }
+
+  @media #{$wide} {
+    .v-card-image {
+      min-height: 250px;
+    }
+  }
+}
+/* ------------------------------------------------- Карточка Промо блок и Роутер - */
+.card {
+  text-align: center;
+  border: 1px solid $block-border-color;
+  border-radius: $border-radius-base;
+  padding: $grid-gutter-width;
+  .card-title {
+    margin-top: $grid-gutter-width;
+  }
+  h3 {
+    color: $brand-blue; font-weight: 400;
+    overflow: hidden;
+    margin: 0;
+  }
+  .card-image {
+    min-height: 190px;
+  }
+  .card-summary {
+    color: $gray;
+    max-height: 5.5em; min-height: 5.5em;
+    overflow: hidden;
+  }
+  .card-action {
+    margin-top: $grid-gutter-width;
+  }
+
+  &.promo-card {
+    h3 {
+      max-height: 2.2em; min-height: 2.2em;
+    }
+  }
+  &.router-card {
+    .divider { display: inline-block; }
+    .card-image {
+      border: 1px solid $block-border-color;
+      padding: 15px;
+    }
+    img {
+      width: 150px;
+      margin: auto;
+    }
+  }
+}
 
 // --------------------------------------- Меню в шапке
 .navbar {
@@ -1174,27 +1262,6 @@ aside {
         color: $brand-blue; font-size: 4rem; font-weight: 400; text-align: center;
         margin: 0 0 $grid-gutter-width*2;
       }
-    .promo-block-content {
-      text-align: center;
-      border: 1px solid $block-border-color;
-      border-radius: $border-radius-base;
-      padding: $grid-gutter-width;
-      h3 {
-        color: $brand-blue; font-weight: 400;
-        max-height: 2.2em; min-height: 2.2em;
-        overflow: hidden;
-        margin-bottom: $grid-gutter-width;
-      }
-      .block-image {
-        min-height: 190px;
-      }
-      .block-summary {
-        color: $gray;
-        max-height: 5.5em; min-height: 5.5em;
-        overflow: hidden;
-        margin-bottom: $grid-gutter-width;
-      }
-    }
   }
 }
 
@@ -1253,51 +1320,3 @@ aside {
 }
 
 
-/* ------------------------------------------------- Вертикальная карточка (Product, Field) - */
-.v-card {
-  text-align: center;
-  overflow: hidden;
-  border: 1px solid $block-border-color;
-  padding: $grid-gutter-width;
-  header, footer {}
-  .divider {
-    background: $block-border-color;
-    display: inline-block;
-    width: 50px; height: 3px;
-    margin: $grid-gutter-width/2 0;
-  }
-
-  .v-card-image {
-    padding: 0 20px;
-  }
-  .v-card-content {
-    .btn {
-      margin-bottom: $grid-gutter-width/2;
-    }
-  }
-  .v-card-summary {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: $grid-gutter-width/2;
-  }
-  .v-card-subtitle {
-    color: $gray-light;
-    margin: 0 0 10px 0;
-    min-height: 1em;
-  }
-  .v-card-more {
-    text-align: left;
-    width: 100%;
-    position: relative;
-  }
-
-  &.product .v-card-summary {
-    height: 9.1em;
-  }
-
-  @media #{$wide} {
-    .v-card-image {
-      min-height: 250px;
-    }
-  }
-}

@@ -80,19 +80,19 @@
  */
 ?>
 
-<div class="promo-block-content">
-    <div class="block-image">
+<div class="card promo-card">
+    <div class="card-image">
         <a href="<? print $node_url; ?>">
             <img src="<? print $image; ?>" alt="<? print $title; ?>" class="img-responsive"/>
         </a>
     </div>
-    <div class="block-title">
+    <div class="card-title">
       <h3><a href="<? print $node_url; ?>"><? print $title; ?></a></h3>
     </div>
-    <div class="block-summary">
+    <div class="card-summary">
         <? print $summary; ?>
     </div>
-    <div class="block-actions clearfix">
+    <div class="card-actions clearfix">
         <a class="btn btn-clear pull-left" href="<? print $category_url; ?>"><? print $category_title; ?></a>
         <a class="btn btn-gray pull-right" href="<? print $node_url; ?>">
             <? print t('More'); ?>

@@ -17,7 +17,13 @@ function ya_theme()
     'contact_card' => array(
       'variables' => array('contact' => null, 'collapse' => null, 'options' => null),
       'template' => 'contact-card',
-      'path' => drupal_get_path('theme', 'gard') . '/templates/user',
+      'path' => drupal_get_path('theme', 'ya') . '/templates/user',
+    ),
+    // карточка роутера
+    'router_card' => array(
+      'variables' => array('item' => null, 'options' => null),
+      'template' => 'router-card',
+      'path' => drupal_get_path('theme', 'ya') . '/templates/system',
     ),
   );
 }
