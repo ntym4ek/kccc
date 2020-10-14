@@ -2,6 +2,13 @@
 <project version="4">
   <component name="PublishConfigData" serverName="kccc.ru" persistUploadOnCheckin="false" showNewOnSourceInSync="false">
     <serverData>
+      <paths name="corp.local">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="ff.local">
         <serverdata>
           <mappings>

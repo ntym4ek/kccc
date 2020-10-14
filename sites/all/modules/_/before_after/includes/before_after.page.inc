@@ -8,7 +8,8 @@ function before_after_list_page()
     $list = '';
 
     if ($atf_array = before_after_get_atfield_list(isset($_GET['region'])?$_GET['region']:null, isset($_GET['culture'])?$_GET['culture']:null)) {
-        foreach ($atf_array as $index => $atf_item) {
+      $index = 0;
+      foreach ($atf_array as $atf_item) {
             $list .= theme('before_after_item', array('content' => $atf_item));
             if (++$index % 2 == 0) $list .= '<div class="clearfix visible-sm"></div>';
             if ($index % 3 == 0) $list .= '<div class="clearfix visible-md visible-lg"></div>';
@@ -132,12 +133,15 @@ function before_after_get_atfield_list($region = null, $culture = null)
                 $preps = $preps_w_links = array();
                 foreach ($processes as $item_p) {
                     if ($item_p['type'] == 'processing') {
-                        $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-                        $preparation = $processing_wr->field_f_s_p_preparation->title->value();
+                      $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
+                      $preparation = $processing_wr->field_f_s_p_preparation->title->value();
+                      $prep_form = '';
+                      if ($processing_wr->field_f_s_p_preparation->getBundle() != 'product_fert') {
                         $prep_form = $processing_wr->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
-                        $nid = $processing_wr->field_f_s_p_preparation->nid->value();
-                        $preps[$nid] = $preparation . ', ' . $prep_form;
-                        $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wr->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
+                      }
+                      $nid = $processing_wr->field_f_s_p_preparation->nid->value();
+                      $preps[$nid] = $preparation . ($prep_form ? ', ' . $prep_form : '');
+                      $preps_w_links[] = '<a href="' . drupal_get_path_alias('node/' . $processing_wr->field_f_s_p_preparation->nid->value()) . '">' . $preparation . ', ' . $prep_form . '</a>';
                     }
                 }
                 $output['preps_title'] = 'Обработка препаратами: ';
@@ -214,7 +218,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
 
                         $output['footer'] = 'Проведена обработка ' . $category;
 
-                        $atf_array[$process['date']] = $output;
+                        $atf_array[$process['date'] . $sid] = $output;
 
                         break;
 
@@ -289,7 +293,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
                         //                        if ($count_processings) $output['h3'] .= '<span>' . format_plural($count_processings, '1 processing', '@count processings') . '</span>';
 
-                        $atf_array[$process['date']] = $output;
+                        $atf_array[$process['date'] . $sid] = $output;
 
                         break;
                 }

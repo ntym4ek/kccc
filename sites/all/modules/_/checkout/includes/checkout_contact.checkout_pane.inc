@@ -63,7 +63,7 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
     );
     if (!empty($form_state['values']['checkout_contact']['request']['forma']['region'])) {
         $options_rep = [];
-        if ($sales = _get_representative($form_state['values']['checkout_contact']['request']['forma']['region'])) {
+        if ($sales = representatives_get_representative($form_state['values']['checkout_contact']['request']['forma']['region'])) {
             foreach ($sales['reps'] as $rep) {
                 if (!empty($rep['emails'][0])) {
                     $options_rep[$rep['emails'][0]] = $rep['surname'] . ' ' . $rep['name'] . ' ' . $rep['name2'];

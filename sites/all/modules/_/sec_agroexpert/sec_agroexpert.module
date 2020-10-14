@@ -48,18 +48,29 @@ function sec_agroexpert_router_page()
  */
 function sec_agroexpert_online_page()
 {
-    $list = '<div></div>';
-    foreach(representatives_get_representatives_list() as $region) {
-        foreach($region as $item) {
-            if (!empty($item['expert'])) {
-                $list .= theme('contact_card', array(
-                    'contact' => $item,
-                    'options' => ['class' => 'col-md-6']));
-            }
+    $list = '';
+    foreach(representatives_get_experts()['expert'] as $key => $exp) {
+      if (!empty($exp['expert'])) {
+        $collapse = [];
+        if (!empty($exp['regions'])) {
+          $regions = [];
+          foreach ($exp['regions'] as $region) { $regions[] = $region['name']; }
+          $collapse = [
+            'id' => 'exp_' . $key,
+            'title' => t('Regions list'),
+            'content' => implode(', ', $regions)
+          ];
         }
+
+        $list .= theme('contact_card', array(
+          'contact' => $exp,
+          'collapse' => $collapse,
+          'options' => ['class' => 'col-md-6']));
+        if (($key) % 2) $list .= '<div class="clearfix"></div>';
+      }
     }
 
-    $output = '' .
+    $output =
             '<div class="agro-expert-online">' .
                 '<div class="row">' .
                     $list .

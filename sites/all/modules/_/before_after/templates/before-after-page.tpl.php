@@ -6,7 +6,7 @@
 <article class="season node">
 
     <div class="node-author">
-        <img src="<? print $content['author']['photo']; ?>" alt="" class="img-circle">
+        <img src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle">
         <div class="author-body">
             <div class="author-title"><? print $content['author']['surname'] . ' ' . $content['author']['name'] . ' ' . $content['author']['name2']; ?></div>
             <div class="author-subtitle"><? print $content['author']['role']; ?></div>
@@ -21,8 +21,8 @@
             <div class="block b1">
                 <div class="image">
                     <div class="date">Поле <? print $before['date']; ?></div>
-                    <a href="<? print $before['image_field_full']; ?>" class="fancybox">
-                        <img src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive">
+                    <a href="<? print $before['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                        <img src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                     </a>
                 </div>
                 <div class="text c1">
@@ -47,7 +47,9 @@
                                             <td><? print $hobject['phase']; ?></td>
                                             <td>
                                                 <? if (!empty($hobject['photo'])): ?>
-                                                    <a href="<? print $hobject['photo']; ?>" class="fancybox"><i class="fa fa-camera" aria-hidden="true"></i></a>
+                                                    <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                                      <i class="fa fa-camera" aria-hidden="true"></i>
+                                                    </a>
                                                     <? $ho_photo_message = true; ?>
                                                 <? else: ?>
                                                     -
@@ -66,7 +68,9 @@
                                         <td><? print $hobject['phase']; ?></td>
                                         <td>
                                             <? if (!empty($hobject['photo'])): ?>
-                                                <a href="<? print $hobject['photo']; ?>" class="fancybox"><i class="fa fa-camera" aria-hidden="true"></i></a>
+                                                <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                                  <i class="fa fa-camera" aria-hidden="true"></i>
+                                                </a>
                                                 <? $ho_photo_message = true; ?>
                                             <? else: ?>
                                             -
@@ -85,8 +89,8 @@
                 <?php if (!empty($before['image_culture_thumb'])): ?>
                     <div class="image">
                         <div class="date">Культура <? print $before['date']; ?></div>
-                        <a href="<? print $before['image_culture_full']; ?>" class="fancybox">
-                            <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
+                        <a href="<? print $before['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                            <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                         </a>
                     </div>
                     <div class="text">
@@ -106,7 +110,9 @@
                                 <td></td>
                                 <td>
                                     <? if (!empty($hobject['photo'])): ?>
-                                        <a href="<? print $hobject['photo']; ?>" class="fancybox"><i class="fa fa-camera" aria-hidden="true"></i></a>
+                                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                          <i class="fa fa-camera" aria-hidden="true"></i>
+                                        </a>
                                         <? $ho_photo_message = true; ?>
                                     <? else: ?>
                                         -
@@ -131,7 +137,9 @@
                                 <td></td>
                                 <td>
                                     <? if ($hobject['photo']): ?>
-                                        <a href="<? print $hobject['photo']; ?>" class="fancybox"><i class="fa fa-camera" aria-hidden="true"></i></a>
+                                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                          <i class="fa fa-camera" aria-hidden="true"></i>
+                                        </a>
                                         <? $ho_photo_message = true; ?>
                                     <? else: ?>
                                         -
@@ -174,8 +182,8 @@
 
                             <div class="image">
                                 <div class="date">Поле <? print $measurement['date']; ?></div>
-                                <a href="<? print $measurement['image_field_full']; ?>" class="fancybox">
-                                    <img src="<? print $measurement['image_field_thumb']; ?>" property="dc:image"  class="img-responsive">
+                                <a href="<? print $measurement['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $measurement['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                             </div>
                             <div class="text c1">
@@ -200,7 +208,7 @@
                                                         <td align="center"><? print $hobject['percent']; ?></td>
                                                         <td>
                                                             <? if ($hobject['photo']): ?>
-                                                                <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                                <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                     <i class="fa fa-camera" aria-hidden="true"></i>
                                                                 </a>
                                                                 <? $ho_photo_message = true; ?>
@@ -221,7 +229,7 @@
                                                         <td align="center"><? print $hobject['percent']; ?></td>
                                                         <td>
                                                             <? if ($hobject['photo']): ?>
-                                                                <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                                <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                     <i class="fa fa-camera" aria-hidden="true"></i>
                                                                 </a>
                                                             <? else: ?>
@@ -242,8 +250,8 @@
                             <?php if (!empty($measurement['image_culture_thumb'])): ?>
                             <div class="image">
                                 <div class="date">Культура на <? print $measurement['date']; ?></div>
-                                <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox">
-                                    <img src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive">
+                                <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                             </div>
                             <div class="text">
@@ -263,7 +271,7 @@
                                                     <td align="center"><? print $hobject['percent']; ?></td>
                                                     <td>
                                                         <? if ($hobject['photo']): ?>
-                                                            <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                            <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                 <i class="fa fa-camera" aria-hidden="true"></i>
                                                             </a>
                                                             <? $ho_photo_message = true; ?>
@@ -290,7 +298,7 @@
                                                     <td align="center"><? print $hobject['percent']; ?></td>
                                                     <td>
                                                         <? if ($hobject['photo']): ?>
-                                                            <a href="<? print $hobject['photo']; ?>" class="fancybox">
+                                                            <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                                                 <i class="fa fa-camera" aria-hidden="true"></i>
                                                             </a>
                                                             <? $ho_photo_message = true; ?>
@@ -342,8 +350,8 @@
                 <div role="tabpanel" class="tab-pane fade<? if (!$key) print ' in active'; ?>" id="tab<? print $key; ?>">
                     <div class="tab-pane-wrapper">
                         <div class="image">
-                            <a href="<? print $processing['image_full']; ?>" class="fancybox">
-                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive">
+                            <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                             </a>
                             <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
                         </div>
@@ -363,12 +371,12 @@
 
                         <div class="preparation">
                             <div class="pr-images">
-                                <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox">
-                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive">
+                                <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox" title="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                                 <? if ($processing['preparation2']): ?>
-                                <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox">
-                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive">
+                                <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox" title="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                                 <? endif; ?>
                             </div>
