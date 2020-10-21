@@ -442,7 +442,7 @@
     @include transition(all .3s linear);
     @media #{$tablet} {
         background: url(../images/bkg_px.png);
-      padding-top: $header-sm-height; padding-bottom: 132px;
+      padding-top: $header-sm-height; padding-bottom: 169px;
         box-shadow: 0 -10px 60px 20px rgba(0, 0, 0, 0.12);
     }
     @media print {
@@ -606,10 +606,10 @@
   padding: 15px;
   a ~ p { margin-top: 20px; }
   h2 {
-    color: $brand-blue; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+    color: $brand-green; font-size: 22px; font-weight: 700; letter-spacing: -1px;
     margin: 0 0 0 0;
     &:hover,
-    a:focus { color: $brand-red; }
+    a:focus { color: $brand-green-hover; }
     @media #{$normal} {
       font-size: 25px;
       .row-1 & { font-size: 30px; }
@@ -652,7 +652,7 @@
         color: #fff;
         padding: 25px 0 15px 0;
       }
-      p { margin-bottom: 70px; }
+      p { margin-bottom: 60px; }
     }
   }
   .row-1, .row-2, .row-3, .row-4  {
@@ -660,6 +660,12 @@
     & .block:last-child { padding-right: 0; }
   }
   .block-image { overflow: hidden; }
+
+  .block {
+    a.btn {
+      @include button-variant(#fff, $brand-blue, $brand-blue);
+    }
+  }
 }
 
 

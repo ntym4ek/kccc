@@ -50,7 +50,7 @@
 
         <div class="card-image">
             <a href="<?php print $term_url; ?>">
-                <img src="<?php print $image ?>" class="img-responsive" />
+                <img src="<?php print $image ?>" class="img-responsive" alt="<?php print t('Handbook') . ' ' . $term_name; ?>" />
             </a>
         </div>
         <div class="card-title">

@@ -93,7 +93,7 @@
 
     <div class="card-image">
         <a href="<?php print $node_url; ?>">
-            <img src="<?php print $image ?>" class="img-responsive" />
+            <img src="<?php print $image ?>" class="img-responsive" alt="<?php print $title; ?>" />
         </a>
     </div>
     <div class="card-title">

@@ -84,8 +84,8 @@
     <div class="v-card-top">
         <div class="v-card-image">
             <a href="<?php print $product_url; ?>">
-                <img src="<?php print $images[0]; ?>" class="img-responsive">
-                <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive"><?php endif; ?>
+                <img src="<?php print $images[0]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" />
+                <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive" alt="<?php print $titles_arr[1]; ?>" /><?php endif; ?>
             </a>
         </div>
     </div>

@@ -178,7 +178,7 @@
                                 </div>
                                 <div class="col-xs-12 hidden-sm col-md-4 col-lg-4">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-                                        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+                                        <img src="<?php print $logo_bl; ?>" alt="<?php print t('Home'); ?>" />
                                     </a>
                                 </div>
                             </div>

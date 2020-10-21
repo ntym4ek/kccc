@@ -93,7 +93,7 @@
 
     <div class="card-image">
         <?php if (!$wf_passed_by_user): ?><a href="<?php print $node_url; ?>"><?php endif; ?>
-            <img src="<?php print $image ?>" class="img-responsive" />
+            <img src="<?php print $image ?>" class="img-responsive" alt="<?php print $title; ?>" />
         </a>
     </div>
     <div class="card-title">

@@ -129,7 +129,7 @@
             <header class="row content-header" role="banner" >
                 <div class="category-header hidden-print">
                     <?php if (!empty($header['image'])):?>
-                    <img src="<?php print $header['image']; ?>">
+                    <img src="<?php print $header['image']; ?>" alt="<?php print $header['title']; ?>">
                     <? endif; ?>
                     <?php if (!empty($header['category_title'])):?>
                     <div class="category-title">
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-                                        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+                                        <img src="<?php print $logo_bl; ?>" alt="<?php print t('Home'); ?>" />
                                     </a>
                                 </div>
                             </div>

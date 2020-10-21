@@ -6,7 +6,7 @@
 
     <? if (!empty($author)): ?>
     <div class="node-author">
-        <img src="<? print $author['photo']; ?>" alt="" class="img-circle">
+        <img src="<? print $author['photo']; ?>" alt="<? print $author['role']; ?>" class="img-circle">
         <div class="author-body">
             <div class="author-title"><? print $author['surname'] . ' ' . $author['name'] . ' ' . $author['name2']; ?></div>
             <div class="author-subtitle"><? print $author['role']; ?></div>

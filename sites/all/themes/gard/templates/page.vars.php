@@ -25,6 +25,7 @@ function gard_preprocess_page(&$vars)
 
     $vars['search_input_placeholder'] = t('Enter your search query');
     $vars['logo'] = file_create_url('public://images/logo/logo.svg');
+    $vars['logo_bl'] = file_create_url('public://images/logo/logo_bl.svg');
     $vars['site_name'] = t('Trading House Kirovo-Chepetsk Chemical Company'); //ООО ТД Кирово-Чепецкая Химическая Компания
     $vars['site_slogan'] = t('Production and selling of fertilizers, plant protection and fire-fighting products');//Производство и продажа удобрений, средств защиты растений и пожаротушения
 
@@ -140,6 +141,9 @@ function gard_preprocess_page(&$vars)
             break;
         case 'handbook/cultures':
             $subtitle = t('Handbook of cultivated plants');
+          if (!empty(arg(2))) {
+            $subtitle = t('Cultivated plants starting with letter ') . arg(2);
+          }
             $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/diseases':
@@ -148,6 +152,9 @@ function gard_preprocess_page(&$vars)
             break;
         case 'handbook/weeds':
             $subtitle = t('Handbook of weeds');
+            if (!empty(arg(2))) {
+              $subtitle = t('Weeds starting with letter ')  . arg(2);
+            }
             $category_title = l(t('Handbooks'), 'handbook');
             break;
         case 'handbook/pests':

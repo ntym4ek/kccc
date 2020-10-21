@@ -46,7 +46,7 @@ function ext_forum_preprocess_page(&$vars)
 
         // определяем родительскую категорию для термина
         if ($parent_term = current(taxonomy_get_parents($term->tid))) {
-            $vars['header']['category_title'] = '<a href="' . url('forum/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
+            $vars['header']['category_title'] = '<a href="' . '/forum' . '">' . t('Forum') . '</a>' . ' / ' . '<a href="' . url('forum/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
         }
     }
     if (arg(0) == 'comment' && !empty($vars['page']['content']['system_main']['#bundle']) && $vars['page']['content']['system_main']['#bundle'] == 'comment_node_forum') {
@@ -96,4 +96,15 @@ function ext_forum_process_author_pane(&$vars)
         // отображать только одно время (минуты, без сек, часы без минут)
         $vars['last_active'] = ($vars['account']->access) ? format_interval(REQUEST_TIME - $vars['account']->access, 1) : t("Never");
     }
+}
+
+/**
+ * hook_after_metatag_metatags_view_alter()
+ *
+ * свой метатег Description для форума
+ */
+function ext_forum_metatag_metatags_view_alter(&$output, $instance, $options) {
+  if (arg(0) == 'forum' && is_numeric(arg(1))) {
+    $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Список тем раздела ' . drupal_get_title();
+  }
 }

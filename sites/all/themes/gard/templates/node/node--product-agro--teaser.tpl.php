@@ -83,12 +83,12 @@
 <div class="v-card product">
     <div class="v-card-image">
         <a href="<?php print $product_url; ?>">
-            <img src="<?php print $images[0]; ?>" class="img-responsive" title="<?php print $title; ?>">
+            <img src="<?php print $images[0]; ?>" class="img-responsive" title="<?php print $titles_arr[0]; ?>" alt="<?php print $titles_arr[0]; ?>" />
         </a>
     </div>
 
     <div class="v-card-content">
-        <h4 class="v-card-title"><a href="<?php print $product_url; ?>"><?php print $title; ?></a></h4>
+        <h4 class="v-card-title"><a href="<?php print $product_url; ?>"><?php print $titles_arr[0]; ?></a></h4>
         <div class="v-card-summary">
             <div class="v-card-subtitle"><?php print implode(' + ', $ingredients_arr); ?></div>
             <div><?php print $content['body'][0]['#markup']; ?></div>
