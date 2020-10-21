@@ -438,7 +438,7 @@ function agrocalc_form_submit($form, &$form_state)
     }
 
 //    $email = 'mega_comp@mail.ru' . (valid_email_address($form_state['values']['email']) ? ', ' . $form_state['values']['email'] : '');
-    $email = 'marina.shirokova@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
+    $email = 'support@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
     drupal_mail('system', 'mail', $email, language_default(), array(
         'context' => array(
             'subject' => 'Новая заявка на сайте в разделе Калькулятор',

@@ -723,7 +723,7 @@ function reglaments_send_request($program)
         }
     }
 
-    $email = 'marina.shirokova@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
+    $email = 'support@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
     drupal_mail('system', 'mail', $email, language_default(), array(
         'context' => array(
             'subject' => 'Новый запрос в мобильном приложении',
