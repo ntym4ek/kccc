@@ -46,7 +46,9 @@
                 });
             };
 
-            $("#mapsvg").mapSvg({
+
+            $("#mapsvg").once(function() {
+              $("#mapsvg").mapSvg({
                 markerLastID: 1,
                 source: "/sites/all/modules/_/representatives/images/map/russia.svg",
                 title: "Russia",
@@ -60,20 +62,22 @@
                 tooltips: {mode: tooltip, on: false, priority: "local", position: "top-right"},
                 onClick: onClick,
                 afterLoad: afterLoad,
-            });
+              });
 
-            // клик за пределами карты
-            $("#mapsvg").on("click", function() {
+              // клик за пределами карты
+              $("#mapsvg").bind("mousedown touchstart", function() {
                 if (!mapClick) {
-                    // var mapsvg = MapSVG.get(0);
-                    var mapsvg = $(this).eq(0).mapSvg();
-                    mapsvg.deselectAllRegions();
-                    $(".rep-item").show();
-                    $(".rep-list .clearfix").show();
-                    mapsvg.selectedRegion = null;
+                  // var mapsvg = MapSVG.get(0);
+                  var mapsvg = $(this).eq(0).mapSvg();
+                  mapsvg.deselectAllRegions();
+                  $(".rep-item").show();
+                  $(".rep-list .clearfix").show();
+                  mapsvg.selectedRegion = null;
                 }
                 mapClick = false;
+              });
             });
+
 
             return false;
         }
