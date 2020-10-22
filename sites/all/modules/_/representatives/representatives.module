@@ -563,19 +563,6 @@ function representatives_get_representatives_list()
             71701 => [], //Омская область",
         ),
     );
-    $sales['reps'][] = array(
-        'roles' =>  ['exp'],
-        'office' => t('Scientific consultant'),
-        'access' => false,
-        'surname' => 'Пелипас', 'name' => 'Николай', 'name2' => 'Николаевич',
-        'phones' => array('+7 (922) 900-02-01'),
-        'emails' => array('omsk1@kccc.ru'),
-        'expert' => '+7 (922) 900-02-01',
-        'photo' => '/' . $module_path . '/images/photos/pelipas.png',
-        'regions' => array(
-            71701 => [], //Омская область",
-        ),
-    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
