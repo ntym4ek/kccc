@@ -62,7 +62,7 @@
         &:first-child { width: 85%; }
         & > div { float: left; }
       }
-      &:hover { background-color: #ddd; }
+      &:hover { background-color: $block-border-color; }
     }
     .image {
       background-color: #EA9700;
@@ -106,21 +106,22 @@
     flex-wrap: wrap;
     .column {
         .col-title {
-            border-bottom: 1px solid #2b8aff;
-            font-size: 2em; text-align: center;
-            padding-bottom: 15px;
+          background: $brand-primary;
+          color:#fff; font-size: $font-size-h2; text-align: center;
+          padding: 15px 30px;
         }
         .image {
             margin-bottom: 20px;
             .date {
-                color: #2b8aff;
+                color: $brand-primary;
+              font-size: $font-size-h3;
                 padding: 10px;
             }
         }
       table { width: 100%; margin-bottom: $grid-gutter-width/2; }
     }
     .block {
-        border-bottom: 1px solid #2b8aff;
+        //border-bottom: 1px solid $brand-primary;
         text-align: center;
       .photo-text {
         color: $text-muted; font-size: .8em;
@@ -129,15 +130,12 @@
     .before {
         flex: 1 0 50%;
         .block {
-            border-right: 1px solid #2b8aff;
-            padding: 15px 15px 15px 0;
-            &.b1 { padding-top: 56px; }
+            &.b1 { padding-top: 64px; }
         }
     }
     .after {
         flex: 1 0 50%;
         .block {
-            padding: 15px 0 15px 15px;
             &.b1 { padding-top: 9px; }
         }
     }
@@ -149,11 +147,11 @@
             .cc1 { overflow: hidden; }
             .cc2 { height: 0; overflow: hidden; }
             .s1 {
-                color: #2b8aff; cursor: pointer;
+                color: $brand-primary; cursor: pointer;
                 &:hover { text-decoration: underline; }
             }
         }
-        span { color: #2b8aff; }
+        span { color: $brand-primary; }
     }
     .processings {
         flex: 1 0 100%;
@@ -164,7 +162,6 @@
             text-align: left;
         }
         .tab-pane-wrapper {
-          font-size: .8em;
             display: flex; flex-wrap: wrap;
         }
         .image {
@@ -179,7 +176,8 @@
             grid-template-columns: auto 1fr;  /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
             grid-template-rows: repeat(auto-fit, 20px);
             dt {
-              color: $brand-blue; font-weight: 100;
+              color: $brand-primary; font-weight: 400;
+              text-align: right;
               min-width: 0;  /* более привычное поведение при переполнении */
             }
             dd { margin: 0 0 0 1em; }
@@ -224,13 +222,13 @@
             a {
                 background: none; border: none;
                 border-bottom: 1px solid rgba(9, 148, 220, 0.2);
-                line-height: 16px;
+                font-size: $font-size-large; line-height: $line-height-large;
                 padding: 10px; margin-right: 15px;
             }
             &.active a, a:hover, a:focus {
-                background: none; border: none; border-bottom: 1px solid #2b8aff;
+                background: none; border: none; border-bottom: 1px solid $brand-primary;
             }
-            span { color: $text-muted; font-size: 11px; line-height: 15px; font-weight: 100; }
+            span { color: $text-muted; font-size: $font-size-base; }
         }
     }
     .processings .nav-tabs {
@@ -241,27 +239,31 @@
 /* таблицы с сорняками */
 .column table {
     th,
-    td { border-left: 1px solid #ddd; border-bottom: 1px solid #ddd;
-        font-size: 12px; line-height: 18px;
-        padding: 4px 7px;
+    td {
+      border-left: 1px solid $block-border-color; border-bottom: 1px solid $block-border-color;
+        padding: 10px;
     }
     th:last-child,
-    td:last-child { border-right: 1px solid #ddd; }
+    td:last-child {
+      border-right: 1px solid $block-border-color;
+      text-align: center;
+    }
     td:first-child a { color: inherit; }
     .head th {
-        background: #2b8aff;
+        background: $brand-primary;
         color: #fff; font-weight: 100; text-align: center;
     }
     .dom td  {
-        background: #F4FFF3;
-        a { color: #2b8aff; }
+        a { color: $brand-primary; }
     }
-    .title td { font-size: 14px; }
+    //.title td { font-size: 14px; }
 }
 
 .after .no-content,
 .processings .no-content {
-  color: #ddd; font-size: 30px; line-height: 40px; text-align: center;
+  color: $block-border-color;
+  //font-size: 30px; line-height: 40px;
+  text-align: center;
   margin-top: 120px;
 }
 .processings .no-content {

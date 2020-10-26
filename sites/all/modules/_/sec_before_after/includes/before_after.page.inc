@@ -10,7 +10,7 @@ function before_after_list_page()
     if ($atf_array = before_after_get_atfield_list(isset($_GET['region'])?$_GET['region']:null, isset($_GET['culture'])?$_GET['culture']:null)) {
       $index = 0;
       foreach ($atf_array as $atf_item) {
-            $list .= theme('before_after_item', array('content' => $atf_item));
+            $list .= '<div class="col-sm-6 col-md-4">' . theme('before_after_item', array('content' => $atf_item)) . '</div>';
             if (++$index % 2 == 0) $list .= '<div class="clearfix visible-sm"></div>';
             if ($index % 3 == 0) $list .= '<div class="clearfix visible-md visible-lg"></div>';
         }
@@ -28,7 +28,7 @@ function before_after_list_page()
     // отправляем список
     if ($list) {
         $html .= '<div class="view-content">'
-                  . '<div id="views-bootstrap-grid-1" class="views-bootstrap-grid-plugin-style col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">'
+                  . '<div id="views-bootstrap-grid-1" class="views-bootstrap-grid-plugin-style">'
                     . '<div class="row">'
                         . $list
                     . '</div></div></div></div>';
@@ -36,7 +36,7 @@ function before_after_list_page()
     // или текст
     else {
         $html .= '<div class="view-empty">'
-                . '<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">Записей не найдено</div>'
+                . '<div class="">Записей не найдено</div>'
                . '</div>';
     }
 
@@ -400,8 +400,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#type' => 'select',
         '#title' => t('Region'),
         '#options' => $region_options,
-        '#prefix' => '<div class="col-sm-6">',
-        '#suffix' => '</div>',
+        '#wrapper_attributes' => ['class' => ['views-exposed-widget']],
         '#default_value' => empty($_GET['region']) ? 'All' : $_GET['region'],
     );
 
@@ -410,8 +409,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#type' => 'select',
         '#title' => t('Culture'),
         '#options' => $culture_options,
-        '#prefix' => '<div class="col-sm-6">',
-        '#suffix' => '</div>',
+        '#wrapper_attributes' => ['class' => ['views-exposed-widget']],
         '#default_value' => empty($_GET['culture']) ? 'All' : $_GET['culture'],
     );
 
@@ -419,8 +417,6 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#type' => 'submit',
         '#value' => t('Submit'),
         '#attributes' => array('class' => array('ctools-use-ajax', 'ctools-auto-submit-click', 'js-hide')),
-        '#prefix' => '<div class="col-sm-12">',
-        '#suffix' => '</div>',
     );
 
     return $form;

@@ -3,7 +3,7 @@
     $before = array_shift($content['measurements']);
 ?>
 
-<article class="season node">
+<article class="season node full">
 
     <div class="node-author">
         <img src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle">
@@ -13,14 +13,14 @@
         </div>
     </div>
 
-    <div class="content">
-        <div class="column before">
+    <div class="content row">
+        <div class="column before col-md-6">
             <header class="col-title">
                 До обработки
             </header>
             <div class="block b1">
                 <div class="image">
-                    <div class="date">Поле <? print $before['date']; ?></div>
+                    <div class="date">Состояние поля на <? print $before['date']; ?></div>
                     <a href="<? print $before['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                         <img src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                     </a>
@@ -88,13 +88,13 @@
             <div class="block">
                 <?php if (!empty($before['image_culture_thumb'])): ?>
                     <div class="image">
-                        <div class="date">Культура <? print $before['date']; ?></div>
+                        <div class="date">Состояние культуры на <? print $before['date']; ?></div>
                         <a href="<? print $before['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                             <img src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                         </a>
                     </div>
                     <div class="text">
-                        <div class="b2"><span>Состояние культуры: </span><? print $before['condition']; ?></div>
+                        <div class="b2"><span>Состояние: </span><? print $before['condition']; ?></div>
                         <div class="b2"><span>Фаза: </span><? print $before['phase']; ?></div>
                     </div>
                 <?php endif; ?>
@@ -156,8 +156,7 @@
             </div>
         </div>
 
-
-        <div class="column after">
+        <div class="column after col-md-6">
             <header class="col-title">
                 После обработки
             </header>
@@ -181,7 +180,7 @@
                         <div class="block b1">
 
                             <div class="image">
-                                <div class="date">Поле <? print $measurement['date']; ?></div>
+                                <div class="date">Состояние поля на <? print $measurement['date']; ?></div>
                                 <a href="<? print $measurement['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                     <img src="<? print $measurement['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
@@ -249,7 +248,7 @@
                         <div class="block">
                             <?php if (!empty($measurement['image_culture_thumb'])): ?>
                             <div class="image">
-                                <div class="date">Культура на <? print $measurement['date']; ?></div>
+                                <div class="date">Состояние культуры на <? print $measurement['date']; ?></div>
                                 <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                     <img src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
@@ -327,9 +326,7 @@
             <? endif; ?>
         </div>
 
-
-
-        <div class="column processings">
+        <div class="column processings col-sm-12">
             <header class="col-title">
                 Проведенные обработки
             </header>
@@ -339,7 +336,8 @@
                     <? foreach($content['processings'] as $key => $processing): ?>
                     <li role="presentation"<? if (!$key) print ' class="active"'; ?>>
                         <a href="#tab<? print $key; ?>" aria-controls="tab<? print $key; ?>" role="tab" data-toggle="tab">
-                            <? print $processing['date'] . '<br /><span>Препарат ' . $processing['preparation']; ?></span>
+                            <? print $processing['date'] . '<br />
+                            <span>Препарат ' . $processing['preparation']; ?></span>
                         </a>
                     </li>
                     <? endforeach; ?>
@@ -350,10 +348,12 @@
                 <div role="tabpanel" class="tab-pane fade<? if (!$key) print ' in active'; ?>" id="tab<? print $key; ?>">
                     <div class="tab-pane-wrapper">
                         <div class="image">
-                            <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                            </a>
-                            <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
+                          <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                              <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                          </a>
+                          <div class="date">
+                            <? print $processing['date'] . '  &nbsp;' . $processing['time']; ?>
+                          </div>
                         </div>
                         <dl class="text">
                             <dt>Расход раб. жидкости: <dd><? print $processing['consumption']; ?> л/га
@@ -372,7 +372,7 @@
                         <div class="preparation">
                             <div class="pr-images">
                                 <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox" title="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $processing['image_prep_thumb']; ?>"<? print $processing['preparation2'] ? '' : ' style="margin: auto;"'; ?> property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
                                 <? if ($processing['preparation2']): ?>
                                 <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox" title="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">

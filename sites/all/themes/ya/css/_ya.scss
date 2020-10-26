@@ -281,7 +281,7 @@ fieldset.panel {
       background: $brand-green;
       &, a, a:hover { color: #fff; }
       display:inline-block;
-      padding: $grid-gutter-width $grid-gutter-width*6;
+      padding: $grid-gutter-width/2 $grid-gutter-width*4;
       .category-title {
         font-size: $font-size-h1;
         margin: 0;
@@ -413,12 +413,15 @@ fieldset.panel {
     }
   }
 }
+
 /* ------------------------------------------------- Карточка Промо блок и Роутер - */
 .card {
   text-align: center;
   border: 1px solid $block-border-color;
   border-radius: $border-radius-base;
   padding: $grid-gutter-width;
+  margin-bottom: $grid-gutter-width;
+
   .card-title {
     margin-top: $grid-gutter-width;
   }
@@ -430,10 +433,21 @@ fieldset.panel {
   .card-image {
     min-height: 190px;
   }
+  img {
+    margin: auto;
+  }
+  .card-subtitle {
+    color: $text-muted;
+    margin-top: $grid-gutter-width/3;
+  }
   .card-summary {
-    color: $gray;
+    color: $text-color;
     max-height: 5.5em; min-height: 5.5em;
     overflow: hidden;
+    div {
+      text-align: left;
+      white-space: nowrap;
+    }
   }
   .card-action {
     margin-top: $grid-gutter-width;
@@ -444,15 +458,59 @@ fieldset.panel {
       max-height: 2.2em; min-height: 2.2em;
     }
   }
+  .divider { display: inline-block; }
+
   &.router-card {
-    .divider { display: inline-block; }
     .card-image {
       border: 1px solid $block-border-color;
       padding: 15px;
     }
     img {
-      width: 150px;
-      margin: auto;
+      width: 50%;
+    }
+  }
+  &.contact-card {
+    img {
+      width: 70%;
+    }
+    .contact-expert,
+    .contact-phones,
+    .contact-emails {
+      text-align: left;
+      padding-left: 8%;
+      i {
+        background: $brand-primary;
+        color: #fff; line-height: 25px; text-align: center;
+        width: 25px; height: 25px; border-radius: 15px;
+        margin-right: $grid-gutter-width/3;
+      }
+    }
+    .contact-expert i {
+      background: $brand-green;
+    }
+    .contact-expert,
+    .contact-phone,
+    .contact-email {
+      font-size: 1.2em;
+      margin-bottom: $grid-gutter-width/6;
+      a { color: $text-color; }
+    }
+  }
+  .card-footer {
+    background: $block-background-color;
+    border-top: 1px solid $block-border-color;
+    margin: $grid-gutter-width (-$grid-gutter-width) (-$grid-gutter-width); padding: $grid-gutter-width/2 $grid-gutter-width;
+    .collapse-title {
+      cursor: pointer;
+      margin-bottom: 5px;
+      i {
+        margin-left: 5px;
+        margin-top: 2px;
+        @include transition(all 0.3s ease-in-out);
+      }
+      &:not(.collapsed) i {
+        @include rotate(-180deg);
+      }
     }
   }
 }
@@ -830,14 +888,15 @@ fieldset.panel {
 .view {
   .view-filters {
     margin-bottom: $grid-gutter-width;
+    @include make-row();
   }
   .views-exposed-widget {
-    width: 50%;
+    @include make-md-column(6);
   }
-  &.view-list .view-item,
-  &.view-table .view-item {
-    padding-bottom: $grid-gutter-width;
-  }
+  //&.view-list .view-item,      у .card свой margin-bottom
+  //&.view-table .view-item {
+  //  padding-bottom: $grid-gutter-width;
+  //}
 }
 
 // --------------------------------------- Карточка Новость, Вакансия, Афиша
@@ -894,6 +953,22 @@ article {
         i { margin-right: $grid-gutter-width/4; }
       }
     }
+    .node-author {
+      margin-bottom: $grid-gutter-width;
+      img {
+        float: left;
+        margin-right: $grid-gutter-width;
+      }
+      .author-body {
+        display: table-cell;
+        .author-title {
+          margin: 5px 0 10px 0;
+        }
+        .author-subtitle { color: $text-muted; font-size: .9em; }
+      }
+      @include clearfix;
+    }
+
     .summary {
       margin-bottom: $grid-gutter-width;
     }

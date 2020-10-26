@@ -3,7 +3,7 @@ hide($form['intro']);
 ?>
 
 <div class="row agro-expert">
-    <div class="col-md-7">
+    <div class="col-md-8">
         <fieldset class="panel panel-default">
             <legend class="panel-heading">
                 <span class="panel-title fieldset-legend"><? print t('Need help'); ?></span>
@@ -19,7 +19,7 @@ hide($form['intro']);
         <? print render($form['field_pd_r_hobjects_comment']); ?>
         <? print render($form['actions']); ?>
     </div>
-    <div class="col-md-5">
+    <div class="col-md-4">
         <fieldset class="panel panel-default panel-shadow">
             <legend class="panel-heading">
                 <span class="panel-title fieldset-legend"><? print t('My contacts'); ?></span>

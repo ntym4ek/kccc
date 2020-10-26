@@ -1020,7 +1020,7 @@ function representatives_get_experts($tid = null)
     $experts = [];
     foreach ($reps as $region => $reg) {
         foreach ($reg as $rep) {
-            if (in_array('exp', $rep['roles'])) {
+            if (isset($rep['roles']) && in_array('exp', $rep['roles'])) {
                 if (empty($tid) || isset($rep['regions'][$tid])) {
                     $rep['office'] = 'Эксперт по защите растений';
                     $experts['expert'][] = $rep;

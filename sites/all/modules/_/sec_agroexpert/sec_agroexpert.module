@@ -57,16 +57,14 @@ function sec_agroexpert_online_page()
           foreach ($exp['regions'] as $region) { $regions[] = $region['name']; }
           $collapse = [
             'id' => 'exp_' . $key,
+            'collapsed' => false,
             'title' => t('Regions list'),
             'content' => implode(', ', $regions)
           ];
         }
 
-        $list .= theme('contact_card', array(
-          'contact' => $exp,
-          'collapse' => $collapse,
-          'options' => ['class' => 'col-md-6']));
-        if (($key) % 2) $list .= '<div class="clearfix"></div>';
+        $list .= '<div class="col-md-4">' . theme('contact_card', ['contact' => $exp,'collapse' => $collapse]) . '</div>';
+        if (($key) % 3) $list .= '<div class="clearfix"></div>';
       }
     }
 
@@ -120,18 +118,14 @@ function sec_agroexpert_preprocess_page(&$vars)
             $category_title = '<a href="/' . AGROEXPERT_URL . '">' . t('Agro Expert') . '</a>';
         }
 
-        $vars['header'] = array(
-            'image' => $image,
-            'category_title' => $category_title,
-            'print' => false,
-        );
+        $vars['header']['image'] = $image;
+        $vars['header']['category_title'] = $category_title;
+        $vars['header']['print'] = false;
     }
 
     if (drupal_get_path_alias($_GET['q']) == AGROEXPERT_URL . '/form') {
-        $vars['header'] = array(
-            'image' => '/' . drupal_get_path('module', 'sec_agroexpert') . '/images/header_image.jpg',
-            'category_title' => '<a href="/' . AGROEXPERT_URL . '">' . t('Agro Expert') . '</a>',
-            'print' => false,
-        );
+      $vars['header']['image'] = '/' . drupal_get_path('module', 'sec_agroexpert') . '/images/header_image.jpg';
+      $vars['header']['category_title'] = '<a href="/' . AGROEXPERT_URL . '">' . t('Agro Expert') . '</a>';
+      $vars['header']['print'] = false;
     }
 }

@@ -3,7 +3,7 @@
 ?>
 
 <div class="row contact-us">
-    <div class="cu-info col-md-7">
+    <div class="cu-info col-md-8">
         <h2><? print t('ООО Trade House') . '<br />' . t('"Kirovo-Chepetsk Chemical Company"');?></h2>
         <div class="cu-title"><? print t('Address'); ?></div>
         <div class="cu-content"><? print t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya, 6'); ?></div>
@@ -16,7 +16,7 @@
         <div class="cu-link"><i class="fas fa-download"></i><a href="/sites/default/files/etc/contact_us/card_th_kccc.pdf" target="_blank"><? print t('Download OOO TD "KCCC" requisites'); ?></a></div>
         <div class="cu-link"><i class="fas fa-map"></i><a href="/info/representatives"><? print t('Official representatives'); ?></a></div>
     </div>
-    <div class="col-md-5 do-not-print">
+    <div class="col-md-4 do-not-print">
         <div class="cu-form">
             <fieldset class="panel panel-default panel-shadow">
                 <legend class="panel-heading">

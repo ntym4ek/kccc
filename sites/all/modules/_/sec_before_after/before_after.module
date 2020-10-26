@@ -9,7 +9,8 @@ include 'includes/before_after.measurement.inc';
 /**
  * Implements hook_menu().
  */
-function before_after_menu() {
+function before_after_menu()
+{
     // страница списка
     $items['before-after'] = array(
         'title' => t('Before & After'),
