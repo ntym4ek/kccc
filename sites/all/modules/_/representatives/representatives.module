@@ -477,18 +477,42 @@ function representatives_get_representatives_list()
             71669 => [], //Краснодарский край",
         ),
     );
-//    $representatives['reps'][] = array(
-//        'roles' =>  ['rep'],
-//        'office' => t('Representative'),
-//        'access' => false,
-//        'surname' => 'Журавлев', 'name' => 'Дмитрий', 'name2' => 'Валерьевич',
-//        'phones' => array('+7 (922) 900-74-64'),
-//        'emails' => array('kursk@kccc.ru'),
-//        'photo' => '/' . $module_path . '/images/photos/zhuravlev.png',
-//        'regions' => array(
-//            71692 => [], //Курская область",
-//      ),
-//    );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Лысенко', 'name' => 'Иван', 'name2' => 'Игоревич',
+        'phones' => array('+7 (922) 900-74-41'),
+        'emails' => array('krasnodar2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/lisenko_i.png',
+        'regions' => array(
+            71669 => [], //Краснодарский край",
+        ),
+    );
+    $representatives['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Постникова', 'name' => 'Наталья', 'name2' => 'Николаевна',
+        'phones' => array('+7 (922) 922-76-22'),
+        'emails' => array('kursk1@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/postnikova_n.png',
+        'regions' => array(
+            71692 => [], //Курская область",
+      ),
+    );
+    $representatives['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Курасов', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
+        'phones' => array('+7 (922) 922-76-10'),
+        'emails' => array('kursk2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/kurasov_s.png',
+        'regions' => array(
+            71692 => [], //Курская область",
+      ),
+    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -798,6 +822,18 @@ function representatives_get_representatives_list()
             71714 => [], //Тамбовская область",
         ),
     );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['rep'],
+//        'office' => t('Representative'),
+//        'access' => false,
+//        'surname' => 'Сироткин', 'name' => 'Николай', 'name2' => 'Николаевич',
+//        'phones' => array('+7 (922) 967-12-55'),
+//        'emails' => array('tambov2@kccc.ru'),
+//        'photo' => $no_photo,
+//        'regions' => array(
+//            71714 => [], //Тамбовская область",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
