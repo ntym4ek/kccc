@@ -318,6 +318,15 @@ function contacts_get_contacts_list() {
                             'emails' => array('reklama@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/byleva.png',
                         ),
+                        array(
+                            'office' => t('Marketing specialist'),
+                            'surname' => 'Орлова',
+                            'name' => 'Дарья',
+                            'name2' => 'Игоревна',
+                            'phones' => array('+7 922 900-08-27'),
+                            'emails' => array('reklama2@kccc.ru'),
+                            'photo' => '/' . $module_path . '/images/photos/orlova_d.png',
+                        ),
                     ),
                 ),
                 'personnel' => array(
