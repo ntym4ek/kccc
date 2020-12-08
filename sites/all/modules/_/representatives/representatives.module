@@ -413,7 +413,7 @@ function representatives_get_representatives_list()
             71682 => [], //Воронежская область",
         ),
     );
-//    $representatives['reps'][] = array(
+//    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
 //        'access' => false,
@@ -489,7 +489,7 @@ function representatives_get_representatives_list()
             71669 => [], //Краснодарский край",
         ),
     );
-    $representatives['reps'][] = array(
+    $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
@@ -501,7 +501,7 @@ function representatives_get_representatives_list()
             71692 => [], //Курская область",
       ),
     );
-    $representatives['reps'][] = array(
+    $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
@@ -564,7 +564,7 @@ function representatives_get_representatives_list()
             71700 => [], //Новосибирская область",
         ),
     );
-//    $representatives['reps'][] =  array(
+//    $sales['reps'][] =  array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
 //        'surname' => '', 'name' => '', 'name2' => '',
@@ -625,18 +625,18 @@ function representatives_get_representatives_list()
       ),
     );
 
-//    $sales['reps'][] = array(
-//        'roles' =>  ['rep'],
-//        'office' => t('Representative'),
-//        'access' => false,
-//        'surname' => 'Неверов', 'name' => 'Владимир', 'name2' => 'Николаевич',
-//        'phones' => array('+7 (922) 909-20-33'),
-//        'emails' => array('orenburg2@kccc.ru'),
-//        'photo' => '/' . $module_path . '/images/photos/neverov.png',
-//        'regions' => array(
-//            71702 => [], //Оренбургская область",
-//        ),
-//    );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Бурлаков', 'name' => 'Владимир', 'name2' => 'Григорьевич',
+        'phones' => array('+7 (922) 970-60-55'),
+        'emails' => array('orenburg5@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/burlakov_v.png',
+        'regions' => array(
+            71702 => [], //Оренбургская область",
+        ),
+    );
 //    $sales['reps'][] = array(
 //        'roles' =>  ['rep'],
 //        'office' => t('Representative'),
