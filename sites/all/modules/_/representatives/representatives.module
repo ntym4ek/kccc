@@ -918,18 +918,6 @@ function representatives_get_representatives_list()
             71720 => [], //Челябинская область",
         ),
     );
-//    $sales['reps'][] = array(
-//        'roles' =>  ['rep'],
-//        'office' => t('Representative'),
-//        'access' => false,
-//        'surname' => 'Антонов', 'name' => 'Александр', 'name2' => 'Викторович',
-//        'phones' => array('+7 (922) 747-26-40'),
-//        'emails' => array('chelyabinsk1@kccc.ru'),
-//        'photo' => '/' . $module_path . '/images/photos/antonov.png',
-//        'regions' => array(
-//            71720 => [], //Челябинская область",
-//        ),
-//    );
     $sales['reps'][] = array(
         'roles' =>  ['exp'],
         'office' => t('Scientific consultant'),
@@ -939,6 +927,19 @@ function representatives_get_representatives_list()
         'expert' => '+7 (922) 747-26-46',
         'emails' => array('chelyabinsk2@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/krasnozhon.png',
+        'regions' => array(
+            71720 => [], //Челябинская область",
+        ),
+    );
+    $sales['reps'][] = array(
+        'roles' =>  ['exp'],
+        'office' => t('Plant protection expert'),
+        'access' => false,
+        'surname' => 'Саитов', 'name' => 'Салимхан', 'name2' => 'Букумбаевич',
+        'phones' => array('+7 (922) 967-12-55'),
+        'expert' => '+7 (922) 967-12-55',
+        'emails' => array('chelyabinsk3@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/saitov_s.png',
         'regions' => array(
             71720 => [], //Челябинская область",
         ),
