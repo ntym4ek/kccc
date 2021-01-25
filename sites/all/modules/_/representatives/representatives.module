@@ -454,6 +454,18 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
+        'roles' =>  ['exp'],
+        'office' => t('Scientific consultant'),
+        'access' => false,
+        'surname' => 'Родченко', 'name' => 'Максим', 'name2' => 'Сергеевич',
+        'phones' => array('+7 (922) 902-27-78'),
+        'emails' => array('krasnoyarsk2@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/rodchenko_m.png',
+        'regions' => array(
+            71670 => [], //Красноярский край",
+        ),
+    );
+    $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
         'access' => false,
@@ -551,6 +563,17 @@ function representatives_get_representatives_list()
           71700 => [], //Новосибирская область",
           71701 => [], //Омская область",
           71668 => [], //Алтайский край",
+        ),
+    );
+    $sales['reps'][] =  array(
+        'roles' =>  ['exp'],
+        'office' => t('Scientific consultant'),
+        'surname' => 'Довлетов', 'name' => 'Ягшымырат', 'name2' => 'Омарович',
+        'phones' => array('+7 (922) 903-67-86'),
+        'emails' => array('novosibirsk@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/dovletov_y.png',
+        'regions' => array(
+          71700 => [], //Новосибирская область",
         ),
     );
     $sales['reps'][] =  array(
@@ -952,6 +975,18 @@ function representatives_get_representatives_list()
         'expert' => '+7 (922) 967-12-55',
         'emails' => array('chelyabinsk3@kccc.ru'),
         'photo' => '/' . $module_path . '/images/photos/saitov_s.png',
+        'regions' => array(
+            71720 => [], //Челябинская область",
+        ),
+    );
+    $sales['reps'][] = array(
+        'roles' =>  ['rep'],
+        'office' => t('Representative'),
+        'access' => false,
+        'surname' => 'Шалаев', 'name' => 'Андрей', 'name2' => 'Сергеевич',
+        'phones' => array('+7 (922) 905-89-84'),
+        'emails' => array('chelyabinsk4@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/shalaev_a.png',
         'regions' => array(
             71720 => [], //Челябинская область",
         ),
