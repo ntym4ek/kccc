@@ -48,8 +48,7 @@ function agroexpert_router_page()
 function agroexpert_online_page()
 {
     $list = '';
-    foreach(representatives_get_experts()['expert'] as $key => $exp) {
-      if (!empty($exp['expert'])) {
+    foreach(representatives_get_experts()['experts'] as $key => $exp) {
         $collapse = [];
         if (!empty($exp['regions'])) {
           $regions = [];
@@ -66,7 +65,6 @@ function agroexpert_online_page()
           'collapse' => $collapse,
           'options' => ['class' => 'col-md-6']));
         if (($key) % 2) $list .= '<div class="clearfix"></div>';
-      }
     }
 
     $output =

@@ -454,7 +454,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] = array(
-        'roles' =>  ['exp'],
+        'roles' =>  ['cons'],
         'office' => t('Scientific consultant'),
         'access' => false,
         'surname' => 'Родченко', 'name' => 'Максим', 'name2' => 'Сергеевич',
@@ -566,7 +566,7 @@ function representatives_get_representatives_list()
         ),
     );
     $sales['reps'][] =  array(
-        'roles' =>  ['exp'],
+        'roles' =>  ['cons'],
         'office' => t('Scientific consultant'),
         'surname' => 'Довлетов', 'name' => 'Ягшымырат', 'name2' => 'Омарович',
         'phones' => array('+7 (922) 903-67-86'),
@@ -781,21 +781,21 @@ function representatives_get_representatives_list()
 //            71707 => [], //Ростовская область",
 //        ),
 //    );
-    $sales['reps'][] = array(
-        'roles' =>  ['exp'],
-        'office' => t('Plant protection expert'),
-        'access' => false,
-        'surname' => 'Четвертаков', 'name' => 'Максим', 'name2' => 'Викторович',
-        'phones' => array('+7 (922) 955-60-07'),
-        'expert' => '+7 (922) 955-60-07',
-        'emails' => array('rostov3@kccc.ru'),
-        'photo' => '/' . $module_path . '/images/photos/chetvertakov.png',
-        'regions' => array(
-          71707 => [], //Ростовская область",
-          71672 => [], //Ставропольский край",
-          71669 => [], //Краснодарский край",
-        ),
-    );
+//    $sales['reps'][] = array(
+//        'roles' =>  ['exp'],
+//        'office' => t('Plant protection expert'),
+//        'access' => false,
+//        'surname' => 'Четвертаков', 'name' => 'Максим', 'name2' => 'Викторович',
+//        'phones' => array('+7 (922) 955-60-07'),
+//        'expert' => '+7 (922) 955-60-07',
+//        'emails' => array('rostov3@kccc.ru'),
+//        'photo' => '/' . $module_path . '/images/photos/chetvertakov.png',
+//        'regions' => array(
+//          71707 => [], //Ростовская область",
+//          71672 => [], //Ставропольский край",
+//          71669 => [], //Краснодарский край",
+//        ),
+//    );
     $sales['reps'][] = array(
         'roles' =>  ['rep'],
         'office' => t('Representative'),
@@ -954,7 +954,7 @@ function representatives_get_representatives_list()
     ),
   );
     $sales['reps'][] = array(
-        'roles' =>  ['exp'],
+        'roles' =>  ['cons'],
         'office' => t('Scientific consultant'),
         'access' => false,
         'surname' => 'Красножон', 'name' => 'Сергей', 'name2' => 'Михайлович',
@@ -1091,16 +1091,17 @@ function representatives_get_experts($tid = null)
     $experts = [];
     foreach ($reps as $region => $reg) {
         foreach ($reg as $rep) {
-            if (in_array('exp', $rep['roles'])) {
+            if ((in_array('exp', $rep['roles']) || in_array('cons', $rep['roles']))
+              && !empty($rep['expert'])) {
                 if (empty($tid) || isset($rep['regions'][$tid])) {
-                    $rep['office'] = 'Эксперт по защите растений';
-                    $experts['expert'][] = $rep;
+                    if ($rep['office'] == 'Представитель') $rep['office']= 'Эксперт по защите растений';
+                    $experts['experts'][] = $rep;
                 }
             }
         }
     }
     if (empty($experts)) {
-        $experts['expert'][] = $reps['tambov'][0];
+        $experts['experts'][] = $reps['tambov'][0];
     }
     return $experts;
 }
