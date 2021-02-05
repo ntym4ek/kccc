@@ -100,7 +100,7 @@ function gard_preprocess_node(&$vars) {
 
     /** ------------------------------------ Дата - */
     if (in_array($vars['type'], array('news', 'blog', 'review', 'vacancy'))) {
-        $vars['date'] = $vars['view_mode'] == 'full' ? format_date2($vars['node']->created, 'custom', 'j F Y') : format_date($vars['created'], 'date');
+        $vars['date'] = strtolower($vars['view_mode'] == 'full' ? format_date2($vars['node']->created, 'custom', 'j F Y') : format_date($vars['created'], 'date'));
     } else { $vars['date'] = ''; }
 
     /** ------------------------------------ Период (Афиша) - */

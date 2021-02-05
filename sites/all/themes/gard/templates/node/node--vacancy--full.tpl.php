@@ -70,7 +70,7 @@
                 <div class="panel-body">
                     <div class="media contact-card col-md-6">
                         <div class="media-left">
-                            <img class="media-object" src="/sites/all/modules/_/contacts/images/photo/ogorodova.png" alt="Отдел кадров">
+                            <img class="media-object" src="/sites/all/modules/_/contacts/images/photos/ogorodova.png" alt="Отдел кадров">
                         </div>
                         <div class="media-body">
                             <h4 class="media-heading">Огородова<br>Мария Николаевна</h4>
