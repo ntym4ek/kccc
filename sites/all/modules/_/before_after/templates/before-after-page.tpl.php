@@ -331,7 +331,7 @@
 
         <div class="column processings">
             <header class="col-title">
-                Проведенные обработки
+                Проведённые обработки
             </header>
 
             <? if ($content['processings']): ?>
@@ -339,7 +339,7 @@
                     <? foreach($content['processings'] as $key => $processing): ?>
                     <li role="presentation"<? if (!$key) print ' class="active"'; ?>>
                         <a href="#tab<? print $key; ?>" aria-controls="tab<? print $key; ?>" role="tab" data-toggle="tab">
-                            <? print $processing['date'] . '<br /><span>Препарат ' . $processing['preparation']; ?></span>
+                            <? print $processing['date'] . '<br /><span>' . $processing['title']; ?></span>
                         </a>
                     </li>
                     <? endforeach; ?>
@@ -349,17 +349,14 @@
                 <? foreach($content['processings'] as $key => $processing): ?>
                 <div role="tabpanel" class="tab-pane fade<? if (!$key) print ' in active'; ?>" id="tab<? print $key; ?>">
                     <div class="tab-pane-wrapper">
-                        <div class="image">
-                            <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                                <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                            </a>
-                            <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
-                        </div>
-                        <dl class="text">
-                            <dt>Расход раб. жидкости: <dd><? print $processing['consumption']; ?> л/га
-                            <? if ($processing['preparation2']): ?>
-                                <dt>Расход доп. раб. жидкости: <dd><? print $processing['consumption2']; ?> л/га
-                            <? endif; ?>
+                      <div class="image">
+                          <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                              <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                          </a>
+                          <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
+                      </div>
+                      <div class="conditions">
+                        <dl>
                             <dt>Кислотность почвы:  <dd><? print $processing['acidity']; ?>
                             <dt>Влажность почвы:    <dd><? print $processing['humidity']; ?> %
                             <dt>Температура, ночь:  <dd><? print $processing['t_night']; ?> град. С
@@ -368,30 +365,33 @@
                             <dt>Осадки:             <dd><? print $processing['precipitation']; ?>
                             <dt>Механизм внесения:  <dd><? print $processing['mechanism']; ?>
                         </dl>
+                      </div>
 
+                      <div class="preparations">
+                        <? foreach($processing['preparations'] as $prep) :?>
                         <div class="preparation">
-                            <div class="pr-images">
-                                <a href="<? print $processing['image_prep_full']; ?>" class="prep fancybox" title="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                                    <img src="<? print $processing['image_prep_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                            <div class="image">
+                                <a href="<? print $prep['image_full']; ?>" class="prep fancybox" title="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                                    <img src="<? print $prep['image_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
                                 </a>
-                                <? if ($processing['preparation2']): ?>
-                                <a href="<? print $processing['image_prep_full2']; ?>" class="prep2 fancybox" title="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                                    <img src="<? print $processing['image_prep_thumb2']; ?>" property="dc:image" class="img-responsive" alt="<? print $processing["preparation2"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                                </a>
-                                <? endif; ?>
                             </div>
-                            <div>
-                                <a href="/<? print $processing['prep_link']; ?>" target="_blank"><? print $processing['preparation']; ?></a>
-                                <? if ($processing['preparation2']): ?>
-                                    + <a href="/<? print $processing['prep_link2']; ?>" target="_blank"><? print $processing['preparation2']; ?></a>
-                                <? endif; ?>
-                                <br />
-                                <span><? print $processing['ingredients']; ?></span>
-                                <? if ($processing['preparation2']): ?>
-                                    <br /><span>+ <? print $processing['ingredients2']; ?></span>
-                                <? endif; ?>
+                            <div class="description">
+                              <div><a href="<? print $prep['url']; ?>" target="_blank"><? print $prep['title']; ?></a></div>
+                              <div><span><? print $prep['ingredients']; ?></span></div>
+                            </div>
+                            <? if(!empty($prep['rate'])): ?>
+                              <div class="rate">
+                                <div>Норма расхода</div>
+                                <div><? print $prep['rate']; ?><span><? print $prep['unit_short']; ?>/<? print $prep['unit_field']; ?></span></div>
+                              </div>
+                            <? endif; ?>
+                            <div class="consumption">
+                              <div>Расход рабочей жидкости</div>
+                              <div><? print $prep['consumption']; ?><span>л/га</span></div>
                             </div>
                         </div>
+                        <? endforeach; ?>
+                      </div>
                     </div>
                 </div>
                 <? endforeach; ?>

@@ -132,7 +132,7 @@ function get_product_info($node)
     // составить массив препаратов
     // один препарат для химии, два препарата для смесей
     $preparations = [];
-    if ($preparation_wr->value()->type == 'product_mix') {
+    if ($preparation_wr->getBundle() == 'product_mix') {
         foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
             $wrapper = $preparation_wr->{$field};
             $preparations[] = array(
@@ -149,15 +149,16 @@ function get_product_info($node)
 
     // формируем результирующий массив
     $preparation = array(
-        'nid'    => $preparation_wr->nid->value(),
-        'type'   => $preparation_wr->value()->type,
+        'nid'    => $preparation_wr->getIdentifier(),
+        'type'   => $preparation_wr->getBundle(),
         'status' => $preparation_wr->status->value(),
         'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
+        'url'    => url('node/' . $preparation_wr->getIdentifier()),
     );
     $titles_w_form = [];
     foreach($preparations as $item) {
         $preparation_wr = $item['item'];
-        $id = $preparation_wr->nid->value();
+        $id = $preparation_wr->getIdentifier();
 
         // препаративная форма
         $form_short = $form_full = '';
@@ -189,7 +190,7 @@ function get_product_info($node)
         // и занести в массив, т.к. неизвестно, какие из них будут использованы
         $unit_field = [];
         foreach ($preparation_wr->field_pd_category as $cat_wrapper) {
-            $tid = $cat_wrapper->tid->value();
+            $tid = $cat_wrapper->getIdentifier();
             $unit_field[$tid] = $tid == AGRO_CATEGORY_DISINFECTANTS_TID ? t(AGRO_SEED_MEASURE) : t(AGRO_FIELD_MEASURE);
         }
 
@@ -201,8 +202,8 @@ function get_product_info($node)
         if ($preparation_wr->field_pd_category->value()) {
             foreach($preparation_wr->field_pd_category->getIterator() as $category_wr) {
                 $cats[$category_wr->tid->value()] = [
-                    'tid' => $category_wr->tid->value(),
-                    'name' => $category_wr->name->value(),
+                    'tid' => $category_wr->getIdentifier(),
+                    'name' => $category_wr->label(),
                     'color' => $category_wr->field_color->value(),
                 ];
             }
@@ -212,6 +213,7 @@ function get_product_info($node)
             'id'            => $id,
             'title'         => $preparation_wr->language($lang)->title_field->value(),
             'description'   => strip_tags($preparation_wr->body->summary->value()),
+            'url'           => url('node/' . $id),
             'form_short'    => $form_short,
             'form_full'     => $form_full,
             'ingredients'   => $ingredients,

@@ -93,8 +93,9 @@
 }
 
 .season-form,
+.processing-form,
 .measurement-form {
-  .add-ho-title {
+  .add-title {
     color: $text-muted; font-weight: 100;
     div { margin-bottom: 5px; }
   }
@@ -164,37 +165,60 @@
             text-align: left;
         }
         .tab-pane-wrapper {
-          font-size: .8em;
-            display: flex; flex-wrap: wrap;
+          display: flex; flex-wrap: wrap;
         }
         .image {
           flex: 1 1 220px;
           padding-right: 20px;
           .date { padding: 10px 0; }
         }
-        .text {
-          flex: 1 0 200px;
-          @supports (display: grid) {  /* если браузер поддерживает Гриды */
-            display: grid;
-            grid-template-columns: auto 1fr;  /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
-            grid-template-rows: repeat(auto-fit, 20px);
-            dt {
-              color: $brand-blue; font-weight: 100;
-              min-width: 0;  /* более привычное поведение при переполнении */
+        .conditions {
+          flex: auto;
+          dl {
+            @supports (display: grid) { /* если браузер поддерживает Гриды */
+              display: grid;
+              grid-template-columns: auto 1fr; /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
+              grid-template-rows: repeat(auto-fit, 20px);
+              dt {
+                color: $brand-blue;
+                font-weight: 100;
+                min-width: 0; /* более привычное поведение при переполнении */
+              }
+              dd { margin: 0 0 0 1em; }
             }
-            dd { margin: 0 0 0 1em; }
           }
         }
+        .preparations {
+          flex: 100%;
+          flex-wrap: wrap;
+          display: flex;
+        }
         .preparation {
-            flex: 1 1 200px;
-            text-align: center;
-            span { color: $text-muted; font-size: 10px; }
-          .pr-images {
-            display: flex;
-            margin: -45px auto 15px;
-            .prep { flex: 1 0 60%; }
-            .prep2 { flex: 1 0 40%; align-self: flex-end; }
+          flex: 100%;
+          display: flex;
+          .image {
+            flex: 0 0 150px;
+            img { width: 100%; }
           }
+          .description {
+            flex: auto;
+            padding: $grid-gutter-width/2;
+          }
+          .rate, .consumption {
+            flex: 0 0 150px;
+            padding: $grid-gutter-width/2;
+            div:first-child {
+              color: $text-muted; font-size: .8em;
+              height: 40px;
+            }
+            div:nth-child(2) {
+              font-size: 2em;
+              span {
+                font-size: .5em;
+                margin-left: 4px; }
+            }
+          }
+          span { color: $text-muted; }
         }
         .tabs li { padding-left: 0; }
     }
