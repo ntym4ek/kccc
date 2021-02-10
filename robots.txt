@@ -78,6 +78,7 @@ Disallow: /xmlrpc.php
 Disallow: /content
 Disallow: /taxonomy
 Disallow: /admin
+Disallow: /tags
 Disallow: /comment
 Disallow: /filter/tips
 Disallow: /node/add

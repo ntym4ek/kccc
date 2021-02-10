@@ -169,46 +169,48 @@ function before_after_del_form($form, &$form_state, $type, $parent_id, $id)
 
 function before_after_del_form_submit($form, &$form_state)
 {
-    switch($form_state['type']) {
-        case 'field':
-            node_delete($form_state['id']);
-            break;
+  switch($form_state['type']) {
+    case 'field':
+      node_delete($form_state['id']);
+      break;
 
-        case 'season':
-        case 'processing':
-        case 'measurement':
-            if ($item = field_collection_item_load($form_state['id'])) $item->delete();
-            break;
-    }
+    case 'season':
+    case 'processing':
+    case 'measurement':
+        if ($item = field_collection_item_load($form_state['id'])) {
+          $item->delete();
+        }
+        break;
+  }
 
-    $form_state['redirect'] = $form_state['redirect_uri'];
+  $form_state['redirect'] = $form_state['redirect_uri'];
 }
 
 
 /**
  * Implements hook_preprocess_page().
  */
-function before_after_preprocess_page(&$vars) {
-    // отключить обёртку col- для списка
-    if ($_GET['q'] == 'before-after') {
-        $vars['wrapper_off'] = true;
+function before_after_preprocess_page(&$vars)
+{
+  // отключить обёртку col- для списка
+  if ($_GET['q'] == 'before-after') {
+      $vars['wrapper_off'] = true;
 
-    }
-    if (arg(0) == 'before-after' && arg(1)) {
-        $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
-    }
+  }
+  if (arg(0) == 'before-after' && arg(1)) {
+      $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
+  }
 
-    if (in_array(arg(0), array('field', 'fields', 'season', 'seasons'))) {
-        // отключить заголовок на странице
-        if (((isset($vars['page']['content']['system_main']['#type']) && $vars['page']['content']['system_main']['#type'] != 'form')
-            || !isset($vars['page']['content']['system_main']['#type']))) {
-                $vars['header']['title_off'] = true;
-        }
-        $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
-        // установить изображение
-        $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
-    }
-
+  if (in_array(arg(0), array('field', 'fields', 'season', 'seasons'))) {
+      // отключить заголовок на странице
+      if (((isset($vars['page']['content']['system_main']['#type']) && $vars['page']['content']['system_main']['#type'] != 'form')
+          || !isset($vars['page']['content']['system_main']['#type']))) {
+              $vars['header']['title_off'] = true;
+      }
+      $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
+      // установить изображение
+      $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
+  }
 }
 
 

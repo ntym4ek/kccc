@@ -77,7 +77,7 @@ function representatives_form($from, &$form_state)
     '#prefix' => '<div id="representatives-form-wrapper">',
     '#suffix' => '</div>',
     '#attributes' => ['class' => ['representatives-form']],
-    'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>'), '#attributes' => ['id' => ['selector-wr']]],
+    'selector' => ['#type' => 'fieldset', '#title' => t('Search for area manager<i> by region</i>'), '#attributes' => ['id' => 'selector-wr']],
     'list' => ['#type' => 'fieldset', '#title' => t('The list<i> of area managers</i>')],
   ];
 
@@ -442,6 +442,7 @@ function representatives_sales_list()
     'access' => false,
     'surname' => 'Родченко', 'name' => 'Максим', 'name2' => 'Сергеевич',
     'phones' => array('+7 (922) 902-27-78'),
+    'expert' => '+7 (922) 902-27-78',
     'emails' => array('krasnoyarsk2@kccc.ru'),
     'photo' => '/' . $module_path . '/images/photos/rodchenko_m.png',
     'regions' => array(

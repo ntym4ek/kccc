@@ -529,8 +529,8 @@ function before_after_page_description($season_id)
     $hobjects[] = $hobject['name'];
   }
   $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.';
-  $output .= $season["previous_culture"] ? '<br />Предшественник: ' . $season["previous_culture"] : '';
-  $output .= $season["sub_culture"] ? '<br />Подсев: ' . $season["sub_culture"] : '';
+  $output .= $season["previous_culture"] ? ' Предшественник: ' . $season["previous_culture"] . '.' : '';
+  $output .= $season["sub_culture"] ? ' Подсев: ' . $season["sub_culture"] . '.' : '';
 
   return $output;
 }

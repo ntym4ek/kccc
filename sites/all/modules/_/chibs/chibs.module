@@ -1061,8 +1061,6 @@ function format_date2($timestamp, $type = 'medium', $format = '', $timezone = NU
     }
   }
 
-  $timestamp += $timezone;
-
   switch ($type) {
     case 'small':
       $format = variable_get('date_format_short', 'm/d/Y - H:i');
