@@ -200,6 +200,9 @@
             flex: 0 0 150px;
             img { width: 100%; }
           }
+          .conditions {
+            padding: 0 $grid-gutter-width/2;
+          }
           .description {
             flex: auto;
             padding: $grid-gutter-width/2;

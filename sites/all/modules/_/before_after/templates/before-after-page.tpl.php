@@ -339,7 +339,7 @@
                     <? foreach($content['processings'] as $key => $processing): ?>
                     <li role="presentation"<? if (!$key) print ' class="active"'; ?>>
                         <a href="#tab<? print $key; ?>" aria-controls="tab<? print $key; ?>" role="tab" data-toggle="tab">
-                            <? print $processing['date'] . '<br /><span>' . $processing['title']; ?></span>
+                            <? print $processing['date']; ?>
                         </a>
                     </li>
                     <? endforeach; ?>
@@ -385,10 +385,12 @@
                                 <div><? print $prep['rate']; ?><span><? print $prep['unit_short']; ?>/<? print $prep['unit_field']; ?></span></div>
                               </div>
                             <? endif; ?>
+                          <? if(!empty($prep['consumption'])): ?>
                             <div class="consumption">
                               <div>Расход рабочей жидкости</div>
                               <div><? print $prep['consumption']; ?><span>л/га</span></div>
                             </div>
+                          <? endif; ?>
                         </div>
                         <? endforeach; ?>
                       </div>
