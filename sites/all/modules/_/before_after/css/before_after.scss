@@ -169,7 +169,7 @@
         }
         .image {
           flex: 1 1 220px;
-          padding-right: 20px;
+          padding-right: $grid-gutter-width;
           .date { padding: 10px 0; }
         }
         .conditions {

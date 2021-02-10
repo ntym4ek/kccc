@@ -522,12 +522,17 @@ function before_after_page($season_id)
  */
 function before_after_page_description($season_id)
 {
+  $output = '';
   $season = before_after_get_atfield($season_id);
   $hobjects = [];
   foreach($season['hobjects'] as $hobject) {
     $hobjects[] = $hobject['name'];
   }
-  return 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.';
+  $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.';
+  $output .= $season["previous_culture"] ? '<br />Предшественник: ' . $season["previous_culture"] : '';
+  $output .= $season["sub_culture"] ? '<br />Подсев: ' . $season["sub_culture"] : '';
+
+  return $output;
 }
 
 /**
@@ -552,6 +557,8 @@ function before_after_get_atfield($sid)
       $output['farm'] = $field_wrapper->field_f_farm->value();
       $output['culture'] = $season_wrapper->field_f_s_culture->label();
       $output['culture_note'] = $season_wrapper->field_f_s_culture_note->value();
+      $output['sub_culture'] = $season_wrapper->field_f_s_sub_culture->value() ? $season_wrapper->field_f_s_sub_culture->value() : '';
+      $output['previous_culture'] = $season_wrapper->field_f_s_previous_culture->value() ? $season_wrapper->field_f_s_previous_culture->label() : '';
       $output['season'] = $season_wrapper->field_f_s_season->value();
       $output['year'] = $season_wrapper->field_f_s_year->value();
       $output['region'] = $field_wrapper->field_f_region->label();
