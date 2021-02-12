@@ -578,22 +578,22 @@ function representatives_sales_list()
     'surname' => 'Усатов', 'name' => 'Валерий', 'name2' => 'Васильевич',
     'phones' => array('+7 (922) 900-74-73'),
     'emails' => array('omsk@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/omsk.png',
+    'photo' => '/' . $module_path . '/images/photos/usatov_v.png',
     'regions' => array(
       71701 => [], //Омская область",
     ),
   );
-//    $sales[] = array(
-//        'roles' =>  ['representative'],
-//        'access' => false,
-//        'surname' => 'Рыбин', 'name' => 'Александр', 'name2' => 'Петрович',
-//        'phones' => array('+7 (922) 900-74-64'),
-//        'emails' => array('omsk2@kccc.ru'),
-//        'photo' => $no_photo,
-//        'regions' => array(
-//            71701 => [], //Омская область",
-//        ),
-//    );
+    $sales[] = array(
+        'roles' =>  ['representative'],
+        'access' => false,
+        'surname' => 'Фукс', 'name' => 'Алексей', 'name2' => 'Павлович',
+        'phones' => array('+7 (922) 900-02-01'),
+        'emails' => array('omsk1@kccc.ru'),
+        'photo' => '/' . $module_path . '/images/photos/fuks_a.png',
+        'regions' => array(
+            71701 => [], //Омская область",
+        ),
+    );
   $sales[] = array(
     'roles' =>  ['representative', 'expert'],
     'access' => false,
