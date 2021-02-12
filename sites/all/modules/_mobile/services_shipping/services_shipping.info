@@ -1,6 +1,0 @@
-name = Services Shipping
-description = Provide shipping services and rates for mobile application
-package = Jax
-core = 7.x
-dependencies[] = services
-dependencies[] = rest_server
