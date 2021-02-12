@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="c3fe1336-81c7-48ee-bc8f-a594b22a515b" name="kccc.ru" url="https://kccc.ru">
-        <fileTransfer host="ftp.kccc.nichost.ru" port="21" rootFolder="/kccc.ru/docs">
+      <webServer id="c3fe1336-81c7-48ee-bc8f-a594b22a515b" name="new.kccc.ru" url="http://new.kccc.ru">
+        <fileTransfer host="ftp.kccc.nichost.ru" port="21" rootFolder="/new.kccc.ru/docs">
           <advancedOptions>
             <advancedOptions passiveMode="true" />
           </advancedOptions>
