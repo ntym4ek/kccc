@@ -102,7 +102,7 @@ function representatives_form($from, &$form_state)
   ];
 
   $contact = '';
-  if (!empty($form_state['values']['region']) && $rep = representatives_get_representatives($form_state['values']['region'])) {
+  if (!empty($form_state['values']['region']) && $rep = representatives_get_sales($form_state['values']['region'])) {
     // выбираем руководителя региона, если нет, то кластера
     $contact = theme('contact_card', ['contact' => array_pop($rep['heads']), 'options' => ['class' => 'col-md-6']]);
   }
@@ -112,7 +112,7 @@ function representatives_form($from, &$form_state)
     '#suffix' => '</div>',
   ];
 
-  $sales = representatives_get_representatives();
+  $sales = representatives_get_sales();
   drupal_add_js(['representatives' => ['sales' => $sales,]], 'setting');
 
   $form['list']['content'] = [
@@ -944,7 +944,7 @@ function representatives_sales_list()
  */
 function _representatives_source($region_id = null)
 {
-  drupal_json_output(['representatives' => representatives_get_representatives($region_id)]);
+  drupal_json_output(['representatives' => representatives_get_sales($region_id)]);
   drupal_exit();
 }
 
@@ -952,7 +952,7 @@ function _representatives_source($region_id = null)
  * используется в корзине
  * @return array|mixed
  */
-function representatives_get_representatives($tid = null)
+function representatives_get_sales($tid = null)
 {
   // получаем список регионов
   $regions_by_tid = $regions_by_iso = [];
@@ -1009,6 +1009,20 @@ function representatives_get_representatives($tid = null)
     }
   }
 
+  if ((in_array('expert', $sale['roles']) || in_array('specialist', $sale['roles']))) {
+    if (!empty($sale['expert'])) {
+      if (in_array('expert', $sale['roles'])) {
+        $sale['office'] = representatives_get_office('expert');
+      }
+      if (in_array('specialist', $sale['roles'])) {
+        $sale['office'] = representatives_get_office('specialist');
+      }
+      $sales['experts'][] = $sale;
+    }
+  }
+
+
+
   $sales['regions_by_tid'] = $regions_by_tid;
   $sales['regions_by_iso'] = $regions_by_iso;
 
@@ -1022,30 +1036,8 @@ function representatives_get_representatives($tid = null)
  */
 function _experts_source($region_id = null)
 {
-  drupal_json_output(['representatives' => representatives_get_experts($region_id)]);
+  drupal_json_output(['representatives' => representatives_get_sales($region_id)]);
   drupal_exit();
-}
-
-function representatives_get_experts()
-{
-  $experts = [];
-  $reps = representatives_sales_list();
-
-  foreach ($reps as $rep) {
-    if ((in_array('expert', $rep['roles']) || in_array('specialist', $rep['roles']))) {
-      if (!empty($rep['expert'])) {
-        if (in_array('expert', $rep['roles'])) {
-          $rep['office'] = representatives_get_office('expert');
-        }
-        if (in_array('specialist', $rep['roles'])) {
-          $rep['office'] = representatives_get_office('specialist');
-        }
-        $experts['experts'][] = $rep;
-      }
-    }
-  }
-
-  return $experts;
 }
 
 function representatives_get_office($role)
