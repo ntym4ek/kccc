@@ -12,7 +12,7 @@
    height="760.6203">
     <defs>
         <pattern id="img1" patternUnits="userSpaceOnUse" width="300" height="300">
-            <image xlink:href="https://kccc.ru/sites/all/modules/_/representatives/images/map/soil.png" x="0" y="0" width="300" height="300" />
+            <image xlink:href="https://kccc.ru/sites/all/modules/_/sec_representatives/images/map/soil.png" x="0" y="0" width="300" height="300" />
         </pattern>
     </defs>
 

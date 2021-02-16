@@ -50,7 +50,7 @@
             $("#mapsvg").once(function() {
               $("#mapsvg").mapSvg({
                 markerLastID: 1,
-                source: "/sites/all/modules/_/representatives/images/map/russia.svg",
+                source: "/sites/all/modules/_/sec_representatives/images/map/russia.svg",
                 title: "Russia",
                 width: 1224.449, height: 760.6203,
                 colors: {baseDefault: "#000000", background: "transparent", directory: "#fafafa", status: {}, stroke: "#DECEC1", hover: "#B0EB28", selected: "#134A07"},

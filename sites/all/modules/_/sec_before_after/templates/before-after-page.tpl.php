@@ -231,6 +231,7 @@ $before = array_shift($content['measurements']);
                                     <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
                                       <i class="fa fa-camera" aria-hidden="true"></i>
                                     </a>
+                                    <? $ho_photo_message = true; ?>
                                   <? else: ?>
                                     -
                                   <? endif; ?>
@@ -350,7 +351,7 @@ $before = array_shift($content['measurements']);
                   <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                     <img src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
                   </a>
-                  <div class="date">Обработка <? print $processing['date'] . ' в ' . $processing['time']; ?></div>
+                  <div class="date">Обработка <? print $processing['date'] . (strpos($processing['time'], 'после') === false ? ' в ' : ' ') . $processing['time']; ?></div>
                 </div>
                 <div class="conditions col-md-6">
                   <dl>
