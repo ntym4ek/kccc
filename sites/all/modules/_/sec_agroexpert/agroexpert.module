@@ -49,11 +49,13 @@ function agroexpert_router_page()
 function agroexpert_online_page()
 {
     $list = '';
-    foreach(representatives_get_experts()['expert'] as $key => $exp) {
+    foreach(representatives_get_experts()['experts'] as $key => $exp) {
       $collapse = [];
       if (!empty($exp['regions'])) {
         $regions = [];
-        foreach ($exp['regions'] as $region) { $regions[] = $region['name']; }
+        foreach ($exp['regions'] as $region) {
+          $regions[] = $region['name'];
+        }
         $collapse = [
           'id' => 'exp_' . $key,
           'title' => t('Regions list'),
