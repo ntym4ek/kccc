@@ -404,5 +404,6 @@ $before = array_shift($content['measurements']);
       <? endif; ?>
     </div>
   </div>
+
 </article>
 
