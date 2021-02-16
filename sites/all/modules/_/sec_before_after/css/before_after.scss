@@ -1,5 +1,5 @@
 // подключаем миксины и переменные темы
-@import "../../../../themes/ya/css/_include";
+@import "../../../../themes/gard/css/_include";
 
 .fields {
     header {
@@ -62,7 +62,7 @@
         &:first-child { width: 85%; }
         & > div { float: left; }
       }
-      &:hover { background-color: $block-border-color; }
+      &:hover { background-color: #ddd; }
     }
     .image {
       background-color: #EA9700;
@@ -93,8 +93,9 @@
 }
 
 .season-form,
+.processing-form,
 .measurement-form {
-  .add-ho-title {
+  .add-title {
     color: $text-muted; font-weight: 100;
     div { margin-bottom: 5px; }
   }
@@ -106,22 +107,21 @@
     flex-wrap: wrap;
     .column {
         .col-title {
-          background: $brand-primary;
-          color:#fff; font-size: $font-size-h2; text-align: center;
-          padding: 15px 30px;
+            border-bottom: 1px solid #2b8aff;
+            font-size: 2em; text-align: center;
+            padding-bottom: 15px;
         }
         .image {
             margin-bottom: 20px;
             .date {
-                color: $brand-primary;
-              font-size: $font-size-h3;
+                color: #2b8aff;
                 padding: 10px;
             }
         }
       table { width: 100%; margin-bottom: $grid-gutter-width/2; }
     }
     .block {
-        //border-bottom: 1px solid $brand-primary;
+        border-bottom: 1px solid #2b8aff;
         text-align: center;
       .photo-text {
         color: $text-muted; font-size: .8em;
@@ -130,12 +130,15 @@
     .before {
         flex: 1 0 50%;
         .block {
-            &.b1 { padding-top: 64px; }
+            border-right: 1px solid #2b8aff;
+            padding: 15px 15px 15px 0;
+            &.b1 { padding-top: 56px; }
         }
     }
     .after {
         flex: 1 0 50%;
         .block {
+            padding: 15px 0 15px 15px;
             &.b1 { padding-top: 9px; }
         }
     }
@@ -147,11 +150,11 @@
             .cc1 { overflow: hidden; }
             .cc2 { height: 0; overflow: hidden; }
             .s1 {
-                color: $brand-primary; cursor: pointer;
+                color: #2b8aff; cursor: pointer;
                 &:hover { text-decoration: underline; }
             }
         }
-        span { color: $brand-primary; }
+        span { color: #2b8aff; }
     }
     .processings {
         flex: 1 0 100%;
@@ -162,37 +165,63 @@
             text-align: left;
         }
         .tab-pane-wrapper {
-            display: flex; flex-wrap: wrap;
+          display: flex; flex-wrap: wrap;
         }
         .image {
           flex: 1 1 220px;
-          padding-right: 20px;
+          padding-right: $grid-gutter-width;
           .date { padding: 10px 0; }
         }
-        .text {
-          flex: 1 0 200px;
-          @supports (display: grid) {  /* если браузер поддерживает Гриды */
-            display: grid;
-            grid-template-columns: auto 1fr;  /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
-            grid-template-rows: repeat(auto-fit, 20px);
-            dt {
-              color: $brand-primary; font-weight: 400;
-              text-align: right;
-              min-width: 0;  /* более привычное поведение при переполнении */
+        .conditions {
+          flex: auto;
+          dl {
+            @supports (display: grid) { /* если браузер поддерживает Гриды */
+              display: grid;
+              grid-template-columns: auto 1fr; /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
+              grid-template-rows: repeat(auto-fit, 20px);
+              dt {
+                color: $brand-blue;
+                font-weight: 100;
+                min-width: 0; /* более привычное поведение при переполнении */
+              }
+              dd { margin: 0 0 0 1em; }
             }
-            dd { margin: 0 0 0 1em; }
           }
         }
+        .preparations {
+          flex: 100%;
+          flex-wrap: wrap;
+          display: flex;
+        }
         .preparation {
-            flex: 1 1 200px;
-            text-align: center;
-            span { color: $text-muted; font-size: 10px; }
-          .pr-images {
-            display: flex;
-            margin: -45px auto 15px;
-            .prep { flex: 1 0 60%; }
-            .prep2 { flex: 1 0 40%; align-self: flex-end; }
+          flex: 100%;
+          display: flex;
+          .image {
+            flex: 0 0 150px;
+            img { width: 100%; }
           }
+          .conditions {
+            padding: 0 $grid-gutter-width/2;
+          }
+          .description {
+            flex: auto;
+            padding: $grid-gutter-width/2;
+          }
+          .rate, .consumption {
+            flex: 0 0 150px;
+            padding: $grid-gutter-width/2;
+            div:first-child {
+              color: $text-muted; font-size: .8em;
+              height: 40px;
+            }
+            div:nth-child(2) {
+              font-size: 2em;
+              span {
+                font-size: .5em;
+                margin-left: 4px; }
+            }
+          }
+          span { color: $text-muted; }
         }
         .tabs li { padding-left: 0; }
     }
@@ -222,13 +251,13 @@
             a {
                 background: none; border: none;
                 border-bottom: 1px solid rgba(9, 148, 220, 0.2);
-                font-size: $font-size-large; line-height: $line-height-large;
+                line-height: 16px;
                 padding: 10px; margin-right: 15px;
             }
             &.active a, a:hover, a:focus {
-                background: none; border: none; border-bottom: 1px solid $brand-primary;
+                background: none; border: none; border-bottom: 1px solid #2b8aff;
             }
-            span { color: $text-muted; font-size: $font-size-base; }
+            span { color: $text-muted; font-size: 11px; line-height: 15px; font-weight: 100; }
         }
     }
     .processings .nav-tabs {
@@ -239,31 +268,27 @@
 /* таблицы с сорняками */
 .column table {
     th,
-    td {
-      border-left: 1px solid $block-border-color; border-bottom: 1px solid $block-border-color;
-        padding: 10px;
+    td { border-left: 1px solid #ddd; border-bottom: 1px solid #ddd;
+        font-size: 12px; line-height: 18px;
+        padding: 4px 7px;
     }
     th:last-child,
-    td:last-child {
-      border-right: 1px solid $block-border-color;
-      text-align: center;
-    }
+    td:last-child { border-right: 1px solid #ddd; }
     td:first-child a { color: inherit; }
     .head th {
-        background: $brand-primary;
+        background: #2b8aff;
         color: #fff; font-weight: 100; text-align: center;
     }
     .dom td  {
-        a { color: $brand-primary; }
+        background: #F4FFF3;
+        a { color: #2b8aff; }
     }
-    //.title td { font-size: 14px; }
+    .title td { font-size: 14px; }
 }
 
 .after .no-content,
 .processings .no-content {
-  color: $block-border-color;
-  //font-size: 30px; line-height: 40px;
-  text-align: center;
+  color: #ddd; font-size: 30px; line-height: 40px; text-align: center;
   margin-top: 120px;
 }
 .processings .no-content {

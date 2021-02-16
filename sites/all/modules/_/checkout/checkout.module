@@ -118,7 +118,7 @@ function checkout_commerce_checkout_form_submit($form, $form_state)
     $region_tid = $form_state['values']['checkout_contact']['request']['forma']['region'];
     $rep_mail = $form_state['values']['checkout_contact']['request']['forma']['rep'];
 
-    $sales = representatives_get_representative($region_tid);
+    $sales = representatives_get_representatives($region_tid);
     // если выбран Представитель, найти его по email
     // todo Представителей связать с пользователем сайта
     $rep = [];
@@ -294,7 +294,7 @@ function checkout_preprocess_commerce_checkout_form_complete(&$vars)
     $data['items_count'] = format_plural($order_wrapper->commerce_line_items->count(), '@count item', '@count items', array(), array('context' => 'Checkout'));
 
     // представитель
-    $sales = representatives_get_representative($data['user_region_tid']);
+    $sales = representatives_get_representatives($data['user_region_tid']);
     // если выбран Представитель, найти его по email
     // todo Представителей связать с пользователем сайта
     foreach($sales['reps'] as $rep) {

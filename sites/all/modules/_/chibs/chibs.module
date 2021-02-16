@@ -1046,76 +1046,87 @@ function email_antibot_encode($email) {
 }
 
 /** -------------------------------- Дата на русском со склонением - */
-function format_date2($timestamp, $type = 'medium', $format = '', $timezone = NULL, $langcode = 'ru') {
-    if (!isset($timezone)) {
-        global $user;
-        if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
-            $timezone = $user->timezone;
-        }
-        else {
-            $timezone = variable_get('date_default_timezone', 0);
-        }
+//Функция форматирования даты
+function format_date2($timestamp, $type = 'medium', $format = '', $timezone = NULL, $langcode = 'ru')
+{
+  if (!isset($timezone)) {
+    global $user;
+    if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
+      $timezone = $user->timezone;
     }
-
-    if (is_numeric($timezone)) $timestamp += $timezone;
-
-    switch ($type) {
-        case 'small':
-            $format = variable_get('date_format_short', 'm/d/Y - H:i');
-            break;
-        case 'large':
-            $format = variable_get('date_format_long', 'l, F j, Y - H:i');
-            break;
-        case 'custom':
-            // No change to format.
-            break;
-        case 'medium':
-        default:
-            $format = variable_get('date_format_medium', 'D, m/d/Y - H:i');
+    else {
+      $timezone = variable_get('date_default_timezone', 0);
     }
+  }
 
-    $max = strlen($format);
-    $date = '';
-    for ($i = 0; $i < $max; $i++) {
-        $c = $format[$i];
-        if (strpos('AaDlM', $c) !== FALSE) {
-            $date .= t(gmdate($c, $timestamp), array(), $langcode);
-        }
-        else if ($c == 'F') {
-            $month = format_date($timestamp, 'custom', 'F');
-            //$month = t('!month ' . gmdate($c, $timestamp), array('!month' => ''), array('langcode' => $langcode));
-            $month = ( format_date( $timestamp, 'custom', 'n' ) == 3 || format_date( $timestamp, 'custom', 'n' ) == 8 ) ?
-                $month . 'а' : drupal_substr($month, 0, drupal_strlen($month) - 1) . 'я';
+  switch ($type) {
+    case 'small':
+      $format = variable_get('date_format_short', 'm/d/Y - H:i');
+      break;
+    case 'large':
+      $format = variable_get('date_format_long', 'l, F j, Y - H:i');
+      break;
+    case 'custom':
+      // No change to format.
+      break;
+    case 'medium':
+    default:
+      $format = variable_get('date_format_medium', 'D, m/d/Y - H:i');
+  }
 
-            $date .= drupal_strtolower(trim($month));
-        }
-        else if (strpos('BdgGhHiIjLmnsStTUwWyz', $c) !== FALSE) {
-            $date .= gmdate($c, $timestamp);
-        }
-        else if ($c == 'r') {
-            $date .= format_date($timestamp - $timezone, 'custom', 'D, d M Y H:i:s O', $timezone, $langcode);
-        }
-        else if ($c == 'O') {
-            $date .= sprintf('%s%02d%02d', ($timezone < 0 ? '-' : '+'), abs($timezone / 3600), abs($timezone % 3600) / 60);
-        }
-        else if ($c == 'Z') {
-            $date .= $timezone;
-        }
-        else if ($c == 'Y') {
-            $year = format_date($timestamp, 'custom', 'Y');
-            $date .= $year . ' года';
-        }
-        else if ($c == '\\') {
-            $date .= $format[++$i];
-        }
-        else {
-            $date .= $c;
-        }
+  $max = strlen($format);
+  $date = '';
+  for ($i = 0; $i < $max; $i++) {
+    $c = $format[$i];
+    if (strpos('AaDlM', $c) !== FALSE) {
+      $date .= t(date($c, $timestamp), array(), array('langcode' => $langcode));
     }
+    else if ($c == 'F') {
+      // Special treatment for long month names: May is both an abbreviation
+      // and a full month name in English, but other languages have
+      // different abbreviations.
 
-    return $date;
+      $long_month_name = t('!long-month-name ' . date($c, $timestamp), array('!long-month-name' => ''), array('langcode' => $langcode));
+
+      //month_declination
+      global $language;
+      $lang = isset($langcode) ? $langcode : $language->language;
+      $month_declination_function = 'month_declination_' . $lang;
+      if ( function_exists( $month_declination_function ) ) {
+        $long_month_name = $month_declination_function( $long_month_name, format_date( $timestamp, 'custom', 'n' ) );
+      }
+
+      $date .= trim($long_month_name);
+    }
+    else if (strpos('BdgGhHiIjLmnsStTUwWYyz', $c) !== FALSE) {
+      $date .= date($c, $timestamp);
+    }
+    else if ($c == 'r') {
+      $date .= format_date($timestamp - $timezone, 'custom', 'D, d M Y H:i:s O', $timezone, array('langcode' => $langcode));
+    }
+    else if ($c == 'O') {
+      $date .= sprintf('%s%02d%02d', ($timezone < 0 ? '-' : '+'), abs($timezone / 3600), abs($timezone % 3600) / 60);
+    }
+    else if ($c == 'Z') {
+      $date .= $timezone;
+    }
+    else if ($c == '\\') {
+      $date .= $format[++$i];
+    }
+    else {
+      $date .= $c;
+    }
+  }
+
+  return $date;
 }
 
+//Склонение на русском языке
+function month_declination_ru ( $long_month_name, $month  ) {
+  $long_month_name = ( $month == 3 || $month == 8 ) ?
+    $long_month_name . 'а' : drupal_substr($long_month_name, 0, drupal_strlen($long_month_name)-1) . 'я';
+  return $long_month_name;
+}
 
 /**
  * Преобразование секунд в секунды/минуты/часы/дни/года

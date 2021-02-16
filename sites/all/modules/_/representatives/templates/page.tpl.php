@@ -5,9 +5,9 @@
 
 <div class="representatives">
     <div class="row">
-        <? print theme('contact_card', array(
-            'contact' => $sales['director'],
-            'options' => ['class' => 'col-md-12'])); ?>
+<!--        --><?// print theme('contact_card', array(
+//            'contact' => $sales['director'],
+//            'options' => ['class' => 'col-md-12'])); ?>
 
         <? $i = 0; ?>
         <? foreach ($sales['heads'] as $key_c => $rep): ?>
@@ -45,7 +45,7 @@
 
             <?php $counter = 0; ?>
             <? foreach ($sales['reps'] as $key_r => $rep): ?>
-                <? if (isset ($rep['roles']) && in_array('rep', $rep['roles'])) {
+                <?
                     $collapse = [];
                     if (count($rep['regions']) > 1) {
                         $collapse['id'] = 'rep-' . $key_r;
@@ -63,7 +63,7 @@
                         'collapse' => $collapse,
                         'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . implode(' ', $rep_iso)]));
                     if ($counter++ % 2) print '<div class="clearfix"></div>';
-                } ?>
+                ?>
             <?php endforeach; ?>
         </div>
 

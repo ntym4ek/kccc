@@ -9,12 +9,9 @@ $category = $node_wrapper->field_pd_category[0]->tid->value();
 $prices = [];
 $show_calculation = true;
 // составляем строку единиц
-$units_arr = [];
-foreach (get_product_info($element['#object']->nid)['items'] as $item) {
-    if (!$prices[] = $item['price']) $show_calculation = false;
-    $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
-}
-$units = implode('+', $units_arr);
+$item = array_shift(get_product_info($element['#object']->nid)['items']);
+if (!$prices[] = $item['price']) $show_calculation = false;
+$units = $item['unit_short'] . '/' . array_shift($item['unit_field']);
 
 //  для Протравителей вывести 'Вес обрабатываемых семян', для остальных
 if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_FUNGICIDES_TID) {
@@ -293,7 +290,7 @@ if ($category == AGRO_CATEGORY_DISINFECTANTS_TID || $category == AGRO_CATEGORY_F
                     </td>
                 </tr>
                 <tr>
-                    <td>Необходимый объём препарата (<span id="units" data-unit-volume="<? print $unit_arr['short_unit']; ?>"><? print $units; ?></span>)</td>
+                    <td>Необходимый объём препарата (<span id="units" data-unit-volume="<? print $item['unit_short']; ?>"><? print $units; ?></span>)</td>
                     <td class="calc-volume"></td>
                 </tr>
                 <tr>

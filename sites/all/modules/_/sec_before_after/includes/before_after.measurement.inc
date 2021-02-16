@@ -234,7 +234,7 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
     // вывести уже добавленные
     if (!empty($form_state['hobjects'])) {
         $form['fs3']['header'] = array(
-            '#markup' => '<div class="add-ho-title row">'
+            '#markup' => '<div class="add-title row">'
                 . '<div class="col-sm-5">Вредный объект</div>'
                 . ($is_first_measure ? '' : '<div class="col-sm-2">% гибели</div>')
                 . ($is_first_measure ? '<div class="col-sm-6">Фото</div>' : '<div class="col-sm-4">Фото</div>')
@@ -350,58 +350,59 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
     return $form;
 }
 
-function before_after_measurement_form_validate(&$form, &$form_state) {
-    if (strpos($form_state['triggering_element']['#name'], 'del-ho-') !== 0) {
+function before_after_measurement_form_validate(&$form, &$form_state)
+{
+  if (strpos($form_state['triggering_element']['#name'], 'del-ho-') !== 0) {
 
-        if (empty($form_state['values']['date'])) { form_set_error('date', 'Задайте дату замера.'); return false; }
-        if (isset($form_state['values']['condition'])
-            && !$form_state['values']['condition']) {
-            form_set_error('condition', 'Задайте состояние культуры.');
-            return false;
-        }
-        if (isset($form_state['values']['phase'])
-            && !$form_state['values']['phase']) {
-            form_set_error('phase', 'Задайте фазу развития культуры.');
-            return false;
-        }
-        if (empty($form_state['values']['comment'])) { form_set_error('comment', 'Напишите короткий комментарий к замеру.'); return false; }
-        if (empty($form_state['values']['photo_f'])) { form_set_error('photo_f', 'Задайте фото поля.'); return false; }
-        if (isset($form_state['values']['photo_c'])
-            && !$form_state['values']['photo_c']) {
-            form_set_error('photo_c', 'Задайте фото культуры.');
-            return false;
-        }
-
-        // при нажатии на кнопки сохранить введенные ВО в массив
-        $form_state['hobjects'] = array();
-        foreach ($form_state['values'] as $key => $value) {
-            if (strpos($key, 'hobject-') !== false) {
-                $id = str_replace('hobject-', '', $key);
-
-                if (!$form_state['values']['hobject-' . $id]) { form_set_error('hobject-' . $id, 'Нужно задать наименование ВО.'); }
-                if (isset($form_state['values']['percent-' . $id])
-                    && ($form_state['values']['percent-' . $id] == '' || intval($form_state['values']['percent-' . $id]) > 100)) {
-                    form_set_error('percent-' . $id, 'Нужно задать % гибели ВО.');
-                }
-
-                if ($value) {
-                    $query = db_select('node', 'n');
-                    $query->condition('n.nid', $value);
-                    $query->fields('n', array('title'));
-                    $title = $query->execute()->fetchField();
-
-                    $form_state['hobjects'][$id] = array(
-                        'nid'       => $value,
-                        'name'       => $title,
-                        'percent'  => isset($form_state['values']['percent-' . $id]) ? $form_state['values']['percent-' . $id] : '',
-                        'photo'     => $form_state['values']['photo_ho-' . $id],
-                    );
-                }
-                unset($form_state['values']['hobject-' . $id]); unset($form_state['values']['percent-' . $id]); unset($form_state['values']['photo_ho-' . $id]);
-                unset($form_state['input']['hobject-' . $id]); unset($form_state['input']['percent-' . $id]); unset($form_state['input']['photo_ho-' . $id]);
-            }
-        }
+    if (empty($form_state['values']['date'])) { form_set_error('date', 'Задайте дату замера.'); return false; }
+    if (isset($form_state['values']['condition'])
+      && !$form_state['values']['condition']) {
+      form_set_error('condition', 'Задайте состояние культуры.');
+      return false;
     }
+    if (isset($form_state['values']['phase'])
+      && !$form_state['values']['phase']) {
+      form_set_error('phase', 'Задайте фазу развития культуры.');
+      return false;
+    }
+    if (empty($form_state['values']['comment'])) { form_set_error('comment', 'Напишите короткий комментарий к замеру.'); return false; }
+    if (empty($form_state['values']['photo_f'])) { form_set_error('photo_f', 'Задайте фото поля.'); return false; }
+    if (isset($form_state['values']['photo_c'])
+      && !$form_state['values']['photo_c']) {
+      form_set_error('photo_c', 'Задайте фото культуры.');
+      return false;
+    }
+
+    // при нажатии на кнопки сохранить введенные ВО в массив
+    $form_state['hobjects'] = array();
+    foreach ($form_state['values'] as $key => $value) {
+      if (strpos($key, 'hobject-') !== false) {
+        $id = str_replace('hobject-', '', $key);
+
+        if (!$form_state['values']['hobject-' . $id]) { form_set_error('hobject-' . $id, 'Нужно задать наименование ВО.'); }
+        if (isset($form_state['values']['percent-' . $id])
+          && ($form_state['values']['percent-' . $id] == '' || intval($form_state['values']['percent-' . $id]) > 100)) {
+          form_set_error('percent-' . $id, 'Нужно задать % гибели ВО.');
+        }
+
+        if ($value) {
+          $query = db_select('node', 'n');
+          $query->condition('n.nid', $value);
+          $query->fields('n', array('title'));
+          $title = $query->execute()->fetchField();
+
+          $form_state['hobjects'][$id] = array(
+            'nid'       => $value,
+            'name'       => $title,
+            'percent'  => isset($form_state['values']['percent-' . $id]) ? $form_state['values']['percent-' . $id] : '',
+            'photo'     => $form_state['values']['photo_ho-' . $id],
+          );
+        }
+        unset($form_state['values']['hobject-' . $id]); unset($form_state['values']['percent-' . $id]); unset($form_state['values']['photo_ho-' . $id]);
+        unset($form_state['input']['hobject-' . $id]); unset($form_state['input']['percent-' . $id]); unset($form_state['input']['photo_ho-' . $id]);
+      }
+    }
+  }
 }
 
 function before_after_measurement_form_submit(&$form, &$form_state)
