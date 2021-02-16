@@ -50,22 +50,19 @@ function sec_agroexpert_online_page()
 {
     $list = '';
     foreach(representatives_get_experts()['expert'] as $key => $exp) {
-      if (!empty($exp['expert'])) {
-        $collapse = [];
-        if (!empty($exp['regions'])) {
-          $regions = [];
-          foreach ($exp['regions'] as $region) { $regions[] = $region['name']; }
-          $collapse = [
-            'id' => 'exp_' . $key,
-            'collapsed' => false,
-            'title' => t('Regions list'),
-            'content' => implode(', ', $regions)
-          ];
-        }
+      $collapse = [];
+      if (!empty($exp['regions'])) {
+        $regions = [];
+        foreach ($exp['regions'] as $region) { $regions[] = $region['name']; }
+        $collapse = [
+          'id' => 'exp_' . $key,
+          'title' => t('Regions list'),
+          'content' => implode(', ', $regions)
+        ];
+      }
 
         $list .= '<div class="col-md-4">' . theme('contact_card', ['contact' => $exp,'collapse' => $collapse]) . '</div>';
         if (($key) % 3) $list .= '<div class="clearfix"></div>';
-      }
     }
 
     $output =

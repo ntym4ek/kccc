@@ -717,6 +717,7 @@ function before_after_get_atfield($sid)
               $preparations[] = [
                 'title' => $title,
                 'ingredients' => implode(' + ', $prep_info['ingredients']),
+                'description' => $prep_info['description'],
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
@@ -737,6 +738,7 @@ function before_after_get_atfield($sid)
               $preparations[] = [
                 'title' => $title,
                 'ingredients' => implode(' + ', $prep_info['ingredients']),
+                'description' => $prep_info['description'],
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
@@ -752,6 +754,7 @@ function before_after_get_atfield($sid)
               $preparations[] = [
                 'title' => $title2,
                 'ingredients' => implode(' + ', $prep_info2['ingredients']),
+                'description' => $prep_info2['description'],
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
                 'image_thumb' => image_style_url('medium', $prep_info2['photo_url']),
