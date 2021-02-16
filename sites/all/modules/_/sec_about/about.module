@@ -2,19 +2,19 @@
 
 define('ABOUT_URL', 'info/about');
 
-function sec_about_menu()
+function about_menu()
 {
   $items[ABOUT_URL] = array(
     'title' => 'О компании',
     'description' => '',
-    'page callback' => 'sec_about_main_page',
+    'page callback' => 'about_main_page',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
   return $items;
 }
 
-function sec_about_theme()
+function about_theme()
 {
   return array(
     'page_about' => array(
@@ -26,12 +26,12 @@ function sec_about_theme()
 /**
  * Pre-processes variables for the "page" theme hook.
  */
-function sec_about_preprocess_page(&$vars)
+function about_preprocess_page(&$vars)
 {
   // установить для страницы параметры шапки
   if ($_GET['q'] == ABOUT_URL) {
     $vars['header'] = array(
-//        'image' => url('/' . drupal_get_path('module', 'sec_about') . '/images/header_image.jpg', array('absolute' => true)),
+//        'image' => url('/' . drupal_get_path('module', 'about') . '/images/header_image.jpg', array('absolute' => true)),
       'category_title' => t('About company'),
       'title_off' => true,
     );
@@ -40,9 +40,9 @@ function sec_about_preprocess_page(&$vars)
 }
 
 // главная страница
-function sec_about_main_page()
+function about_main_page()
 {
-  $module_path = drupal_get_path('module', 'sec_about');
+  $module_path = drupal_get_path('module', 'about');
   drupal_add_css($module_path . '/css/about.css');
 
   return theme('page_about');
