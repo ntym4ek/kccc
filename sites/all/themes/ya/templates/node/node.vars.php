@@ -166,7 +166,7 @@ function ya_preprocess_node(&$vars)
 
     /** ------------------------------------ Авторство - */
     if (in_array($vars['type'], array('blog', 'review'))) {
-        $author = person_get_user_array($vars['node']->uid);
+        $author = ext_user_get_user_array($vars['node']->uid);
         $vars['author'] = $author;
 //        $vars['author'] = $author['name'] . ' ' . $author['surname'];
         //$vars['commented'] = $vars['node']->comment_count;

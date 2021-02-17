@@ -1,0 +1,4 @@
+name = Ext User
+description = Изменения, связанные с пользователем
+package = Custom
+core = 7.x

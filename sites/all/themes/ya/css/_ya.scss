@@ -120,6 +120,7 @@ fieldset.panel {
 .page-header {
   border: none;
   margin-bottom: $grid-gutter-width*2; padding: 0;
+  width: 100%;
 }
 .page-title {
   color: $brand-blue;
@@ -208,22 +209,63 @@ fieldset.panel {
   @include button-variant($brand-green, #fff, #fff);
 }
 
+// ------------------------------------------------- Таблицы (Tables)
+.table {
+  th {
+    font-size: .9em; font-weight: 100; text-align: center;
+    background-color: $brand-blue;
+    color: #fff;
+    a {
+      color: #fff;
+      &:hover { text-decoration: underline; }
+    }
+  }
+  td {
+    font-size: .85em;
+    vertical-align: middle;
+  }
+  h5 { font-size: 1em; }
+  @media #{$phone} {
+    font-size: 6px; line-height: 7px;
+  }
+  .views-field-ops,
+  .views-field-ops-1 { vertical-align: middle; } // подписки в ЛК
+}
+
 // ------------------------------------------------- Закладки меню (Tabs)
 .admin-tabs {
-  position: absolute; bottom: 0; left: 0; right: 0;
+  display:flex; flex-direction: column; align-items: flex-end;
+  position: absolute; right: $grid-gutter-width; top: -32px;
 }
 .tabs--primary {
-  float: right;
+  text-align: right;
   margin-bottom: 0; border-bottom: 0;
   > li {
+    display: inline-block;
     margin-bottom: 0;
     > a {
       color: $text-color;
-      background-color: $block-background-color;
+      background-color: $gray-lighter;
       padding: 5px 15px;
     }
     &:last-child > a {
       margin-right: 0;
+    }
+  }
+}
+.tabs--secondary {
+  border-bottom: 1px solid $block-border-color;
+  text-align: right; list-style: none;
+  padding: 0;
+  > li {
+    display: inline-block;
+    > a {
+      color: #aaa; text-decoration: none;
+      display: block;
+      padding: 7px 15px;
+      &:hover,
+      &:focus,
+      &.active { color: inherit; }
     }
   }
 }
@@ -338,6 +380,9 @@ fieldset.panel {
         margin: 0;
       }
     }
+  }
+  .header-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
   }
 }
 // --------------------------------------- Popup
@@ -480,6 +525,7 @@ fieldset.panel {
   }
   .card-title {
     margin-top: $grid-gutter-width;
+    text-align: center;
   }
   h3 {
     color: $brand-blue; font-weight: 400;
@@ -943,6 +989,7 @@ fieldset.panel {
   .we-covenient-content {
     display: flex;
     text-align: center;
+    padding: $grid-gutter-width/2 0;
     > div {
       border: 3px solid transparent;
       border-radius: $border-radius-base;
@@ -974,9 +1021,12 @@ fieldset.panel {
   .view-filters {
     margin-bottom: $grid-gutter-width;
     @include make-row();
+    .views-exposed-widget {
+      @include make-md-column(6);
+    }
   }
-  .views-exposed-widget {
-    @include make-md-column(6);
+  .view-header {
+    margin-bottom: $grid-gutter-width;
   }
   //&.view-list .view-item,      у .card свой margin-bottom
   //&.view-table .view-item {
@@ -1133,22 +1183,6 @@ article {
 .product-description {
   padding-top: 60px;
   overflow: hidden;
-
-  .table {
-    th {
-      font-size: .9em; font-weight: 100; text-align: center;
-      background-color: $brand-blue;
-      color: #fff;
-    }
-    td {
-      font-size: .85em;
-      vertical-align: middle;
-    }
-    h5 { font-size: 1em; }
-    @media #{$phone} {
-      font-size: 6px; line-height: 7px;
-    }
-  }
 
   div.horizontal-tabs {
     border: none;
@@ -1685,3 +1719,100 @@ aside {
   }
 }
 
+
+/* ------------------------------------------------- Профиль пользователя ------------------------------------------- */
+.profile {
+  @include make-row();
+  .profile-left {
+  }
+  .profile-right {
+    .pass-show,
+    .pass-close { cursor: pointer; }
+    .password-pane {
+      position: relative;
+      display: none;
+      background-color: #e4f5ff;
+      padding: 10px 0;
+    }
+  }
+  .form-type-managed-file {
+    margin-bottom: $grid-gutter-width/2;
+    .image-preview,
+    .image-widget-data {
+      text-align: center;
+      max-width: initial;
+      .form-submit { margin-top: 15px; }
+    }
+    .help-block { text-align: center; }
+  }
+  .profile-changes {
+    margin-bottom: $grid-gutter-width/2;
+    font-size: 0.8em; color: $brand-danger;
+    @include make-xs-column-offset(4);
+  }
+  .profile-separator {
+    border-top: 1px solid #e7e8ec;
+    width: 100%; height: 0;
+    margin-bottom: $grid-gutter-width/2;
+  }
+  .form-horizontal .form-group label {
+    @media (min-width: $screen-xs-min) {
+      float: left;
+      width: percentage((4 / $grid-columns));
+    }
+  }
+  .form-horizontal .form-group .form-textarea-wrapper,
+  .form-horizontal .form-group .form-input-wrapper {
+    @media (min-width: $screen-xs-min) {
+      float: left;
+      width: percentage((8 / $grid-columns));
+    }
+  }
+  .profile-save { @include make-xs-column-offset(4); }
+
+  .profile-info-top {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e7e8ec;
+    position: relative;
+  }
+  .profile-name { font-weight: 500; }
+  .profile-name span {
+    font-size: 12px; font-weight: 400;
+  }
+  .profile-role {
+    color: #999;
+    font-weight: 400;
+    line-height: 18px;
+  }
+  .profile-status {
+    position: absolute; right: 10px; top: 5px;
+  }
+  .profile-online { color: #40ae1a; }
+  .profile-offline { color: #01b0f1; }
+
+
+  /* счётчики активности */
+  .profile-counts {
+    text-align: center;
+  }
+  .profile-count {
+    display: inline-block;
+    color: #000;
+    padding: 15px;
+    text-align: center;
+  }
+  .profile-count:hover {
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .count-title {
+    font-size: 11px; color: #999;
+    text-transform: uppercase;
+  }
+  .profile-count:hover .count-title { color: #000; }
+  .count-amount { font-size: 1.5em; padding-bottom: 8px; color: #000; }
+}
+.user-profile-form {
+  @include make-md-column(6);
+  @include make-md-column-offset(3);
+}

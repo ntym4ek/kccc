@@ -2,7 +2,7 @@
     hide($content['links']);
 ?>
 
-<article class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+<article class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
   <? if (!empty($backstep_url)): ?>
     <div class="backstep">

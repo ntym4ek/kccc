@@ -19,7 +19,7 @@ function before_after_field_callback($op = 'list', $fid = 0)
 
             // поля текущего пользователя (для админа вывести все поля)
             $query = db_select('node', 'n');
-            if ($GLOBALS['user']->uid != 1) $query->condition('n.uid', $GLOBALS['user']->uid);
+          if (!user_has_role(STAFF_ADMIN)) $query->condition('n.uid', $GLOBALS['user']->uid);
             $query->condition('n.type', 'field');
             $query->fields('n', array('nid'));
             $query->orderBy('n.nid', 'DESC');

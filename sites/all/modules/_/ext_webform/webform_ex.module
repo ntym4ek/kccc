@@ -33,11 +33,6 @@ function webform_ex_preprocess_page(&$vars)
         $vars['node'] = $query->execute()->fetchObject();
     }
 
-    if (isset($vars['node']) && in_array($vars['node']->type, ['webform', 'idea'])) {
-        $vars['header']['print'] = false;
-        $vars['header']['url'] = '';
-    }
-
     if ((isset($vars['node']) && $vars['node']->type == 'webform')) {
         $vars['header']['subtitle'] = t('Survey');
         $hi_path = 'public://images/header_images/survey/header_image.jpg';

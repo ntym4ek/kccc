@@ -3,7 +3,7 @@
     hide($content['comments']);
 ?>
 
-<article class="<?php print $classes; ?> container"<?php print $attributes; ?>>
+<article class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
   <? if (!empty($backstep_url)): ?>
   <div class="backstep">

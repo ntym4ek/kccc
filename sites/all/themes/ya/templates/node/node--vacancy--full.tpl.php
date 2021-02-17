@@ -5,7 +5,7 @@
     $st = (isset($field_vacancy_employer[0]) && $field_vacancy_employer[0]['value'] == 'st') ? true : false;
 ?>
 
-<article class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+<article class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
   <? if (!empty($backstep_url)): ?>
     <div class="backstep">

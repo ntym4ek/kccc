@@ -165,7 +165,7 @@ function person_staff_ajax_callback(&$form, &$form_state) {
     $output = theme('person_wrap', array(
         'content' => array(
             'body' => drupal_render($form),
-            'account' => person_get_user_array($form_state['acid']),
+            'account' => ext_user_get_user_array($form_state['acid']),
             'menu' => _person_actions($form_state['acid'], $form_state['section']),
             'class' => $form_state['section'],
             'message' => $message ? $message : '',

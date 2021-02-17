@@ -1,5 +1,5 @@
 name = P | Representatives page
 description = Страница представителей
-package = Jax
+package = Custom
 core = 7.x
 

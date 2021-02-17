@@ -1,0 +1,352 @@
+<?
+
+include 'includes/user.company.inc';
+
+
+/**
+ * роли сотрудников компании
+ */
+define('STAFF_PERSONNEL', 4);
+define('STAFF_UNCONFIRMED', 7);
+define('STAFF',           6);
+define('STAFF_EDITOR',    5);
+define('STAFF_SHOP',      11);
+define('STAFF_CHIEF',     8);
+define('STAFF_ADMIN',     3);
+
+/**
+ * hook_module_implements_alter
+ * change hook execution order, commerce_helper - last
+ */
+function ext_user_module_implements_alter(&$implementations, $hook)
+{
+  // Name of the hook.
+  if (in_array($hook, ['form_alter'])) {
+    // ext_user - last
+    $module = 'ext_user';
+    if (isset($implementations[$module])) {
+      $group = $implementations[$module];
+      unset($implementations[$module]);
+      $implementations[$module] = $group;
+    }
+  }
+
+  //    if ($hook == 'commerce_order_presave') {
+  //        // ext_user - first
+  //        $module = 'ext_user';
+  //        $group = array($module => $implementations[$module]);
+  //        unset($implementations[$module]);
+  //        $implementations = $group + $implementations;
+  //    }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ext_user_permission()
+{
+  return array(
+    'access product_reglaments actions' => array(
+      'title' => t('Access Product Reglaments'),
+      'description' => t('Access Product Reglaments actions'),
+    )
+  );
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function ext_user_user_insert(&$edit, &$account, $category)
+{
+  // при регистрации нового пользователя установить уникальное имя: Пользователь #uid
+  $new_name = t('User ') . $account->uid;
+
+  db_update('users')
+    ->fields(array('name' => $new_name))
+    ->condition('uid', $account->uid)
+    ->execute();
+
+  $edit['name'] = $new_name;
+  $account->name = $new_name;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_login_alter(&$form, &$form_state)
+{
+  unset($form['name']['#title']);
+  $form['name']['#attributes']['placeholder'] = [t('Your e-mail')];;
+  unset($form['name']['#description']);
+
+  unset($form['pass']['#title']);
+  $form['pass']['#attributes']['placeholder'] = [t('Your password')];
+  unset($form['pass']['#description']);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_register_form_alter(&$form, &$form_state)
+{
+  // изменение формы регистрации
+  unset($form['account']['mail']['#title']);
+  $form['account']['mail']['#attributes']['placeholder'] = array($form['account']['mail']['#description']);
+  unset($form['account']['mail']['#description']);
+
+  // имя и фамилия обязательны
+  $form['firstname'] = [
+    '#type' => 'textfield',
+    '#attributes' => ['placeholder' => t('Name')],
+    '#weight' => -2,
+  ];
+  $form['surname'] = [
+    '#type' => 'textfield',
+    '#attributes' => ['placeholder' => t('Surname')],
+    '#weight' => -1,
+  ];
+
+
+  // вместо пароля с подтверждением и рекомендациями выводим одно поле пароля
+  $form['account']['pass']['#type'] = 'password';
+  unset($form['account']['pass']['#title']);
+  $form['account']['pass']['#attributes']['placeholder'] = $form['account']['pass']['#description'];
+  unset($form['account']['pass']['#description']);
+
+  $form['account']['name']['#type'] = 'hidden';
+  $form['account']['name']['#value'] = 'user_' . user_password();
+
+  // добавить проверку
+  $form['#validate'][] = 'ext_user_user_register_form_validate';
+
+  // добавить обработчик сабмита регистрации
+  $form['#submit'][] = 'ext_user_user_register_form_submit';
+
+  $form['actions']['submit']['#attributes']['class'][] = 'btn-primary';
+
+  // убрать капчу для DrupalGap и local сервера
+  if (arg(0) == 'drupalgap' || strpos($GLOBALS['base_url'], '.local') !== false) {
+    $form['#after_build'][] = 'ext_user_form_captcha_after_build';
+  }
+}
+
+/**
+ * дополнительная проверка при регистрации
+ */
+function ext_user_user_register_form_validate($form, $form_state)
+{
+  // проверить имя и фамилию
+  if (empty($form_state['values']['firstname'])) {
+    form_set_error('firstname', t('Name is required'));
+  }
+  if (empty($form_state['values']['surname'])) {
+    form_set_error('surname', t('Surname is required'));
+  }
+
+  // отсеять нежелательные (спамерские) email
+  foreach(['!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray\.com!s', '!.*@.*\.dynainbox\.com!s'
+            , '!.*@.*\.mailsmail\.ru!s', '!.*@.*\.mailyaha\.ru!s', '!.*@.*\.aolmail\.fun!s', '!.*@.*\.osakass\.!s'] as $pattern) {
+    if (preg_match($pattern, $form_state['values']['mail'])) {
+      form_set_error('mail', t('E-mail is not valid.'));
+    }
+  }
+}
+
+/**
+ * дополнительный сабмит при регистрации
+ */
+function ext_user_user_register_form_submit($form, $form_state)
+{
+  global $user;
+
+  // дать пользователям с почтой @kccc.ru роль сотрудника
+  if (drupal_substr($form_state['values']['mail'], -8) == '@kccc.ru') {
+    $user->roles[STAFF] = 1;
+    user_save($user);
+  }
+
+  // добавить профиль Пользователь и внести Имя Фамилию с формы регистрации
+  if (!$main = profile2_load_by_user($user, 'main')) {
+    $main = profile2_create(array('user' => $user->uid, 'type' => 'main'));
+    // сохранить сразу, так как при создании не срабатывает profile2_update
+    $main->save();
+  }
+  $main_wr = entity_metadata_wrapper('profile2', $main);
+  $main_wr->field_profile_surname->set($form_state['values']['surname']);
+  $main_wr->field_profile_name->set($form_state['values']['firstname']);
+  $main_wr->save();
+
+  // если пользователь регистрируется со ссылки user/login
+  // то модyль login_destination не может определить, что это регистрация
+  // и переадресует на страницу, с которой перешли на форму регистрации
+  // а нужно заполнить форму личных данных в кабинете
+  if (module_exists('login_destination')) {
+    unset($_GET['current']);
+    unset($GLOBALS['destination']);
+  }
+}
+
+/**
+ * An after build handler to remove captcha from DrupalGap forms.
+ */
+function ext_user_form_captcha_after_build($form, &$form_state)
+{
+  // ReCAPTCHA
+  if (isset($form['captcha'])) { unset($form['captcha']); }
+  // Mollom
+  if (isset($form['mollom'])) { unset($form['mollom']); }
+  return $form;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_pass_alter(&$form)
+{
+  $form['#prefix'] =  '<div class="user-pass-wrapper">' .
+    '<div class="user-pass-logo"></div>' .
+    '<div class="user-pass-links">' .
+    '<a href="/user/login">' . t('I have a password') . '</a>' .
+    '</div>' .
+    '<div class="user-pass">';
+  $form['#suffix'] = '</div></div>';
+  $form['name']['#title'] = t('E-mail');
+  $form['actions']['submit']['#attributes']['class'][] = 'btn-primary';
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_user_preprocess_page(&$vars)
+{
+  global $user;
+
+  // предупреждение для неподтвержденных аккаунтов
+  if (isset($user->roles[7])) {
+    drupal_set_message(t('You have to confirm your account, otherwise it wound be deleted soon. Check your e-mail.'), 'warning');
+  }
+
+  if (arg(0) == 'user') {
+    $vars['header']['category_title'] = t('My Account');
+  }
+  if (in_array(arg(1), ['login', 'register'])) {
+    $vars['header']['title_off'] = true;
+  }
+}
+
+// массив с информацией о пользователе
+function ext_user_get_user_array($user)
+{
+  if (is_numeric($user)) $account = user_load($user);
+  else $account = $user;
+
+  $name_arr = array('', '', '');
+  $email = $phone = '';
+  $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
+  $role = t('User');
+  $post = $company = '';
+
+  if (!empty($account->uid)) {
+    if ($main = profile2_load_by_user($account, 'main')) {
+      $main_wrapper = entity_metadata_wrapper('profile2', $main);
+      $name_arr[0] = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
+      $name_arr[1] = $main_wrapper->field_profile_name->value() ? $main_wrapper->field_profile_name->value() : '';
+      $name_arr[2] = $main_wrapper->field_profile_name2->value() ? $main_wrapper->field_profile_name2->value() : '';
+      $email = $account->mail;
+      $phone = $main_wrapper->field_profile_phone->value() ? $main_wrapper->field_profile_phone->value() : '';
+      if ($main_wrapper->field_profile_photo->value()) {
+        $file = $main_wrapper->field_profile_photo->file->value();
+        $photo_url = image_style_url('user_photo', $file->uri);
+      }
+    }
+
+    // если утвержденный сотрудник вывести регалии
+    if ($staff = profile2_load_by_user($user, 'staff')) {
+      $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
+
+      if ($staff_wrapper->field_profile_company_approved->value() == 1) {
+        $company = ext_user_get_user_company_name($staff_wrapper->field_profile_company2->pid->value());
+        $post = $staff_wrapper->field_profile_post->value();
+        $role = $post . ' ' . $company;
+      }
+    }
+  }
+
+  return array(
+    'surname' => $name_arr[0],
+    'name' => $name_arr[1],
+    'name2' => $name_arr[2],
+    'full_name' => implode(' ', $name_arr),
+    'short_name' => $name_arr[1] . ' ' . $name_arr[0],
+    'role' => $role,
+    'post' => $post,
+    'company' => $company,
+    'photo' => $photo_url,
+    'email' => $email,
+    'phone' => $phone,
+  );
+}
+
+
+/**
+ * возвращает имя пользователя аккаунта в разных форматах
+ * @param $user
+ * @param string $format
+ * @return bool|string
+ */
+function ext_user_get_user_name($user, $format = 'short_ns')
+{
+  if (is_numeric($user)) $account = user_load($user);
+  else $account = $user;
+
+  $user_name = false;
+  if (!empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
+    $main_wrapper = entity_metadata_wrapper('profile2', $main);
+    $name       = $main_wrapper->field_profile_name->value()    ? $main_wrapper->field_profile_name->value()    : '';
+    $surname    = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
+    $name2      = $main_wrapper->field_profile_name2->value()   ? $main_wrapper->field_profile_name2->value()   : '';
+    switch($format) {
+      case 'short_sn':
+        $user_name = $surname . ' ' . $name;
+        break;
+      case 'short_ns':
+        $user_name = $name . ' ' . $surname;
+        break;
+      case 'full':
+        $user_name = $surname . ' ' . $name . ' ' . $name2;
+        break;
+    }
+  }
+  if (!trim($user_name)) $user_name = $account->name;
+
+  return $user_name;
+}
+
+/**
+ * возвращает количество совершенных пользователем заказов
+ */
+function ext_user_orders_count($acid)
+{
+  $count = 0;
+  foreach (commerce_order_load_multiple(array(), array('uid' => $acid)) as $order) {
+    if (!$order->status != 'cart') {
+      $count++;
+    }
+  }
+  return $count;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_profile_form_alter (&$form, $form_state)
+{
+  if (!user_has_role(STAFF_ADMIN, $GLOBALS['user'])) {
+    $form["account"]["name"]["#access"] = false;
+    $form['timezone']['#access'] = false;
+    $form['locale']['#access'] = false;
+    $form['mimemail']['#access'] = false;
+    $form['picture']['#access'] = false;
+    $form['#attributes']['class'][] = 'user-profile-form';
+  }
+}

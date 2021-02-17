@@ -79,7 +79,7 @@
  * @ingroup templates
  */
 ?>
-<article class="<?php print $classes; ?> container"<?php print $attributes; ?>>
+<article class="<?php print $classes; ?>"<?php print $attributes; ?>>
   <? if (!empty($backstep_url)): ?>
     <div class="backstep">
       <a href="<? print $backstep_url; ?>"><i class="fas fa-long-arrow-alt-left"></i>&nbsp;&nbsp;<? print t("Back to list");?></a>

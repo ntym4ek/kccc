@@ -1,5 +1,5 @@
 name = F | Terms Vocabulary
 description = Функционал Страницы терминов
-package = Jax
+package = Custom
 core = 7.x
 

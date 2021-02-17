@@ -84,9 +84,9 @@
       <img src="<? print $logo; ?>" alt="<? print t('Home'); ?>" />
     </a>
     <? if ($is_front): ?>
-    <h1 class="site-slogan"><? print $site_slogan;?></h1>
+      <h1 class="site-slogan"><? print $site_slogan;?></h1>
     <? else:?>
-    <div class="site-slogan"><? print $site_slogan;?></div>
+      <div class="site-slogan"><? print $site_slogan;?></div>
     <? endif;?>
   </div>
 
@@ -123,11 +123,11 @@
 
 
   <? if (!empty($tabs) && !$is_front): ?>
-  <div class="admin-tabs">
-    <div class="container">
-      <? print render($tabs); ?>
+    <div class="container header-bottom">
+      <div class="admin-tabs">
+        <? print render($tabs); ?>
+      </div>
     </div>
-  </div>
   <? endif; ?>
 </div>
 
@@ -143,9 +143,9 @@
     <? endif; ?>
 
     <? if (!empty($page['banner_top'])): ?>
-    <div class="row row-screen-wide">
-      <div class="banner-top col-screen-wide" role="banner"><? print render($page['banner_top']); ?></div>
-    </div>
+      <div class="row row-screen-wide">
+        <div class="banner-top col-screen-wide" role="banner"><? print render($page['banner_top']); ?></div>
+      </div>
     <? endif; ?>
 
     <div class="row<? print $wide_content ? ' row-screen-wide' : ''; ?>">
@@ -157,33 +157,33 @@
       <? endif; ?>
 
       <section class="<? print $wide_content ? ' col-screen-wide' : $content_column_class; ?> content">
-        <div class="row">
-      <!--          --><? //if (!empty($breadcrumb) && !$is_front): ?>
-      <!--            --><? //print $breadcrumb; ?>
-      <!--          --><? //endif;?>
+        <!--        <div class="row">-->
+        <!--          --><? //if (!empty($breadcrumb) && !$is_front): ?>
+        <!--            --><? //print $breadcrumb; ?>
+        <!--          --><? //endif;?>
 
-              <? if (!$header['title_off']): ?>
-              <div class="page-header">
-                <? if (!empty($header['title'])): ?>
-                <h1 class="page-title"><? print $header['title']; ?></h1>
-              <? endif; ?>
-              <? if (!empty($header['subtitle'])): ?>
-                <h2 class="page-subtitle"><? print $header['subtitle']; ?></h2>
-              <? endif; ?>
-              </div>
-              <? endif; ?>
+        <? if (!$header['title_off']): ?>
+          <div class="page-header">
+            <? if (!empty($header['title'])): ?>
+              <h1 class="page-title"><? print $header['title']; ?></h1>
+            <? endif; ?>
+            <? if (!empty($header['subtitle'])): ?>
+              <h2 class="page-subtitle"><? print $header['subtitle']; ?></h2>
+            <? endif; ?>
+          </div>
+        <? endif; ?>
 
 
-              <? if (!empty($page['help'])): ?>
-                <? print render($page['help']); ?>
-              <? endif; ?>
+        <? if (!empty($page['help'])): ?>
+          <? print render($page['help']); ?>
+        <? endif; ?>
 
-              <? if (!empty($action_links)): ?>
-                <ul class="action-links"><? print render($action_links); ?></ul>
-              <? endif; ?>
+        <? if (!empty($action_links)): ?>
+          <ul class="action-links"><? print render($action_links); ?></ul>
+        <? endif; ?>
 
-              <? print render($page['content']); ?>
-        </div>
+        <? print render($page['content']); ?>
+        <!--        </div>-->
       </section>
 
       <? if (!empty($page['sidebar_second'])): ?>
@@ -195,9 +195,9 @@
     </div>
 
     <? if (!empty($page['banner_bottom'])): ?>
-    <div class="row row-screen-wide">
-      <div class="banner-bottom col-screen-wide"><? print render($page['banner_bottom']); ?></div>
-    </div>
+      <div class="row row-screen-wide">
+        <div class="banner-bottom col-screen-wide"><? print render($page['banner_bottom']); ?></div>
+      </div>
     <? endif; ?>
 
   </div>
@@ -234,8 +234,8 @@
 
 
         <? print render($page['footer']); ?>
-        </div>
       </div>
+    </div>
     </div>
   </footer>
 <? endif; ?>
