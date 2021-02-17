@@ -1007,19 +1007,21 @@ function representatives_get_sales($tid = null)
         $sales['reps'][] = $sale;
       }
     }
-  }
 
-  if ((in_array('expert', $sale['roles']) || in_array('specialist', $sale['roles']))) {
-    if (!empty($sale['expert'])) {
-      if (in_array('expert', $sale['roles'])) {
-        $sale['office'] = representatives_get_office('expert');
+    // эксперты
+    if ((in_array('expert', $sale['roles']) || in_array('specialist', $sale['roles']))) {
+      if (!empty($sale['expert'])) {
+        if (in_array('expert', $sale['roles'])) {
+          $sale['office'] = representatives_get_office('expert');
+        }
+        if (in_array('specialist', $sale['roles'])) {
+          $sale['office'] = representatives_get_office('specialist');
+        }
+        $sales['experts'][] = $sale;
       }
-      if (in_array('specialist', $sale['roles'])) {
-        $sale['office'] = representatives_get_office('specialist');
-      }
-      $sales['experts'][] = $sale;
     }
   }
+
 
 
 
