@@ -38,7 +38,6 @@ function agrocalc_form($from, &$form_state)
         'field' => [
             '#type' => 'fieldset',
             '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" />',
-            '#prefix' => '<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">',
         ],
         'problem' => [
             '#type' => 'fieldset',
@@ -239,11 +238,10 @@ function agrocalc_form($from, &$form_state)
         '#value' => t('Calculate'),
         '#name' => 'calc',
         '#attributes' => [
-            'class' => ['pull-right', 'btn-success', 'btn-wide', 'do-not-print'],
+            'class' => ['pull-right', 'btn-primary', 'btn-wide', 'do-not-print'],
             'onclick' => ["yaCounter11541151.reachGoal('send_agrocalc'); return true;"],
         ],
         '#disabled' => $culture_id ? false : true,
-        '#suffix' => '</div>',
         '#ajax' => array(
             'callback' => 'agrocalc_form_refresh',
             'wrapper' => 'agrocalc-form-wrapper',
@@ -279,10 +277,10 @@ function agrocalc_form($from, &$form_state)
 
         $form['request'] = [
             '#type' => 'fieldset',
-            '#prefix' => '<div id="request" class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 do-not-print">',
+            '#prefix' => '<div id="request" class="request">',
         ];
         $form['request']['intro'] = [
-            '#markup' => '<div class="col-sm-12"><h3>'. t('Get detailed calculation'). '</h3><p class="font-small">' . t('Choose your region, fill phone or E-Mail fields.<br />Our representative will make individual program for you and send it to E-Mail or contact you by phone.') . '</p></div>',
+            '#markup' => '<div class="col-sm-12 request-title"><h3>'. t('Get detailed calculation'). '</h3><p class="font-small">' . t('Choose your region, fill phone or E-Mail fields.<br />Our representative will make individual program for you and send it to E-Mail or contact you by phone.') . '</p></div>',
         ];
 
         $query = db_select('taxonomy_term_data', 't');
@@ -318,7 +316,7 @@ function agrocalc_form($from, &$form_state)
             '#type' => 'submit',
             '#value' => t('Get'),
             '#name' => 'send',
-            '#attributes' => ['class' => ['btn-info', 'btn-wide']],
+            '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
             '#prefix' => '<div class="form-submit-wrapper">',
             '#suffix' => '</div>',
         );
@@ -384,7 +382,7 @@ function agrocalc_form_submit($form, &$form_state)
 
     // отправка письма менеджеру и представителю
     $message = 'Добрый день!<br /><br />';
-    $message .= 'На в разделе Калькулятор сайте kccc.ru была отправлена заявка на детальный расчёт.<br />';
+    $message .= 'В разделе Калькулятор сайте kccc.ru была отправлена заявка на детальный расчёт.<br />';
     $message .= '<br />';
     $message .= '<b>Данные пользователя</b><br />';
     $message .= 'Регион: ' . $form_state['values']['region'] . '<br />';

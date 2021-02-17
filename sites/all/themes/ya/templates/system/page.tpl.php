@@ -134,8 +134,13 @@
 <div class="main">
   <div class="container">
 
-
-    <? print $messages; ?>
+    <? if (!empty($messages)): ?>
+      <div class="row">
+        <div class="col-sm-12">
+          <? print $messages; ?>
+        </div>
+      </div>
+    <? endif; ?>
 
     <? if (!empty($page['banner_top'])): ?>
     <div class="row row-screen-wide">

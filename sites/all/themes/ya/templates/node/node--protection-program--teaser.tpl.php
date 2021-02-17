@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @file
  * Default theme implementation to display a node.
@@ -80,38 +80,15 @@
  */
 ?>
 
-<div class="card product-card">
+<div class="card protection-program-card">
   <div class="card-content">
     <div class="card-image">
-      <a href="<? print $product_url; ?>">
-        <img src="<? print $images[0]; ?>" class="img-responsive" alt="<? print $title; ?>" loading="lazy" />
+      <a href="<? print $node_url; ?>">
+        <img src="<? print $image_url; ?>" alt="<? print $title; ?>" class="img-responsive" title="<?php print $title; ?>" />
       </a>
     </div>
-
     <div class="card-title">
-      <h3><a href="<? print $product_url; ?>"><? print $title; ?></a></h3>
-    </div>
-
-    <div class="card-subtitle"><? print $subtitle; ?></div>
-
-    <? if(!empty($content['body'][0]['#markup'])): ?>
-      <div class="divider"></div>
-      <div class="card-summary">
-        <? print $content['body'][0]['#markup']; ?>
-      </div>
-    <? endif; ?>
-
-    <div class="card-action">
-      <a class="btn btn-gray" href="<? print $product_url; ?>">
-        <? print t('More'); ?>
-        <i class="fa fa-chevron-right pull-right"></i>
-      </a>
-
-      <a class="btn btn-clear" href="<? print $product_url; ?>">
-        <? if (!empty($content['field_pd_price_per_unit']['#items'][0]['amount'])): ?>
-          <? print t('Price per ') . ' ' . mb_strtolower($content['field_pd_units'][0]['#markup']) . t('(with NDS)') . ': ' . $content['field_pd_price_per_unit'][0]['#markup']; ?>
-        <? endif; ?>
-      </a>
+      <h3><a href="<? print $node_url; ?>"><? print $title; ?></a></h3>
     </div>
   </div>
 </div>

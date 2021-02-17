@@ -37,7 +37,7 @@ function ya_preprocess_node(&$vars)
   $vars['title'] = drupal_ucfirst($vars['title']);
   // если выведено меню на странице (например в Вакансиях), не выводить заголовок
   // todo по уму нужно бы отключать по факту наличия этого меню
-  if ($_GET['q'] == 'info/karere-v-kccc') {
+  if (url($_GET['q']) == '/info/karera-v-kccc') {
     $vars['node_title_off'] = true;
   }
 
@@ -108,6 +108,7 @@ function ya_preprocess_node(&$vars)
     if (strpos($path_alias, '/blogs') === 0) $vars['backstep_url'] = '/blogs';
     if (strpos($path_alias, '/agenda') === 0) $vars['backstep_url'] = '/agenda';
     if (strpos($path_alias, '/info/job/') === 0) $vars['backstep_url'] = '/info/job';
+    if (strpos($path_alias, '/handbook/protection-programs/') === 0) $vars['backstep_url'] = '/handbook/protection-programs';
     if (in_array($vars['type'], ['product_agro', 'product_chem', 'product_fert', 'product_mix']) && !empty($vars["field_pd_category"]["und"][0]["tid"])) {
       $vars['backstep_url'] = url('taxonomy/term/' . $vars["field_pd_category"]["und"][0]["tid"]);
     }
@@ -136,12 +137,6 @@ function ya_preprocess_node(&$vars)
     } elseif ($vars['type'] == 'agenda') {
       $vars['category_url'] = '/agenda';
       $vars['category_title'] = t('Agenda');
-    }
-
-
-    /** ------------------------------------ Просмотры - */
-    if (!in_array($vars['type'], array('product_agro', 'product_mix', 'product_fert', 'product_chem', 'page', 'idea')) || ($vars['type'] == 'webform' && $vars['view_mode'] != 'full')) {
-        $vars['viewed'] = statistics_get($vars['node']->nid)['totalcount'];
     }
 
     /** ------------------------------------ Дата - */
@@ -187,18 +182,24 @@ function ya_preprocess_node(&$vars)
 
 
     /** ------------------------------------ Программы защиты-------------------------------------------------------- */
-    if ($vars['type'] == 'protection_program' && isset($vars['content']['field_image'][0])) {
+  if ($vars['type'] == 'protection_program') {
+    if ($vars['view_mode'] == 'full') {
+      if (isset($vars['content']['field_image'][0])) {
         $image_alt = empty($vars['field_image'][0]['alt']) ? $vars['title'] : $vars['field_image'][0]['alt'];
 
-        $image_url = $file_url = file_create_url($vars['field_image'][0]['uri']);
+        $image_url = file_create_url($vars['field_image'][0]['uri']);
 
         $vars['image'] = '<a href="' . file_create_url($vars['field_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
         $vars['image'] .= '<div class="img-title"><span>' . t('Click on image to zoom') . '</span></div>';
         hide($vars['content']['field_image']);
-
-        $program = _reglaments_get_protection_system2(['program_id' => $vars['node']->nid]);
-        $vars['program'] = theme('protection_program', ['program' => $program]);
+      }
+      $program = _reglaments_get_protection_system2(['program_id' => $vars['node']->nid]);
+      $vars['program'] = theme('protection_program', ['program' => $program]);
     }
+    if ($vars['view_mode'] == 'teaser') {
+      $vars['image_url'] = file_create_url($vars['field_icon']['und'][0]["uri"]);
+    }
+  }
 
     /** ------------------------------------ Продукция -------------------------------------------------------------- */
     if (in_array($vars['type'], array('product_agro', 'product_fert', 'product_mix', 'product_chem'))) {

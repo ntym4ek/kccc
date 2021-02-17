@@ -41,6 +41,13 @@ a {
 .form-group > label {
   color: $text-muted; font-weight: 100;
 }
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+  background: $gray-lightest;
+}
+.form-item-fz152-agreement {
+  color: $text-muted; font-size: 12px; text-align: right;
+  margin-top: 10px;
+}
 .form-horizontal {
   .form-group {
     label {
@@ -221,7 +228,51 @@ fieldset.panel {
   }
 }
 
+/* ------------------------------------------------- Bootstrap Switch ----------------------------------------------- */
+// https://bootsnipp.com/snippets/featured/material-design-switch
+.material-switch > input[type="checkbox"] {
+  display: none;
+}
 
+.material-switch > label {
+  cursor: pointer;
+  height: 0px;
+  position: relative;
+  width: 40px;
+}
+
+.material-switch > label::before {
+  background: rgb(0, 0, 0);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  content: '';
+  height: 16px; width: 40px;
+  margin-top: -8px;
+  position:absolute; right: 0;
+  opacity: 0.3;
+  transition: all 0.4s ease-in-out;
+}
+.material-switch > label::after {
+  background: rgb(255, 255, 255);
+  border-radius: 16px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  content: '';
+  height: 24px;
+  left: -4px;
+  margin-top: -8px;
+  position: absolute;
+  top: -4px;
+  transition: all 0.3s ease-in-out;
+  width: 24px;
+}
+.material-switch > input[type="checkbox"]:checked + label::before {
+  background: inherit;
+  opacity: 0.5;
+}
+.material-switch > input[type="checkbox"]:checked + label::after {
+  background: inherit;
+  left: 20px;
+}
 
 // --------------------------------------- Задний фон для модальных окон
 #modalBackdrop {
@@ -366,62 +417,67 @@ fieldset.panel {
 .btn-s3 .popup { left: -58px; }
 
 /* ------------------------------------------------- Вертикальная карточка (Product, Field) - */
-.v-card {
-  text-align: center;
-  overflow: hidden;
-  border: 1px solid $block-border-color;
-  padding: $grid-gutter-width;
-  header, footer {}
-  .divider {
-    background: $block-border-color;
-    display: inline-block;
-    width: 50px; height: 3px;
-    margin: $grid-gutter-width/2 0;
-  }
-
-  .v-card-image {
-    padding: 0 20px;
-  }
-  .v-card-content {
-    .btn {
-      margin-bottom: $grid-gutter-width/2;
-    }
-  }
-  .v-card-summary {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: $grid-gutter-width/2;
-  }
-  .v-card-subtitle {
-    color: $gray-light;
-    margin: 0 0 10px 0;
-    min-height: 1em;
-  }
-  .v-card-more {
-    text-align: left;
-    width: 100%;
-    position: relative;
-  }
-
-  &.product .v-card-summary {
-    height: 9.1em;
-  }
-
-  @media #{$wide} {
-    .v-card-image {
-      min-height: 250px;
-    }
-  }
-}
+//.v-card {
+//  text-align: center;
+//  overflow: hidden;
+//  border: 1px solid $block-border-color;
+//  padding: $grid-gutter-width;
+//  header, footer {}
+//  .divider {
+//    background: $block-border-color;
+//    display: inline-block;
+//    width: 50px; height: 3px;
+//    margin: $grid-gutter-width/2 0;
+//  }
+//
+//  .v-card-image {
+//    padding: 0 20px;
+//  }
+//  .v-card-content {
+//    .btn {
+//      margin-bottom: $grid-gutter-width/2;
+//    }
+//  }
+//  .v-card-summary {
+//    overflow: hidden;
+//    text-overflow: ellipsis;
+//    margin-bottom: $grid-gutter-width/2;
+//  }
+//  .v-card-subtitle {
+//    color: $gray-light;
+//    margin: 0 0 10px 0;
+//    min-height: 1em;
+//  }
+//  .v-card-more {
+//    text-align: left;
+//    width: 100%;
+//    position: relative;
+//  }
+//
+//  &.product .v-card-summary {
+//    height: 9.1em;
+//  }
+//
+//  @media #{$wide} {
+//    .v-card-image {
+//      min-height: 250px;
+//    }
+//  }
+//}
 
 /* ------------------------------------------------- Карточка Промо блок и Роутер - */
 .card {
-  text-align: center;
   border: 1px solid $block-border-color;
   border-radius: $border-radius-base;
-  padding: $grid-gutter-width;
   margin-bottom: $grid-gutter-width;
+  .card-header {
+    border-bottom: 1px solid $block-border-color;
+  }
 
+  .card-content {
+    padding: $grid-gutter-width;
+    text-align: center;
+  }
   .card-title {
     margin-top: $grid-gutter-width;
   }
@@ -431,10 +487,17 @@ fieldset.panel {
     margin: 0;
   }
   .card-image {
-    min-height: 190px;
-  }
-  img {
-    margin: auto;
+    position: relative;
+    img {
+      margin: auto;
+    }
+    img:first-child {
+      min-height: 190px;
+    }
+    img:nth-child(2) {
+      position: absolute; right: 15px; bottom: 0;
+      width: 40%;
+    }
   }
   .card-subtitle {
     color: $text-muted;
@@ -451,6 +514,7 @@ fieldset.panel {
   }
   .card-action {
     margin-top: $grid-gutter-width;
+    a:not(:last-child) { margin-bottom: $grid-gutter-width/2; }
   }
 
   &.promo-card {
@@ -469,6 +533,7 @@ fieldset.panel {
       width: 50%;
     }
   }
+
   &.contact-card {
     img {
       width: 70%;
@@ -512,6 +577,26 @@ fieldset.panel {
         @include rotate(-180deg);
       }
     }
+  }
+
+  &.product-card {
+    .card-subtitle { min-height: 42px; }
+    .card-image img:first-child { min-height: 308px; }
+    .card-summary {
+      > div {
+        margin-bottom: 5px;
+        color: $brand-blue;
+        span {
+          color: $text-muted;
+          display: block;
+          &.irs-single { color: #fff; }
+        }
+      }
+    }
+  }
+
+  &.protection-program-card {
+    padding: 40px;
   }
 }
 
@@ -1280,6 +1365,52 @@ article {
   }
 }
 
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+.agrocalc-form {
+  fieldset .panel-body {
+    @include make-row();
+  }
+  .form-item-culture,
+  .form-item-phase,
+  .form-item-area,
+  .form-item-seed,
+  .form-item-weeds,
+  .form-item-pests,
+  .form-item-fert,
+  .form-item-desic,
+  .form-item-region,
+  .form-item-phone,
+  .form-item-email,
+  .form-item-name,
+  .form-item-diseases {
+    @include make-sm-column(6);
+  }
+  .form-item-desic,
+  .form-item-fert {
+    text-transform: uppercase;
+  }
+  .form-submit-wrapper {
+    text-align: right;
+  }
+  .help-block { margin: 0; }
+  .form-actions { position: relative; }
+
+  [data-animate=true] {
+    position: absolute; z-index: 1;
+    display: none;
+    &.animate-processed { display: block; }
+    &.animate-processed.accepted { display: none; }
+  }
+  .help1 { top: -85px; left: -150px; }
+  .help2 { top: 160px; left: 210px; }
+  .help3 { top: -60px; right: 180px; }
+  .help4 { right: 0; top: 125px; }
+  .help5 { top: 30px; right: -20px; }
+  .help6 { bottom: -70px; right: 30px; }
+  .help7 { top: -5px; left: -35px; }
+  .help8 { top: -140px; left: 325px; }
+
+}
 
 // --------------------------------------- ASide
 aside {
@@ -1394,4 +1525,163 @@ aside {
   }
 }
 
+/* ------------------------------------------------- Программа защиты - */
+#protection-program {
+  .view-content { padding-bottom: $grid-gutter-width*2; }
+  .request .request-title {
+    margin-bottom: $grid-gutter-width;
+  }
+}
+.protection-program {
+  .switch-all {
+    display: flex; justify-content: flex-end;
+    padding: 10px 15px;
+    .material-switch-title { flex: 0 0 265px; }
+    .material-switch { flex: 0 0 40px; }
+  }
+  margin-top: $grid-gutter-width*2;
+  .list-category-header {
+    background: $brand-primary;
+    display: flex; align-items: center;
+    padding: 5px $grid-gutter-width/2;
+    color: #fff;
+    height: 60px;
+    margin-bottom: $grid-gutter-width;
+    .icon {
+      width: 50px;
+      margin-right: $grid-gutter-width;
+    }
+  }
+  .collapse {
+    overflow: hidden;
+  }
+  .card {
+    transition: all 500ms ease-in-out;
+    filter: grayscale(100%); -webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: gray; /* IE 6-9 */
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 15px;
+      .material-switch-title { flex: auto; }
+      .material-switch { flex: 0 0 40px; }
+    }
+    &.reglament .v-card-summary,
+    &.reglament .v-card-subtitle { margin: 0; }
+
+    .card-summary { max-height: initial; }
+    .card-footer {
+      color: inherit;
+      padding: 10px 15px;
+      div {
+        margin-bottom: 10px;
+        > span {
+          color: #aaa; font-weight: 100;
+          display: block;
+          margin-bottom: 4px;
+        }
+      }
+    }
+    &.is-active {
+      filter: none; -webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none;
+    }
+  }
+  .amountByCat,
+  .amountByProgram {
+    display: flex;
+    .is-active & { display: flex;}
+    position: absolute; bottom: 0; left: 0; right: 0; top: 0; z-index: 0;
+    padding: 0 15px;
+    div {
+      flex: 0 0 150px;
+      padding: 5px;
+      @media #{$phone} {
+        &:first-child { flex: 0 0 120px; }
+      }
+    }
+    h5 {
+      font-size: 1.2em; text-transform: uppercase;
+      margin: 5px 0;
+    }
+    p { margin: 5px 0; }
+    @media #{$tablet} {
+      justify-content: center;
+    }
+  }
+  .list-category-header:not(.is-active) .amountByCat {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper {
+}
+.agrocalc-form {
+  fieldset .panel-body {
+    @include make-row();
+  }
+  .form-item-culture,
+  .form-item-phase,
+  .form-item-area,
+  .form-item-seed,
+  .form-item-weeds,
+  .form-item-pests,
+  .form-item-fert,
+  .form-item-desic,
+  .form-item-region,
+  .form-item-phone,
+  .form-item-email,
+  .form-item-name,
+  .form-item-diseases {
+    @include make-sm-column(6);
+  }
+  .form-item-desic,
+  .form-item-fert {
+    text-transform: uppercase;
+  }
+  .form-submit-wrapper {
+    text-align: right;
+  }
+  .help-block { margin: 0; }
+  .form-actions {
+    position: relative;
+    @include clearfix();
+  }
+
+  [data-animate=true] {
+    position: absolute; z-index: 1;
+    display: none;
+    &.animate-processed { display: block; }
+    &.animate-processed.accepted { display: none; }
+  }
+  .help1 { top: -85px; left: -150px; }
+  .help2 { top: 160px; left: 210px; }
+  .help3 { top: -60px; right: 180px; }
+  .help4 { right: 0; top: 125px; }
+  .help5 { top: 30px; right: -20px; }
+  .help6 { bottom: -70px; right: 30px; }
+  .help7 { top: -40px; left: 140px; }
+  .help8 { top: -140px; left: 325px; }
+
+}
+
+/* ------------------------------------------------- Animated Elements ----------------------------------------------- */
+// пока исп только для всплывающих (.slide-up) текстовых подписей на экранах описания продуктов
+[data-animate=true] {
+  opacity: 0;
+  transition-property: transform, opacity;
+  transition-timing-function: ease;
+  &.slide-up { transform: translateY(40px); }
+  &.slide-down { transform: translateY(-40px); }
+  &.slide-left { transform: translateX(40px); }
+  &.slide-right { transform: translateX(-40px); }
+  &.visible {
+    opacity: 1;
+    transition-duration: 500ms;
+    &.slide-up,
+    &.slide-down { transform: translateY(0px); }
+    &.slide-left,
+    &.slide-right { transform: translateX(0px); }
+  }
+}
 
