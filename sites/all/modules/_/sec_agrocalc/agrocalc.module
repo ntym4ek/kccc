@@ -85,7 +85,7 @@ function agrocalc_form($from, &$form_state)
     }
     $weed_ids = empty($form_state['values']['weeds']) ? '' : $form_state['values']['weeds'];
     $pest_ids = empty($form_state['values']['pests']) ? '' : $form_state['values']['pests'];
-    $disease_ids = empty($form_state['values']['disease']) ? '' : $form_state['values']['disease'];
+    $disease_ids = empty($form_state['values']['diseases']) ? '' : $form_state['values']['diseases'];
     $desic = empty($form_state['values']['desic']) ? '' : $form_state['values']['desic'];
     $fert = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
 
