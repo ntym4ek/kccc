@@ -558,9 +558,10 @@ fieldset.panel {
       white-space: nowrap;
     }
   }
-  .card-action {
+  .card-actions {
     margin-top: $grid-gutter-width;
-    a:not(:last-child) { margin-bottom: $grid-gutter-width/2; }
+    a { font-size: .9em; }
+    //a:not(:last-child) { margin-bottom: $grid-gutter-width/2; }
   }
 
   &.promo-card {

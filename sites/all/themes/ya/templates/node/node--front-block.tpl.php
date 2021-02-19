@@ -81,6 +81,7 @@
 ?>
 
 <div class="card promo-card">
+  <div class="card-content">
     <div class="card-image">
         <a href="<? print $node_url; ?>">
             <img src="<? print $image; ?>" alt="<? print $title; ?>" class="img-responsive"/>
@@ -99,5 +100,6 @@
             <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         </a>
     </div>
+  </div>
 </div>
 
