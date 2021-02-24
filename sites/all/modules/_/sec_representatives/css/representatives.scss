@@ -31,71 +31,57 @@
 }
 
 
-.rep-box .header,
-.rep .header {
-  background: #3A9027;
-  border-top-left-radius: 4px; border-top-right-radius: 4px;
-  padding: 5px 15px;
-  width: 100%;
-  color: #fff; font-size: 16px; line-height: 28px;
-}
-.rep .header .icon  {
-  margin-right: 10px;
-  width: 30px;
-}
-.rep .contact-card {
-  padding: 20px;
-}
+//.rep-box .header,
+//.rep .header {
+//  background: #3A9027;
+//  border-top-left-radius: 4px; border-top-right-radius: 4px;
+//  padding: 5px 15px;
+//  width: 100%;
+//  color: #fff; font-size: 16px; line-height: 28px;
+//}
+//.rep .header .icon  {
+//  margin-right: 10px;
+//  width: 30px;
+//}
+//.rep .contact-card {
+//  padding: 20px;
+//}
 
 
-.rep-box {
-  border: 1px solid #eee; border-right: none; border-bottom: none;
-  margin-top: 15px;
-  height: 235px;
-  position: relative; top: initial; left: initial;
-}
-
-.rep-box .media-heading {
-  color: #3A9126; font-size: 16px;
-}
-.rep-box .media-heading img { width: 30px; }
-
-.rep-box.user-card .phone a,
-.rep-box.user-card .email a {
-  float: none;
-  width: initial;
-}
-
-.rep-box.last {
+.last-box {
   color: #fff; font-size: 15px;
   background: #3A9027;
-  border: none;
-  padding: 30px;
+  a {
+    color: #fff;
+    position: absolute;
+    bottom: 30px; right: 50px;
+    text-decoration: underline;
+  }
+  a.mail { left: 30px; }
+  i {
+     font-size: 12px;
+     position: absolute; top: 5px; right: -20px;
+  }
+  .last-item {
+    position: relative;
+    padding: 30px;
+    height: 200px;
+  }
+  @media only screen and (min-width : 0) and (max-width : 768px) {
+    .last-item {
+      padding: 15px 30px;
+      height: 110px;
+    }
+  }
 }
-.rep-box.last a i {
-  font-size: 12px;
-  position: absolute; top: 5px; right: -20px;
-}
-.rep-box.last a {
-  color: #fff;
-  position: absolute;
-  bottom: 30px; right: 50px;
-  text-decoration: underline;
-}
-.rep-box.last a.mail { left: 30px; }
 
-.rep-item.contact-card { min-height: 150px; }
+
 
 @media only screen and (min-width : 0) and (max-width : 1440px) {
   .map > img { height: initial; width: 100%; }
   .rep { display: none; }
 }
-@media only screen and (min-width : 0) and (max-width : 768px) {
-  .rep-box.last {
-    padding: 15px 30px;
-    height: 110px;
-  }
-}
+
 
 #RU-KRM,
 #RU-SV { transform: scale(0.3); }

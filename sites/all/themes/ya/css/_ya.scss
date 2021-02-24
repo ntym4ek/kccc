@@ -589,7 +589,7 @@ fieldset.panel {
     .contact-phones,
     .contact-emails {
       text-align: left;
-      padding-left: 8%;
+      // padding-left: 8%; не входят телефоны с добавочным номером
       i {
         background: $brand-primary;
         color: #fff; line-height: 25px; text-align: center;

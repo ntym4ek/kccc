@@ -1,3 +1,6 @@
+<?if (isset($options['class'])): ?>
+<div class="<? print $options['class']; ?>">
+<? endif; ?>
 <div class="card contact-card">
   <div class="card-content">
     <div class="card-image">
@@ -43,3 +46,6 @@
     </div>
   </div>
 </div>
+<?if (isset($options['class'])): ?>
+  </div>
+<? endif; ?>
