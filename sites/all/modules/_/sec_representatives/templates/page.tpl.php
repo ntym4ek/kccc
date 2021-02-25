@@ -34,7 +34,7 @@ $director = array_shift($sales['heads']);
             'contact' => $rep,
             'collapse' => $collapse,
             'options' => ['class' => 'col-md-6']));
-          if (($i++) % 2) print '<div class="clearfix"></div>';
+//          if (($i++) % 2) print '<div class="clearfix"></div>';
           ?>
         <? endforeach; ?>
       </div>
@@ -74,7 +74,7 @@ $director = array_shift($sales['heads']);
           'contact' => $rep,
           'collapse' => $collapse,
           'options' => ['class' => 'rep-item col-sm-12 col-md-6 ' . implode(' ', $rep_iso)]));
-        if ($counter++ % 2) print '<div class="clearfix"></div>';
+//        if ($counter++ % 2) print '<div class="clearfix"></div>';
         ?>
       <?php endforeach; ?>
     </div>
