@@ -1,6 +1,6 @@
 name = Shipping | Pickup
 description = Доставка: самовывоз
-package = Jax
+package = Custom
 dependencies[] = commerce
 dependencies[] = commerce_shipping
 core = 7.x

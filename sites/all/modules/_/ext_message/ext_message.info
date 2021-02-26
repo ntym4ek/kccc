@@ -1,7 +1,7 @@
 name = F | Message Сustom
 description = Функционал создания сообщений на базе Message API
 core = 7.x
-package = Jax
+package = Custom
 version = 7.x-1.0
 dependencies[] = ctools
 dependencies[] = entity

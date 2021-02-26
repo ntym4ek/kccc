@@ -1,5 +1,5 @@
-name = Protection Programs
+name = Раздел Программы защиты
 description = Программы защиты
-package = Jax
+package = Custom
 core = 7.x
 

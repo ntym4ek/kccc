@@ -2,4 +2,4 @@ name = Reglaments
 description = Функционал, связанный с регламентами
 version = 7.x-1.0
 core = 7.x
-package = Jax
+package = Custom

@@ -1,4 +1,4 @@
 name = Payment | Bank Transfer
 description = Adds new payment way - bank transfer
-package = Jax
+package = Custom
 core = 7.x

@@ -1,6 +1,6 @@
 name = H | Registration Custom
 description = Изменение и дополнения для модуля
-package = Jax
+package = Custom
 core = 7.x
 dependencies[] = registration
 
