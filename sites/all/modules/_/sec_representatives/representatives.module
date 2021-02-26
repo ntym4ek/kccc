@@ -594,18 +594,18 @@ function representatives_sales_list()
             71701 => [], //Омская область",
         ),
     );
-  $sales[] = array(
-    'roles' =>  ['representative', 'expert'],
-    'access' => false,
-    'surname' => 'Токарев', 'name' => 'Виктор', 'name2' => 'Анатольевич',
-    'expert' => '+7 (922) 555-08-96',
-    'phones' => array('+7 (922) 966-05-52'),
-    'emails' => array('orenburg3@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/tokarev.png',
-    'regions' => array(
-      71702 => [], //Оренбургская область",
-    ),
-  );
+//  $sales[] = array(
+//    'roles' =>  ['representative', 'expert'],
+//    'access' => false,
+//    'surname' => 'Токарев', 'name' => 'Виктор', 'name2' => 'Анатольевич',
+//    'expert' => '+7 (922) 555-08-96',
+//    'phones' => array('+7 (922) 966-05-52'),
+//    'emails' => array('orenburg3@kccc.ru'),
+//    'photo' => '/' . $module_path . '/images/photos/tokarev.png',
+//    'regions' => array(
+//      71702 => [], //Оренбургская область",
+//    ),
+//  );
   $sales[] = array(
     'roles' =>  ['representative'],
     'access' => true,
@@ -920,6 +920,12 @@ function representatives_sales_list()
     'photo' => '/' . $module_path . '/images/photos/saitov_s.png',
     'regions' => array(
       71720 => [], //Челябинская область",
+      71702 => [], //Оренбургская область",
+      71704 => [], //Пензенская область",
+      71648 => [], //Республика Башкортостан",
+      71719 => [], //Ульяновская область',
+      71718 => [], //Тюменская область",
+      71659 => [], //Республика Мордовия",
     ),
   );
   $sales[] = array(
