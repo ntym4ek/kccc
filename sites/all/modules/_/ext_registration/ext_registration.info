@@ -1,4 +1,4 @@
-name = H | Registration Custom
+name = Дополнения для Registration
 description = Изменение и дополнения для модуля
 package = Custom
 core = 7.x

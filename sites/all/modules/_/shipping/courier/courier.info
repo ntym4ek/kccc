@@ -1,8 +1,0 @@
-name = Shipping | Courier delivery
-description = Courier delivery
-package = Custom
-dependencies[] = commerce
-dependencies[] = commerce_shipping
-core = 7.x
-
-

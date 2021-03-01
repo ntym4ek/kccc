@@ -1,7 +1,0 @@
-name = Shipping | Transport Company
-description = Shipping by transport company
-package = Custom
-dependencies[] = commerce
-dependencies[] = commerce_shipping
-core = 7.x
-

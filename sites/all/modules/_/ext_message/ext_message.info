@@ -1,4 +1,4 @@
-name = F | Message Сustom
+name = Дополнения для Message
 description = Функционал создания сообщений на базе Message API
 core = 7.x
 package = Custom

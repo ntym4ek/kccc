@@ -1,4 +1,4 @@
-name = H | Forms Extension
+name = Дополнения для Forms
 description = Изменение оформления форм
 package = Custom
 core = 7.x

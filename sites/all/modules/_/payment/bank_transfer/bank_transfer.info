@@ -1,4 +1,0 @@
-name = Payment | Bank Transfer
-description = Adds new payment way - bank transfer
-package = Custom
-core = 7.x

@@ -1,4 +1,0 @@
-name = Payment | Other Method
-description = Adds new payment way - any other one, choose it with manager
-package = Custom
-core = 7.x
