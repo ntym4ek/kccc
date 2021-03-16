@@ -1,0 +1,70 @@
+<?
+
+function ip_menu()
+{
+  // purpose/ip/country
+  $items['ip/add/%/%/%'] = array(
+    'page callback' => 'ip_add_ip',
+    'page arguments' => [2, 3, 4],
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  // purpose/ip/days
+  $items['ip/check-fits/%/%/%'] = array(
+    'page callback' => 'ip_check_ip_fits',
+    'page arguments' => [2, 3, 4],
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  return $items;
+}
+
+function ip_check_ip_fits($purpose, $ip, $days)
+{
+  $is_ip_used = db_select('ips', 'i')
+    ->condition('i.ip', $ip)
+    ->condition('i.purpose', $purpose)
+    ->condition('i.created', time() - $days*24*60*60, '>')
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+
+  echo $is_ip_used ? 'false' : 'true';
+  drupal_exit();
+}
+
+function ip_add_ip($purpose, $ip, $country)
+{
+  // проверить наличие в DB
+  $ips = db_select('ips', 'i')
+    ->fields('i')
+    ->condition('i.ip', $ip)
+    ->condition('i.purpose', $purpose)
+    ->execute()
+    ->fetchAllAssoc('id');
+
+  $id = 0;
+  if ($ips) {
+    $id = array_shift($ips)->id;
+    db_update('ips')
+      ->fields([
+        'created' => time(),
+      ])
+      ->condition('id', $id)
+      ->execute();
+  } else {
+    $id = db_insert('ips')
+      ->fields([
+        'ip' => $ip,
+        'purpose' => $purpose,
+        'country' => $country,
+        'created' => time(),
+      ])
+      ->execute();
+  }
+
+  echo $id ? 'true' : 'false';
+  drupal_exit();
+}

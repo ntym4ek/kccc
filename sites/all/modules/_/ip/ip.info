@@ -1,0 +1,5 @@
+name = IP
+description = База данных IP адресов с функционалом для проверки
+version = 7.x-1.0
+core = 7.x
+package = Custom
