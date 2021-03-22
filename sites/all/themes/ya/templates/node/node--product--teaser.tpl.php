@@ -101,7 +101,7 @@
       </div>
     <? endif; ?>
 
-    <div class="card-action">
+    <div class="card-actions">
       <a class="btn btn-gray" href="<? print $product_url; ?>">
         <? print t('More'); ?>
         <i class="fa fa-chevron-right pull-right"></i>

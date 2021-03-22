@@ -81,7 +81,7 @@ function agrocalc_form($from, &$form_state)
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'culture') {
         unset($form_state['input']['weeds']); unset($form_state['values']['weeds']);
         unset($form_state['input']['pests']); unset($form_state['values']['pests']);
-        unset($form_state['input']['disease']); unset($form_state['values']['disease']);
+        unset($form_state['input']['diseases']); unset($form_state['values']['diseases']);
     }
     $weed_ids = empty($form_state['values']['weeds']) ? '' : $form_state['values']['weeds'];
     $pest_ids = empty($form_state['values']['pests']) ? '' : $form_state['values']['pests'];

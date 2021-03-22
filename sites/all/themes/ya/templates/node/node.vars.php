@@ -197,7 +197,7 @@ function ya_preprocess_node(&$vars)
       $vars['program'] = theme('protection_program', ['program' => $program]);
     }
     if ($vars['view_mode'] == 'teaser') {
-      $vars['image_url'] = file_create_url($vars['field_icon']['und'][0]["uri"]);
+      $vars['image_url'] = file_create_url($vars['field_icon'][0]["uri"]);
     }
   }
 

@@ -552,6 +552,7 @@ fieldset.panel {
   .card-summary {
     color: $text-color;
     max-height: 5.5em; min-height: 5.5em;
+    margin-top: $grid-gutter-width/2;
     overflow: hidden;
     div {
       text-align: left;
@@ -559,8 +560,10 @@ fieldset.panel {
     }
   }
   .card-actions {
-    margin-top: $grid-gutter-width;
-    a { font-size: .9em; }
+    margin-top: $grid-gutter-width/2;
+    a {
+      font-size: .9em;
+    }
     //a:not(:last-child) { margin-bottom: $grid-gutter-width/2; }
   }
 
@@ -569,7 +572,10 @@ fieldset.panel {
       max-height: 2.2em; min-height: 2.2em;
     }
   }
-  .divider { display: inline-block; }
+  .divider {
+    display: inline-block;
+    margin: $grid-gutter-width/2 0;
+  }
 
   &.router-card {
     .card-image {
@@ -640,6 +646,7 @@ fieldset.panel {
         }
       }
     }
+    .card-actions a:not(:first-child) { margin-top: $grid-gutter-width/2; }
   }
 
   &.protection-program-card {
@@ -1621,6 +1628,7 @@ aside {
       filter: none; -webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none;
     }
   }
+  p { margin-bottom: $grid-gutter-width; }
   .amountByCat,
   .amountByProgram {
     display: flex;
@@ -1697,8 +1705,9 @@ aside {
   .help6 { bottom: -70px; right: 30px; }
   .help7 { top: -40px; left: 140px; }
   .help8 { top: -140px; left: 325px; }
-
 }
+
+.request p { margin-bottom: $grid-gutter-width; }
 
 /* ------------------------------------------------- Animated Elements ----------------------------------------------- */
 // пока исп только для всплывающих (.slide-up) текстовых подписей на экранах описания продуктов
@@ -1817,3 +1826,16 @@ aside {
   @include make-md-column(6);
   @include make-md-column-offset(3);
 }
+
+/* ------------------------------------------------- Форум ---------------------------------------------------------- */
+.forum-table {
+  .forum-header,
+  .forum-header a {
+    color: #fff; font-weight: 400;
+  }
+  td { padding: 5px 10px; }
+}
+.forum-comments-add {
+     width: 100%;
+}
+

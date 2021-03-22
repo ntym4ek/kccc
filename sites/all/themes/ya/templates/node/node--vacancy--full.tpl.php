@@ -60,6 +60,7 @@
 
       <h3><? print t('Contacts'); ?></h3>
 
+      <div class="row">
       <? print theme('contact_card', array(
         'contact' => [
           'office' => t('Personnel manager'),
@@ -70,7 +71,8 @@
           'emails' => array('maria.ogorodova@kccc.ru'),
           'photo' => '/sites/all/modules/_/contacts/images/photo/ogorodova.png',
         ],
-        'options' => ['class' => 'col-md-6'])); ?>
+        'options' => ['class' => 'col-md-4'])); ?>
+      </div>
     </div>
   </div>
 
