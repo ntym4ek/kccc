@@ -31,7 +31,13 @@ function gard_preprocess_page(&$vars)
 
 
     /** -------------------------------------------- Шаблон страницы ------------------------------------------------ */
-        // шаблон для страниц без оформления
+    // шаблон maintenance_page есть в стеке, но стоит на последнем месте,
+    // поэтому переопределённые шаблоны применяются вместо него шаблона
+    if ($vars["theme_hook_original"] == 'maintenance_page') {
+        $vars['theme_hook_suggestions'][] = 'maintenance_page';
+    }
+
+    // шаблон для страниц без оформления
     if (isset($vars['node']) && $vars['node']->nid == 7247) {
         $vars['theme_hook_suggestions'][] = 'page__print';
     }

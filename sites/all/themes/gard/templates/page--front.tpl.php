@@ -192,3 +192,5 @@
 </div>
 
 <div id="modalBackdrop"></div>
+
+<?php render($page['content']['metatags']); ?>

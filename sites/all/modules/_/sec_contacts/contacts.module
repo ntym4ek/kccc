@@ -144,7 +144,7 @@ function contacts_get_contacts_list() {
                             'office' => t('Head of region'),
                             'access' => true,
                             'surname' => 'Князев', 'name' => 'Алексей', 'name2' => 'Юрьевич',
-                            'phones' => array('+7 (922) 936-10-14'),
+                            'phones' => array('+7 (912) 700-12-07'),
                             'emails' => array('td.sale2@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/knyazev.png',
                             'regions' => array(
