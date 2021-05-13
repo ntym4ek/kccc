@@ -46,7 +46,7 @@ $auto = !isset($message['params']['context']['auto']) ? t('This message was gene
                     <table width="800px">
                         <tr>
                             <td style="border-bottom: 1px solid #ccc;">
-                                <img src="https://kccc.ru/sites/all/themes/gard/images/logo/logo_mail_<?php print $lang; ?>.png" style="width: 299px;">
+                                <img src="https://kccc.ru/sites/all/themes/gard/images/logo/logo_long.png" style="width: 299px;">
                             </td>
                         </tr>
                         <tr>
