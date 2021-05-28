@@ -91,7 +91,7 @@ function checkout_contact_pane_checkout_form($form, &$form_state, $checkout_pane
         '#attributes' => array('placeholder' => t('Contact phone')),
     );
     $checkout_form['request']['forma']['agree'] = array(
-        '#markup' => '<div class="agree">' . t('Submitting this form you agree with <a href="/info/privacy-policy">personal data processing</a>') . '</div>',
+        '#markup' => '<div class="button-notice">' . t('Submitting this form you agree with <a href="/info/privacy-policy">personal data processing</a>') . '</div>',
     );
 
     return $checkout_form;

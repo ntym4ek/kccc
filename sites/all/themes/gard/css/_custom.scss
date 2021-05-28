@@ -2035,11 +2035,12 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     .cc-forma {
         margin-top: 4px;
     }
-      .agree {
-          color: $text-muted; font-size: .8em;
-          text-align: right;
-      }
   }
+}
+
+.button-notice {
+  color: $text-muted; font-size: .8em; text-align: right;
+  margin-top: 5px;
 }
 
 .checkout-buttons {

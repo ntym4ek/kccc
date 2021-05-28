@@ -102,7 +102,7 @@ function checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_stat
     // отключить отмену, переименовать оформление
     unset($form['buttons']['cancel']);
     $form['buttons']['continue']['#value'] = t('Send request');
-    $form['buttons']['continue']['#attributes']['class'][] = 'pull-right btn-wide';
+    $form['buttons']['continue']['#attributes']['class'][] = 'btn-wide';
     $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
     $form['buttons']['continue']['#submit'][] = 'checkout_commerce_checkout_form_submit';
     // подавить общее сообщение о наличии ошибок в форме
