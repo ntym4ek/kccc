@@ -347,17 +347,6 @@ function representatives_sales_list()
   $sales[] = array(
     'roles' =>  ['representative'],
     'access' => false,
-    'surname' => 'Цыбань', 'name' => 'Антон', 'name2' => 'Александрович',
-    'phones' => array('+7 (922) 900-74-40'),
-    'emails' => array('amur.region@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/tsiban.png',
-    'regions' => array(
-      71674 => [], //Амурская область",
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Мизюков', 'name' => 'Владимир', 'name2' => 'Александрович',
     'phones' => array('+7 (922) 903-02-57'),
     'emails' => array('amur.region2@kccc.ru'),
@@ -424,6 +413,17 @@ function representatives_sales_list()
       71689 => [], //Кировская область",
       71690 => [], //Костромская область",
       71705 => [], //Пермский край",
+    ),
+  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'access' => false,
+    'surname' => 'Бойко ', 'name' => 'Павел', 'name2' => 'Валерьевич',
+    'phones' => array('+7 (922) 900-01-52'),
+    'emails' => array('irkutsk@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/boiko_p.png',
+    'regions' => array(
+      71684 => [], //Иркутская область",
     ),
   );
   $sales[] = array(
@@ -539,17 +539,6 @@ function representatives_sales_list()
       71700 => [], //Новосибирская область",
       71701 => [], //Омская область",
       71668 => [], //Алтайский край",
-    ),
-  );
-  $sales[] =  array(
-    'roles' =>  ['specialist'],
-    'surname' => 'Довлетов', 'name' => 'Ягшымырат', 'name2' => 'Омарович',
-    'phones' => array('+7 (922) 903-67-86'),
-    'expert' => '+7 (922) 903-67-86',
-    'emails' => array('novosibirsk@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/dovletov_y.png',
-    'regions' => array(
-      71700 => [], //Новосибирская область",
     ),
   );
   $sales[] =  array(
@@ -874,17 +863,6 @@ function representatives_sales_list()
     'photo' => '/' . $module_path . '/images/photos/gimalov_r.png',
     'regions' => array(
       71719 => [], //Ульяновская область',
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
-    'surname' => 'Упаков', 'name' => 'Ильдар', 'name2' => 'Тагирович',
-    'phones' => array('+7 (922) 747-26-40'),
-    'emails' => array('chelyabinsk1@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/upakov_i.png',
-    'regions' => array(
-      71720 => [], //Челябинская область",
     ),
   );
   $sales[] = array(
