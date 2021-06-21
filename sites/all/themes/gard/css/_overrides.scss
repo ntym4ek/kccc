@@ -154,7 +154,7 @@ a, a:hover, a:focus {
   position: absolute; bottom: 0; left: 0; right: 0;
   padding-top: 10px; padding-bottom: 10px;
   text-align: center;
-
+  > .row { display: flex;  }
   .logo img { height: 40px; }
 
   .social { padding-left: 30px; }

@@ -203,7 +203,7 @@ function mailer_manual_form_spam_submit($form, &$form_state)
 
 function mailer_send_manual_mails($params)
 {
-     drupal_mail('mailer', 'manual_mail', $params['mail'], 'ru', $params);
+     drupal_mail('mailer', 'manual_mail', $params['mail'], 'ru', $params, 'bot@kccc.ru');
 }
 
 
