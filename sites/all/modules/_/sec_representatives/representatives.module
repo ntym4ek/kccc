@@ -783,7 +783,7 @@ function representatives_sales_list()
     'surname' => 'Сироткин', 'name' => 'Евгений', 'name2' => 'Николаевич',
     'phones' => array('+7 (922) 966-59-88'),
     'emails' => array('tambov@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/sirotkin.png',
+    'photo' => '/' . $module_path . '/images/photos/sirotkin_e.png',
     'regions' => array(
       71714 => [], //Тамбовская область",
     ),
