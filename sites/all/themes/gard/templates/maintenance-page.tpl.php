@@ -63,7 +63,7 @@
     <?php endif; ?>
   </div>
   <div class="logo">
-    <img src="/sites/default/files/images/logo/logo.png" alt="KCCC" />
+    <img src="/sites/default/files/images/logo/logo.svg" alt="KCCC" />
   </div>
 </div>
 </div>

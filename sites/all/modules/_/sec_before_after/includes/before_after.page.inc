@@ -181,11 +181,13 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         $output['culture'] = $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '');
 
                         $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
-                        $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
                         $category = 'препаратом';
-                        if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
-                        if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
-                        if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
+                        if ($processing_wr->field_f_s_p_preparation->value()) {
+                          $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
+                          if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
+                          if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
+                          if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
+                        }
 
                         // фото поля
                         $output['image_thumb'] = $output['image_full'] = '';
