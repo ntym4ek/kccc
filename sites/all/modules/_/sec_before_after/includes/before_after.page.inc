@@ -504,7 +504,7 @@ function before_after_exposed_filters_form_submit($form, &$form_state)
 function before_after_page($season_id)
 {
   if ($season = before_after_get_atfield($season_id)) {
-    $title = htmlspecialchars_decode('Защита культуры ' . $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '') . '. ' . $season['region'] . '. ' . $season['farm']);
+    $title = htmlspecialchars_decode('Защита культуры ' . $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '') . '. ' . $season['region'] . '.');
     drupal_set_title($title);
     drupal_set_subtitle(before_after_page_description($season_id));
 
@@ -530,7 +530,7 @@ function before_after_page_description($season_id)
   foreach($season['hobjects'] as $hobject) {
     $hobjects[] = $hobject['name'];
   }
-  $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '.';
+  $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '. ' . $season["farm"] . '.';
   $output .= $season["previous_culture"] ? ' Предшественник: ' . $season["previous_culture"] . '.' : '';
   $output .= $season["sub_culture"] ? ' Подсев: ' . $season["sub_culture"] . '.' : '';
 

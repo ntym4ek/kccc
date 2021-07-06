@@ -109,11 +109,6 @@
         <?php print render($primary_nav); ?>
         <?php print render($navigation_nav); ?>
     </div>
-    <div class="side-menu language-selector">
-        <ul class="menu nav navbar-nav foot">
-            <li class="with-icon"><?php print $language_link; ?></li>
-        </ul>
-    </div>
 </div>
 <div class="content-container">
     <div class="content container-fluid">

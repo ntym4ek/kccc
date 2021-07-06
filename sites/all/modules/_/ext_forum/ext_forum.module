@@ -105,6 +105,7 @@ function ext_forum_process_author_pane(&$vars)
  */
 function ext_forum_metatag_metatags_view_alter(&$output, $instance, $options) {
   if (arg(0) == 'forum' && is_numeric(arg(1))) {
+    $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Форум - ' . $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2];
     $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Список тем раздела ' . drupal_get_title();
   }
 }

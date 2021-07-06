@@ -195,7 +195,7 @@ function get_product_info($node)
         }
 
         // фото
-        $photo_url = $preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '';
+        $photo_url = file_create_url($preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '');
 
         // категория и цвет
         $cats = [];

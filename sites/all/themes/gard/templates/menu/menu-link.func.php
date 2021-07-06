@@ -419,7 +419,8 @@ function _get_menu_entities($field_entity, $field_entity_field = null, $tids = [
     }
 
     foreach($query->execute()->fetchAll() as $item) {
-        $items[] = [
+      $url = url('node/' . $item->nid);
+      $items[] = [
             'id' => $item->nid,
             'title' => $item->title,
             'url' => url('node/' . $item->nid),

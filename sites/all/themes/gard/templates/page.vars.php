@@ -310,12 +310,12 @@ function gard_preprocess_page(&$vars)
     $vars['footer_nav'] = menu_tree('menu-footer');
 
     // языковое меню
-    $lang = ($vars['language']->language == 'ru') ? '' : $vars['language']->language;
-    $url = drupal_get_path_alias(current_path());
-    $url = ($url == 'home') ? '' : $url;
-    $url = $lang ? $url : 'en/' . $url;
-    $text = '<i class="fas fa-globe"></i> ' . ($lang ? 'Русская версия' : 'English version');
-    $vars['language_link'] = '<a href="/' . $url . '">' . $text . '</a>';
+//    $lang = ($vars['language']->language == 'ru') ? '' : $vars['language']->language;
+//    $url = drupal_get_path_alias(current_path());
+//    $url = ($url == 'home') ? '' : $url;
+//    $url = $lang ? $url : 'en/' . $url;
+//    $text = '<i class="fas fa-globe"></i> ' . ($lang ? 'Русская версия' : 'English version');
+//    $vars['language_link'] = '<a href="/' . $url . '">' . $text . '</a>';
 
 
     /** - Главная страница ----------------------------------------------------------------- */

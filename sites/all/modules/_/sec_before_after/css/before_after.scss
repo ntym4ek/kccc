@@ -243,13 +243,13 @@
   /* закладки */
   .nav-tabs {
     border-bottom: none;
-    margin-bottom: 0; padding: 5px 15px;
+    margin-bottom: 0; padding: 5px 0;
     li {
       a {
         background: none; border: none;
         border-bottom: 1px solid rgba(9, 148, 220, 0.2);
-        font-size: $font-size-large; line-height: $line-height-large;
-        padding: 10px; margin-right: 15px;
+        font-size: 14px; line-height: 1.2;
+        padding: 5px 0; margin-right: 15px;
       }
       &.active a, a:hover, a:focus {
         background: none; border: none; border-bottom: 1px solid $brand-primary;
