@@ -41,6 +41,9 @@ function ext_forum_preprocess_page(&$vars)
         $vars['header']['category_title'] = '<a href="' . '/forum' . '">' . t('Forum') . '</a>';
     }
     if (arg(0) == 'forum' && $term = taxonomy_term_load(arg(1))) {
+      // сменим заголовок страницы
+      drupal_set_title('Раздел ' . drupal_set_title());
+
         $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
         $vars['header']['subtitle'] = $term_wrapper->description->value();
 

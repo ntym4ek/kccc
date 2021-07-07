@@ -86,7 +86,6 @@ Disallow: /blogs/tag
 Disallow: /blogs/user
 Disallow: /search
 Disallow: /user
-Disallow: /user/login
 Disallow: /user/logout
 Disallow: /user/register
 Disallow: /user/password
