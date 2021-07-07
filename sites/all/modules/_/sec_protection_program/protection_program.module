@@ -717,7 +717,8 @@ function protection_program_preprocess_page(&$vars) {
     }
 }
 
-function get_protection_program($ppid, $data = array()) {
+function get_protection_program($ppid, $data = array())
+{
     $pp = array();
     if ($ppid) {
         $pp_wrapper = entity_metadata_wrapper('node', $ppid);
@@ -800,7 +801,7 @@ function get_protection_program($ppid, $data = array()) {
             $sid = $stage->item_id->value();
             $prep_wrapper = entity_metadata_wrapper('node', $stage->field_pp_ps_preparation->value());
             $nid = $prep_wrapper->nid->value();
-            
+
             // определяем наименование препарата, ед.изм., нормы, стоимость
             $unit = $units_arr = $pid = $price = $title = array();
             $product_info = get_product_info($prep_wrapper->nid->value())['items'];
@@ -1063,7 +1064,7 @@ function get_protection_program($ppid, $data = array()) {
                         $cost_max = $stage['rate_max'][$sp_key] * $stage['price'][$sp_key];
                         $cost_field_min = $cost_min * $area;
                         $cost_field_max = $cost_max * $area;
-    
+
                         $pp['products'][$pid] = array(
                             'pid' => $pid,
                             'price' => $stage['price'][$sp_key],
@@ -1077,7 +1078,7 @@ function get_protection_program($ppid, $data = array()) {
                             'cost_field_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_min'] : 0) + $cost_field_min,
                             'cost_field_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_max'] : 0) + $cost_field_max,
                         );
-    
+
                         $sum_min += $cost_min;
                         $sum_max += $cost_max;
                     }

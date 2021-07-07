@@ -175,7 +175,7 @@ function _reglaments_resource_retrieve($pid)
                             $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
                             $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
                             $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
-                            $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_url']);
+                            $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_uri']);
                         }
 
                         $regl_new = array(

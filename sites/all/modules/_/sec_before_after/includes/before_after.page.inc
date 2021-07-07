@@ -221,7 +221,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'title' => $title,
                           'ingredients' => implode(' + ', $prep_info['ingredients']),
                           'url' => $prep_info['url'],
-                          'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
+                          'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                           'image_full' => $prep_info['photo_url'],
                         ];
                         $titles[] = $title;
@@ -236,7 +236,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'title' => $title,
                           'ingredients' => implode(' + ', $prep_info['ingredients']),
                           'url' => $prep_info['url'],
-                          'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
+                          'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                           'image_full' => $prep_info['photo_url'],
                         ];
                         $titles[] = $title;
@@ -250,7 +250,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'ingredients' => implode(' + ', $prep_info2['ingredients']),
                           'url' => $prep_info2['url'],
                           'nid' => $prep_info2['id'],
-                          'image_thumb' => image_style_url('medium', $prep_info2['photo_url']),
+                          'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
                           'image_full' => $prep_info2['photo_url'],
                         ];
                         $titles[] = $title2;
@@ -504,7 +504,7 @@ function before_after_exposed_filters_form_submit($form, &$form_state)
 function before_after_page($season_id)
 {
   if ($season = before_after_get_atfield($season_id)) {
-    $title = htmlspecialchars_decode('Защита культуры ' . $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '') . '. ' . $season['region'] . '.');
+    $title = htmlspecialchars_decode('Защита культуры ' . $season['culture'] . ($season['culture_note'] ? ' (' . $season['culture_note'] . ')' : '') . '. ' . $season['farm']);
     drupal_set_title($title);
     drupal_set_subtitle(before_after_page_description($season_id));
 
@@ -530,7 +530,7 @@ function before_after_page_description($season_id)
   foreach($season['hobjects'] as $hobject) {
     $hobjects[] = $hobject['name'];
   }
-  $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '. ' . $season["farm"] . '.';
+  $output = 'Пример работы препаратов Кирово-Чепецкой Химической Компании. Система защиты от вредных объектов ' . implode(', ', $hobjects) . '. ' . $season['region'] . '.';
   $output .= $season["previous_culture"] ? ' Предшественник: ' . $season["previous_culture"] . '.' : '';
   $output .= $season["sub_culture"] ? ' Подсев: ' . $season["sub_culture"] . '.' : '';
 
@@ -726,7 +726,7 @@ function before_after_get_atfield($sid)
                 'description' => $prep_info['description'],
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
-                'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
+                'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                 'image_full' => $prep_info['photo_url'],
                 'rate' => $prep_wr->field_f_s_p_p_rate->value(),
                 'unit_short' => $prep_info['unit_short'],
@@ -747,7 +747,7 @@ function before_after_get_atfield($sid)
                 'description' => $prep_info['description'],
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
-                'image_thumb' => image_style_url('medium', $prep_info['photo_url']),
+                'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                 'image_full' => $prep_info['photo_url'],
                 'consumption' => $processing_wr->field_f_s_p_consumption->value(),
               ];
@@ -763,7 +763,7 @@ function before_after_get_atfield($sid)
                 'description' => $prep_info2['description'],
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
-                'image_thumb' => image_style_url('medium', $prep_info2['photo_url']),
+                'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
                 'image_full' => $prep_info2['photo_url'],
                 'consumption' => $processing_wr->field_f_s_p_consumption2->value(),
               ];

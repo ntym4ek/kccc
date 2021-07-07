@@ -195,7 +195,8 @@ function get_product_info($node)
         }
 
         // фото
-        $photo_url = file_create_url($preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '');
+      $photo_uri = $preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '';
+      $photo_url = file_create_url($photo_uri);
 
         // категория и цвет
         $cats = [];
@@ -221,6 +222,7 @@ function get_product_info($node)
             'unit'          => $unit_wr->name->value(),
             'unit_short'    => $unit_wr->field_tax_short_name->value(),
             'unit_field'    => $unit_field,
+            'photo_uri'     => $photo_uri,
             'photo_url'     => $photo_url,
             // порядковый номер в списке препаратов баковой смеси (БС)
             // используется для связи с нормой расхода в регламенте БС
@@ -293,7 +295,7 @@ function ext_product_qsearch_callback($category_tid = null)
                     'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
                     'description' => $prep_item['description'],
                     'ingredients' => implode(' + ', $prep_item['ingredients']),
-                    'photo' => image_style_url('mobile_teaser_product', $prep_item['photo_url']),
+                    'photo' => image_style_url('mobile_teaser_product', $prep_item['photo_uri']),
                     'icon' => $prep_arr['icon'],
                 ];
                 foreach($prep_item['categories'] as $tid => $cat) {
