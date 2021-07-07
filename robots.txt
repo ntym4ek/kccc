@@ -51,6 +51,10 @@ Allow: /themes/*.gif
 Allow: /themes/*.jpg
 Allow: /themes/*.jpeg
 Allow: /themes/*.png
+Allow: /user/login
+Allow: /user/register
+Allow: /user/logout
+Allow: /user/password
 
 # Directories
 Disallow: /includes/
@@ -79,16 +83,12 @@ Disallow: /content
 Disallow: /taxonomy
 Disallow: /admin
 Disallow: /tags
-Disallow: /comment
 Disallow: /filter/tips
 Disallow: /node/add
 Disallow: /blogs/tag
 Disallow: /blogs/user
 Disallow: /search
 Disallow: /user
-Disallow: /user/logout
-Disallow: /user/register
-Disallow: /user/password
 Disallow: /person
 Disallow: /field-collection
 Disallow: /404-page-not-found
@@ -102,7 +102,6 @@ Disallow: /en
 Disallow: /?q=content
 Disallow: /?q=taxonomy
 Disallow: /?q=admin
-Disallow: /?q=comment
 Disallow: /?q=filter/tips
 Disallow: /?q=node/add
 Disallow: /?q=search

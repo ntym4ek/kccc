@@ -37,19 +37,19 @@ function agrocalc_form($from, &$form_state)
         '#attributes' => ['class' => ['agrocalc-form']],
         'field' => [
             '#type' => 'fieldset',
-            '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" />',
+            '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" alt="Помощь" />',
             '#prefix' => '<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">',
         ],
         'problem' => [
             '#type' => 'fieldset',
-            '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png" />'
+            '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png"  alt="Помощь"/>'
         ],
         'addon' => ['#type' => 'fieldset', '#title' => t('Additional')],
         'actions' => [
             '#type' => 'container',
             '#attributes' => array('class' => array('form-actions')),
             'help' => [
-                '#markup' => '<img class="help3 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-right" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/3.png" />'
+                '#markup' => '<img class="help3 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-right" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/3.png" alt="Помощь"/>'
                 ]
         ],
         '#attached' => [
@@ -294,7 +294,7 @@ function agrocalc_form($from, &$form_state)
 
         $form['request']['region'] = [
             '#type' => 'select',
-            '#title' => t('Region') . '<img class="help8 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/8.png" />',
+            '#title' => t('Region') . '<img class="help8 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/8.png" alt="Помощь" />',
             '#options' => $regions,
         ];
         $form['request']['phone'] = [

@@ -7,8 +7,8 @@
             <? foreach ($contacts as $key_t => $tab): ?>
                 <li role="presentation" class="col-xs-12 col-sm-4<? print $key_t == 'td' ? ' active' :''; ?>">
                     <a href="#<? print 'tab-' . $key_t; ?>" class="<? print 'tab-' . $key_t; ?>" aria-controls="home" role="tab" data-toggle="tab">
-                        <img class="logo-on" src="<? print $tab['logo_on']; ?>" />
-                        <img class="logo-off" src="<? print $tab['logo_off']; ?>" />
+                        <img class="logo-on" src="<? print $tab['logo_on']; ?>" alt="logo" />
+                        <img class="logo-off" src="<? print $tab['logo_off']; ?>" alt="logo" />
                         <span><? print $tab['title']; ?></span>
                     </a>
                 </li>

@@ -259,7 +259,7 @@ function chibs_node_submit($node, $form, &$form_state)
 }
 
 /**
- * hook_node_insert
+ * hook_node_insert()
  */
 function chibs_node_insert($node)
 {
@@ -319,7 +319,7 @@ function _chibs_check_and_place_news_to_front($node_updated)
             $block_html = '<div class="block-content no-gutters">' .
                             '<div class="block-image image-valign-center">' .
                                 '<a href="' . $url . '">' .
-                                    '<img src="' . $image_url . '">' .
+                                    '<img src="' . $image_url . '" alt="' . $title . '" loading="lazy">' .
                                 '</a>' .
                             '</div>' .
                             '<div class="block-body">' .
@@ -356,7 +356,7 @@ function _chibs_check_and_place_agenda_to_front($node)
             $term = (object)array(
                 'vid' => $voc->vid,
                 'parent' => $parent,
-                'name' => 'Подробнее о мероприятии',
+                'name' => $node->title,
             );
             taxonomy_term_save($term);
             $tid = $term->tid;
@@ -366,18 +366,14 @@ function _chibs_check_and_place_agenda_to_front($node)
 
         $term_wr = entity_metadata_wrapper('taxonomy_term', $term);
 
-        $url = drupal_get_path_alias('node/' . $node->nid);
-        $term_wr->language('ru')->name_field = 'Подробнее о мероприятии';
-        $term_wr->language('en')->name_field = 'More about event';
+        $url = 'node/' . $node->nid; // path_alias ещё не сформирован и неизвестен
+        $term_wr->language('ru')->name_field = $node->title;
         $term_wr->language('ru')->description_field->format = 'full_html';
-        $term_wr->language('en')->description_field->format = 'full_html';
-        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="/' . $url . '">' .
-                                                                    '<i class="fa fa-chevron-right" aria-hidden="true"></i>' .
-                                                                '</a>';
-        $term_wr->language('en')->description_field->value =    '<a class="btn btn-danger" href="/en/' . $url . '">' .
+        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="/<?php print url(\'' . $url . '\'); ?>">' .
                                                                     '<i class="fa fa-chevron-right" aria-hidden="true"></i>' .
                                                                 '</a>';
         $term_wr->field_link = $url;
+        $term_wr->field_text = 'Подробнее o мероприятии';
         $term_wr->field_promo_image->set($node->field_promo_image['und'][0]);
         $term_wr->field_period->value->set($node->field_period['und'][0]['value']-2*7*24*3600);
         $term_wr->field_period->value2->set($node->field_period['und'][0]['value2']);
@@ -1020,15 +1016,17 @@ function chibs_galleryformatter_styles() {
 function chibs_field_attach_view_alter(&$output, $context)
 {
   // для поля field_image_gallery установить аттр alt, если пустой
-  if (isset($output["field_image_gallery"]) && !empty(["field_image_gallery"][0]['#slides'])) {
+  if (isset($output["field_image_gallery"]) && !empty($output["field_image_gallery"][0]['#slides'])) {
       foreach ($output["field_image_gallery"][0]['#slides'] as $key => &$item) {
         if (empty($item['alt'])) {
-          $item['image'] = str_replace('alt=""', 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image') . ' ' . ($key + 1) . '"', $item['image']);
+          $alt = 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ООО ТД Кирово-Чепецкая Химическая Компания"';
+          $item['image'] = str_replace('alt=""', $alt, $item['image']);
         }
       }
       foreach ($output["field_image_gallery"][0]['#thumbs'] as $key => &$item) {
         if (empty($item['alt'])) {
-          $item['image'] = str_replace('alt=""', 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image preview') . ' ' . ($key + 1) . '"', $item['image']);
+          $alt = 'alt="' . $output["field_image_gallery"]["#object"]->title . ' - ' . t('Image preview') . ' ' . ($key + 1) . '"';
+          $item['image'] = str_replace('alt=""', $alt, $item['image']);
         }
       }
   }
@@ -1379,3 +1377,4 @@ function chibs_page_delivery_callback_alter(&$delivery_callback) {
     variable_set('x_frame_options', 'SAMEORIGIN');
   }
 }
+

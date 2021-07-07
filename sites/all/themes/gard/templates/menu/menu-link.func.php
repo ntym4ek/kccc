@@ -243,7 +243,7 @@ function gard_menu_link__menu_main_d(array $variables) {
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
                 $image_url = image_style_url('thumbnail', $image_uri);
-                $title =  '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . '"/></div>'
+                $title =  '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . ' - ООО ТД Кирово-Чепецкая Химическая Компания"/></div>'
                         . '<div class="category-link">' . $title . '</div>';
 
                 // формируем при необходимости меню третьего уровня

@@ -56,7 +56,7 @@ function gard_preprocess_node(&$vars) {
         /** -------------------------------- Изображение - */
         if (empty($vars['image'])) {
             if (isset($vars['content']['field_image_gallery'][0])) {
-                $vars['image'] = render($vars['content']['field_image_gallery']);
+              $vars['image'] = render($vars['content']['field_image_gallery']);
             } elseif (isset($vars['content']['field_promo_image'][0])) {
                 $image_title = empty($vars['field_promo_image'][0]['title']) ? $vars['title'] : $vars['field_promo_image'][0]['title'];
                 $image_alt = empty($vars['field_promo_image'][0]['alt']) ? $vars['title'] : $vars['field_promo_image'][0]['alt'];

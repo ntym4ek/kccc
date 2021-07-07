@@ -9,23 +9,25 @@ function linker_node_presave($node)
     if (in_array($node->type, ['news', 'blog', 'review'])) {
         $lang = $GLOBALS['language']->language;
 
-        // полный текст для проверки
-        $text = $node->body[$lang][0]['value'];
+        if (isset($node->body[$lang][0]['value'])) {
+          // полный текст для проверки
+          $text = $node->body[$lang][0]['value'];
 
-        // убираем неподдающиеся регекспу кавычки
-        $text = str_replace('«', '"', $text);
-        $text = str_replace('»', '"', $text);
+          // убираем неподдающиеся регекспу кавычки
+          $text = str_replace('«', '"', $text);
+          $text = str_replace('»', '"', $text);
 
-        // список искомых фраз и их ссылок
-        foreach(_linker_replacement_list() as $replacement_item) {
+          // список искомых фраз и их ссылок
+          foreach (_linker_replacement_list() as $replacement_item) {
             $patterns = _linker_convert_needles_to_preg_patterns($replacement_item['needles']);
             $replace = '<a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>';
-            foreach($patterns as $pattern) {
-                preg_match($patterns[0], $text, $match);
-                $text = preg_replace($pattern, $replace, $text);
+            foreach ($patterns as $pattern) {
+              preg_match($patterns[0], $text, $match);
+              $text = preg_replace($pattern, $replace, $text);
             }
+          }
+          $node->body[$lang][0]['value'] = $text;
         }
-        $node->body[$lang][0]['value'] = $text;
     }
 }
 

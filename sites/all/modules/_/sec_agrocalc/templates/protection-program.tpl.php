@@ -32,7 +32,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                 <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
                                 <img class="icon" src="<?php print $category['icon']; ?>" alt="help icon">
                                 <?php if ($cnt_cat == 1): ?>
-                                    <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" alt="<? print 'help'; ?>"  />
+                                    <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" alt="<? print t('help'); ?>"  />
                                 <?php endif; ?>
                                 <?php if ($area): ?>
                                     <div class="amountByCat">
@@ -113,7 +113,7 @@ $path = drupal_get_path('module', 'agrocalc');
 
                                     <div class="view-item col-xs-12 col-sm-6 col-md-4 col-lg-4 hidden-print">
                                         <?php if ($area && $cnt_reg == 1 && $cnt_cat == 1): ?>
-                                            <img class="help5 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/<?php print $path; ?>/images/help/5.png" alt="<? print 'help'; ?>"  />
+                                            <img class="help5 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/<?php print $path; ?>/images/help/5.png" alt="<? print t('help'); ?>"  />
                                         <?php endif; ?>
                                         <div class="v-card reglament gray<?php print $reglament['state'] == 'on' ? " is-active" : ""; ?> hidden-print" data-cat="category-<?php print $category['tid']; ?>" id="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                             <?php if ($area): ?>
@@ -174,7 +174,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                             </footer>
                                         </div>
                                         <?php if ($area && $cnt_reg == 2 && $cnt_cat == 1): ?>
-                                            <img class="help6 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/6.png" alt="<? print 'help'; ?>" />
+                                            <img class="help6 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/6.png" alt="<? print t('help'); ?>" />
                                         <?php endif; ?>
                                     </div>
                                     <?php
@@ -205,7 +205,7 @@ $path = drupal_get_path('module', 'agrocalc');
                 <?php if ($area): ?>
                 <div class="row">
                     <div class="list-category-header col-xs-12 calculation-total category-17">
-                        <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" alt="<? print 'help'; ?>"  />
+                        <img class="help7 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/7.png" alt="<? print t('help'); ?>"  />
                         <div class="box">
                             <div class="bkg"></div>
                             <div class="amountByProgram">
