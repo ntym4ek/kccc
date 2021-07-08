@@ -193,8 +193,8 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         $output['image_thumb'] = $output['image_full'] = '';
                         $image_fid = $processing_wr->field_f_s_p_photo->value();
                         if ($image_fid && $image = file_load($image_fid)) {
-                            $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
-                            $output['image_full'] = file_create_url($image->uri);
+                            $output['image_thumb']  = image_style_url('news_teaser', $image->uri);
+                            $output['image_full']   = image_style_url('1200_1200', $image->uri);
                         }
 
                         // содержимое
@@ -222,7 +222,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'ingredients' => implode(' + ', $prep_info['ingredients']),
                           'url' => $prep_info['url'],
                           'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                          'image_full' => $prep_info['photo_url'],
+                          'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
                         ];
                         $titles[] = $title;
                       }
@@ -237,7 +237,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'ingredients' => implode(' + ', $prep_info['ingredients']),
                           'url' => $prep_info['url'],
                           'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                          'image_full' => $prep_info['photo_url'],
+                          'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
                         ];
                         $titles[] = $title;
                       }
@@ -251,7 +251,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                           'url' => $prep_info2['url'],
                           'nid' => $prep_info2['id'],
                           'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
-                          'image_full' => $prep_info2['photo_url'],
+                          'image_full' => image_style_url('1200_1200', $prep_info2['photo_uri']),
                         ];
                         $titles[] = $title2;
                       }
@@ -299,9 +299,9 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         // фото поля
                         $image_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
                         $image = file_load($image_fid);
-                        $output['image_alt']    = $image ? '' : '';
+                        $output['image_alt']    = 'Контрольное фото поля - ООО ТД Кирово-Чепеццкая Химическая Компания';
                         $output['image_thumb']  = $image ? image_style_url('news_teaser', $image->uri) : '';
-                        $output['image_full']   = $image ? file_create_url($image->uri) : '';
+                        $output['image_full']   = $image ? image_style_url('1200_1200', $image->uri) : '';
 
                         // содержимое
                         $output['condition_title'] = '';
@@ -668,11 +668,11 @@ function before_after_get_atfield($sid)
             $image_f_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
             $image_f = file_load($image_f_fid);
             $measurements[$key_m]['image_field_thumb'] = $image_f ? image_style_url('news_teaser', $image_f->uri) : '';
-            $measurements[$key_m]['image_field_full'] = $image_f ? file_create_url($image_f->uri) : '';
+            $measurements[$key_m]['image_field_full'] = $image_f ? image_style_url('1200_1200', $image_f->uri) : '';
             $image_c_fid = $measurement_wrapper->field_f_s_m_foto_culture->value();
             $image_c = $image_c_fid ? file_load($image_c_fid) : false;
             $measurements[$key_m]['image_culture_thumb'] = $image_c ? image_style_url('news_teaser', $image_c->uri) : '';
-            $measurements[$key_m]['image_culture_full'] = $image_c ? file_create_url($image_c->uri) : '';
+            $measurements[$key_m]['image_culture_full'] = $image_c ? image_style_url('1200_1200', $image_c->uri) : '';
             $measurements[$key_m]['condition'] = drupal_strtolower($measurement_wrapper->field_f_s_m_condition_mc->value());
             $measurements[$key_m]['phase'] = $measurement_wrapper->field_f_s_m_phase_mc->value() ? drupal_strtolower($measurement_wrapper->field_f_s_m_phase_mc->name->value()) : '';
             $measurements[$key_m]['date'] = date('d.m.Y', $measurement_wrapper->field_f_s_m_date->value());
@@ -695,7 +695,7 @@ function before_after_get_atfield($sid)
                 if (isset($arr_ho[$nid])) {
                   $arr_ho[$nid]['photo'] = '';
                   if ($photo_fid && $photo = file_load($photo_fid)) {
-                    $arr_ho[$nid]['photo'] = $photo ? file_create_url($photo->uri) : '';
+                    $arr_ho[$nid]['photo'] = $photo ? image_style_url('1200_1200', $photo->uri) : '';
                   }
 
                   $arr_ho[$nid]['percent'] = $item_ho->field_f_s_m_c_percent->value() ? $item_ho->field_f_s_m_c_percent->value() : '-';
@@ -727,7 +727,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                'image_full' => $prep_info['photo_url'],
+                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
                 'rate' => $prep_wr->field_f_s_p_p_rate->value(),
                 'unit_short' => $prep_info['unit_short'],
                 'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
@@ -748,7 +748,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                'image_full' => $prep_info['photo_url'],
+                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
                 'consumption' => $processing_wr->field_f_s_p_consumption->value(),
               ];
               $titles[] = $title;
@@ -764,7 +764,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
                 'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
-                'image_full' => $prep_info2['photo_url'],
+                'image_full' => image_style_url('medium', $prep_info2['photo_uri']),
                 'consumption' => $processing_wr->field_f_s_p_consumption2->value(),
               ];
               $titles[] = $title2;
@@ -783,7 +783,7 @@ function before_after_get_atfield($sid)
             $image_fid = $processing_wr->field_f_s_p_photo->value();
             $image = file_load($image_fid);
             $processings[$key_p]['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
-            $processings[$key_p]['image_full'] = $image ? file_create_url($image->uri) : '';
+            $processings[$key_p]['image_full'] = $image ? image_style_url('1200_1200', $image->uri) : '';
 
             $key_p++;
           }

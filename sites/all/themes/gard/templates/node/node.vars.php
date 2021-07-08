@@ -46,7 +46,6 @@ function gard_preprocess_node(&$vars) {
                 $image_uri = $vars['content']['product:field_p_images'][0]['#item']['uri'];
             }
 
-
             $vars['image'] = image_style_url($image_style, $image_uri);
         }
     }
@@ -64,9 +63,9 @@ function gard_preprocess_node(&$vars) {
                 if ($vars['field_promo_image'][0]['height'] <= 430) {
                     $image_url = image_style_url('news_full_vertical', $vars['field_promo_image'][0]['uri']);
                 } else {
-                    $image_url = image_style_url('news_full_horizontal_hd', $vars['field_promo_image'][0]['uri']);
+                    $image_url = image_style_url('news_full_horizontal', $vars['field_promo_image'][0]['uri']);
                 }
-                $vars['image'] = '<a href="' . file_create_url($vars['field_promo_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
+                $vars['image'] = '<a href="' . image_style_url('1200_1200', $vars['field_promo_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
                 $vars['image'] .= '<div class="img-title"><span>' . t('Photo') . '. ' . $image_title . '</span></div>';
 
             }
@@ -136,9 +135,9 @@ function gard_preprocess_node(&$vars) {
     if ($vars['type'] == 'protection_program' && isset($vars['content']['field_image'][0])) {
         $image_alt = empty($vars['field_image'][0]['alt']) ? $vars['title'] : $vars['field_image'][0]['alt'];
 
-        $image_url = $file_url = file_create_url($vars['field_image'][0]['uri']);
+        $image_url = image_style_url('1200_1200', $vars['field_image'][0]['uri']);
 
-        $vars['image'] = '<a href="' . file_create_url($vars['field_image'][0]['uri']) . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
+        $vars['image'] = '<a href="' . $image_url . '" class="fancybox"><img src="' . $image_url . '" class="img-responsive" alt="' . $image_alt . '" /></a>';
         $vars['image'] .= '<div class="img-title"><span>' . t('Click on image to zoom') . '</span></div>';
         hide($vars['content']['field_image']);
 

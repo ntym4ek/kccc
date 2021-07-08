@@ -197,12 +197,12 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
     $form['fs2']['file1']['photo_f'] = array(
         '#type' => 'managed_file',
         '#title' => 'Фото поля',
-        '#description' => 'Выберите файл с расширением jpg, jpeg, png',
+        '#description' => 'Выберите файл с расширением jpg, jpeg',
         '#upload_location' => "public://images/before_after/field_$fid/",
         '#upload_validators' => array(
             'file_validate_is_image' => array(),
-            'file_validate_extensions' => array('png jpg jpeg'),
-            'file_validate_image_resolution' => array('2560x2048', '400x400'),
+            'file_validate_extensions' => array('jpg jpeg'),
+            'file_validate_image_resolution' => array('1200x1200', '400x400'),
         ),
         '#default_value' => $photo_f,
         '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate
@@ -217,12 +217,12 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
         $form['fs2']['file2']['photo_c'] = array(
             '#type' => 'managed_file',
             '#title' => 'Фото культуры',
-            '#description' => 'Выберите файл с расширением jpg, jpeg, png',
+            '#description' => 'Выберите файл с расширением jpg, jpeg',
             '#upload_location' => "public://images/before_after/field_$fid/",
             '#upload_validators' => array(
                 'file_validate_is_image' => array(),
-                'file_validate_extensions' => array('png jpg jpeg'),
-                'file_validate_image_resolution' => array('2560x2048', '400x400'),
+                'file_validate_extensions' => array('jpg jpeg'),
+                'file_validate_image_resolution' => array('1200x1200', '400x400'),
             ),
             '#default_value' => $photo_c,
             '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate
@@ -295,12 +295,12 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
                 );
                 $form['fs3']['file']['photo_ho-' . $fsid] = array(
                     '#type' => 'managed_file',
-                    '#description' => 'Выберите файл с расширением jpg, jpeg, png',
+                    '#description' => 'Выберите файл с расширением jpg, jpeg',
                     '#upload_location' => "public://images/before_after/field_$fid/",
                     '#upload_validators' => array(
                         'file_validate_is_image' => array(),
-                        'file_validate_extensions' => array('png jpg jpeg'),
-                        'file_validate_image_resolution' => array('2560x2048', '400x400'),
+                        'file_validate_extensions' => array('jpg jpeg'),
+                        'file_validate_image_resolution' => array('1200x1200', '400x400'),
                     ),
                     '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate
                 );

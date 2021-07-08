@@ -416,12 +416,12 @@ function before_after_processing_form($form, &$form_state, $sid, $pid = '')
   $form['fs3'] = array('#type' => 'fieldset', '#title' => 'Фото<i> процесса обработки</i>');
   $form['fs3']['photo'] = array(
       '#type' => 'managed_file',
-      '#description' => 'Выберите файл с расширением jpg, jpeg, png',
+      '#description' => 'Выберите файл с расширением jpg, jpegg',
       '#upload_location' => "public://images/before_after/field_$fid/",
       '#upload_validators' => array(
           'file_validate_is_image' => array(),
-          'file_validate_extensions' => array('png jpg jpeg'),
-          'file_validate_image_resolution' => array('2560x2048', '400x400'),
+          'file_validate_extensions' => array('jpg jpeg'),
+          'file_validate_image_resolution' => array('1200x1200', '400x400'),
       ),
       '#default_value' => $photo,
       '#element_validate' => array('file_managed_file_validate', '_unset_status_message'),   // подавление статусных сообщений после стандартного валидатора file_managed_file_validate

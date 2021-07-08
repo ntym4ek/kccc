@@ -311,10 +311,8 @@ function _chibs_check_and_place_news_to_front($node_updated)
             $title = $node_wr->label();
             $url = url('node/' . $node_wr->getIdentifier());
             $image = $node_wr->field_promo_image->value();
-            $uri = $image['uri'];
-            $image_uri = empty($image) ? image_style_url('720_465', 'public://default_images/no_photo.png') : $uri;
-//            $image_url = image_style_url('720_465', $image_uri);
-            $image_url = file_create_url($image_uri);
+            $image_uri = empty($image) ? 'public://default_images/no_photo.png' : $image['uri'];
+            $image_url = image_style_url('720_465', $image_uri);
             $section =  $node_wr->getBundle() == 'news' ? 'События' : t('Reviews');
             $block_html = '<div class="block-content no-gutters">' .
                             '<div class="block-image image-valign-center">' .
