@@ -112,3 +112,19 @@ function ext_forum_metatag_metatags_view_alter(&$output, $instance, $options) {
     $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Список тем раздела ' . drupal_get_title();
   }
 }
+
+/**
+ * Implements hook_html_head_alter().
+ *
+ * убрать rel="alternate" со ссылкой "taxonomy/term/.."
+ */
+function ext_forum_html_head_alter(&$head_elements)
+{
+  foreach ($head_elements as $key => $element) {
+    // Disables links to taxonomy term rss.
+    $href = isset($element['#attributes']['href']) ? $element['#attributes']['href'] : NULL;
+    if (isset($href) && preg_match("/taxonomy\/term\/[0-9]+\/feed$/", $href)) {
+      unset($head_elements[$key]);
+    }
+  }
+}
