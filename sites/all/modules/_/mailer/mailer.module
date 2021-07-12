@@ -150,7 +150,6 @@ function mailer_manual_form_test_submit($form, &$form_state)
     // письмо тестовому Пользователю
     drupal_mail('mailer', 'manual_mail', $form_state['values']['email'], 'RU', $params);
 
-
     // оставляем значения в форме
     $form_state['rebuild'] = true;
 }

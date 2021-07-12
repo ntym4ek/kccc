@@ -136,6 +136,7 @@ function gard_menu_link__user_menu(array $variables)
     // вставить Иконки
     if (in_array($mlid, [14, 12880])) {
         $options['attributes']['class'][] = 'btn btn-header btn-s1';
+        $options['attributes']['rel'][] = 'nofollow';
         $title =  '<i class="fa fa-user">';
 
         // вывести бейдж с количеством уведомлений

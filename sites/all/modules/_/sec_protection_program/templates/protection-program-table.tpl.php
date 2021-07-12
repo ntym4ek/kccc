@@ -17,7 +17,7 @@ $update_access = (node_access('update', node_load($pp['id'])) && arg(0) == 'prot
             <tr>
                 <td class="img" rowspan="2">
                     <a class="fancybox" href="<?php print $pp['culture_image_uri']; ?>">
-                        <img src="<?php print $pp['culture_image_uri']; ?>">
+                        <img typeof="foaf:Image" src="<?php print $pp['culture_image_uri']; ?>">
                     </a>
                 </td>
                 <td class="name">

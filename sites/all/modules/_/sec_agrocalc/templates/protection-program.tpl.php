@@ -99,9 +99,9 @@ $path = drupal_get_path('module', 'agrocalc');
                                     <div class="view-item col-xs-4 reglament-print hidden-print" data-print="<?php print $key_cat . '_' . $key_stage . '_' . $key_set . '_' . $key_reg; ?>">
                                         <div class="v-card">
                                             <div class="v-card-image">
-                                                <img src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
+                                                <img typeof="foaf:Image" src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                 <?php if (isset($photos[1])): ?>
-                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
+                                                    <img typeof="foaf:Image" src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                 <?php endif; ?>
                                             </div>
                                             <div class="v-card-content">
@@ -135,9 +135,9 @@ $path = drupal_get_path('module', 'agrocalc');
 
                                             <div class="v-card-image">
                                                 <a href="<?php print $product_url; ?>" target="_blank">
-                                                    <img src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
+                                                    <img typeof="foaf:Image" src="<?php print $photos[0]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                     <?php if (isset($photos[1])): ?>
-                                                    <img src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
+                                                    <img typeof="foaf:Image" src="<?php print $photos[1]; ?>" class="img-responsive" alt="<?php print $title; ?>">
                                                     <?php endif; ?>
                                                 </a>
                                             </div>

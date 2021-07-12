@@ -317,7 +317,7 @@ function _chibs_check_and_place_news_to_front($node_updated)
             $block_html = '<div class="block-content no-gutters">' .
                             '<div class="block-image image-valign-center">' .
                                 '<a href="' . $url . '">' .
-                                    '<img src="' . $image_url . '" alt="' . $title . '" loading="lazy">' .
+                                    '<img typeof="foaf:Image" src="' . $image_url . '" alt="' . $title . '" loading="lazy">' .
                                 '</a>' .
                             '</div>' .
                             '<div class="block-body">' .

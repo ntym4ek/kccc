@@ -51,10 +51,6 @@ Allow: /themes/*.gif
 Allow: /themes/*.jpg
 Allow: /themes/*.jpeg
 Allow: /themes/*.png
-Allow: /user/login
-Allow: /user/register
-Allow: /user/logout
-Allow: /user/password
 
 # Directories
 Disallow: /includes/
@@ -89,6 +85,10 @@ Disallow: /blogs/tag
 Disallow: /blogs/user
 Disallow: /search
 Disallow: /user
+Disallow: /user/login
+Disallow: /user/register
+Disallow: /user/logout
+Disallow: /user/password
 Disallow: /checkout
 Disallow: /person
 Disallow: /field-collection
@@ -117,4 +117,3 @@ Clean-param: cat /catalog/*
 Clean-param: cat /en/catalog/*
 Clean-param: current /user/*
 Clean-param: current /en/user/*
-

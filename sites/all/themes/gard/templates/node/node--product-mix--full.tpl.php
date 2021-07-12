@@ -83,8 +83,8 @@
 <div class="product-intro row">
     <div class="col-sm-5">
         <div class="product-image">
-            <img src="<?php print $images[0]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" />
-            <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" /><?php endif; ?>
+            <img typeof="foaf:image" src="<?php print $images[0]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" />
+            <?php if (!empty($images[1])): ?><img typeof="foaf:image" src="<?php print $images[1]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" /><?php endif; ?>
         </div>
     </div>
     <div class="col-sm-7">
