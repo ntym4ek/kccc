@@ -148,53 +148,14 @@ function mailer_manual_form_test_submit($form, &$form_state)
     $params['body'] = $form_state['values']['body']['value'];
 
     // письмо тестовому Пользователю
-    //drupal_mail('mailer', 'manual_mail', $form_state['values']['email'], 'RU', $params);
-  mailer_replace_http();
+    drupal_mail('mailer', 'manual_mail', $form_state['values']['email'], 'RU', $params);
+
 
     // оставляем значения в форме
     $form_state['rebuild'] = true;
 }
 
 
-function mailer_replace_http()
-{
-  $queue = DrupalQueue::get('http_queue');
-  for($i = 1; $i < 9999; $i++) {
-    $params['nid'] = $i;
-    $queue->createItem($params);
-  }
-}
-function mailer_http_mails($params)
-{
-  if ($node = node_load($params['nid'])) {
-    watchdog('http', 'Проверена нода ' . $params['nid'], NULL);
-    if (in_array($node->type, ['weed', 'disease', 'pest'])) {
-      $body_und = '';
-      $body_und_new = '';
-      if (!empty($node->body["und"][0]["value"])) {
-        $body_und = $node->body["und"][0]["value"];
-        $body_und_new = str_replace('http://kccc.', 'https://kccc.', $body_und);
-      }
-
-      $body_ru = '';
-      $body_ru_new = '';
-      if (!empty($node->body["ru"][0]["value"])) {
-        $body_ru = $node->body["ru"][0]["value"];
-        $body_ru_new = str_replace('http://kccc.', 'https://kccc.', $body_ru);
-      }
-
-      if ($body_und != $body_und_new || $body_ru != $body_ru_new) {
-        if ($body_und != $body_und_new) {
-          $node->body["und"][0]["value"] = $body_und_new;
-        }
-        if ($body_ru != $body_ru_new) {
-          $node->body["ru"][0]["value"] = $body_ru_new;
-        }
-        node_save($node);
-      }
-    }
-  }
-}
 
 /**
  * form submit callback.
@@ -386,3 +347,46 @@ function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
 }
 
 
+// замена http на https в справочниках
+//function mailer_replace_http()
+//{
+//  $queue = DrupalQueue::get('http_queue');
+//  for($i = 1; $i < 9999; $i++) {
+//    $params['nid'] = $i;
+//    $queue->createItem($params);
+//  }
+//}
+//function mailer_http_mails($params)
+//{
+//  if ($node = node_load($params['nid'])) {
+//    watchdog('http', 'Проверена нода ' . $params['nid'], NULL);
+//    if (in_array($node->type, ['weed', 'disease', 'pest'])) {
+//      $body_und = '';
+//      $body_und_new = '';
+//      if (!empty($node->body["und"][0]["value"])) {
+//        $body_und = $node->body["und"][0]["value"];
+//        $body_und_new = str_replace('http://kccc.', 'https://kccc.', $body_und);
+//        $body_und_new = str_replace('http://www.kccc.', 'https://kccc.', $body_und_new);
+//      }
+//
+//      $body_ru = '';
+//      $body_ru_new = '';
+//      if (!empty($node->body["ru"][0]["value"])) {
+//        $body_ru = $node->body["ru"][0]["value"];
+//        $body_ru_new = str_replace('http://kccc.', 'https://kccc.', $body_ru);
+//        $body_ru_new = str_replace('http://www.kccc.', 'https://kccc.', $body_ru_new);
+//      }
+//
+//      if ($body_und != $body_und_new || $body_ru != $body_ru_new) {
+//        if ($body_und != $body_und_new) {
+//          $node->body["und"][0]["value"] = $body_und_new;
+//        }
+//        if ($body_ru != $body_ru_new) {
+//          $node->body["ru"][0]["value"] = $body_ru_new;
+//        }
+//        node_save($node);
+//        watchdog('http', 'Нода ' . $params['nid'] . ' изменена', NULL);
+//      }
+//    }
+//  }
+//}

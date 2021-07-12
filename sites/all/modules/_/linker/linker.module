@@ -26,6 +26,11 @@ function linker_node_presave($node)
               $text = preg_replace($pattern, $replace, $text);
             }
           }
+
+          // дополнительные обработки
+          $text = str_replace('http://kccc.', 'https://kccc.', $text);
+          $text = str_replace('http://www.kccc.', 'https://kccc.', $text);
+
           $node->body[$lang][0]['value'] = $text;
         }
     }
