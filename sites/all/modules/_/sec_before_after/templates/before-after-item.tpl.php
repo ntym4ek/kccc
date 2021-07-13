@@ -9,7 +9,7 @@
 
         <div class="v-card-image">
             <a href="<?php print $content['link']; ?>">
-                <img src="<?php print $content['image_thumb']; ?>" class="img-responsive" title="Действие препарата в поле" alt="Защита культуры <?php print $content['culture'] . ' препаратами ООО ТД Кирово-Чепецкая Химическая Компания. ' . $content['region']; ?>">
+                <img typeof="foaf:Image" src="<?php print $content['image_thumb']; ?>" class="img-responsive" title="Действие препарата в поле" alt="Защита культуры <?php print $content['culture'] . ' препаратами ООО ТД Кирово-Чепецкая Химическая Компания. ' . $content['region']; ?>" loading="lazy">
             </a>
         </div>
 

@@ -6,7 +6,7 @@ $before = array_shift($content['measurements']);
 <article class="season node full">
 
   <div class="node-author">
-    <img src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle">
+    <img typeof="foaf:Image" src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle" loading="lazy">
     <div class="author-body">
       <div class="author-title"><? print $content['author']['surname'] . ' ' . $content['author']['name'] . ' ' . $content['author']['name2']; ?></div>
       <div class="author-subtitle"><? print $content['author']['role']; ?></div>
@@ -22,7 +22,7 @@ $before = array_shift($content['measurements']);
         <div class="image">
           <div class="date">Состояние поля на <? print $before['date']; ?></div>
           <a href="<? print $before['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-            <img typeof="foaf:Image" src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+            <img typeof="foaf:Image" src="<? print $before['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
           </a>
         </div>
         <div class="text c1">
@@ -90,7 +90,7 @@ $before = array_shift($content['measurements']);
           <div class="image">
             <div class="date">Состояние культуры на <? print $before['date']; ?></div>
             <a href="<? print $before['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-              <img typeof="foaf:Image" src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+              <img typeof="foaf:Image" src="<? print $before['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
             </a>
           </div>
           <div class="text">
@@ -182,7 +182,7 @@ $before = array_shift($content['measurements']);
                   <div class="image">
                     <div class="date">Состояние поля на <? print $measurement['date']; ?></div>
                     <a href="<? print $measurement['image_field_full']; ?>" class="fancybox" title="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                      <img typeof="foaf:Image" src="<? print $measurement['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                      <img typeof="foaf:Image" src="<? print $measurement['image_field_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние поля <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
                     </a>
                   </div>
                   <div class="text c1">
@@ -251,7 +251,7 @@ $before = array_shift($content['measurements']);
                     <div class="image">
                       <div class="date">Состояние культуры на <? print $measurement['date']; ?></div>
                       <a href="<? print $measurement['image_culture_full']; ?>" class="fancybox" title="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                        <img typeof="foaf:Image" src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                        <img typeof="foaf:Image" src="<? print $measurement['image_culture_thumb']; ?>" property="dc:image" class="img-responsive" alt="Состояние культуры <? print $content['culture'];?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
                       </a>
                     </div>
                     <div class="text">
@@ -349,7 +349,7 @@ $before = array_shift($content['measurements']);
               <div class="tab-pane-wrapper row">
                 <div class="image col-md-6">
                   <a href="<? print $processing['image_full']; ?>" class="fancybox" title="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
-                    <img typeof="foaf:Image" src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания">
+                    <img typeof="foaf:Image" src="<? print $processing['image_full']; ?>" property="dc:image" class="img-responsive" alt="Процесс обработки поля <? print $content['culture'];?> препаратами ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
                   </a>
                   <div class="date">Обработка <? print $processing['date'] . (strpos($processing['time'], 'после') === false ? ' в ' : ' ') . $processing['time']; ?></div>
                 </div>
@@ -370,7 +370,7 @@ $before = array_shift($content['measurements']);
                     <div class="preparation">
                       <div class="image">
                         <a href="<? print $prep['image_full']; ?>" class="prep fancybox" title="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                          <img typeof="foaf:Image" src="<? print $prep['image_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
+                          <img typeof="foaf:Image" src="<? print $prep['image_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
                         </a>
                       </div>
                       <div class="info">
