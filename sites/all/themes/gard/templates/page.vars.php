@@ -332,17 +332,30 @@ function gard_preprocess_page(&$vars)
 //        if (!empty($vars['page']['highlighted']['bootstrap_slider_bootstrap_slider'])) {
 //            $vars['slider'] = $vars['page']['highlighted']['bootstrap_slider_bootstrap_slider'];
 //        }
+      if (isset($vars['page']['content']['views_sliders-block_1'])) {
         $vars['row_1']['block_1'] = $vars['page']['content']['views_sliders-block_1'];
+      }
 
+      if (isset($vars['page']['content']['block_18'])) {
         $vars['row_2']['block_1'] = $vars['page']['content']['block_18'];
+      }
+      if (isset($vars['page']['content']['block_19'])) {
         $vars['row_2']['block_2'] = $vars['page']['content']['block_19'];
+      }
 
+      if (isset($vars['page']['content']['block_20'])) {
         $vars['row_3']['block_1'] = $vars['page']['content']['block_20'];
+      }
+      if (isset($vars['page']['content']['views_interesting_facts-block'])) {
         $vars['row_3']['block_2'] = $vars['page']['content']['views_interesting_facts-block'];
-//        $vars['row_3']['block_2'] = $vars['page']['content']['block_21'];
+      }
+      if (isset($vars['page']['content']['views_sliders-block'])) {
         $vars['row_3']['block_3'] = $vars['page']['content']['views_sliders-block'];
+      }
 
+      if (isset($vars['page']['content']['block_23'])) {
         $vars['row_4']['block_1'] = $vars['page']['content']['block_23'];
+      }
     }
 
 }
