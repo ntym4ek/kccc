@@ -144,6 +144,8 @@
                         $eAddr = $eAddr.replace(/\//g, "");
                         $eAddr = $eAddr.replace(/\[s1\]/, "@");
                         $eAddr = $eAddr.replace(/\[s2\]/, ".");
+                        $eAddr = $eAddr.replace('%5Bs1%5D', "@");
+                        $eAddr = $eAddr.replace('%5Bs2%5D', ".");
                         $(this).attr("href", "mailto:" + $eAddr).removeClass("eAddr-encoded");
                         if ($(this).hasClass("eAddr-html")) {
                             $(this).html($eAddr).removeClass("eAddr-html");
@@ -163,6 +165,8 @@
                         $eAddr = $eAddr.replace(/\//g, "");
                         $eAddr = $eAddr.replace(/\[s1\]/, "@");
                         $eAddr = $eAddr.replace(/\[s2\]/, ".");
+                        $eAddr = $eAddr.replace('%5Bs1%5D', "@");
+                        $eAddr = $eAddr.replace('%5Bs2%5D', ".");
                         $(this).html($match[1] + $eAddr + $match[3]);
                     }
                 }
