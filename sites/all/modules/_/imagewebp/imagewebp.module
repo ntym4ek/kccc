@@ -1,0 +1,280 @@
+<?php
+
+/**
+ * @file
+ * Module file for generating webp image.
+ */
+
+// Load all Field module hooks for Imagewebp.
+require_once drupal_get_path('module', 'imagewebp') . '/imagewebp.field.inc';
+// Load admin include for batch process
+module_load_include('inc', 'imagewebp', 'imagewebp.admin');
+
+/**
+ * Implements hook_permission().
+ */
+function imagewebp_permission() {
+  return array(
+    'administer imagewebp' => array(
+      'title' => t('Administer ImageWebP settings'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function imagewebp_menu() {
+  $items['admin/config/media/imagewebp'] = array(
+    'title' => 'ImageWebP',
+    'description' => 'Controls how your imagewebp settings work.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('imagewebp_admin_form'),
+    'access arguments' => array('administer imagewebp'),
+    'file' => 'imagewebp.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/media/imagewebp/settings'] = array(
+    'title' => 'ImageWebP',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/config/media/imagewebp/generate'] = array(
+    'title' => 'Generate WebP images',
+    'description' => 'Batch process to generate images',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('imagewebp_setup_batch'),
+    'access arguments' => array('administer imagewebp'),
+    'file' => 'imagewebp.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+/**
+ * Callback for generate webp image.
+ */
+function createwebpimage($file) {
+  $uri = $file->uri;
+  $url = file_create_url($uri);
+  $pathinfo = pathinfo($url, PATHINFO_FILENAME);
+  $file_path = realpath($_SERVER['DOCUMENT_ROOT'] . parse_url($url, PHP_URL_PATH));
+  $dirpath = dirname($file_path) . "/" . $pathinfo . ".webp";
+  // If file exists, we skip and return with the file path.
+  if (file_exists($dirpath)) {
+    return preg_replace('"\.(bmp|gif|png|jpg)$"', '.webp', $uri);
+  }
+  $webpUrl = image_create_from_any($url);
+  $imagewebp = imagewebp($webpUrl, $dirpath, variable_get('imagewebp_quality', 80));
+  // Clean up memory before return.
+  imagedestroy($webpUrl);
+  return $imagewebp;
+}
+
+/**
+ * Returns an image identifier representing a blank image of specified size.
+ */
+function image_create_from_any($filepath) {
+  // You can use getImageSize()
+  $type = exif_imagetype($filepath);
+  // 1->gif, 2->jpg, 3->png, 6->bmp.
+  $allowed_types = array(
+    1,
+    2,
+    3,
+    6,
+  );
+  if (!in_array($type, $allowed_types)) {
+    return FALSE;
+  }
+  switch ($type) {
+    case 1:
+      $im = imagecreatefromgif($filepath);
+      break;
+
+    case 2:
+      $im = imagecreatefromjpeg($filepath);
+      break;
+
+    case 3:
+      $im = imagecreatefrompng($filepath);
+      imagepalettetotruecolor($im);
+      imagealphablending($im, true);
+      imagesavealpha($im, true);
+      break;
+
+    case 6:
+      $im = imagecreatefrombmp($filepath);
+      break;
+  }
+  return $im;
+}
+
+/**
+ * Implements hook_field_display_alter().
+ */
+function imagewebp_field_display_alter(&$display, $context) {
+  if ((isset($_SERVER['HTTP_ACCEPT']) === TRUE) && (strstr($_SERVER['HTTP_ACCEPT'], 'image/webp') !== FALSE) && $display['type'] == 'image') {
+    $support = $display['settings']['webp_support'];
+    $field_name = $context['instance']['field_name'];
+
+    for ($i = 0; $i < $context['field']['cardinality']; $i++) {
+      if (!empty($context['entity']->{$field_name})) {
+        $path = $context['entity']->{$field_name}[LANGUAGE_NONE][$i]['uri'];
+      }
+      if ($support && isset($path)) {
+        $filename = preg_replace('"\.(bmp|gif|png|jpg)$"', '.webp', $path);
+        // Here we create the webp image if it does not exist.
+        if (!file_exists($filename)) {
+          $file = file_load($context['entity']->{$field_name}[LANGUAGE_NONE][$i]['fid']);
+          $webp_file_create = createwebpimage($file);
+          if ($webp_file_create === TRUE) {
+            watchdog('ImageWebP', 'The WebP image (%filename) has been successfully created.', array('%filename' => $file->filename));
+          }
+          elseif ($webp_file_create === FALSE) {
+            watchdog('ImageWebP', 'The WebP image (%filename) could not be created.', array('%filename' => $file->filename), WATCHDOG_WARNING);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function imagewebp_preprocess_field(&$variables) {
+  // Provide an extra variable to the field template when the field uses
+  // a formatter of type 'image'.
+  if ($variables['element']['#formatter'] == 'image') {
+    $entity_type = $variables['element']['#entity_type'];
+    $field_name  = $variables['element']['#field_name'];
+    $bundle      = $variables['element']['#bundle'];
+    $view_mode   = $variables['element']['#view_mode'];
+
+    // If Webp Support already set, we don't need to do it again.
+    if (!isset($variables['element']['webp_support'])) {
+      _imagewebp_use_webp_is_possible($variables['element'], $entity_type, $field_name, $bundle, $view_mode);
+    }
+  }
+}
+
+function _imagewebp_use_webp_is_possible(&$variables, $entity_type, $field_name, $bundle, $view_mode) {
+  $formatter_settings = field_formatter_settings_get_instance_display_settings($entity_type, $field_name, $bundle, $view_mode);
+  // Make the setting available in the field template.
+  $variables['webp_support'] = (bool) $formatter_settings['webp_support'];
+  // if webp_support is enabled and browser supports the webp, use the
+  // generated webp imamge.
+  if ($formatter_settings['webp_support']) {
+    if ((isset($_SERVER['HTTP_ACCEPT']) === TRUE) && (strstr($_SERVER['HTTP_ACCEPT'], 'image/webp') !== FALSE)) {
+      foreach ($variables['#items'] as $key => $item) {
+        $path = $variables['#items'][$key]['uri'];
+        $filename = preg_replace('"\.(bmp|gif|png|jpg)$"', '.webp', $path);
+        if (file_exists($filename)) {
+          $variables['#items'][$key]['uri'] = $filename;
+          $variables[$key]['#item']['uri'] = $filename;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function imagewebp_preprocess_node(&$variables) {
+  if (!empty($variables['content'])) {
+    foreach (element_children($variables['content']) as $field) {
+      if (!empty($variables['content'][$field]) &&
+        (array_key_exists('#field_type', $variables['content'][$field]) && $variables['content'][$field]['#field_type'] == 'image') &&
+        (array_key_exists('#formatter', $variables['content'][$field]) && $variables['content'][$field]['#formatter'] == 'image')
+      ) {
+        _imagewebp_use_webp_is_possible($variables['content'][$field], 'node', $field, $variables['type'], $variables['view_mode']);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function imagewebp_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  $form['#submit'][] = '_imagewebp_custom_submit';
+}
+
+function _imagewebp_get_affected_images($bundle, $field) {
+  $query = db_select('field_data_' . $field, 'fd');
+  $query->condition('bundle', $bundle);
+  $query->addExpression('count(*)', 'items');
+  $result = $query->execute()->fetchField();
+  return $result;
+}
+
+/**
+ * Callback for hook_form_alter() submit.
+ */
+function _imagewebp_custom_submit($form, &$form_state) {
+  $fields = get_field_entity($form['#entity_type'], $form['#bundle']);
+  if (!empty($fields) && !empty($form_state['formatter_settings'])) {
+    foreach ($form_state['formatter_settings'] as $field => $setting) {
+      if (in_array($field, $fields) && $setting['webp_create']) {
+        $nodes = node_load_multiple(array(), array('type' => $form['#bundle']));
+        $created = 0;
+        $existed = 0;
+        foreach ($fields as $key => $value) {
+          $formatter_settings = $form_state['formatter_settings'];
+          if (isset($formatter_settings[$value]) && $formatter_settings[$value]['webp_support']) {
+            foreach ($nodes as $node) {
+              $items = field_get_items('node', $node, $value);
+              foreach ($items as $item) {
+                $fid = $item['fid'];
+                if (isset($fid) && $fid != 0) {
+                  $file = file_load($fid);
+                  if ($file) {
+                    $response = createwebpimage($file);
+                    if ($response === TRUE) {
+                      $created++;
+                    }
+                    elseif (is_string($response)) {
+                      $existed++;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        drupal_set_message(t('%created images have been created, %existed image(s) was already existed',
+          array(
+            '%created' => $created,
+            '%existed' => $existed,
+          )
+        ));
+      }
+    }
+  }
+}
+
+/**
+ * Returns fields of type image.
+ */
+function get_field_entity($node, $type) {
+  $field_entity = field_info_instances($node, $type);
+  $field_image = array();
+  foreach ($field_entity as $key => $value) {
+    if ($value['widget']['module'] == 'image') {
+      $field_image[] = $key;
+    }
+  }
+  return $field_image;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function imagewebp_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'imagewebp') . '/includes/views',
+  );
+}
