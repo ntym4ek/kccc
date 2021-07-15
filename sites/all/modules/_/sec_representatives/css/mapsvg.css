@@ -261,7 +261,6 @@
 .mapsvg-tooltip {
     font-weight: normal;
     font-size: 12px;
-    font-family: Helvetica, Arial;
     color: #000000;
     position: absolute;
     border-radius: 4px;
@@ -408,7 +407,6 @@
     color: #000;
     display: none;
     font-size: 12px;
-    font-family: 'Helvetica',sans-serif;
     /*padding: 15px 10px 7px 10px;*/
     position: absolute;
     width: 250px;
@@ -479,7 +477,6 @@
     line-height: 15px !important;
     color: #666666;
     padding: 0px 0px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
     -webkit-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.5);
     -moz-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.5);
@@ -885,7 +882,6 @@
     display: inline-block;
     padding: 5px 14px;
     line-height: 1.5;
-    font-family: Helvetica;
     box-shadow: none;
     text-decoration: none;
     font-size: 13px;
