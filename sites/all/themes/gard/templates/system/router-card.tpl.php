@@ -7,7 +7,7 @@
 
         <div class="r-card-image">
             <a href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>>
-                <img src="/<?php print $item['image_url']; ?>" class="img-responsive" alt="<?php print $item['title']; ?>" title="<?php print $item['title']; ?>">
+                <img src="/<?php print $item['image_url']; ?>" class="img-responsive" alt="<?php print $item['title']; ?>" title="<?php print $item['title']; ?>" loading="lazy" />
             </a>
         </div>
 
