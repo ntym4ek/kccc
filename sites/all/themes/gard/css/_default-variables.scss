@@ -120,7 +120,7 @@ $menu-level-2-color: #a3a3a3;
 $menu-hover-color: #4f4f4f;
 
 //== Шрифты
-$font-family-sans-serif:  ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif:  ubuntu, Helvetica, Arial, sans-serif;
 
 $font-size-base:          15px;
 $font-size-large:         ceil(($font-size-base * 1.25)); // ~18px
@@ -157,3 +157,8 @@ $padding-base-horizontal:   15px;
 
 //== Tabs
 $nav-tabs-active-link-hover-bg:             #fff;
+
+//** File name for all font files.
+$icon-font-name:          "Font Awesome 5 Free";
+//** Element ID within SVG icon file.
+$icon-font-svg-id:        "Font Awesome 5 Free";

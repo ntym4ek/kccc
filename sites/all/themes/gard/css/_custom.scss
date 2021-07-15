@@ -89,7 +89,7 @@
             max-width: 200px;
             width: 100%;
             > a {
-                color: $menu-level-1-color; font-weight: 500;
+                color: $menu-level-1-color;
                 display: block;
                 line-height: 18px;
                 min-height: 50px;
@@ -482,7 +482,7 @@
     a { color: #fff; }
     @include make-row(0);
     .phone {
-      font-size: 1.1em; font-weight: 700; text-align: center;
+      font-size: 1.1em; font-weight: 500; text-align: center;
       padding: 20px;
     }
     .mail {
@@ -545,7 +545,7 @@
 
     p { color: $text-color; text-transform: none; }
     h2 {
-      color: $brand-blue; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+      color: $brand-blue; font-size: 22px; font-weight: 500; letter-spacing: -1px;
       margin-top: 0;
       &:hover { color: $brand-red; }
       @media #{$normal} { font-size: 30px; }
@@ -606,7 +606,7 @@
   padding: 15px;
   a ~ p { margin-top: 20px; }
   h2 {
-    color: $brand-green; font-size: 22px; font-weight: 700; letter-spacing: -1px;
+    color: $brand-green; font-size: 22px; letter-spacing: -1px;
     margin: 0 0 0 0;
     &:hover,
     a:focus { color: $brand-green-hover; }
@@ -2527,7 +2527,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     .form-group > label {
         color: #000;
         font-size: 24px;
-        font-weight: 500;
         text-align: left;
         margin-bottom: 15px;
     }

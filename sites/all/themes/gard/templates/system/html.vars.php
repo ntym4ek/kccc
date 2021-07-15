@@ -63,9 +63,14 @@ function gard_preprocess_html(&$vars)
     }
     if ($color) $vars['classes_array'][] = 'page-'. $color;
 
-    /** --------------------------  подключить FontAwesome 5 -
-     */
+    /** --------------------------  подключить FontAwesome 5 - */
     drupal_add_css('https://use.fontawesome.com/releases/v5.11.0/css/all.css', array('type' => 'external'));
+
+    /** --------------------------  подключить Ubuntu - */
+    drupal_add_css('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500&display=swap', array('type' => 'external'));
+    // <link rel="preconnect" href="https://fonts.googleapis.com">
+    //<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    //<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet">
 }
 
 /**
