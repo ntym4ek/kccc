@@ -324,7 +324,7 @@ function _chibs_check_and_place_news_to_front($node_updated)
                                 '<a href="' . $url . '"><h2>' . $title . '</h2></a>' .
                                     '<p>' . $section . '</p>' .
                                 '<a class="btn btn-danger" href="' . $url . '">' .
-                                    t('More') . '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>' .
+                                    t('More') .
                                 '</a>' .
                             '</div>' .
                           '</div>' .
@@ -366,13 +366,12 @@ function _chibs_check_and_place_agenda_to_front($node)
 
         $url = 'node/' . $node->nid; // path_alias ещё не сформирован и неизвестен
         $term_wr->language('ru')->name_field = $node->title;
-        $term_wr->language('ru')->description_field->format = 'full_html';
-        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="/<?php print url(\'' . $url . '\'); ?>">' .
-                                                                    '<i class="fa fa-chevron-right" aria-hidden="true"></i>' .
-                                                                '</a>';
+        $term_wr->language('ru')->description_field->format = 'php_code';
+        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="<?php print url(\'' . $url . '\'); ?>"></a>';
         $term_wr->field_link = $url;
         $term_wr->field_text = 'Подробнее o мероприятии';
         $term_wr->field_promo_image->set($node->field_promo_image['und'][0]);
+        $term_wr->field_image_mobile->set($node->field_image_mobile['und'][0]);
         $term_wr->field_period->value->set($node->field_period['und'][0]['value']-2*7*24*3600);
         $term_wr->field_period->value2->set($node->field_period['und'][0]['value2']);
         $term_wr->field_entity_ref = $node;

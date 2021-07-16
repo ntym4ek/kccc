@@ -442,7 +442,7 @@ function _pack_list_to_html($items, $options)
             $title = $item['title'] . (empty($item['formulation']) ? '' : ', ' . $item['formulation']);
             $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
             $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#585857\';"' : '';
-            $list .= '<li><i class="fa fa-chevron-right"' . $color_style . '></i><a href="' . $item['url'] . '"' . $hover_style . '>' . $title . '</a></li>';
+            $list .= '<li><i class="fas fa-chevron-right"' . $color_style . '></i><a href="' . $item['url'] . '"' . $hover_style . '>' . $title . '</a></li>';
         }
         $list .= '</ul>';
     }
@@ -467,7 +467,7 @@ function _get_banner_html($element)
                         '<div class="col-xs-12 banner-img"><img src="' . $image_url . '"  alt="' . $link_title . '" loading="lazy" /></div>' .
                         '<div class="col-xs-12 banner-text">' .
                             '<p>' . $desc . '</p>' .
-                            '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></a>' .
+                            '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fas fa-chevron-right"></i></a>' .
                         '</div>' .
                     '</div>';
         }

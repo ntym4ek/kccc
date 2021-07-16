@@ -17,7 +17,7 @@
 
             <a class="btn btn-danger r-card-more" href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>>
                 <?php print empty($item['button_text']) ? t('More') : $item['button_text']; ?>
-                <i class="fa fa-chevron-right pull-right"></i>
+                <i class="fas fa-chevron-right pull-right"></i>
             </a>
         </div>
 

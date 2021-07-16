@@ -98,8 +98,7 @@ $node_url = url('node/' . $node->nid);
         <a href="<?php print $node_url; ?>"><h2><?php print $title; ?></h2></a>
         <p><?php print $category; ?></p>
         <a class="btn btn-danger" href="<?php print $node_url; ?>">
-            <?php print t('More'); ?>
-            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <?php print t('More'); ?>
         </a>
     </div>
 </div>

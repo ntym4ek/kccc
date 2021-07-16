@@ -24,7 +24,7 @@
             </div>
             <a class="btn btn-danger v-card-more" href="<?php print $content['link']; ?>">
                 <?php print t('More'); ?>
-                <i class="fa fa-chevron-right pull-right"></i>
+                <i class="fas fa-chevron-right pull-right"></i>
             </a>
         </div>
 

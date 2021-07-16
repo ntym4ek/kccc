@@ -36,10 +36,10 @@
   </div>
   <?php if($controls): ?>
     <a class="left carousel-control" href="<?php print $target; ?>" role="button" data-slide="prev">
-      <span class="glyphicon glyphicon-chevron-left"></span>
+      <i class="fas fa-chevron-left"></i>
     </a>
     <a class="right carousel-control" href="<?php print $target; ?>" role="button" data-slide="next">
-      <span class="glyphicon glyphicon-chevron-right"></span>
+      <i class="fas fa-chevron-right"></i>
     </a>
   <?php endif; ?>
 </div>

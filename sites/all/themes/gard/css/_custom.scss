@@ -576,10 +576,10 @@
   .info-over & .block-body {
     background: #fff;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 13px; line-height: 17px;
     position: absolute; bottom: 10%; right: 10%;
-    padding: 20px 30px 25px 20px;
-    width: 380px;
+    padding: 15px 32px 15px 15px;
+    width: 180px;
     a.btn {
       position: absolute; bottom: 50%; right: -25px;
       color: #fff; font-size: 25px; line-height: 50px;
@@ -587,10 +587,14 @@
       padding: 0 0 0 5px;
       @include translate(0, 50%);
     }
-    @media #{$phone} {
-      padding: 15px 32px 10px 15px;
+    @media #{$tablet} {
+      font-size: 16px;
+      padding: 20px 30px 25px 20px;
       width: 280px;
-      font-size: 13px; line-height: 17px;
+    }
+    @media #{$wide} {
+      font-size: 18px;
+      width: 380px;
     }
   }
   &.info-right {
@@ -606,12 +610,12 @@
   padding: 15px;
   a ~ p { margin-top: 20px; }
   h2 {
-    color: $brand-green; font-size: 22px; letter-spacing: -1px;
+    color: $brand-green; font-size: 18px; font-weight: 400; letter-spacing: -1px;
     margin: 0 0 0 0;
     &:hover,
     a:focus { color: $brand-green-hover; }
     @media #{$normal} {
-      font-size: 25px;
+      font-size: 25px; font-weight: 500;
       .row-1 & { font-size: 30px; }
     }
   }
@@ -624,12 +628,11 @@
     @include make-row();
     .block {
       @include make-sm-column(12, 2px);
-      @media #{$phone} {
-        .block-image {
-          height: 200px;
-          a { height: 100%; }
-          img { height: 100%; width: initial; max-width: initial; }
-        }
+    }
+    .view-id-sliders .block-image {
+      @media #{$wide} {
+        min-height: 500px;
+        height: 500px;
       }
     }
   }
@@ -659,7 +662,9 @@
     & .block:first-child { padding-left: 0; }
     & .block:last-child { padding-right: 0; }
   }
-  .block-image { overflow: hidden; }
+  .block-image {
+    overflow: hidden;
+  }
 
   .block {
     a.btn {
@@ -688,7 +693,7 @@
     h3 {
       color: #fff;
       //font-family: oswald;
-      font-weight: 100; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      font-weight: 300; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       margin-top: 0; margin-bottom: 15px;
       a {
         color: #fff;
@@ -753,7 +758,7 @@
       }
   }
     h3 {
-        font-weight: 100;
+        font-weight: 300;
         display: inline-block;
         margin-top: 0;
     }
@@ -922,7 +927,7 @@
   overflow: hidden;
 
     .table {
-        th { font-size: .9em; font-weight: 100; text-align: center; }
+        th { font-size: .9em; font-weight: 300; text-align: center; }
         td {
             font-size: .85em;
             vertical-align: middle;
@@ -1028,13 +1033,13 @@
           padding: 3px 10px;
       }
       .fc-mn-percent {
-          font-size: 17px; font-weight: 100;
+          font-size: 17px; font-weight: 300;
           height: 60%;
           overflow: hidden;
           margin-top: -60%;
       }
       .fc-mn-element {
-          font-size: 28px; font-weight: 100;
+          font-size: 28px; font-weight: 300;
           height: 50%;
       }
       .fc-mn-name {
@@ -1484,7 +1489,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .entityform {
   .pre-instructions {
     display: none;
-    //  color: #2b8aff; font-size: 16px; font-weight: 100; text-align: center;
+    //  color: #2b8aff; font-size: 16px; font-weight: 300; text-align: center;
     //margin-bottom: 15px;
   }
 }
@@ -1549,7 +1554,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 }
 .popup .close {
   color: #fff;
-  font-size: 35px; line-height: 0; font-weight: 100;
+  font-size: 35px; line-height: 0; font-weight: 300;
   position: absolute; top: 24px; right: 20px;
   cursor: pointer;
 }
@@ -1864,11 +1869,11 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     img { width: 80px; }
   }
   .contact-dep {
-    color: $text-muted; font-size: .9em; font-weight: 100; line-height: 1.2;
+    color: $text-muted; font-size: .9em; font-weight: 300; line-height: 1.2;
     margin-bottom: 10px;
   }
   .contact-collapse {
-    font-size: .8em; font-weight: 100;
+    font-size: .8em; font-weight: 300;
     .collapse-title {
       cursor: pointer;
       margin: .5em 0;
@@ -1893,7 +1898,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .taxonomy.teaser {
   padding: 0 0 0 22px;
   h4 {
-    font-weight: 700;
+    font-weight: 500;
     position: relative;
     padding-left: 5px;
     a { color: $text-color; }
@@ -1971,7 +1976,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         padding: 0 $grid-gutter-width/2;
         & > div { flex: 0 0 100%; }
         .cc-price {
-          font-size: 1.1em; font-weight: 100;
+          font-size: 1.1em; font-weight: 300;
           margin-bottom: 5px;
         }
         .cc-qty {
@@ -2088,7 +2093,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 .captcha { margin: 10px 0; }
 .font-small { font-size: .8em; }
-.sup { font-size: 10px; line-height: 10px; font-weight: 100; vertical-align: super; }
+.sup { font-size: 10px; line-height: 10px; font-weight: 300; vertical-align: super; }
 
 // убрать отступы по краям
 // применяется к row
@@ -2289,7 +2294,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
             div {
                 margin-bottom: 10px;
                 > span {
-                    color: #aaa; font-weight: 100;
+                    color: #aaa; font-weight: 300;
                     display: block;
                     margin-bottom: 4px;
                 }
