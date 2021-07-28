@@ -86,16 +86,18 @@
     </div>
     <div class="col-sm-7">
         <div class="product-brief">
-            <?php if ($content['product:commerce_price']['#items'][0]['amount'] != 0) : ?>
-                <?php print render($content['product:commerce_price']); ?>
-            <?php else: ?>
-                <div class="field field-commerce-price">
-                    <div class="field-label"><?php print t('Price'); ?></div>
-                    <div class="field-items"><?php print '<a id="price-request" href="#" onclick="supportAPI.openTab(0); return false;">' . t('Check price') . '</a>'; ?></div>
-                </div>
-            <?php endif; ?>
+<!--            --><?php //if ($content['product:commerce_price']['#items'][0]['amount'] != 0) : ?>
+<!--                --><?php //print render($content['product:commerce_price']); ?>
+<!--            --><?php //else: ?>
+<!--                <div class="field field-commerce-price">-->
+<!--                    <div class="field-label">--><?php //print t('Price'); ?><!--</div>-->
+<!--                    <div class="field-items">--><?php //print '<a id="price-request" href="#" onclick="supportAPI.openTab(0); return false;">' . t('Check price') . '</a>'; ?><!--</div>-->
+<!--                </div>-->
+<!--            --><?php //endif; ?>
 
-            <?php print render($content['product:field_p_in_package']); ?>
+          <?php print render($content['product:field_p_tare']); ?>
+
+          <?php print render($content['product:field_p_packaging']); ?>
 
             <?php print render($content['field_product']); ?>
 

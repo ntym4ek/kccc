@@ -19,7 +19,7 @@
     <h4><span class="tax-icon"></span><a href="<?php print url('taxonomy/term/' . $tid); ?>"><?php print $name; ?></a></h4>
     <ul>
         <?php foreach($preps as $prep): ?>
-            <li><i class="fas fa-chevron-right"></i><a href="<?php print url('node/' . $prep->nid); ?>"><?php print get_product_info($prep->nid)['title']; ?></a></li>
+            <li><i class="fas fa-chevron-right"></i><a href="<?php print url('node/' . $prep->nid); ?>"><?php print ext_product_product_get_info($prep->nid)['title']; ?></a></li>
         <?php endforeach; ?>
     </ul>
 </div>

@@ -14,12 +14,24 @@ function ext_product_menu()
     return $items;
 }
 
+/**
+ * Implementation of hook_module_implements_alter().
+ */
+function ext_product_module_implements_alter(&$implementations, $hook)
+{
+  //  Если хук - hook_form_alter, то переносим нашу реализацию этого хука в конец очереди
+  if ($hook == 'form_alter' && isset($implementations['ext_product'])) {
+    $group = $implementations['ext_product'];
+    unset($implementations['ext_product']);
+    $implementations['ext_product'] = $group;
+  }
+}
 
 /**
  *
  */
-function ext_product_form_field_collection_item_form_alter(&$form, &$form_state, $form_name) {
-
+function ext_product_form_field_collection_item_form_alter(&$form, &$form_state, $form_name)
+{
     // для Регламентов
     if ($form['field_name']['#value'] == 'field_pd_reglaments') {
         // ограничение списка Функций регламента
@@ -113,131 +125,221 @@ function ext_product_preprocess_node(&$vars)
     }
 }
 
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ * форма добавления в корзину
+ */
+function ext_product_form_commerce_cart_add_to_cart_form_alter(&$form, $form_state)
+{
+  $product_id = empty($form["product_id"]["#value"]) ? $form["product_id"]["#default_value"] : $form["product_id"]["#value"];
+  $nid = _get_product_display_by_product_id($product_id, true);
+  $product_info = ext_product_product_get_info($nid);
+
+  // i18n не перевёл taxonomy_term_reference
+  // извлекаем переведенное значение поля Упаковка вручную
+  if (isset($form['attributes']['field_p_tare']['#options'])) {
+    foreach ($form['attributes']['field_p_tare']['#options'] as $tid => $title) {
+      $term_wr = entity_metadata_wrapper('taxonomy_term', $tid);
+      $form['attributes']['field_p_tare']['#options'][$tid] = $term_wr->language($GLOBALS['language']->language)->name->value();
+    }
+  }
+
+  // выводить элементы в одну строку с метками
+  $form['#attributes']['class'][] = 'form-horizontal';
+  $form['submit']['#prefix'] = '<div class="form-item form-action-wrapper">';
+  $form['submit']['#suffix'] = '</div>';
+  $form['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('add_to_cart'); return true;";
+  $form['submit']['#attributes']['class'][] = 'btn-primary';
+  $form['submit']['#attributes']['class'][] = 'btn-wide-full';
+
+  // если Out_of_stock, сделать Добавление в корзину неактивным
+  if ($product_info["status"]) {
+    $product = $product_info['items'][$product_info['nid']];
+    $form['submit']['#value'] = 'от ' . $product['price_in_tare_formatted'];
+    $form['submit']['#suffix'] = '<div class="button-notice">Цена зависит от общей стоимости заказа</div></div>';
+  } else {
+    $form['submit']['#disabled'] = true;
+    $form['submit']['#value'] = t('Out of stock');
+  }
+
+  // сферу и таблетку перенаправить на страду через кнопку Купить
+  if (isset($product_info["items"][$product_info["nid"]]["categories"]['72785'])) {
+    $form['submit']['#value'] = t('Buy');
+    array_unshift($form['#submit'], 'ext_product_cart_add_to_cart_form_submit');
+    foreach($form['submit']['#attributes']['class'] as $index => $class) {
+      if ($class == 'use-ajax-submit') unset($form['submit']['#attributes']['class'][$index]);
+    }
+  }
+}
+
+function ext_product_cart_add_to_cart_form_submit($form, $form_state)
+{
+  // если это сфера или таб, перейти на сайт страды
+  if (isset($form_state['context']['entity_id'])) {
+    if ($form_state['context']['entity_id'] == 8505) drupal_goto('https://joy-magazin.ru/product/finfire-sfera');
+    if ($form_state['context']['entity_id'] == 8770) drupal_goto('https://joy-magazin.ru/product/finfire-tab');
+  }
+}
 
 /**
  * Вернуть полную информацию о продукте
  * @param $node
  * @return array с массивом препаратов заголовком, формуляцией и ингредиентами
  */
-function get_product_info($node)
+function ext_product_product_get_info($node)
 {
-    $result = &drupal_static(__FUNCTION__);
-    if (is_numeric($node) && isset($result[$node])) return $result[$node];
-    if (isset($node->nid) && isset($result[$node->nid])) return $result[$node->nid];
+  $result = &drupal_static(__FUNCTION__);
+  if (is_numeric($node) && isset($result[$node])) return $result[$node];
+  if (isset($node->nid) && isset($result[$node->nid])) return $result[$node->nid];
 
-    $lang = $GLOBALS['language']->language;
+  $lang = $GLOBALS['language']->language;
 
-    $preparation_wr = entity_metadata_wrapper('node', $node)->language($lang);
+  $preparation_wr = entity_metadata_wrapper('node', $node)->language($lang);
 
-    // составить массив препаратов
-    // один препарат для химии, два препарата для смесей
-    $preparations = [];
-    if ($preparation_wr->getBundle() == 'product_mix') {
-        foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
-            $wrapper = $preparation_wr->{$field};
-            $preparations[] = array(
-                'order' => $key,
-                'item' => $wrapper,
-            );
-        }
-    } else {
-        $preparations[] = array(
-            'order' => 0,
-            'item' => $preparation_wr,
-        );
+  // составить массив препаратов
+  // один препарат для химии, два препарата для смесей
+  $preparations = [];
+  if ($preparation_wr->getBundle() == 'product_mix') {
+    foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
+      $wrapper = $preparation_wr->{$field};
+      $preparations[] = array(
+        'order' => $key,
+        'item' => $wrapper,
+      );
     }
-
-    // формируем результирующий массив
-    $preparation = array(
-        'nid'    => $preparation_wr->getIdentifier(),
-        'type'   => $preparation_wr->getBundle(),
-        'status' => $preparation_wr->status->value(),
-        'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
-        'url'    => url('node/' . $preparation_wr->getIdentifier()),
+  } else {
+    $preparations[] = array(
+      'order' => 0,
+      'item' => $preparation_wr,
     );
-    $titles_w_form = [];
-    foreach($preparations as $item) {
-        $preparation_wr = $item['item'];
-        $id = $preparation_wr->getIdentifier();
+  }
 
-        // препаративная форма
-        $form_short = $form_full = '';
-        if (isset($preparation_wr->field_pd_formulation) && $preparation_wr->field_pd_formulation->value()) {
-            $form_short = $preparation_wr->field_pd_formulation->language($lang)->field_tax_short_name->value();
-            $form_full = $preparation_wr->field_pd_formulation->language($lang)->name->value();
-        }
+  // формируем результирующий массив
+  $preparation = array(
+    'nid'    => $preparation_wr->getIdentifier(),
+    'type'   => $preparation_wr->getBundle(),
+    'status' => $preparation_wr->status->value(),
+    'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
+    'url'    => url('node/' . $preparation_wr->getIdentifier()),
+  );
+  $titles_w_form = [];
+  foreach($preparations as $item) {
+    $preparation_wr = $item['item'];
+    $id = $preparation_wr->getIdentifier();
 
-        // единицы измерения препарата
-        $unit_wr = $preparation_wr->field_pd_units->language($lang);
-
-        // ДВ
-        $ingredients = [];
-        if (isset($preparation_wr->field_pd_active_ingredients) && $preparation_wr->field_pd_active_ingredients->value()) {
-            foreach ($preparation_wr->field_pd_active_ingredients as $ingredient_wr) {
-                if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {
-                    $ingredient_wr = $ingredient_wr->language($lang);
-                    $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->name->value() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
-                    $ingr_dose = $ingredient_wr->field_pd_ai_concentration->value();
-                    $cons_unit = t('l');
-                    if (in_array($unit_wr->field_tax_short_name->value(), array('кг', 'г', 'kg', 'g'))) $cons_unit = t('kg');
-                    if (in_array($unit_wr->field_tax_short_name->value(), array('л', 'мл', 'l', 'ml'))) $cons_unit = t('l');
-                    $ingredients[] = $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit;
-                }
-            }
-        }
-
-        // определить по категории ед. изм. применения препарата (га или т)
-        // и занести в массив, т.к. неизвестно, какие из них будут использованы
-        $unit_field = [];
-        foreach ($preparation_wr->field_pd_category as $cat_wrapper) {
-            $tid = $cat_wrapper->getIdentifier();
-            $unit_field[$tid] = $tid == AGRO_CATEGORY_DISINFECTANTS_TID ? t(AGRO_SEED_MEASURE) : t(AGRO_FIELD_MEASURE);
-        }
-
-        // фото
-      $photo_uri = $preparation_wr->field_product[0]->field_p_images[0]->value() ? $preparation_wr->field_product[0]->field_p_images[0]->value()['uri'] : '';
-      $photo_url = file_create_url($photo_uri);
-
-        // категория и цвет
-        $cats = [];
-        if ($preparation_wr->field_pd_category->value()) {
-            foreach($preparation_wr->field_pd_category->getIterator() as $category_wr) {
-                $cats[$category_wr->tid->value()] = [
-                    'tid' => $category_wr->getIdentifier(),
-                    'name' => $category_wr->label(),
-                    'color' => $category_wr->field_color->value(),
-                ];
-            }
-        }
-
-        $preparation['items'][$id] = array(
-            'id'            => $id,
-            'title'         => $preparation_wr->language($lang)->title_field->value(),
-            'description'   => strip_tags($preparation_wr->body->summary->value()),
-            'url'           => url('node/' . $id),
-            'form_short'    => $form_short,
-            'form_full'     => $form_full,
-            'ingredients'   => $ingredients,
-            'price'         => $preparation_wr->field_pd_price_per_unit->amount->value()/100,
-            'unit'          => $unit_wr->name->value(),
-            'unit_short'    => $unit_wr->field_tax_short_name->value(),
-            'unit_field'    => $unit_field,
-            'photo_uri'     => $photo_uri,
-            'photo_url'     => $photo_url,
-            // порядковый номер в списке препаратов баковой смеси (БС)
-            // используется для связи с нормой расхода в регламенте БС
-            'order'         => $item['order'],
-            'categories'    => $cats
-        );
-        $titles_w_form[] = $form_short ? $preparation_wr->title_field->value() . ', ' . $form_short : $preparation_wr->title_field->value();
+    // препаративная форма
+    $form_short = $form_full = '';
+    if (isset($preparation_wr->field_pd_formulation) && $preparation_wr->field_pd_formulation->value()) {
+      $form_short = $preparation_wr->field_pd_formulation->language($lang)->field_tax_short_name->value();
+      $form_full = $preparation_wr->field_pd_formulation->language($lang)->name->value();
     }
-    $preparation['title'] = implode(' + ', $titles_w_form);
 
-    $result[$preparation['nid']] = $preparation;
+    // единицы измерения препарата
+    $unit_wr = $preparation_wr->field_pd_units->language($lang);
 
-    return $preparation;
+    // ДВ
+    $ingredients = [];
+    if (isset($preparation_wr->field_pd_active_ingredients) && $preparation_wr->field_pd_active_ingredients->value()) {
+      foreach ($preparation_wr->field_pd_active_ingredients as $ingredient_wr) {
+        if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {
+          $ingredient_wr = $ingredient_wr->language($lang);
+          $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->name->value() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
+          $ingr_dose = $ingredient_wr->field_pd_ai_concentration->value();
+          $cons_unit = t('l');
+          if (in_array($unit_wr->field_tax_short_name->value(), array('кг', 'г', 'kg', 'g'))) $cons_unit = t('kg');
+          if (in_array($unit_wr->field_tax_short_name->value(), array('л', 'мл', 'l', 'ml'))) $cons_unit = t('l');
+          $ingredients[] = $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit;
+        }
+      }
+    }
+
+    // определить по категории ед. изм. применения препарата (га или т)
+    // и занести в массив, т.к. неизвестно, какие из них будут использованы
+    $unit_field = [];
+    foreach ($preparation_wr->field_pd_category as $cat_wrapper) {
+      $tid = $cat_wrapper->getIdentifier();
+      $unit_field[$tid] = $tid == AGRO_CATEGORY_DISINFECTANTS_TID ? t(AGRO_SEED_MEASURE) : t(AGRO_FIELD_MEASURE);
+    }
+
+    // фото
+    $photo_uri = 'public://default_images/no_image.jpg';
+    if ($photo = $preparation_wr->field_product[0]->field_p_images[0]->value()) {
+      $photo_uri = $photo['uri'];
+    }
+    $photo_url = file_create_url($photo_uri);
+    $photo_medium = image_style_url('medium', $photo_uri);
+
+    // наличие
+    $stock = $preparation_wr->status->value();
+
+    $product_0_wr = $preparation_wr->field_product[0];
+    // тара
+    $tare = $product_0_wr->field_p_tare->name->value();
+
+    // цена От
+    $price_in_tare_formatted = str_replace(',00', '', commerce_currency_format($product_0_wr->commerce_price->amount->value(), 'RUB'));
+
+    // категория и цвет
+    $cats = [];
+    if ($preparation_wr->field_pd_category->value()) {
+      foreach($preparation_wr->field_pd_category->getIterator() as $category_wr) {
+        $cats[$category_wr->tid->value()] = [
+          'tid' => $category_wr->getIdentifier(),
+          'name' => $category_wr->label(),
+          'color' => $category_wr->field_color->value(),
+        ];
+      }
+    }
+
+    $preparation['items'][$id] = array(
+      'id'            => $id,
+      'title'         => $preparation_wr->language($lang)->title_field->value(),
+      'description'   => strip_tags($preparation_wr->body->summary->value()),
+      'url'           => url('node/' . $id),
+      'form_short'    => $form_short,
+      'form_full'     => $form_full,
+      'ingredients'   => $ingredients,
+      'price'         => $preparation_wr->field_pd_price_per_unit->amount->value()/100,
+      'unit'          => $unit_wr->name->value(),
+      'unit_short'    => $unit_wr->field_tax_short_name->value(),
+      'unit_field'    => $unit_field,
+      'photo_uri'     => $photo_uri,
+      'photo_url'     => $photo_url,
+      'photo_medium'  => $photo_medium,
+      // порядковый номер в списке препаратов баковой смеси (БС)
+      // используется для связи с нормой расхода в регламенте БС
+      'order'         => $item['order'],
+      'categories'    => $cats,
+      'stock'         => $stock,
+      'tare'          => $tare,
+      'price_in_tare_formatted'  => $price_in_tare_formatted,
+    );
+    $titles_w_form[] = $form_short ? $preparation_wr->title_field->value() . ', ' . $form_short : $preparation_wr->title_field->value();
+  }
+  $preparation['title'] = implode(' + ', $titles_w_form);
+
+  $result[$preparation['nid']] = $preparation;
+
+  return $preparation;
 }
 
+
+/**
+ * Получить id ноды или ноду по id привязанного commerce product
+ */
+function ext_product_get_product_display_by_product_id($product_id, $load_node = false)
+{
+  if ($product_id) {
+    $product_display_nid = db_select('field_data_field_product', 'f')
+      ->fields('f', array('entity_id'))
+      ->condition('f.field_product_product_id', $product_id)
+      ->range(0, 1)
+      ->execute()
+      ->fetchField();
+    return $load_node ? node_load($product_display_nid) : $product_display_nid;
+  }
+  return false;
+}
 
 /**
  * --------------------------------- Сделать текст под заголовками h4 сворачиваемым (в поле body)-----------------------
@@ -287,7 +389,7 @@ function ext_product_qsearch_callback($category_tid = null)
     }
     if ($result = $query->execute()->fetchAll()) {
         foreach($result as $prep) {
-            $prep_arr = get_product_info($prep->nid);
+            $prep_arr = ext_product_product_get_info($prep->nid);
             if (in_array($prep_arr['type'], ['product_agro', 'product_fert'])) {
                 $prep_item = $prep_arr['items'][$prep_arr['nid']];
                 $item = [

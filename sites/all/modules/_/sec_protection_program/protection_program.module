@@ -412,7 +412,7 @@ function pp_stage_form($form, $form_state, $ppid, $sid = '') {
 
             // единицы измерения
             $units_arr = [];
-            foreach (get_product_info($prep_wrapper->nid->value())['items'] as $item) {
+            foreach (ext_product_product_get_info($prep_wrapper->nid->value())['items'] as $item) {
                 $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
             }
 
@@ -804,7 +804,7 @@ function get_protection_program($ppid, $data = array())
 
             // определяем наименование препарата, ед.изм., нормы, стоимость
             $unit = $units_arr = $pid = $price = $title = array();
-            $product_info = get_product_info($prep_wrapper->nid->value())['items'];
+            $product_info = ext_product_product_get_info($prep_wrapper->nid->value())['items'];
             foreach ($product_info['items'] as $item) {
                 $pid[] = $item['id'];
                 $unit[] = $item['unit_short'];

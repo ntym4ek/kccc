@@ -120,7 +120,7 @@ body {
   margin: 0 auto;
 }
 
-strong {
+strong, dt {
   font-weight: 500;
 }
 
@@ -656,6 +656,71 @@ table {
 .checkbox input[type="checkbox"],
 .checkbox-inline input[type="checkbox"] {
     margin-top: .4em;
+}
+
+.form-type-checkbox {
+  input {
+    position: absolute; z-index: -1;
+    opacity: 0;
+  }
+  .control-label {
+    font-weight: 300;
+    padding: 0;
+    display: flex; align-items: center;
+  }
+  input + .cb-mark:before {
+    font-family: "Font Awesome 5 Free"; font-style: normal; font-variant: normal; text-rendering: auto; -webkit-font-smoothing: antialiased;
+    font-weight: 900;
+    content: " ";
+
+    display: inline-block;
+    color: $brand-primary; text-align: center; font-size: 13px; line-height: 1.5;
+    margin-right: $grid-gutter-width/2;
+    width: 20px; height: 20px;
+    border: 1px solid $gray-lighten;
+    vertical-align: middle;
+  }
+
+  input:checked + .cb-mark:before { content: "\f00c"; }
+  input:disabled + .cb-mark:before {
+    background: #eee;
+    color: #aaa;
+  }
+}
+
+.form-item-quantity,
+[class*=form-item-cart-contents-form-cart-contents-form-view-edit-quantity]
+{
+  .form-input-wrapper {
+    display: flex; flex-wrap: nowrap;
+    .commerce-quantity-plusminus-link {
+      flex: 0 0 35px;
+      border: 1px solid $input-border;
+      border-radius: $input-border-radius;
+      background: $input-bg;
+      //height: 39px;
+      display: flex;
+      justify-content: center;
+
+      a.button {
+        display: block;
+        width: 100%; height: 100%;
+        padding: 6px; margin: 0;
+        color: $text-muted; font-weight: 400;
+        &:hover { color: $text-color; }
+        &:hover,
+        &:focus {
+          background: none;
+          text-decoration: none;
+        }
+      }
+    }
+    input {
+      flex: auto;
+      margin: 0 $grid-gutter-width/2;
+      text-align: center;
+    }
+  }
 }
 
 

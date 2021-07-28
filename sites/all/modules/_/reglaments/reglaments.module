@@ -315,7 +315,7 @@ function _reglaments_get_protection_system2($parameters)
                 $weight = $reglament_wr->field_pd_r_function->weight->value();
                 $tid = $reglament_wr->field_pd_r_function->tid->value();
                 // просматриваем регламенты
-                $prep_info = get_product_info($preparation_id);
+                $prep_info = ext_product_product_get_info($preparation_id);
 
 
                 // уникальный ключ этапа Программы защиты - сочетание id препарата и id функции

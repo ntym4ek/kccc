@@ -54,11 +54,11 @@
             /* ------------------------------------------ блок корзины ---------------------------------------------- */
             /* - при обновлении блока корзины через секунду убрать класс с эффектом тряски - */
             /* - (класс добавляется в модуле checkout - checkout_commerce_fast_ajax_atc_commands_alter()) - */
-            $("#block-cart").once(function() {
-                $("#block-cart").each(function() {
-                    setTimeout(function() { $("#block-cart").removeClass("shake-on"); }, 1500);
-                });
-            });
+            // $("#block-cart").once(function() {
+            //     $("#block-cart").each(function() {
+            //         setTimeout(function() { $("#block-cart").removeClass("shake-on"); }, 1500);
+            //     });
+            // });
 
             /* ------------------------------------------  swipe events init ---------------------------------------- */
             function toggleMenu() {

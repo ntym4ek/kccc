@@ -63,8 +63,26 @@ function theme_tabular_form($vars)
     ));
 }
 
-function gard_preprocess_field(&$variables, $hook) {
-  if ($variables['element']['#field_name'] == 'field_image_gallery') {
 
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function gard_theme_registry_alter(&$theme_registry) {
+  $theme_path = path_to_theme();
+
+  // Checkboxes.
+  if (isset($theme_registry['checkbox'])) {
+    $theme_registry['checkbox']['type'] = 'theme';
+    $theme_registry['checkbox']['theme path'] = $theme_path;
+    $theme_registry['checkbox']['template'] = $theme_path. '/templates/field/field--type-checkbox';
+    unset($theme_registry['checkbox']['function']);
   }
+
+  // Radios.
+//  if (isset($theme_registry['radio'])) {
+//    $theme_registry['radio']['type'] = 'theme';
+//    $theme_registry['radio']['theme path'] = $theme_path;
+//    $theme_registry['radio']['template'] = $theme_path . '/templates/field/field--type-radio';
+//    unset($theme_registry['radio']['function']);
+//  }
 }

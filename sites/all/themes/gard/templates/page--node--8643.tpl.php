@@ -95,7 +95,7 @@
             <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
         </button>
         <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3">
-            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
+            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print ext_checkout_get_cart_block(); ?></i>
             <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
         </a>
     </div>

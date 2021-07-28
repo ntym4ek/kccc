@@ -180,7 +180,7 @@ function gard_preprocess_node(&$vars) {
         }
 
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
-        if ($product = get_product_info($vars['node'])) {
+        if ($product = ext_product_product_get_info($vars['node'])) {
             foreach ($product['items'] as $nid => $item) {
                 $vars['titles_arr'][] = $item['title'] . ($item['form_short'] ? ', ' . $item['form_short'] : '');
                 $vars['ingredients_arr'][] = implode(' + ', $item['ingredients']);

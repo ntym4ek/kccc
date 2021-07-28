@@ -1,0 +1,6 @@
+name = Payment Method Bank
+description = Provides Bank payment method
+package = Custom
+dependencies[] = commerce
+dependencies[] = commerce_payment
+core = 7.x

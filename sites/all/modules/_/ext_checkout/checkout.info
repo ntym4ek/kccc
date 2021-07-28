@@ -1,5 +1,0 @@
-name = Дополнения для Checkout
-description = Вспомогательный модуль на странице чекаута
-package = Custom
-core = 7.x
-

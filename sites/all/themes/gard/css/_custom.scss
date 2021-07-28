@@ -772,7 +772,6 @@
   .header-social {
     border-bottom: 1px solid $gray-light;
     font-size: 16px; font-weight: 500;
-    //font-family: oswald;
     text-align: right;
     padding-bottom: 5px;
     button,
@@ -899,6 +898,7 @@
       }
     }
 
+    .form-item-product-id { display: none; }
     .field-name-field-product {
       .field-items { @include make-sm-column(12); }
     }
@@ -915,6 +915,18 @@
       .ingredients { color: $text-muted; font-size: $font-size-small; }
     }
     #edit-line-item-fields { display: none; }
+
+    //.form-item-quantity .form-input-wrapper {
+    //  display: flex; flex-wrap: nowrap;
+    //  .commerce-quantity-plusminus-link {
+    //    flex: 0 0 35px;
+    //  }
+    //  input {
+    //    flex: auto;
+    //    margin: 0 $grid-gutter-width/2;
+    //    text-align: center;
+    //  }
+    //}
 
     @media #{$phone} {
       padding: 20px;
@@ -1012,7 +1024,7 @@
       /* ----------------------------------------------- Микроэлементы (Microelements) - */
       .fc-micronutrients { margin-bottom: 20px; }
       .fc-micronutrient {
-        background: #f39314;  border-radius: 4px;
+        background: $brand-green;  border-radius: 4px;
         float: left;
         color: #fff;
         height: 80px; width: 80px;
@@ -1047,7 +1059,7 @@
           height: 25%;
           padding: 3px 5px;
       }
-      .fc-micronutrient:hover { background: #b36500; }
+      .fc-micronutrient:hover { background: $brand-green-hover; }
       .fc-micronutrient:hover .fc-mn-number {
         opacity: 0;
         height: 0;
@@ -1059,23 +1071,23 @@
       }
       .fc-micronutrient:hover .fc-mn-element { font-size: 18px; }
 
-      .page-node-6050 .fc-micronutrient       { background: #f39314; }
-      .page-node-6050 .fc-micronutrient:hover { background: #b36500; }
-
-      .page-node-6051 .fc-micronutrient       { background: #c31e49; }
-      .page-node-6051 .fc-micronutrient:hover { background: #a3143a; }
-
-      .page-node-6055 .fc-micronutrient       { background: #ac7e4f; }
-      .page-node-6055 .fc-micronutrient:hover { background: #73512e; }
-
-      .page-node-6056 .fc-micronutrient       { background: #fecc00; }
-      .page-node-6056 .fc-micronutrient:hover { background: #c29b00; }
-
-      .page-node-6057 .fc-micronutrient       { background: #3cba37; }
-      .page-node-6057 .fc-micronutrient:hover { background: #259621; }
-
-      .page-node-6058 .fc-micronutrient       { background: #e85423; }
-      .page-node-6058 .fc-micronutrient:hover { background: #d14c1f; }
+      //.page-node-6050 .fc-micronutrient       { background: #f39314; }
+      //.page-node-6050 .fc-micronutrient:hover { background: #b36500; }
+      //
+      //.page-node-6051 .fc-micronutrient       { background: #c31e49; }
+      //.page-node-6051 .fc-micronutrient:hover { background: #a3143a; }
+      //
+      //.page-node-6055 .fc-micronutrient       { background: #ac7e4f; }
+      //.page-node-6055 .fc-micronutrient:hover { background: #73512e; }
+      //
+      //.page-node-6056 .fc-micronutrient       { background: #fecc00; }
+      //.page-node-6056 .fc-micronutrient:hover { background: #c29b00; }
+      //
+      //.page-node-6057 .fc-micronutrient       { background: #3cba37; }
+      //.page-node-6057 .fc-micronutrient:hover { background: #259621; }
+      //
+      //.page-node-6058 .fc-micronutrient       { background: #e85423; }
+      //.page-node-6058 .fc-micronutrient:hover { background: #d14c1f; }
 
     }
 
@@ -1615,7 +1627,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 }
 .btn-s1 .popup { left: 10px; }
 .btn-s2 .popup { left: -55px; }
-.btn-s3 .popup { left: -117px; }
+.btn-s3 .popup { left: -50px; }
 
 
 /* ------------------------------------------------- Представления (Views)  ----------------------------------------- */
@@ -2324,138 +2336,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   .do-not-print { display: none; }
 }
 
-
-/* ------------------------------------------------- Эффект тряски -------------------------------------------------- */
-/* ------------------------------------------------- Используется для блока корзины - */
-/*! * * * * * * * * * * * * * * * * * * * *\
-  CSShake :: shake
-  v1.5.0
-  CSS classes to move your DOM
-  (c) 2015 @elrumordelaluz
-  http://elrumordelaluz.github.io/csshake/
-  Licensed under MIT
-\* * * * * * * * * * * * * * * * * * * * */
-.shake {
-  display: inline-block;
-  transform-origin: center center; }
-
-.shake-freeze,
-.shake-constant.shake-constant--hover:hover,
-.shake-trigger:hover .shake-constant.shake-constant--hover {
-  animation-play-state: paused; }
-
-.shake-freeze:hover,
-.shake-trigger:hover .shake-freeze, .shake:hover,
-.shake-trigger:hover .shake {
-  animation-play-state: running; }
-
-@keyframes shake {
-  2% { transform: translate(0.5px, 0.5px) rotate(-0.5deg); }
-  4% {
-    transform: translate(0.5px, 2.5px) rotate(1.5deg); }
-  6% {
-    transform: translate(-0.5px, 1.5px) rotate(0.5deg); }
-  8% {
-    transform: translate(2.5px, 1.5px) rotate(-0.5deg); }
-  10% {
-    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
-  12% {
-    transform: translate(2.5px, -1.5px) rotate(-0.5deg); }
-  14% {
-    transform: translate(0.5px, -0.5px) rotate(1.5deg); }
-  16% {
-    transform: translate(1.5px, 1.5px) rotate(-0.5deg); }
-  18% {
-    transform: translate(-0.5px, 0.5px) rotate(0.5deg); }
-  20% {
-    transform: translate(-0.5px, -0.5px) rotate(-0.5deg); }
-  22% {
-    transform: translate(-1.5px, -1.5px) rotate(-0.5deg); }
-  24% {
-    transform: translate(1.5px, -0.5px) rotate(1.5deg); }
-  26% {
-    transform: translate(1.5px, 1.5px) rotate(0.5deg); }
-  28% {
-    transform: translate(2.5px, 1.5px) rotate(0.5deg); }
-  30% {
-    transform: translate(2.5px, 0.5px) rotate(1.5deg); }
-  32% {
-    transform: translate(-0.5px, -0.5px) rotate(0.5deg); }
-  34% {
-    transform: translate(-1.5px, -0.5px) rotate(-0.5deg); }
-  36% {
-    transform: translate(-1.5px, 2.5px) rotate(0.5deg); }
-  38% {
-    transform: translate(2.5px, 2.5px) rotate(0.5deg); }
-  40% {
-    transform: translate(2.5px, 0.5px) rotate(0.5deg); }
-  42% {
-    transform: translate(1.5px, 2.5px) rotate(-0.5deg); }
-  44% {
-    transform: translate(0.5px, -1.5px) rotate(1.5deg); }
-  46% {
-    transform: translate(2.5px, 0.5px) rotate(1.5deg); }
-  48% {
-    transform: translate(-0.5px, -0.5px) rotate(1.5deg); }
-  50% {
-    transform: translate(2.5px, 1.5px) rotate(1.5deg); }
-  52% {
-    transform: translate(0.5px, 0.5px) rotate(0.5deg); }
-  54% {
-    transform: translate(-0.5px, -1.5px) rotate(-0.5deg); }
-  56% {
-    transform: translate(0.5px, 1.5px) rotate(0.5deg); }
-  58% {
-    transform: translate(2.5px, 0.5px) rotate(0.5deg); }
-  60% {
-    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
-  62% {
-    transform: translate(0.5px, 1.5px) rotate(0.5deg); }
-  64% {
-    transform: translate(-0.5px, 0.5px) rotate(-0.5deg); }
-  66% {
-    transform: translate(0.5px, 0.5px) rotate(0.5deg); }
-  68% {
-    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
-  70% {
-    transform: translate(-0.5px, 2.5px) rotate(1.5deg); }
-  72% {
-    transform: translate(-0.5px, 0.5px) rotate(0.5deg); }
-  74% {
-    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
-  76% {
-    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
-  78% {
-    transform: translate(-0.5px, 2.5px) rotate(1.5deg); }
-  80% {
-    transform: translate(-1.5px, 1.5px) rotate(-0.5deg); }
-  82% {
-    transform: translate(1.5px, 1.5px) rotate(-0.5deg); }
-  84% {
-    transform: translate(0.5px, -0.5px) rotate(1.5deg); }
-  86% {
-    transform: translate(0.5px, -1.5px) rotate(-0.5deg); }
-  88% {
-    transform: translate(1.5px, 1.5px) rotate(0.5deg); }
-  90% {
-    transform: translate(2.5px, 0.5px) rotate(-0.5deg); }
-  92% {
-    transform: translate(2.5px, -0.5px) rotate(-0.5deg); }
-  94% {
-    transform: translate(-1.5px, 1.5px) rotate(0.5deg); }
-  96% {
-    transform: translate(-1.5px, 0.5px) rotate(0.5deg); }
-  98% {
-    transform: translate(-1.5px, 0.5px) rotate(1.5deg); }
-  0%, 100% {
-    transform: translate(0, 0) rotate(0); } }
-
-.shake.shake-on {
-  animation-name: shake;
-  animation-duration: 100ms;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
 
 /* ------------------------------------------------- Bootstrap Switch ----------------------------------------------- */
 // https://bootsnipp.com/snippets/featured/material-design-switch

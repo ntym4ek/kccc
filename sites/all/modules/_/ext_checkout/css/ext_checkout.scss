@@ -1,0 +1,209 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/gard/css/_include";
+
+
+.commerce-checkout-form-checkout > div {
+  display: flex;
+  flex-wrap: wrap; align-items: flex-start;
+  margin-top: 45px;
+  .alert {
+    flex: 0 0 100%;
+  }
+  .c-1 { flex: 100%; }
+  .c-2 {
+    flex: 100%;
+    border: 1px solid $gray-lighten;
+    margin: 65px 0 0 $grid-gutter-width;
+    padding: $grid-gutter-width;
+  }
+  h2 { margin: 0 0 $grid-gutter-width 0; }
+  @media #{$wide} {
+    flex-wrap: nowrap;
+    .c-1 { flex: auto; }
+    .c-2 { flex: 0 0 330px; }
+  }
+}
+
+.cart_contents_form {
+  margin-bottom: $grid-gutter-width*2;
+  form > div {
+    display: flex;
+  }
+  .line-item-list { margin-top: $grid-gutter-width; }
+
+  .ccf-item {
+    border: 1px solid $gray-lighten;
+    position: relative;
+    margin-bottom: $grid-gutter-width;
+  }
+  .ccf-content {
+    display: flex;
+    padding: $grid-gutter-width 0;
+  }
+  .ccf-image {
+    flex: 0 1 150px;
+    img { width: 100%;  }
+  }
+  .ccf-info {
+    flex: auto;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 0 $grid-gutter-width*2 0 $grid-gutter-width;
+    .ccf-descr {
+      > div {
+        border-bottom: 1px solid $well-bg;
+        color: $text-muted;
+        padding: $grid-gutter-width/2 0;
+        display: flex; justify-content: space-between;
+      }
+    }
+    .ccf-title {
+      color: $text-color; font-size: $font-size-h3; font-weight: 500;
+      .category {
+        font-weight: 300;
+      }
+      .point {
+        display: inline-block;
+        background: $brand-primary;
+        margin: 0 10px;
+        width: 10px; height: 10px;
+        vertical-align: middle;
+      }
+      a { color: inherit; }
+    }
+  }
+
+  .ccf-footer {
+    background: $well-bg;
+    border-top: 1px solid $gray-lighten;
+    display: flex;
+    padding: $grid-gutter-width/2;
+  }
+  .ccf-qty > div {
+    display: flex; align-items: center;
+    .views-label {
+      margin-right: $grid-gutter-width/2;
+    }
+    .field-content > div {
+      display: flex;
+      margin: 0;
+    }
+    .field-content input {
+      flex: 0 0 70px;
+      margin: 0 $grid-gutter-width/2;
+      text-align: center;
+    }
+    padding-left: $grid-gutter-width/2;
+  }
+  .ccf-action {
+    flex: 0 0 30px;
+    display: flex; justify-content: flex-end; align-items: center;
+    i { font-size: 20px; }
+    a, button {
+      color: $text-muted;
+      border: none; background: none;
+      padding: 0;
+      min-width: initial;
+      @include transition(color 120ms ease-out);
+      &:hover,
+      &:active,
+      &:focus,
+      &:active:hover {
+        background-color: transparent;
+        color: $text-color;
+      }
+      > span {
+        font-size: 24px;
+        margin-top: 8px;
+      }
+    }
+  }
+  .ccf-total {
+    flex: auto;
+    color: $brand-primary; font-size: $font-size-h4; font-weight: 500; text-align: right;
+  }
+}
+
+.checkout-summary {
+  .cs-total {
+    display: flex;
+    justify-content: space-between;
+    color: $brand-primary; font-size: $font-size-h4; font-weight: 400;
+    margin-bottom: $grid-gutter-width/2;
+  }
+  .cs-amount,
+  .cs-discount,
+  .cs-weight {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $grid-gutter-width/2;
+  }
+}
+
+.checkout-policy {
+  color: $text-muted; font-size: $font-size-small;
+}
+
+.checkout-services {
+  .services-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-right: -$grid-gutter-width/2;
+  }
+
+  .form-type-checkbox {
+    flex: 0 0 33%;
+    line-height: 1.2;
+    padding-right: $grid-gutter-width/2;
+    &.form-item { margin-bottom: $grid-gutter-width; }
+    .cb-mark:before {
+      font-size: 24px;
+      width: 40px; height: 40px;
+    }
+  }
+}
+
+.checkout-address,
+.checkout-support {
+  .form-group { margin-bottom: $grid-gutter-width/2*3; }
+}
+
+.commerce_payment {
+  position: relative;
+  margin-bottom: $grid-gutter-width*2;
+
+  .form-radios {
+    display: flex;
+    @include user-select(none);
+    &::-webkit-scrollbar { display: none; }
+    margin: 0 (-$grid-gutter-width/2);
+  }
+  .radio {
+    flex: 1 1 200px;
+    max-width: 33%;
+    margin: 0 $grid-gutter-width/2!important;
+    label {
+      background-color: $well-bg;
+      border: 1px solid $gray-lighten;
+      padding: 15px 30px;
+      font-weight: 300; text-align: center;
+      width: 100%;
+    }
+    &:focus label,
+    &.active label {
+      border-color: $brand-primary;
+    }
+    input {
+      clip: rect(0, 0, 0, 0);
+      pointer-events: none;
+      margin: 0;
+    }
+    &:not(:last-child) label {
+      margin-right: $grid-gutter-width/2;
+    }
+  }
+  #payment-details {
+    font-size: $font-size-small;
+    padding: $grid-gutter-width/2 0;
+  }
+}

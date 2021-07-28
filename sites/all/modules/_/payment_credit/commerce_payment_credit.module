@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Provides an example payment method for Drupal Commerce for testing and
+ *   development.
+ */
+
+
+/**
+ * Implements hook_commerce_payment_method_info().
+ */
+function commerce_payment_credit_commerce_payment_method_info()
+{
+  $payment_methods = array();
+
+  $payment_methods['commerce_payment_credit'] = array(
+    'title' => t('Credit'),
+    // Название способа оплаты для отображения в форме чекаута. Может содержать html.
+    // Опционально.
+    'display_title' => 'Отсрочка платежа',
+    'description' => 'Условия отсрочки обсуждаются индивидуально, в зависимости от суммы первоначального платежа',
+    // Состояние способа оплаты при включении модуля: TRUE — включён, FALSE — выключен
+    // (по умолчанию). Опционально.
+    'active' => TRUE,
+    // Сможет ли администратор самостоятельно добавить этот способ оплаты для
+    // завершённого заказа. Опционально. По умолчанию TRUE.
+    'terminal' => TRUE,
+    // Нужно ли покупателю покидать пределы сайта при оплате заказа этим способом.
+    // Опционально. По умолчанию FALSE.
+    'offsite' => FALSE,
+    // Автоматический редирект на сторонний сайт при оплате заказа этим способом.
+    // Опционально. По умолчанию FALSE.
+    'offsite_autoredirect' => FALSE,
+  );
+
+  return $payment_methods;
+}
+
+/**
+ * Payment method callback: submit form.
+ */
+function commerce_payment_credit_submit_form($payment_method, $pane_values, $checkout_pane, &$order)
+{
+  $payment_description = commerce_payment_method_get_title('description', $payment_method["method_id"]);
+  $form = [
+    '#markup' => $payment_description,
+  ];
+
+  // для определения наценки
+  $order->data['payment_checkout_selected'] = $payment_method["method_id"];
+  commerce_order_save($order);
+
+  return $form;
+}
+
+/**
+ * Payment method callback: submit form validation.
+ */
+function commerce_payment_credit_submit_form_validate($payment_method, $pane_form, $pane_values, $order, $form_parents = array())
+{
+//  return true;
+}
+
+/**
+ * Payment method callback: submit form submission.
+ */
+function commerce_payment_credit_submit_form_submit($payment_method, $pane_form, $pane_values, $order, $charge)
+{
+  $order->data['commerce_payment_credit'] = $pane_values;
+
+  // Создаём транзакцию
+  $transaction = commerce_payment_transaction_new('commerce_payment_credit', $order->order_id);
+  $transaction->instance_id = $payment_method['instance_id'];
+  $transaction->amount = $charge['amount'];
+  $transaction->currency_code = $charge['currency_code'];
+  $transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;
+  $transaction->message = t('The payment is pending.');
+  commerce_payment_transaction_save($transaction);
+}
+

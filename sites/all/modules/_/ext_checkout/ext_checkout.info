@@ -1,0 +1,5 @@
+name = Дополнения для Checkout
+description = Вспомогательный модуль для чекаута
+package = Custom
+core = 7.x
+

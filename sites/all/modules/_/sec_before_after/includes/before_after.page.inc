@@ -213,7 +213,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                       $preparations = [];
                       $titles = [];
                       foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-                        $product_info = get_product_info($prep_wr->field_f_s_p_p_preparation->value());
+                        $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
                         $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
 
                         $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
@@ -230,7 +230,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                       // для обратной совместимости со старыми полями препаратов
                       // препарат
                       if ($processing_wr->field_f_s_p_preparation->value()) {
-                        $prep_info = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
+                        $prep_info = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value())['items']);
                         $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
                         $preparations[] = [
                           'title' => $title,
@@ -243,7 +243,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                       }
                       // препарат2
                       if ($processing_wr->field_f_s_p_preparation2->value()) {
-                        $prep_info2 = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
+                        $prep_info2 = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation2->value())['items']);
                         $title2 = $prep_info2['title'] . ($prep_info2['form_short'] ? ', ' . $prep_info2['form_short'] : '');
                         $preparations[] = [
                           'title' => $title2,
@@ -716,7 +716,7 @@ function before_after_get_atfield($sid)
             $preparations = [];
             $titles = [];
             foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-              $product_info = get_product_info($prep_wr->field_f_s_p_p_preparation->value());
+              $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
               $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
 
               $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
@@ -739,7 +739,7 @@ function before_after_get_atfield($sid)
             // для обратной совместимости со старыми полями препаратов
             // препарат
             if ($processing_wr->field_f_s_p_preparation->value()) {
-              $prep_info = array_shift(get_product_info($processing_wr->field_f_s_p_preparation->value())['items']);
+              $prep_info = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value())['items']);
               $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
               $preparations[] = [
                 'title' => $title,
@@ -755,7 +755,7 @@ function before_after_get_atfield($sid)
             }
             // препарат2
             if ($processing_wr->field_f_s_p_preparation2->value()) {
-              $prep_info2 = array_shift(get_product_info($processing_wr->field_f_s_p_preparation2->value())['items']);
+              $prep_info2 = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation2->value())['items']);
               $title2 = $prep_info2['title'] . ($prep_info2['form_short'] ? ', ' . $prep_info2['form_short'] : '');
               $preparations[] = [
                 'title' => $title2,

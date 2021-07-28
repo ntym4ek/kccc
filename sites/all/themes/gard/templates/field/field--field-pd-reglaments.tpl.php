@@ -9,7 +9,7 @@ $category = $node_wrapper->field_pd_category[0]->tid->value();
 $prices = [];
 $show_calculation = true;
 // составляем строку единиц
-$item = array_shift(get_product_info($element['#object']->nid)['items']);
+$item = array_shift(ext_product_product_get_info($element['#object']->nid)['items']);
 if (!$prices[] = $item['price']) $show_calculation = false;
 $units = $item['unit_short'] . '/' . array_shift($item['unit_field']);
 

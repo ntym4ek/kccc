@@ -96,7 +96,7 @@
             <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
         </button>
         <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3" rel="nofollow">
-            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print checkout_get_cart_block(); ?></i>
+            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print ext_checkout_get_cart_block(); ?></i>
             <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
         </a>
     </div>
@@ -160,10 +160,10 @@
                         <?php if (!empty($header['print']) || !empty($header['url'])): ?>
                             <div class="header-social hidden-print">
                                 <?php if (!empty($header['print'])): ?>
-                                    <button class="btn-link btn-print hidden-xs"><?php print t('Print');?> <span class="glyphicon glyphicon-print" aria-hidden="true"></span></button>
+                                    <button class="btn-link btn-print hidden-xs"><?php print t('Print');?> <i class="fas fa-print"></i></button>
                                 <? endif; ?>
                                 <?php if (!empty($header['url'])): ?>
-                                    <button class="btn-link btn-share"><?php print t('Share');?> <span class="glyphicon glyphicon-share" aria-hidden="true"></span></button>
+                                    <button class="btn-link btn-share"><?php print t('Share');?> <i class="fas fa-share"></i></button>
                                 <? endif; ?>
                             </div>
                         <? endif; ?>

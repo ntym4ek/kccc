@@ -367,7 +367,7 @@ function _chibs_check_and_place_agenda_to_front($node)
         $url = 'node/' . $node->nid; // path_alias ещё не сформирован и неизвестен
         $term_wr->language('ru')->name_field = $node->title;
         $term_wr->language('ru')->description_field->format = 'php_code';
-        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="<?php print url(\'' . $url . '\'); ?>"></a>';
+        $term_wr->language('ru')->description_field->value =    '<a class="btn btn-danger" href="<?php print url(\'' . $url . '\'); ?>"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>';
         $term_wr->field_link = $url;
         $term_wr->field_text = 'Подробнее o мероприятии';
         $term_wr->field_promo_image->set($node->field_promo_image['und'][0]);
