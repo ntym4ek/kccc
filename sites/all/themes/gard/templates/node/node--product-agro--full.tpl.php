@@ -81,73 +81,81 @@
 ?>
 
 <div class="product-intro row">
-    <div class="col-sm-5">
-        <?php print render($content['product:field_p_images']); ?>
-    </div>
-    <div class="col-sm-7">
-        <div class="product-brief">
-<!--            --><?php //if ($content['product:commerce_price']['#items'][0]['amount'] != 0) : ?>
-<!--                --><?php //print render($content['product:commerce_price']); ?>
-<!--            --><?php //else: ?>
-<!--                <div class="field field-commerce-price">-->
-<!--                    <div class="field-label">--><?php //print t('Price'); ?><!--</div>-->
-<!--                    <div class="field-items">--><?php //print '<a id="price-request" href="#" onclick="supportAPI.openTab(0); return false;">' . t('Check price') . '</a>'; ?><!--</div>-->
-<!--                </div>-->
-<!--            --><?php //endif; ?>
+  <div class="col-sm-5">
+    <?php print render($content['product:field_p_images']); ?>
+  </div>
+  <div class="col-sm-7">
+    <div class="product-brief">
+      <!--            --><?php //if ($content['product:commerce_price']['#items'][0]['amount'] != 0) : ?>
+      <!--                --><?php //print render($content['product:commerce_price']); ?>
+      <!--            --><?php //else: ?>
+      <!--                <div class="field field-commerce-price">-->
+      <!--                    <div class="field-label">--><?php //print t('Price'); ?><!--</div>-->
+      <!--                    <div class="field-items">--><?php //print '<a id="price-request" href="#" onclick="supportAPI.openTab(0); return false;">' . t('Check price') . '</a>'; ?><!--</div>-->
+      <!--                </div>-->
+      <!--            --><?php //endif; ?>
 
-          <?php print render($content['product:field_p_tare']); ?>
+      <?php print render($content['product:field_p_tare']); ?>
 
-            <?php print render($content['product:field_p_packaging']); ?>
+      <?php print render($content['product:field_p_packaging']); ?>
 
-            <?php print render($content['field_product']); ?>
-
-
-            <?php if (!empty($content['field_pd_consumption_rate'])) : ?>
-                <div class="field field-name-field-pd-consumption-rate">
-                    <div class="field-label"><?php print $content['field_pd_consumption_rate']['#title']; ?></div>
-                    <div class="field-items">
-                        <?php print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
-                            . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
-                            . ' ' . $unit; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($content['field_pd_price_per_unit']['#items'][0]['amount'] != 0 && !empty($content['field_pd_consumption_rate']['#items'][0]['from'])) : ?>
-              <div class="field field-name-field-pd-price-per-unit">
-                <div class="field-label"><?php print t('Processing cost'); ?></div>
-                    <div class="field-items">
-                        <?php print (float) $content['field_pd_price_per_unit']['#items'][0]['amount'] / 100 * $content['field_pd_consumption_rate']['#items'][0]['from']
-                            . ' - ' . (float) $content['field_pd_price_per_unit']['#items'][0]['amount'] / 100 * $content['field_pd_consumption_rate']['#items'][0]['to']
-                            . ' ' . t('rub') . '/' . $unit; ?>
-                    </div>
-              </div>
-            <?php endif; ?>
-
-            <?php if(!empty($formulation_full)): ?>
-                <div class="field field-name-field-pd-formulation">
-                    <div class="field-label fleft"><?php print t('Preparative form'); ?></div>
-                    <div class="field-items">
-                        <?php print $formulation_full; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <?php if(!empty($ingredients_arr)): ?>
-                <div class="field field-name-field-pd-active-ingredients">
-                    <div class="field-label fleft"><?php print t('Active ingredients'); ?></div>
-                    <div class="field-items">
-                        <?php foreach($ingredients_arr as $ingr): ?>
-                            <div class="field-item"><?php print $ingr; ?></div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
+        <div class="field field-name-commerce-price">
+          <div class="field-label"><?php print t('Price'); ?></div>
+          <div class="field-items">
+            <div class="price">от <? print $price_start_formatted; ?></div>
+            <div class="button-notice">Цена зависит от общей стоимости заказа</div>
+          </div>
         </div>
+
+      <?php print render($content['field_product']); ?>
+
+
+      <?php if (!empty($content['field_pd_consumption_rate'])) : ?>
+        <div class="field field-name-field-pd-consumption-rate">
+          <div class="field-label"><?php print $content['field_pd_consumption_rate']['#title']; ?></div>
+          <div class="field-items">
+            <?php print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
+              . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
+              . ' ' . $unit; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($content['field_pd_price_per_unit']['#items'][0]['amount'] != 0 && !empty($content['field_pd_consumption_rate']['#items'][0]['from'])) : ?>
+        <div class="field field-name-field-pd-price-per-unit">
+          <div class="field-label"><?php print t('Processing cost'); ?></div>
+          <div class="field-items">
+            <?php print (float) $content['field_pd_price_per_unit']['#items'][0]['amount'] / 100 * $content['field_pd_consumption_rate']['#items'][0]['from']
+              . ' - ' . (float) $content['field_pd_price_per_unit']['#items'][0]['amount'] / 100 * $content['field_pd_consumption_rate']['#items'][0]['to']
+              . ' ' . t('rub') . '/' . $unit; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <?php if(!empty($formulation_full)): ?>
+        <div class="field field-name-field-pd-formulation">
+          <div class="field-label fleft"><?php print t('Preparative form'); ?></div>
+          <div class="field-items">
+            <?php print $formulation_full; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <?php if(!empty($ingredients_arr)): ?>
+        <div class="field field-name-field-pd-active-ingredients">
+          <div class="field-label fleft"><?php print t('Active ingredients'); ?></div>
+          <div class="field-items">
+            <?php foreach($ingredients_arr as $ingr): ?>
+              <div class="field-item"><?php print $ingr; ?></div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
     </div>
+  </div>
 </div>
 
 <div class="product-description">
-    <?php print render($content['group_description']); ?>
+  <?php print render($content['group_description']); ?>
 </div>

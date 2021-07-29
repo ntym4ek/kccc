@@ -889,12 +889,9 @@
     }
 
     .field-name-commerce-price {
-      .field-items { @include make-sm-column(12); }
-      .field-item {
-        background-color: #ccc;
-        border-radius: 5px;
-        font-size: 24px; text-align: center;
-        padding: 5px;
+      .field-items .price {
+        font-size: 1.5em; line-height: 1;
+        margin-top: -2px;
       }
     }
 
@@ -1853,7 +1850,8 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
 
   .v-card-summary {
-    font-size: 12px;  white-space: nowrap;
+    font-size: 12px;
+    //white-space: nowrap; в карточках не входят ДВ и описание
     overflow: hidden;
     text-overflow: ellipsis;
     //min-height: 80px;
@@ -2063,7 +2061,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 }
 
 .button-notice {
-  color: $text-muted; font-size: .8em; text-align: right;
+  color: $text-muted; font-size: .8em;
   margin-top: 5px;
 }
 

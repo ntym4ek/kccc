@@ -154,9 +154,11 @@ function ext_product_form_commerce_cart_add_to_cart_form_alter(&$form, $form_sta
 
   // если Out_of_stock, сделать Добавление в корзину неактивным
   if ($product_info["status"]) {
-    $product = $product_info['items'][$product_info['nid']];
-    $form['submit']['#value'] = 'от ' . $product['price_in_tare_formatted'];
-    $form['submit']['#suffix'] = '<div class="button-notice">Цена зависит от общей стоимости заказа</div></div>';
+    if (in_array($product_id, ext_product_get_order_product_ids($GLOBALS['user']->uid))) {
+      $form['submit']['#value'] = 'В корзину';
+    } else {
+      $form['submit']['#value'] = 'Добавлено';
+    }
   } else {
     $form['submit']['#disabled'] = true;
     $form['submit']['#value'] = t('Out of stock');
@@ -277,7 +279,8 @@ function ext_product_product_get_info($node)
     $tare = $product_0_wr->field_p_tare->name->value();
 
     // цена От
-    $price_in_tare_formatted = str_replace(',00', '', commerce_currency_format($product_0_wr->commerce_price->amount->value(), 'RUB'));
+    $price_in_tare_amount = $product_0_wr->commerce_price->amount->value();
+    $price_in_tare_formatted = str_replace(',00', '', commerce_currency_format($price_in_tare_amount, 'RUB'));
 
     // категория и цвет
     $cats = [];
@@ -312,6 +315,7 @@ function ext_product_product_get_info($node)
       'categories'    => $cats,
       'stock'         => $stock,
       'tare'          => $tare,
+      'price_in_tare_amount'  => $price_in_tare_amount,
       'price_in_tare_formatted'  => $price_in_tare_formatted,
     );
     $titles_w_form[] = $form_short ? $preparation_wr->title_field->value() . ', ' . $form_short : $preparation_wr->title_field->value();
@@ -420,4 +424,29 @@ function ext_product_qsearch_callback($category_tid = null)
 
     drupal_json_output(['preparations' => $items]);
     drupal_exit();
+}
+
+/**
+ * Возвращает список product id помещенных в корзину пользователя
+ * @param $uid
+ * @return array|mixed
+ */
+function ext_product_get_order_product_ids($uid)
+{
+  $pids = &drupal_static(__FUNCTION__);
+
+  // заполнить массив id товаров в корзине
+  if (!$pids) {
+    $pids = array();
+
+    if ($order = commerce_cart_order_load($GLOBALS['user']->uid)) {
+      $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+      foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+        if (in_array($line_item_wrapper->type->value(), commerce_product_line_item_types())) {
+          $pids[] = $line_item_wrapper->commerce_product->product_id->value();
+        }
+      }
+    }
+  }
+  return $pids;
 }

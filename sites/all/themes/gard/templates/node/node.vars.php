@@ -180,11 +180,13 @@ function gard_preprocess_node(&$vars) {
         }
 
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
+        $price_in_tare_amount = 0;
         if ($product = ext_product_product_get_info($vars['node'])) {
             foreach ($product['items'] as $nid => $item) {
                 $vars['titles_arr'][] = $item['title'] . ($item['form_short'] ? ', ' . $item['form_short'] : '');
                 $vars['ingredients_arr'][] = implode(' + ', $item['ingredients']);
                 $vars['prices_arr'][] = $item['price'];
+              $price_in_tare_amount += $item['price_in_tare_amount'];
                 $vars['units'][] = $item['unit_short'];
                 $preparations[] = $nid;
                 $vars['images'][] = image_style_url('large', $item['photo_uri']);
@@ -194,6 +196,9 @@ function gard_preprocess_node(&$vars) {
                 }
             }
         }
+        // минимальная цена - Скидка 10%
+        $vars['price_start_formatted'] = str_replace(',00', '', commerce_currency_format($price_in_tare_amount*.9, 'RUB'));
+
         $vars['summary'] = $vars['body'][0]['safe_summary'];
 
         if ($vars['type'] == 'product_mix') {
