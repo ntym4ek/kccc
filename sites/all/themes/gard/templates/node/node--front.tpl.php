@@ -81,9 +81,13 @@
 
 $category = empty($content['field_news_category'][0]['#markup']) ? '' : t('Category', array(), array('context' => 'Блоки на главной странице')) . ' "' . $content['field_news_category'][0]['#markup'] . '"';
 
-$image = isset($content['field_promo_image'][0]['#item']) ? image_style_url($content['field_promo_image'][0]['#image_style'], $content['field_promo_image'][0]['#item']['uri']) : '';
-$image = (!$image && $content['field_image_gallery'][0]['#item']) ? image_style_url($content['field_image_gallery'][0]['#image_style'], $content['field_image_gallery'][0]['#item']['uri']) : '';
-$image = !$image ? image_style_url('front_block_small', 'public://default_images/no_image.jpg') : $image;
+$image = isset($content['field_promo_image'][0]['#item']) ? image_style_url('479_319', $content['field_promo_image'][0]['#item']['uri']) : '';
+$image = (!$image && $content['field_image_gallery'][0]['#item']) ? image_style_url('479_319', $content['field_image_gallery'][0]['#item']['uri']) : '';
+$image = !$image ? image_style_url('479_319', 'public://default_images/no_image.jpg') : $image;
+
+$image_mobile = isset($content['field_promo_image'][0]['#item']) ? image_style_url('news_teaser', $content['field_promo_image'][0]['#item']['uri']) : '';
+$image_mobile = (!$image_mobile && $content['field_image_gallery'][0]['#item']) ? image_style_url('news_teaser', $content['field_image_gallery'][0]['#item']['uri']) : '';
+$image_mobile = !$image_mobile ? image_style_url('news_teaser', 'public://default_images/no_image.jpg') : $image_mobile;
 
 $node_url = url('node/' . $node->nid);
 ?>
@@ -91,7 +95,10 @@ $node_url = url('node/' . $node->nid);
 <div class="block-content no-gutters">
     <div class="block-image image-valign-center">
         <a href="<?php print $node_url; ?>">
-            <img src="<?php print $image; ?>" alt="<?php print $title; ?>" loading="lazy" />
+          <picture>
+            <source srcset="<?php print $image_mobile; ?>" media="(max-width: 767px)">
+            <img src="<?php print $image; ?>" alt="<?php print $title; ?>" loading="lazy">
+          </picture>
         </a>
     </div>
     <div class="block-body">

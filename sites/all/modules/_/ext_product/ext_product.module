@@ -155,9 +155,9 @@ function ext_product_form_commerce_cart_add_to_cart_form_alter(&$form, $form_sta
   // если Out_of_stock, сделать Добавление в корзину неактивным
   if ($product_info["status"]) {
     if (in_array($product_id, ext_product_get_order_product_ids($GLOBALS['user']->uid))) {
-      $form['submit']['#value'] = 'В корзину';
-    } else {
       $form['submit']['#value'] = 'Добавлено';
+    } else {
+      $form['submit']['#value'] = 'В корзину';
     }
   } else {
     $form['submit']['#disabled'] = true;
