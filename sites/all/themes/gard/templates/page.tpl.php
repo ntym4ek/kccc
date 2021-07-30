@@ -233,3 +233,4 @@
 </div>
 
 <div id="modalBackdrop"></div>
+<?php print render($page['ajax_throbber']); ?>
