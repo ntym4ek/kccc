@@ -28,6 +28,15 @@
                 $("#modalBackdrop").hide();
             });
 
+            // dropdown вместо ссылки
+          $('a').each(function(i, el) {
+            if ($(el).attr('data-href')) {
+              $(el).attr('href', $(el).attr('data-href'));
+              $(el).attr('data-toggle', 'collapse');
+            }
+          });
+
+
             /* ------------------------------------------ Right  Menu ----------------------------------------------- */
             $(".user-menu .dropdown").hover(function() {
                     $(this).addClass("open");

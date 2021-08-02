@@ -291,12 +291,12 @@
         > a { border-bottom: 1px solid #e7e7e7; }
         .dropdown-link {
             flex: 0 0 45px;
-            .dropdown-caret {
+            .fa-caret-down {
                 padding: 0;
                 @include rotate(0);
                 @include transition(transform 0.2s ease-in-out);
             }
-            &:not(.collapsed) .dropdown-caret { @include rotate(180deg); }
+            &:not(.collapsed) .fa-caret-down { @include rotate(180deg); }
         }
         .panel-body {
             background-color: #eee;
@@ -1459,6 +1459,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
       text-align: center;
       margin-bottom: 10px;
       & > a {
+        color: $text-color;
         border: none;
         margin: 0 auto;
         display: inline-block;

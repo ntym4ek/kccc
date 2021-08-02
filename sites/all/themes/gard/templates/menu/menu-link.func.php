@@ -84,7 +84,8 @@ function gard_menu_link(array $variables) {
             $attributes['class'][] = 'panel panel-default';
             $attributes['id'] = 'dropdown';
 
-            $title .= ' <a href="#dropdown-' . $mlid . '-' . $element['#original_link']['depth'] . '" class="dropdown-link collapsed" data-toggle="collapse"><span class="glyphicon glyphicon-menu-down dropdown-caret"></span></a>';
+            $title .= ' <a href="#dropdown-' . $mlid . '-' . $element['#original_link']['depth'] . '" class="dropdown-link collapsed" data-toggle="collapse"><i class="fas fa-caret-down"></i></a>';
+            $options["attributes"]["data-href"] = '#dropdown-' . $mlid . '-' . $element['#original_link']['depth'];
 
             // заменить сссылку /catalog на /catalog/agrochemicals
             if ($href == 'catalog') {

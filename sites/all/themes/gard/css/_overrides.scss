@@ -294,7 +294,7 @@ a, a:hover, a:focus {
                 ul {
                     padding: 0;
                     > li {
-                        &.with-icon i { display: none; }
+                        &.with-icon i.fa-cog { display: none; }
                         &.panel {
                             box-shadow: none;
                             border: none;
@@ -311,9 +311,9 @@ a, a:hover, a:focus {
                             &:hover { color: $link-color; }
                             &.dropdown-link {
                                 padding-left: 0;
-                                span { @include transition(all 0.3s ease-in-out); }
+                                i { @include transition(all 0.3s ease-in-out); }
                             }
-                            &:not(.collapsed) span {
+                            &:not(.collapsed) i {
                                 @include rotate(-180deg);
                             }
                             &.dropdown-link { float: right; }
