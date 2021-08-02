@@ -316,14 +316,14 @@ function ext_checkout_payment_radios_alter($element, $form_state) {
  */
 function ext_checkout_commerce_checkout_form_submit($form, &$form_state)
 {
-    // отправить письма
-    $params = [];
-    $params['data'] = [
-        'order' => $form_state['order'],
-    ];
-    $params['mail_to'] = 'manager';
+  // отправить письма
+  $params = [];
+  $params['data'] = [
+    'order' => $form_state['order'],
+  ];
+  $params['mail_to'] = 'manager';
 
-//    if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
+  if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
 //        // отправить письмо Представителю, дублировать Руководителю и Рудяк попросил отправлять ещё на td.sale3@kccc.ru
 //        if ($rep) {
 //            drupal_mail('mailer', 'order_creation', $rep_mail, $GLOBALS['language'], $params, 'bot@kccc.ru');
@@ -332,17 +332,20 @@ function ext_checkout_commerce_checkout_form_submit($form, &$form_state)
 //            $head = array_pop($sales['heads']);
 //            drupal_mail('mailer', 'order_creation', $head['emails'][0], $GLOBALS['language'], $params);
 //        }
+
+    // Юле Камневой
+    drupal_mail('mailer', 'order_creation', 'td.sale15@kccc.ru', 'RU', $params, 'bot@kccc.ru');
+
+    // отправить письмо пользователю
+    $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
+    if ($user_mail) {
+      $params['mail_to'] = 'user';
+      drupal_mail('mailer', 'order_creation', $user_mail, 'RU', $params, 'bot@kccc.ru');
+    }
 //
-//        drupal_mail('mailer', 'order_creation', 'td.sale3@kccc.ru', $GLOBALS['language'], $params);
-//
-//        // отправить письмо пользователю
-//        $params['mail_to'] = 'user';
-//        $user_mail = $form_state['values']['checkout_contact']['request']['forma']['email'];
-//        drupal_mail('mailer', 'order_creation', $user_mail, $GLOBALS['language']->language, $params);
-//
-//    } else {
-        drupal_mail('mailer', 'order_creation', 'mega_comp@mail.ru', 'ru', $params);
-//    }
+  } else {
+    drupal_mail('mailer', 'order_creation', 'mega_comp@mail.ru', 'RU', $params, 'bot@kccc.ru');
+  }
 }
 
 

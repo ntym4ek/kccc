@@ -230,11 +230,11 @@ function mailer_mail($key, &$message, $params)
 
         case 'order_creation':
             if ($params['mail_to'] == 'manager') {
-                $message['subject'] = t('There is a new order from TradeHouse website visitor.');
+                $message['subject'] = t('There is a new order from TradeHouse website visitor.', [], ['context' => 'Mailer']);
                 $message['body'][] = mailer_get_checkout_complete_email_text($params['data'], 'manager');
             }
             if ($params['mail_to'] == 'user') {
-                $message['subject'] = t('You made an order at TradeHouse website.');
+                $message['subject'] = t('You made an order at TradeHouse website.', [], ['context' => 'Mailer']);
                 $message['body'][] = mailer_get_checkout_complete_email_text($params['data'], 'user');
             }
             break;
@@ -309,7 +309,7 @@ function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
 
   // содержимое письма
   $message = '<h2>' . t('Good day!') . '</h2>'
-    . ($recipient == 'manager' ? '<p>' . t('There is a new order from TradeHouse website visitor.') . '</p>' : '<p>' . t('You made an order on TradeHouse website <a href="https://kccc.ru" target="_blank">https://kccc.ru</a>.<br />Our representative will contact you as soon as possible.') . '</p>')
+    . ($recipient == 'manager' ? '<p>' . t('There is a new order from TradeHouse website visitor.', [], ['context' => 'Mailer']) . '</p>' : '<p>' . t('You made an order on TradeHouse website <a href="https://kccc.ru" target="_blank">https://kccc.ru</a>.<br />Our representative will contact you as soon as possible.') . '</p>')
     . '<table style="margin-bottom: 15px;">'
     . '<tr>'
     . '<td style="' . $dt . '">' . t('Order number') . '</td>'
@@ -334,7 +334,7 @@ function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
 
   if (!empty($order_info["services"])) {
     $message .= '<tr>'
-      . '<td style="' . $dt . '">' . t('Services') . '</td>'
+      . '<td style="' . $dt . '">' . t('Services', [], ['context' => 'Mailer']) . '</td>'
       . '<td style="' . $dd . '">' . $order_info["services"]['list'] . '</td>'
       . '</tr>';
   }
@@ -349,7 +349,7 @@ function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
   }
   if (!empty($order_info["services"]["support"])) {
     $message .= '<tr>'
-      . '<td style="' . $dt . '">' . t('Support') . '</td>'
+      . '<td style="' . $dt . '">' . t('Support', [], ['context' => 'Mailer']) . '</td>'
       . '<td style="' . $dd . '">' . $order_info["services"]["support"] . '</td>'
       . '</tr>';
   }
