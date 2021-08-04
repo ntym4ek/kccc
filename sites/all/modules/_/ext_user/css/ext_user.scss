@@ -1,0 +1,204 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/gard/css/_include";
+
+.user-acc-add-link {
+  margin-bottom: $grid-gutter-width/2;
+  text-align: right;
+}
+
+/* ------------------------------------------------- Форма восстановления пароля - */
+.user-auth-wr {
+  @include make-sm-column-offset(2);
+  @include make-sm-column(8);
+  @include make-md-column-offset(3);
+  @include make-md-column(6);
+
+  .user-auth-logo {
+    background: $form-background;
+    width: 60px; height: 67px;
+    background: url(../../../../../default/files/images/logo/logo.svg); background-repeat: no-repeat; background-size: cover;
+    margin: 30px auto 20px;
+  }
+  .user-auth-header {
+    display: flex; flex-wrap: wrap;
+    background: $form-background;
+    border-top: 6px solid $brand-info;
+    padding: $grid-gutter-width $grid-gutter-width*2;
+  }
+  .user-auth-title h1 {
+    font-size: 22px;
+    margin: 0 0 5px;
+  }
+  .user-auth-links {
+    flex: 100%;
+    font-size: .9em;
+    a { color: $text-muted; text-decoration: underline; }
+  }
+  .user-auth {
+    background: $form-background;
+    padding: 0 $grid-gutter-width*2 $grid-gutter-width $grid-gutter-width*2;
+  }
+  .form-actions .btn { width: 100%; }
+}
+
+
+
+/* ------------------------------------------------- Профиль -------------------------------------------------------- */
+.profile-wrapper {
+    .profile {
+        .alert { margin: 0 0 $grid-gutter-width/2 0; }
+        .form-type-managed-file {
+            margin-bottom: $grid-gutter-width/2;
+          .image-widget { display: flex; flex-wrap: wrap; justify-content: center; }
+          .control-label { display: none; }
+            .image-preview,
+            .image-widget-data {
+                text-align: center;
+                max-width: initial;
+              .input-group {
+                display: flex; flex-wrap: wrap; justify-content: center;
+                .input-group-btn { width: initial; }
+              }
+                .form-submit { margin-top: 15px; }
+            }
+            .help-block { text-align: center; }
+        }
+      .photo {
+        .form-item-files-picture-upload {
+          text-align: center;
+          margin-right: $grid-gutter-width/2;
+        }
+      }
+        .profile-changes {
+            margin-bottom: $grid-gutter-width/2;
+            font-size: 0.8em; color: $brand-danger;
+            @include make-xs-column-offset(4);
+        }
+        .profile-separator {
+            border-top: 1px solid #e7e8ec;
+            width: 100%; height: 0;
+            margin-bottom: $grid-gutter-width/2;
+        }
+        .form-horizontal .form-group label {
+            @media (min-width: $screen-xs-min) {
+                float: left;
+                width: percentage((4 / $grid-columns));
+            }
+        }
+        .form-horizontal .form-group .form-textarea-wrapper,
+        .form-horizontal .form-group .form-input-wrapper {
+            @media (min-width: $screen-xs-min) {
+                float: left;
+                width: percentage((8 / $grid-columns));
+            }
+        }
+        .profile-save { @include make-xs-column-offset(4); }
+
+        .profile-info-top {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e7e8ec;
+            position: relative;
+        }
+        .profile-name { font-weight: 500; }
+        .profile-name span {
+            font-size: 12px; font-weight: 400;
+        }
+        .profile-role {
+            color: #999;
+            font-weight: 400;
+            line-height: 18px;
+        }
+        .profile-status {
+            position: absolute; right: 10px; top: 5px;
+        }
+        .profile-online { color: #40ae1a; }
+        .profile-offline { color: #01b0f1; }
+
+
+        /* счётчики активности */
+        .profile-counts {
+            text-align: center;
+        }
+        .profile-count {
+            display: inline-block;
+            color: #000;
+            padding: 15px;
+            text-align: center;
+        }
+        .profile-count:hover {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .count-title {
+            font-size: 11px; color: #999;
+            text-transform: uppercase;
+        }
+        .profile-count:hover .count-title { color: #000; }
+        .count-amount { font-size: 1.5em; padding-bottom: 8px; color: #000; }
+
+    }
+
+
+    .profile-left {
+        @include make-md-column(4);
+    }
+    .profile-right {
+        @include make-md-column(8);
+
+        .pass-show,
+        .pass-close { cursor: pointer; }
+        .password-pane {
+            position: relative;
+            display: none;
+            background-color: #e4f5ff;
+            padding: 10px 0;
+        }
+    }
+}
+
+
+
+/* До и После */
+.profile-content.before-after { padding:0; }
+
+/* Блог */
+.blog-user-acc .views-field-created,
+.blog-user-acc .views-field-edit-node { text-align: center; width: 15%; }
+
+/* таблицы */
+.profile th { padding: 9px 6px; text-align: center; }
+.profile td { border-bottom: 1px solid rgba(100, 100, 100, 0.1); padding: 9px 12px; }
+
+/* ------------------------------------------------- Уведомления ---------------------------------------------------- */
+.profile .notifications {
+    .n-controls {
+        display: flex; justify-content: space-between;
+        margin-bottom: $grid-gutter-width/2;
+        .n-filter { flex: auto; }
+        .n-read-all { flex: 0 0 auto; }
+        a {
+            color: $text-color; text-transform: uppercase; text-decoration: none;
+            display: inline-block;
+            margin-right: $grid-gutter-width/2;
+            &.active,
+            &:hover, &:focus { color: $brand-primary; }
+        }
+    }
+}
+
+/* ------------------------------------------------- Подписки ------------------------------------------------------- */
+.profile .subscriptions {
+    .views-field-ops,
+    .views-field-ops-1 {
+        width: 150px;
+        vertical-align: middle;
+        a { color: $brand-primary; }
+        a.unflag-action { color: $brand-danger; }
+    }
+    .views-field-name-field-et {
+        span {
+            color: $text-muted; font-size: $font-size-small;
+            p { margin: 0; }
+        }
+    }
+}

@@ -256,7 +256,7 @@ function forms_ex_form_ad_node_form_alter( &$form, &$form_state, $form_id )
 {
     // предзаполнить телефон номером из профиля
     global $user;
-    $user_array = person_get_user_array($user);
+    $user_array = ext_user_get_user_array($user);
     if (empty($form['field_phone']['und'][0]['value']['#default_value'])) $form['field_phone']['und'][0]['value']['#default_value'] = $user_array['phone'];
     // изменить видимость информации о компании по клику по чекбоксу
     $form['field_ad_allow_company']['#attributes'] = array('onchange' => array('jQuery(".form-company-info").slideToggle();'));
@@ -283,7 +283,7 @@ function forms_ex_board_add_finish_page($nid) {
     $output .=  '<div class="ad-node-finish">';
     $output .=      '<h1>Ваше объявление успешно добавлено</h1>';
     $output .=      '<p>Объявление <a href="/' . drupal_get_path_alias('node/' . $nid) . '">' . $node_wr->title->value() . '</a> добавлено на сайт на 30 дней.<br />';
-    $output .=      'Вы всегда можете отредактировать или удалить своё объявление в <a href="/person/' . $user->uid . '/summary">Личном кабинете</a>.';
+    $output .=      'Вы всегда можете отредактировать или удалить своё объявление в <a href="/user/' . $user->uid . '/summary">Личном кабинете</a>.';
     $output .=  '</div>';
     return $output;
 }

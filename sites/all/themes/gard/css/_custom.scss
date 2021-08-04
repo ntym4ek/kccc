@@ -1287,7 +1287,7 @@
 /* ------------------------------------------------- Формы ---------------------------------------------------------- */
 .dropbox-entry td { padding: 5px 10px; }
 .form-item-fz152-agreement {
-    color: $text-muted; font-size: 12px; text-align: right;
+    color: $text-muted; font-size: 12px;
     margin-top: 10px;
 }
 
@@ -1315,85 +1315,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 /* ------------------------------------------------- Формы редактирования - */
 .page-node .form-item-language { display: none; }
 
-/* ------------------------------------------------- Форма входа - */
-.toboggan-unified {
-    @include make-sm-column-offset(2);
-    @include make-sm-column(8);
-    @include make-md-column-offset(3);
-    @include make-md-column(6);
-    padding-left: 0; padding-right: 0;
 
-  #login-message {
-    text-indent: -9999px;
-    width: 60px; height: 67px;
-    background: url(../../../../default/files/images/logo/logo.svg); background-repeat: no-repeat; background-size: cover;
-    margin: 30px auto 20px;
-  }
-  #login-links {
-    background: $form-background;
-    border-top: 6px solid $brand-info; border-left: 1px solid $gray-lighter; border-right: 1px solid $gray-lighter;
-    font-size: 1em; text-align: right; line-height: inherit;
-    padding: $grid-gutter-width/2;
-    a {
-      background: none; border: none;
-        color: $text-muted;
-      padding: 0;
-      &.lt-active { display: none; }
-      &:hover { background: none; }
-    }
-  }
-  #register-form,
-  #login-form {
-    background: $form-background;
-    padding: 0 $grid-gutter-width/2 $grid-gutter-width/2;
-    border: 1px solid $gray-lighter; border-top: none;
-    .login-forgot {
-      text-align: right;
-      margin-bottom: 10px;
-        a { color: $text-muted; }
-    }
-    .form-group:not(.form-actions) { margin-bottom: $grid-gutter-width; }
-    .btn { width: 100%; }
-    .g-recaptcha > div { margin: 0 auto; }
-  }
-    @media #{$tablet} {
-        padding-left: $grid-gutter-width/2; padding-right: $grid-gutter-width/2;
-        #login-links {
-            padding: $grid-gutter-width $grid-gutter-width*2;
-        }
-        #register-form,
-        #login-form {
-            padding: 0 $grid-gutter-width*2 $grid-gutter-width;
-        }
-    }
-}
-
-/* ------------------------------------------------- Форма восстановления пароля - */
-.user-pass-wrapper {
-    @include make-sm-column-offset(2);
-    @include make-sm-column(8);
-    @include make-md-column-offset(3);
-    @include make-md-column(6);
-
-    .user-pass-logo {
-        background: $form-background;
-        width: 60px; height: 60px;
-        background: url(../../../../default/files/images/logo/logo.svg); background-repeat: no-repeat; background-size: cover;
-        margin: 30px auto 20px;
-    }
-    .user-pass-links {
-        background: $form-background;
-        border-top: 6px solid $brand-info;
-        font-size: 1em; text-align: right; line-height: inherit;
-        padding: $grid-gutter-width $grid-gutter-width*2;
-        a { color: $text-muted; }
-    }
-    .user-pass {
-        background: $form-background;
-        padding: 0 $grid-gutter-width*2 $grid-gutter-width $grid-gutter-width*2;
-    }
-    .form-actions .btn { width: 100%; }
-}
 
 
 /* ------------------------------------------------- Форма регистрации Афиша () - */

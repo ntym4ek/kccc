@@ -19,7 +19,6 @@ function ext_message_got_menu()
     );
     $items['user/notifications'] = array(
         'title' => t('Notifications'),
-        'page callback' => 'person_account_callback',
         'access arguments' => array('access content'),
         'menu_name' => 'user-menu',
         'type' => MENU_NORMAL_ITEM,

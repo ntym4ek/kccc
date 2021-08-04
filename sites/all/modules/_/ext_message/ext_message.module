@@ -413,7 +413,7 @@ function ext_message_mail_alter(&$message)
             // добавить подпись об отписке
             $message['params']['context']['auto'] = t('You got this mail, because you subscribed to notifications.<br />You can !set_up or !unsubscribe.',
                 [
-                    '!set_up' => l(t('set up subscriptions'), "person/$uid/subscriptions", ['absolute' => true]),
+                    '!set_up' => l(t('set up subscriptions'), "user/$uid/subscriptions", ['absolute' => true]),
                     '!unsubscribe' => l(t('unsubscribe all'), "unsubscribe", ['absolute' => true, 'query' => ['mail' => $mail]])
                 ]
             );
@@ -456,7 +456,7 @@ function ext_message_unsubscribe_form($form, $form_state, $uid)
         '#value' => t('Unsubscribe'),
         '#attributes' => ['class' => ['btn-primary', 'btn-wide']]
     ];
-    $form['actions']['setup'] = ['#markup' => '<div class="setup-link">' . l(t('Set up subscribes'), "/person/$uid/subscriptions") . '</div>'];
+    $form['actions']['setup'] = ['#markup' => '<div class="setup-link">' . l(t('Set up subscribes'), "/user/$uid/subscriptions") . '</div>'];
 
     return $form;
 }
@@ -489,8 +489,8 @@ function ext_message_spam_subscribe()
             // отправить письмо (через очередь)
             $params['subject'] = 'Обновление функционала на сайте kccc.ru';
             $params['body'] = '<p>На нашем сайте <a href="https://kccc.ru">kccc.ru</a> появилась возможность получать уведомления о публикации новых материалов в разделах <a href="https://kccc.ru/catalog/agrochemicals">Препараты</a>, <a href="https://kccc.ru/agenda">Афиша</a>, <a href="https://kccc.ru/info/job">Вакансии</a>, <a href="https://kccc.ru/reviews">Отзывы</a>, <a href="https://kccc.ru/blogs">Блоги</a>, <a href="https://kccc.ru/news/events">Новости</a>, <a href="https://kccc.ru/survey">Опросы</a> и <a href="https://kccc.ru/before-after">Препараты в поле</a>.</p>' .
-                '<p>Уведомления будут приходить в <a href="https://kccc.ru/person/' . $user->uid . '/notifications">Личный кабинет</a> и на электронную почту.</p>' .
-                '<p>Мы подписали Вас на все уведомления, но если Вам интересны только часть из них, настройки можно найти в Личном кабинете в разделе <a href="https://kccc.ru/person/' . $user->uid . '/subscriptions">Подписки</a>.</p>';
+                '<p>Уведомления будут приходить в <a href="https://kccc.ru/user/' . $user->uid . '/notifications">Личный кабинет</a> и на электронную почту.</p>' .
+                '<p>Мы подписали Вас на все уведомления, но если Вам интересны только часть из них, настройки можно найти в Личном кабинете в разделе <a href="https://kccc.ru/user/' . $user->uid . '/subscriptions">Подписки</a>.</p>';
 
             $queue = DrupalQueue::get('manual_mails_queue');
             $params['mail'] = $user->mail;

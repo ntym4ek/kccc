@@ -145,7 +145,7 @@
     margin-bottom: 15px;
     &.c1 {
       overflow: hidden;
-      .cc1 { overflow: hidden; }
+      .cc1 { overflow: hidden; min-height: 42px; }
       .cc2 { height: 0; overflow: hidden; }
       .s1 {
         color: $brand-primary; cursor: pointer;

@@ -564,7 +564,7 @@ function before_after_get_atfield($sid)
       $output['season'] = $season_wrapper->field_f_s_season->value();
       $output['year'] = $season_wrapper->field_f_s_year->value();
       $output['region'] = $field_wrapper->field_f_region->label();
-      $output['author'] = person_get_user_array($user);
+      $output['author'] = ext_user_get_user_array($user);
 
       // user
       $img = 'default_images/ru-default-thickbox_default.jpg';
@@ -578,10 +578,8 @@ function before_after_get_atfield($sid)
       if ($staff = profile2_load_by_user($user, 'staff')) {
         $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
 
-        if ($staff_wrapper->field_profile_company_approved->value() == 1) {
-          $output['author_company'] = person_get_user_company_name($staff_wrapper->field_profile_company2->pid->value());
-          $output['author_post'] = $staff_wrapper->field_profile_post->value();
-        }
+        $output['author_company'] = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
+        $output['author_post'] = $staff_wrapper->field_profile_post->value();
       }
 
 
