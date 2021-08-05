@@ -1,0 +1,6 @@
+name = Дополнения для User
+description = Изменение и дополнения для модуля
+package = Custom
+core = 7.x
+dependencies[] = user
+

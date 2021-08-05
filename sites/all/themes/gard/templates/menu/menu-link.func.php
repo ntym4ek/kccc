@@ -184,7 +184,7 @@ function gard_menu_link__user_menu(array $variables)
 
         $attributes['class'][] = 'dropdown';
         $attributes['id'] = 'dropdown';
-        if ($GLOBALS['user']->uid) $href = 'person/' . $GLOBALS['user']->uid . '/summary';
+        if ($GLOBALS['user']->uid) $href = 'user/' . $GLOBALS['user']->uid;
 //
 //        $options['attributes']['class'][] = 'dropdown-toggle';
 //        $options['attributes']['data-toggle'] = 'dropdown';

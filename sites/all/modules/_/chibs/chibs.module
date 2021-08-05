@@ -559,7 +559,7 @@ function chibs_ads_contact_form($form, &$form_state, $nid) {
     if (empty($form_state['complete'])) {
         // задаём начальные значения
         if (empty($form_state['submitted'])) {
-            $account = person_get_user_array($user);
+            $account = ext_user_get_user_array($user);
         }
 
         $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');

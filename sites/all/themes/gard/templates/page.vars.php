@@ -263,7 +263,7 @@ function gard_preprocess_page(&$vars)
     /** -------------------------------------------- Представления (Views) - */
 //    if (isset($vars['page']['content']['system_main']['view']) || isset($vars['page']['#contextual_links']['views_ui'])) {
     if (isset($vars['page']['content']['system_main']['view'])
-        || (isset($vars['page']['content']['system_main']['main']) && strpos($vars['page']['content']['system_main']['main']['#markup'], 'class="view') !== false && arg(0) !== 'person')) {
+        || (isset($vars['page']['content']['system_main']['main']) && strpos($vars['page']['content']['system_main']['main']['#markup'], 'class="view') !== false && arg(0) !== 'user')) {
         $wrapper_off = true;
     }
 

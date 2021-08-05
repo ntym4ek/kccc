@@ -27,6 +27,19 @@ function before_after_menu() {
 
     // интерфейс представителей
         // поле
+
+    // закладка Препараты в поле в ЛК
+    $items['user/%user/before_after'] = array(
+      'title' => t('Before & After'),
+      'page callback' => 'before_after_field_callback',
+      'page arguments' => array(),
+      'access callback' => 'before_after_account_access_callback',
+      'access arguments' => array(1),
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 10,
+    );
+
+
     $items['fields/%'] = array(
         'title' => t('Before & After'),
         'page callback' => 'before_after_field_callback',
@@ -69,6 +82,16 @@ function before_after_menu() {
 
     return $items;
 }
+
+
+/**
+ * Access callback.
+ */
+function before_after_account_access_callback($user)
+{
+  return (user_has_role(STAFF_REPRESENTATIVE, $user) || user_has_role(STAFF_ADMIN, $user));
+}
+
 
 function before_after_permission() {
     return array(

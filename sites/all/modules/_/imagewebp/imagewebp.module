@@ -146,7 +146,7 @@ function imagewebp_field_display_alter(&$display, $context) {
 function imagewebp_preprocess_field(&$variables) {
   // Provide an extra variable to the field template when the field uses
   // a formatter of type 'image'.
-  if ($variables['element']['#formatter'] == 'image') {
+  if (isset($variables['element']['#formatter']) && $variables['element']['#formatter'] == 'image') {
     $entity_type = $variables['element']['#entity_type'];
     $field_name  = $variables['element']['#field_name'];
     $bundle      = $variables['element']['#bundle'];

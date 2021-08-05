@@ -90,7 +90,6 @@ Disallow: /user/register
 Disallow: /user/logout
 Disallow: /user/password
 Disallow: /checkout
-Disallow: /person
 Disallow: /field-collection
 Disallow: /404-page-not-found
 Disallow: /node
