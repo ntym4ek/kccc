@@ -211,11 +211,18 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
 
     // Оплата --------------------------------------------------------------------
     if (isset($form["commerce_payment"])) {
-      $link_become_legal = '/user/' . $GLOBALS['user']->uid;
-      $form["commerce_payment"]['#prefix'] = '<h2>Оплата</h2><p class="header-notice">Отсрочка платежа доступна только для юридических лиц.<br /><a href="' . $link_become_legal . '">Добавить необходимую информацию</a>.</p>';
       $form['commerce_payment']['payment_method']['#after_build'][] = 'ext_checkout_payment_radios_alter';
       $form['commerce_payment']['payment_method']['#ajax']['callback'] = 'ext_checkout_commerce_checkout_form_refresh';
       $form['commerce_payment']['payment_method']['#ajax']['wrapper'] = 'commerce-checkout-ajax-wrapper';
+
+      $notice = '';
+      // запретить выбор Отсрочки платежа для физлиц
+      if (!user_has_role(ROLE_COMPANY, $GLOBALS['user'])) {
+        $form['commerce_payment']['payment_method']['#disabled_options'] = ['commerce_payment_credit|commerce_payment_commerce_payment_credit'];
+        $notice = '<p class="header-notice">Отсрочка платежа доступна только для юридических лиц.<br /><a href="/user/' . $GLOBALS['user']->uid . '/edit">Добавить необходимую информацию</a>.</p>';
+      }
+
+      $form["commerce_payment"]['#prefix'] = '<h2>Оплата</h2>' . $notice;
     }
 
     $form['wrapper-suffix'] = [
@@ -307,6 +314,12 @@ function ext_checkout_payment_radios_alter($element, $form_state)
       $element[$radios_value]['#wrapper_attributes']['class'][] = 'active';
     } else {
       $element[$element['#default_value']]['#wrapper_attributes']['class'][] = 'active';
+    }
+
+    if (!empty($element["#disabled_options"])) {
+      foreach ($element["#disabled_options"] as $option) {
+        $element[$option]['#wrapper_attributes']['class'][] = 'disabled';
+      }
     }
 
   }

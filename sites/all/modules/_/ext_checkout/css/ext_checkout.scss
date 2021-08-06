@@ -195,6 +195,9 @@
     &.active label {
       border-color: $brand-primary;
     }
+    &.disabled label {
+      color: $text-muted;
+    }
     input {
       clip: rect(0, 0, 0, 0);
       pointer-events: none;
