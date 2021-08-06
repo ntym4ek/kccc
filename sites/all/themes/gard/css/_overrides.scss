@@ -255,7 +255,6 @@ a, a:hover, a:focus {
   }
 }
 
-
 // панель Header
 .navbar {
     display: flex; justify-content: space-between;
@@ -440,7 +439,16 @@ a, a:hover, a:focus {
   }
 }
 
-
+.button-notice,
+.header-notice {
+  color: $text-muted; font-size: .8em;
+  margin-top: 5px;
+  a {
+    color: $text-muted;
+    text-decoration: underline;
+  }
+}
+.header-notice { font-size: .9em; }
 
 // Paragraphs.
 p:last-child {

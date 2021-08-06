@@ -47,7 +47,7 @@
 .profile-wrapper {
     .profile {
         .alert { margin: 0 0 $grid-gutter-width/2 0; }
-        .form-type-managed-file {
+        [class*=field-profile-photo] {
             margin-bottom: $grid-gutter-width/2;
           .image-widget { display: flex; flex-wrap: wrap; justify-content: center; }
           .control-label { display: none; }

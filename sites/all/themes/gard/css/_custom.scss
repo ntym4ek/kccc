@@ -410,6 +410,7 @@
     border-bottom: 1px solid #c7c7c7;
     float: right;
     text-align: right; list-style: none;
+    padding: 0;
     > li {
         display: inline-block;
         > a {
@@ -418,7 +419,7 @@
             padding: 7px 15px;
             &:hover,
             &:focus,
-            &.active { color: inherit; }
+            &.active { color: #000; text-decoration: underline; }
         }
     }
 }
@@ -672,18 +673,13 @@
   }
   #block-block-23 {
     a.btn {
-      @include button-variant($text-color, #fff, $text-color);
+      @include button-variant($text-color, #fff, #fff);
     }
   }
 }
 
 
 /* ------------------------------------------------- Базовые настройки страницы - */
-//#page-header {
-//  position: relative;
-//  height: 160px;
-//  overflow: hidden;
-//}
 .header-image img {
   height: 100%;
 }
@@ -696,7 +692,6 @@
     position: absolute; left: 0; right: 0; bottom: 0; top: initial;
     h3 {
       color: #fff;
-      //font-family: oswald;
       font-weight: 300; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
       margin-top: 0; margin-bottom: 15px;
       a {
@@ -1873,134 +1868,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
       }
     }
   }
-}
-
-/* ------------------------------------------------- Список препаратов (Checkout ) ------------------------------ */
-/* ------------------------------------------------- Оформление списка (Checkout cart) - */
-.checkout-cart {
-  .cc-list {
-    margin: 0 0 $grid-gutter-width 0;
-    .cc-item {
-      border-bottom: 1px solid $legend-border-color;
-      padding: $grid-gutter-width/2 0;
-      display: flex;
-      .cc-image       {
-        flex: 0 0 100px;
-        margin-right: $grid-gutter-width/2;
-      }
-      .cc-product     {
-        flex: 1 0 300px;
-        margin-right: $grid-gutter-width/2;
-        h4 {
-          font-size: 1.4em;
-          margin-top: 0;
-          a {
-            span { color: $text-muted; font-size: .6em; }
-            &:hover,
-            &:focus {
-              color: $brand-danger;
-              text-decoration: none;
-            }
-          }
-        }
-        div { font-size: .8em; }
-        span { color: $text-muted; font-weight: 300; }
-      }
-      .cc-price-group {
-        flex: 1 0 100px;
-        display: flex; flex-wrap: wrap; justify-content: flex-end;
-        text-align: right;
-        padding: 0 $grid-gutter-width/2;
-        & > div { flex: 0 0 100%; }
-        .cc-price {
-          font-size: 1.1em; font-weight: 300;
-          margin-bottom: 5px;
-        }
-        .cc-qty {
-          max-width: 150px;
-          .form-text { text-align: center; }
-        }
-        .cc-total {
-          font-size: 1.4em; line-height: 35px;
-          margin-top: 5px;
-        }
-      }
-      .cc-action {
-        flex: 0 0 35px;
-        margin-left: $grid-gutter-width;
-        button { margin-bottom: $grid-gutter-width/2; }
-      }
-
-      @media #{$phone} {
-        font-size: .8em;
-        flex-wrap: wrap;
-        .cc-image { flex: 0 0 60px; }
-        .cc-product     {
-          flex: 1 0 150px;
-          margin-right: 5px;
-          div span { display: none; }
-        }
-        .cc-price-group {
-          flex: 0 0 100%;
-          order: 4;
-          padding: 0; margin-top: 15px;
-          .cc-price {
-            flex: 1 0 150px; order: 2;
-            line-height: 1.4;
-            margin: 0; padding-top: 10px;
-          }
-          .cc-qty { flex: 0 0 130px; order: 1; }
-          .cc-total {
-            flex: 0 0 100%; order: 3;
-            line-height: 1.4;
-            margin: 0;
-          }
-        }
-        .cc-action { margin: 0; }
-      }
-    }
-  }
-  .cc-summary {
-    display: flex;
-    .cc-physical {
-      flex: 1 0 200px;
-      span:not(.sup) { color: $text-muted; font-weight: 300; }
-    }
-    .cc-total {
-      flex: 1 0 100px;
-      font-size: 1.4em; text-align: right;
-      padding: 0 $grid-gutter-width/2;
-    }
-    .cc-refresh {
-      flex: 0 0 35px;
-      margin-left: $grid-gutter-width;
-    }
-  }
-}
-/* ------------------------------------------------- Данные пользователя (Checkout) - */
-.checkout-contact {
-  .cc-request {
-    margin: $grid-gutter-width 0 0 0;
-    .cc-forma {
-        margin-top: 4px;
-    }
-  }
-}
-
-.button-notice {
-  color: $text-muted; font-size: .8em;
-  margin-top: 5px;
-}
-
-.checkout-buttons {
-  text-align: right;
-}
-
-/* ------------------------------------------------- Страница завершения оформления (Checkout complete) - */
-.checkout-complete {
-  h4 { margin-bottom: $grid-gutter-width; }
-  dl > dd { margin-bottom: $grid-gutter-width/2; }
-  .contact-card { margin-top: 5px; }
 }
 
 /* ------------------------------------------------- Временные стили ------------------------------------------------ */

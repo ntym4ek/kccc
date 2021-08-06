@@ -211,7 +211,8 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
 
     // Оплата --------------------------------------------------------------------
     if (isset($form["commerce_payment"])) {
-      $form["commerce_payment"]['#prefix'] = '<h2>Оплата</h2>';
+      $link_become_legal = '/user/' . $GLOBALS['user']->uid;
+      $form["commerce_payment"]['#prefix'] = '<h2>Оплата</h2><p class="header-notice">Отсрочка платежа доступна только для юридических лиц.<br /><a href="' . $link_become_legal . '">Добавить необходимую информацию</a>.</p>';
       $form['commerce_payment']['payment_method']['#after_build'][] = 'ext_checkout_payment_radios_alter';
       $form['commerce_payment']['payment_method']['#ajax']['callback'] = 'ext_checkout_commerce_checkout_form_refresh';
       $form['commerce_payment']['payment_method']['#ajax']['wrapper'] = 'commerce-checkout-ajax-wrapper';
@@ -254,7 +255,7 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
     unset($form["buttons"]);
 
     $form['summary']['policy'] = [
-      '#markup' => '<div class="checkout-policy"><p>Согласен с условиями <a href="/">Правил пользования торговой площадкой и правилами возврата</a></p></div>',
+      '#markup' => '<div class="checkout-policy"><p class="button-notice">Согласен с условиями <a href="/">Правил пользования торговой площадкой и правилами возврата</a></p></div>',
       '#weight' => 3,
     ];
 
@@ -298,7 +299,8 @@ function ext_checkout_quantity_validate_cardinality(&$form, &$form_state)
  * Processing Radios Element using #after_build property.
  * Adding the 'active' class attribute for selected item in checkout_shipping
  */
-function ext_checkout_payment_radios_alter($element, $form_state) {
+function ext_checkout_payment_radios_alter($element, $form_state)
+{
   if ($form_state['values']['commerce_payment']['payment_method']) {
     $radios_value = $form_state['values']['commerce_payment']['payment_method'];
     if (isset($element[$radios_value])) {
@@ -674,3 +676,4 @@ function ext_checkout_commerce_order_presave($order)
     $order_wr->commerce_order_total->data = commerce_price_component_add($order_total, 'discount_5', $discount, TRUE);
   }
 }
+

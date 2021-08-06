@@ -3,16 +3,18 @@
 define('KCCC_COMPANY_PID', 668);
 
 /**
- * роли сотрудников компании
+ * роли
  */
-define('STAFF_PERSONNEL',       4);
-define('STAFF_UNCONFIRMED',     7);
 define('STAFF',                 6);
+define('STAFF_PERSONNEL',       4);
 define('STAFF_EDITOR',          5);
 define('STAFF_REPRESENTATIVE',  14);
 define('STAFF_SHOP',            11);
 define('STAFF_CHIEF',           8);
 define('STAFF_ADMIN',           3);
+
+define('ROLE_UNCONFIRMED',      7);
+define('ROLE_COMPANY',          15);
 
 /**
  * Implements hook_menu_alter()
@@ -24,12 +26,12 @@ function ext_user_menu_alter(&$items)
 
 function ext_user_permission()
 {
-  return array(
-    'access product_reglaments actions' => array(
+  return [
+    'access product_reglaments actions' => [
       'title' => t('Access Product Reglaments'),
       'description' => t('Access Product Reglaments actions'),
-    )
-  );
+    ]
+  ];
 }
 
 
@@ -442,6 +444,7 @@ function ext_user_form_user_profile_form_alter (&$form, $form_state)
     $form['timezone']['#access'] = false;
     $form['locale']['#access'] = false;
     $form['mimemail']['#access'] = false;
+    $form['picture']['#access'] = false;
 
     if (isset($form["account"]["mail"])) {
       $form["account"]["mail"]["#weight"] = -10;
@@ -453,6 +456,27 @@ function ext_user_form_user_profile_form_alter (&$form, $form_state)
 
     // меняем тему формы всем, кроме Админа
     $form["#theme"] = ['user_profile_form_custom'];
+
+    $form["#submit"][] = 'ext_user_user_profile_form_submit';
+  }
+}
+
+function ext_user_user_profile_form_submit($form, &$form_state)
+{
+  // проверить галку Аккаунтт Юрлица и создать профиль, если отсутствует
+  global $user;
+  if (!empty($form_state["values"]["field_profile_has_company"]["und"][0]["value"])) {
+    if (!user_has_role(ROLE_COMPANY, $user)) {
+      $roles = user_roles();
+      $user->roles[ROLE_COMPANY] = $roles[ROLE_COMPANY];
+      user_save($user);
+      $form_state['redirect'] = 'user/' . $user->uid . '/edit/company';
+    }
+  } else {
+    if (user_has_role(ROLE_COMPANY, $user)) {
+      unset($user->roles[ROLE_COMPANY]);
+      user_save($user);
+    }
   }
 }
 
