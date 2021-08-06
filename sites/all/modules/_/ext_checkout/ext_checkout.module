@@ -231,7 +231,6 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
     ];
 
 
-
     // Блок итого ----------------------------------------------------------------
     $form['summary'] = [
       '#type' => 'container',

@@ -85,6 +85,13 @@ function ext_user_preprocess_page(&$vars)
 
     drupal_add_js(drupal_get_path('module', 'ext_user') . '/js/ext_user.js');
     drupal_add_css(drupal_get_path('module', 'ext_user') . '/css/ext_user.css');
+
+    if (arg(2) == 'edit') {
+      if (arg(3) == 'main') drupal_set_title('Профиль пользователя');
+      elseif (arg(3) == 'staff') drupal_set_title('Профиль сотрудника');
+      elseif (arg(3) == 'company') drupal_set_title('Профиль компании');
+      else drupal_set_title('Настройки аккаунта');
+    }
   }
 
   // предупреждение для неподтвержденных аккаунтов
