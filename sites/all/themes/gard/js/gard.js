@@ -262,32 +262,25 @@
                 })(Drupal.galleryformatter.prepare);
             }
 
-          /* ------------------------------------- checkout/* ------------------------------------------------------- */
-          $(".checkout-contact").once(function() {
-            checkButton();
-            $(".form-item-checkout-contact-request-forma-region select").on("keyup", checkButton);
-            $(".form-item-checkout-contact-request-forma-name input").on("keyup", checkButton);
-            $(".form-item-checkout-contact-request-forma-email input").on("keyup", checkButton);
-            $(".form-item-checkout-contact-request-forma-phone input").on("keyup", checkButton);
-          });
-          function checkButton() {
-            var region = $(".form-item-checkout-contact-request-forma-region select");
-            var name = $(".form-item-checkout-contact-request-forma-name input");
-            var email = $(".form-item-checkout-contact-request-forma-email input");
-            var phone = $(".form-item-checkout-contact-request-forma-phone input");
-            var q1 = region.val();
-            var q2 = name.val();
-            var q3 = email.val();
-            var q4 = phone.val();
-            if (region.val() === "All" || !name.val() || ! email.val() || !phone.val()) {
-              if (!$(".checkout-continue").prop( "disabled")) {
-                $(".checkout-continue").prop( "disabled", true ).after("<p class='button-notice'>Заполните поля выше прежде чем продолжить.</p>");
-              }
-            } else {
-              $(".checkout-continue").prop("disabled", false);
-              $(".checkout-buttons .button-notice").remove();
+          /* ------------------------------------- Front Page ------------------------------------------------------- */
+          // анимация стрелки
+          function setArrowPos() {
+            var parent_block = $('.block-arrow').closest('.block-block');
+            var block_bottom = $(parent_block).offset().top + $(parent_block).height();
+            var page_bottom = $(window).height() + $(window).scrollTop();
+            if (block_bottom > page_bottom) {
+              $('.block-arrow').css({bottom: (block_bottom - page_bottom) + 'px'});
             }
           }
+
+          setArrowPos();
+          window.resize = function () {
+            setArrowPos();
+          };
+          window.onscroll = function () {
+            setArrowPos();
+          };
+
         }
     };
 

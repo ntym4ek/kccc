@@ -434,7 +434,7 @@
   }
   & > .content  {
     background-repeat: repeat-y;
-      background-color: #fff;
+    background-color: #fff;
 
     padding-top: $header-xs-height; padding-bottom: 178px;
     position: relative;
@@ -443,7 +443,7 @@
     @include transition(all .3s linear);
     @media #{$tablet} {
         background: url(../images/bkg_px.png);
-      padding-top: $header-sm-height; padding-bottom: 169px;
+      padding-top: $header-sm-height; padding-bottom: 153px;
         box-shadow: 0 -10px 60px 20px rgba(0, 0, 0, 0.12);
     }
     @media print {
@@ -634,6 +634,18 @@
       @media #{$wide} {
         min-height: 500px;
         height: 500px;
+      }
+    }
+    .block-arrow {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      text-align: center;
+      height: 40px;
+      @media #{$wide} { height: 80px; }
+      .arrow {
+        display: inline-block;
+        width: 40px;
+        @media #{$tablet} { width: 60px; }
+        @media #{$wide} { width: 100px; }
       }
     }
   }
