@@ -122,7 +122,7 @@
         <div class="region region-content">
             <?php if (!empty($row_1)): ?>
             <div class="row-1">
-              <?php print render($row_1['block_1']); ?>
+              <?php print render($row_1['block_17']); ?>
             </div>
             <?php endif; ?>
             <?php if (!empty($row_2)): ?>

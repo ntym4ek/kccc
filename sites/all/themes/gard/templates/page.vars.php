@@ -332,8 +332,8 @@ function gard_preprocess_page(&$vars)
 //        if (!empty($vars['page']['highlighted']['bootstrap_slider_bootstrap_slider'])) {
 //            $vars['slider'] = $vars['page']['highlighted']['bootstrap_slider_bootstrap_slider'];
 //        }
-      if (isset($vars['page']['content']['views_sliders-block_1'])) {
-        $vars['row_1']['block_1'] = $vars['page']['content']['views_sliders-block_1'];
+      if (isset($vars['page']['content']['block_17'])) {
+        $vars['row_1']['block_17'] = $vars['page']['content']['block_17'];
       }
 
       if (isset($vars['page']['content']['block_18'])) {
