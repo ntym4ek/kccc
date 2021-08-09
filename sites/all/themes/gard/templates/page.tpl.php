@@ -92,11 +92,11 @@
     <div class="right-menu">
         <?php print render($secondary_nav); ?>
         <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
-            <i class="fa fa-phone" aria-hidden="true"></i>
+          <img src="/sites/all/themes/gard/images/icons/phone_d.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
             <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
         </button>
         <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3" rel="nofollow">
-            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print ext_checkout_get_cart_block(); ?></i>
+          <img src="/sites/all/themes/gard/images/icons/cart_d.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания"><?php print ext_checkout_get_cart_block(); ?></i>
             <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
         </a>
     </div>
@@ -220,7 +220,7 @@
                                 </div>
                                 <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-                                        <img src="<?php print $logo_bl; ?>" alt="<?php print t('Home'); ?>" loading="lazy" />
+                                        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" loading="lazy" />
                                     </a>
                                 </div>
                             </div>

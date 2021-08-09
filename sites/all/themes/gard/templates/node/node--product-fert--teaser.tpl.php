@@ -93,7 +93,7 @@
             <div class="v-card-subtitle"><?php print explode('|', $titles_arr[0])[1]; ?></div>
             <div><?php print $content['body'][0]['#markup']; ?></div>
         </div>
-        <a class="btn btn-danger v-card-more" href="<?php print $product_url; ?>">
+        <a class="btn btn-primary v-card-more" href="<?php print $product_url; ?>">
             <?php print t('More'); ?>
             <i class="fas fa-chevron-right pull-right"></i>
         </a>

@@ -138,7 +138,9 @@ function gard_menu_link__user_menu(array $variables)
     if (in_array($mlid, [14, 12880])) {
         $options['attributes']['class'][] = 'btn btn-header btn-s1';
         $options['attributes']['rel'][] = 'nofollow';
-        $title =  '<i class="fa fa-user">';
+
+        $icon_suffix = drupal_is_front_page() ? '' : '_d';
+        $title =  '<img src="/sites/all/themes/gard/images/icons/account' . $icon_suffix . '.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">';
 
         // вывести бейдж с количеством уведомлений
         if (module_exists('ext_message_got')) {
@@ -244,9 +246,11 @@ function gard_menu_link__menu_main_d(array $variables) {
             // панель второго уровня
             if ($depth == 2) {
                 $image_uri = empty($source_term_wr->field_shop_category_image->value()) ? 'public://default_images/no_photo.png' : $source_term_wr->field_shop_category_image->file->value()->uri;
-                $image_url = image_style_url('thumbnail', $image_uri);
+                $image_url = file_create_url($image_uri);
                 $title =  '<div class="category-img"><img src="' . $image_url . '" alt="' . $title . ' - ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy"/></div>'
                         . '<div class="category-link">' . $title . '</div>';
+//                $title =  '<div class="category-img"></div>'
+//                        . '<div class="category-link">' . $title . '</div>';
 
                 // формируем при необходимости меню третьего уровня
                 // тащим экземпляры заданной сущности
@@ -271,8 +275,9 @@ function gard_menu_link__menu_main_d(array $variables) {
                 if ($list) {
                     // определяем наполнение первой трети
                     // если это каталог
-                    if ($tid) {
-                        $parents = taxonomy_get_parents_all($tid);
+                  if ($tid) {
+                    $category_subtitle_color = '';
+                    $parents = taxonomy_get_parents_all($tid);
                         if (empty($parents[1])) {
                             $category_title = $parents[0]->name;
                             $category_subtitle = t('View more');
@@ -284,7 +289,7 @@ function gard_menu_link__menu_main_d(array $variables) {
                             $category_title = $parents[1]->name;
                             $category_subtitle = $parents[0]->name;
                             $category_title_color = $parents[1]->field_color['und'][0]['value'];
-                            $category_subtitle_color = $parents[0]->field_color['und'][0]['value'];
+//                            $category_subtitle_color = $parents[0]->field_color['und'][0]['value'];
                             $category_title_url = url('taxonomy/term/' . $parents[1]->tid);
                             $category_subtitle_url = url('taxonomy/term/' . $parents[0]->tid);
                         }
@@ -437,12 +442,13 @@ function _get_menu_entities($field_entity, $field_entity_field = null, $tids = [
 function _pack_list_to_html($items, $options)
 {
     $list = '';
+  $color_style = $hover_style = '';
     if ($items) {
         $list .= '<ul class="level-3">';
         foreach ($items as $item) {
             $title = $item['title'] . (empty($item['formulation']) ? '' : ', ' . $item['formulation']);
-            $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
-            $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#585857\';"' : '';
+//            $color_style = isset($options['color']) ? ' style="color: #' . $options['color'] . '"' : '';
+//            $hover_style = isset($options['color']) ? ' onmouseover="this.style.color=\'#' . $options['color'] . '\';" onmouseleave="this.style.color=\'#585857\';"' : '';
             $list .= '<li><i class="fas fa-chevron-right"' . $color_style . '></i><a href="' . $item['url'] . '"' . $hover_style . '>' . $title . '</a></li>';
         }
         $list .= '</ul>';
@@ -468,7 +474,7 @@ function _get_banner_html($element)
                         '<div class="col-xs-12 banner-img"><img src="' . $image_url . '"  alt="' . $link_title . '" loading="lazy" /></div>' .
                         '<div class="col-xs-12 banner-text">' .
                             '<p>' . $desc . '</p>' .
-                            '<a href="' . $href . '">' . $link_title . '&nbsp;&nbsp;<i class="fas fa-chevron-right"></i></a>' .
+                            '<a href="' . $href . '"><i class="fas fa-chevron-right"></i>&nbsp;&nbsp;' . $link_title . '</a>' .
                         '</div>' .
                     '</div>';
         }

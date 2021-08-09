@@ -99,17 +99,20 @@ $brand-l-blue:          #01b0f1;
 $brand-red:             #CF142B;
 $brand-orange:          #f2a500;
 
-$brand-primary:         $brand-blue;
-$brand-success:         $brand-green;
-$brand-info:            #01b0f1;
-$brand-warning:         #f2a500;
-$brand-danger:          $brand-red;
-
 $brand-green-hover:     darken($brand-green, 10%);
 $brand-blue-hover:      darken($brand-blue, 10%);
 $brand-l-blue-hover:    darken($brand-l-blue, 10%);
 $brand-red-hover:       darken($brand-red, 10%);
 $brand-orange-hover:    darken($brand-orange, 10%);
+
+$brand-primary:         $brand-green;
+$brand-success:         $brand-green;
+$brand-info:            #01b0f1;
+$brand-warning:         #f2a500;
+$brand-danger:          $brand-red;
+
+$brand-primary-hover:   $brand-green-hover;
+
 
 // backgrounds
 $form-background:       $gray-lighter;

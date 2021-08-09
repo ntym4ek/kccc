@@ -33,7 +33,7 @@ function gard_preprocess_node(&$vars) {
         /** -------------------------------- Изображение - */
         if (empty($vars['image'])) {
             $image_style = 'news_teaser';
-            $image_uri = $vars['type'] == 'vacancy' ? 'public://default_images/user_image.jpg' : 'public://default_images/no_image.jpg';
+            $image_uri = $vars['type'] == 'vacancy' ? 'public://default_images/vacancy.png' : 'public://default_images/no_image.jpg';
             // для Вакансий своё изображение
             if (isset($vars['content']['field_promo_image'][0])) {
                 if (!empty($vars['content']['field_promo_image'][0]['#image_style'])) $image_style = $vars['content']['field_promo_image'][0]['#image_style'];

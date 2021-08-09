@@ -44,16 +44,19 @@
     .level-1 > li {
         float: left;
         > a {
-            border-bottom: 5px solid transparent;
-            color: $text-color; font-size: 18px;
-            display: inline-block;
-            line-height: 26px;
-            padding: 22px 25px;
-            @include transition(all 0.2s ease-in-out);
-            &:hover {
-                background-color: transparent;
-                border-bottom: 5px solid $brand-green;
-            }
+          border-bottom: 5px solid transparent;
+          color: $text-color; font-size: 18px;
+          display: inline-block;
+          line-height: 26px;
+          padding: 22px 25px;
+          @include transition(all 0.2s ease-in-out);
+          &:hover {
+            background-color: transparent;
+            border-bottom: 5px solid $brand-green;
+          }
+          &:focus {
+            background-color: transparent;
+          }
         }
     }
     .level-2-wrapper {
@@ -116,11 +119,15 @@
                 width: 100%;
             }
             .category-img {
-                text-align: center;
-                margin-bottom: 10px; margin-left: auto; margin-right: auto;
-                display: block;
-                width: 100px; height: 70px;
-                img { max-height: 100%; }
+              text-align: center;
+              margin-bottom: 10px; margin-left: auto; margin-right: auto;
+              display: block;
+              width: 100px;
+              img {
+                max-height: 100%;
+                width: 100%;
+                padding: 10px;
+              }
             }
             .category-link {
                 text-align: center;
@@ -139,8 +146,8 @@
             left: 0; top: 100%;
             width: 100%;
             border-top: 1px solid #e1e1e1;
-            border-bottom-left-radius: 7px;
-            border-bottom-right-radius: 7px;
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
         }
         .col-first {
             display: flex; flex-direction: column; justify-content: flex-start;
@@ -156,7 +163,7 @@
             flex: auto;
             display: flex; align-items: flex-end;
             margin: 0 0 15px 40px; padding: 10px 0;
-            a { color: $text-color; }
+            a { color: $text-muted; }
         }
         h3, h4 { padding-left: 40px; }
         h3 { margin-top: 50px; }
@@ -193,7 +200,7 @@
                 &:hover { color: $link-color; }
 
             }
-            > i { color: $brand-l-blue; font-size: 10px; position: absolute; top: 6px; }
+            > i { color: $brand-green; font-size: 10px; position: absolute; top: 6px; }
         }
     }
     .visible .level-3-wrapper { display: block; }
@@ -442,7 +449,7 @@
     margin-left: 0;
     @include transition(all .3s linear);
     @media #{$tablet} {
-        background: url(../images/bkg_px.png);
+        //background: url(../images/bkg_px.png);
       padding-top: $header-sm-height; padding-bottom: 153px;
         box-shadow: 0 -10px 60px 20px rgba(0, 0, 0, 0.12);
     }
@@ -620,11 +627,36 @@
       .row-1 & { font-size: 30px; }
     }
   }
+  .show-more {
+    position: relative;
+    padding-left: 15px;
+    i {
+      color: $brand-green;
+      font-size: 10px;
+      position: absolute; top: 5px; left: 0;
+    }
+  }
 }
 
 
 // настройки блоков
 .front {
+  header.navbar {
+    background: none;
+    box-shadow: none;
+    position: absolute; top: 30px;
+    .navbar-brand { display: none; }
+    .btn-header {
+      border-color: transparent;
+      .fa { color: #fff; }
+    }
+  }
+  .primary-d-menu .level-1 > li > a {
+    color: #fff; font-size: 20px; font-weight: 500;
+  }
+  .content-container .content {
+    padding-top: 0;
+  }
   .row-1 {
     @include make-row();
     .block {
@@ -640,12 +672,9 @@
       position: absolute; bottom: 0; left: 0; right: 0;
       text-align: center;
       height: 40px;
-      @media #{$wide} { height: 80px; }
       .arrow {
         display: inline-block;
         width: 40px;
-        @media #{$tablet} { width: 60px; }
-        @media #{$wide} { width: 100px; }
       }
     }
   }
@@ -760,13 +789,12 @@
 .article-header {
     margin: $grid-gutter-width 0;
   h1 {
-      color: $brand-primary;
-      display: inline-block;
-      margin-top: 0; margin-right: 15px;
-      @media #{$phone} {
-          font-size: $font-size-h2; line-height: $font-size-h2;
-          //margin-bottom: 0;
-      }
+    display: inline-block;
+    margin-top: 0; margin-right: 15px;
+    font-size: $font-size-h2; line-height: $font-size-h2;
+    @media #{$tablet} {
+      font-size: $font-size-h1; line-height: $font-size-h1;
+    }
   }
     h3 {
         font-weight: 300;
@@ -992,7 +1020,7 @@
           padding: 0 15px 0 0;
           &:hover {
             background: none;
-            color: $brand-blue-hover;
+            color: $brand-primary-hover;
           }
         }
         &:last-child {
@@ -1001,8 +1029,8 @@
         }
       }
       .selected strong {
-        color: $brand-blue;
-        &:hover { color: $brand-blue-hover; }
+        color: $brand-primary;
+        &:hover { color: $brand-primary-hover; }
       }
     }
     fieldset.horizontal-tabs-pane {
@@ -1246,17 +1274,17 @@
   }
 }
 
-@include custom-page('.page-herbicides', $brand-herbicides);
-@include custom-page('.page-fungicides', $brand-fungicides);
-@include custom-page('.page-insecticides', $brand-insecticides);
-@include custom-page('.page-desiccants', $brand-desiccants);
-@include custom-page('.page-disinfectants', $brand-disinfectants);
-@include custom-page('.page-mineral-fertilizers', $brand-fertilizers);
-@include custom-page('.page-fire-extinguishing-powders', $brand-finfire);
-@include custom-page('.page-automatic-extinguishers', $brand-finfire);
-@include custom-page('.page-firefighting-products', $brand-finfire);
-@include custom-page('.page-mixes', $brand-mixes);
-@include custom-page('.page-organic-compounds', $brand-compounds);
+//@include custom-page('.page-herbicides', $brand-herbicides);
+//@include custom-page('.page-fungicides', $brand-fungicides);
+//@include custom-page('.page-insecticides', $brand-insecticides);
+//@include custom-page('.page-desiccants', $brand-desiccants);
+//@include custom-page('.page-disinfectants', $brand-disinfectants);
+//@include custom-page('.page-mineral-fertilizers', $brand-fertilizers);
+//@include custom-page('.page-fire-extinguishing-powders', $brand-finfire);
+//@include custom-page('.page-automatic-extinguishers', $brand-finfire);
+//@include custom-page('.page-firefighting-products', $brand-finfire);
+//@include custom-page('.page-mixes', $brand-mixes);
+//@include custom-page('.page-organic-compounds', $brand-compounds);
 
 /* ------------------------------------------------- Блог(Blog) - */
 .node-blog {
@@ -1279,8 +1307,6 @@
 
     .field {
         margin-bottom: 15px;
-        .field-label { color: $brand-blue; font-size: 17px; }
-        .field-item { font-size: 17px; }
     }
     .field.field-name-field-vacancy-location,
     .field.field-name-field-region { margin-bottom: 0; }
@@ -1592,6 +1618,9 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
             @include make-row();
             .views-exposed-widget {
                 padding-top: 0;
+              label {
+                color: $text-muted; font-weight: 300;
+              }
             }
         }
     }
@@ -1746,6 +1775,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
             height: 40px;
             overflow: hidden;
             margin: 0;
+          a { color: $text-color; }
             a:hover,
             a:focus { text-decoration: none; }
             // троеточие на обрезанном тексте
@@ -1781,6 +1811,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
   .v-card-title {
       margin: 0 0 3px 0;
+    a { color: $text-color; }
   }
 
   .v-card-summary {
@@ -1801,7 +1832,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
   .v-card-btm { font-size: 12px; }
 
-    &.product .v-card-summary { height: 80px; }
+  &.product .v-card-summary { height: 80px; }
 }
 
 
@@ -2233,7 +2264,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 /* ------------------------------------------------- Бейджи - */
 .bubble {
     color: #fff; font-size: 10px; line-height: 1; text-align: center;
-    position: absolute; z-index: 1; top: -3px; right: -5px;
+    position: absolute; z-index: 1; top: 14px; right: 8px;
     display: inline-block;
     box-sizing: border-box;
     min-width: 14px;

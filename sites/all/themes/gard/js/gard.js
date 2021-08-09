@@ -266,17 +266,19 @@
           // анимация стрелки
           function setArrowPos() {
             var parent_block = $('.block-arrow').closest('.block-block');
-            var block_bottom = $(parent_block).offset().top + $(parent_block).height();
-            var page_bottom = $(window).height() + $(window).scrollTop();
-            if (block_bottom > page_bottom) {
-              $('.block-arrow').css({bottom: (block_bottom - page_bottom) + 'px'});
+            if ($(parent_block).length) {
+              var block_bottom = $(parent_block).offset().top + $(parent_block).height();
+              var page_bottom = $(window).height() + $(window).scrollTop();
+              if (block_bottom > page_bottom) {
+                $('.block-arrow').css({bottom: (block_bottom - page_bottom) + 'px'});
+              }
             }
           }
 
           setArrowPos();
-          window.resize = function () {
+          window.addEventListener('resize', function(event) {
             setArrowPos();
-          };
+          }, true);
           window.onscroll = function () {
             setArrowPos();
           };

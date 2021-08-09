@@ -104,8 +104,8 @@ $node_url = url('node/' . $node->nid);
     <div class="block-body">
         <a href="<?php print $node_url; ?>"><h2><?php print $title; ?></h2></a>
         <p><?php print $category; ?></p>
-        <a class="btn btn-danger" href="<?php print $node_url; ?>">
-          <?php print t('More'); ?>
+        <a class="show-more" href="<?php print $node_url; ?>">
+          <i class="fas fa-chevron-right"></i><?php print t('More'); ?>
         </a>
     </div>
 </div>

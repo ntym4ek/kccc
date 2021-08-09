@@ -22,7 +22,7 @@
                     <strong>Обработка:</strong> <?php print $content['preps_w_links']; ?>
                 </div>
             </div>
-            <a class="btn btn-danger v-card-more" href="<?php print $content['link']; ?>">
+            <a class="btn btn-primary v-card-more" href="<?php print $content['link']; ?>">
                 <?php print t('More'); ?>
                 <i class="fas fa-chevron-right pull-right"></i>
             </a>

@@ -397,7 +397,12 @@ function ext_checkout_get_cart_block()
         }
     }
 
-    return '<div id="block-cart" class="shake">' . ($product_quantity_count ? $product_quantity_count : '') . '</div>';
+  $class = $qty = '';
+    if ($product_quantity_count) {
+      $class = 'bubble bubble-red';
+      $qty = $product_quantity_count;
+    }
+    return '<span id="block-cart" class="' . $class . '">' . $qty . '</span>';
 }
 
 /**

@@ -9,8 +9,11 @@
     </div>
     <?php if (!empty($row->field_description_field[0]["rendered"]["#markup"])): ?>
     <div class="block-body">
-        <a href="<?php print url($row->field_field_link[0]['rendered']['#markup']); ?>"><h2><?php print $text; ?></h2></a>
-        <?php print $row->field_description_field[0]["rendered"]["#markup"] ?>
+      <a href="<?php print url($row->field_field_link[0]['rendered']['#markup']); ?>"><h2><?php print $text; ?></h2></a>
+      <?php print $row->field_description_field[0]["rendered"]["#markup"] ?>
+      <a class="show-more" href="<?php print url($row->field_field_link[0]['rendered']['#markup']); ?>">
+        <i class="fas fa-chevron-right"></i><?php print t('More'); ?>
+      </a>
     </div>
     <?php endif; ?>
 </div>

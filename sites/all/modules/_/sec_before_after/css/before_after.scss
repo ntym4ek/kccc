@@ -114,7 +114,6 @@
     .image {
       margin-bottom: 20px;
       .date {
-        color: $brand-primary;
         font-size: $font-size-h3;
         padding: 10px;
       }
@@ -152,7 +151,6 @@
         &:hover { text-decoration: underline; }
       }
     }
-    span { color: $brand-primary; }
   }
   .processings {
     flex: 1 0 100%;
@@ -175,7 +173,6 @@
           grid-template-columns: auto 1fr; /* auto определяет ширину первой колонки, которая равна самому широкому элементу <dt> (auto можно заменить на fit-content(10em), если необходимо её ограничить) */
           grid-template-rows: repeat(auto-fit, 20px);
           dt {
-            color: $brand-blue;
             font-weight: 100;
             min-width: 0; /* более привычное поведение при переполнении */
           }
@@ -201,7 +198,9 @@
       .info {
         flex: auto;
         padding: $grid-gutter-width/2;
-        .title { font-size: 1.5em; }
+        .title {
+          color: $text-color; font-size: 1.5em;
+        }
         .description { margin-top: 10px; }
       }
       .rate, .consumption {
@@ -246,6 +245,7 @@
     margin-bottom: 0; padding: 5px 0;
     li {
       a {
+        color: $text-color;
         background: none; border: none;
         border-bottom: 1px solid rgba(9, 148, 220, 0.2);
         font-size: 14px; line-height: 1.2;
