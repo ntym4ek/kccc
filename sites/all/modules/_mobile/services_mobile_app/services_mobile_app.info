@@ -1,0 +1,6 @@
+name = Services Mobile App
+description = Provide service actions for mobile application
+package = Custom
+core = 7.x
+dependencies[] = services
+dependencies[] = rest_server

@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * YML primary module file.
+ */
+
+include_once 'yml_tools.class.inc';
+
+define('YML_TOOLS_STORE_TYPE_UBERCART', 'Ubercart');
+define('YML_TOOLS_STORE_TYPE_COMMERCE', 'Commerce');
+define('YML_TOOLS_XML_URL', 'products_to_yml.xml');
+
+/**
+ * Implements hook_menu().
+ */
+function yml_tools_menu() {
+  $items = array();
+  $items[YML_TOOLS_XML_URL] = array(
+    'title' => 'Export products to YML',
+    'page callback' => 'yml_tools_get_xml',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+  $items['admin/config/yml_tools'] = array(
+    'title' => 'Yml export tools (Yandex.market)',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('yml_tools_admin_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'yml_tools.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Callback for YML view page.
+ */
+function yml_tools_get_xml() {
+  $strore_creator = new YmlStore();
+  $store = $strore_creator->createStore();
+  $store->getXML();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function yml_tools_theme() {
+  return array(
+    'yml_tools_xml' => array(
+      'variables' => array(
+        'products' => NULL,
+        'categories' => NULL,
+        'currency' => 'RUR',
+        'name' => variable_get('site_name', 'Drupal'),
+        'company' => variable_get('site_name', 'Drupal'),
+        'url' => $GLOBALS['base_url'],
+        'date' => date('Y-m-d h:i'),
+      ),
+      'template' => 'yml_tools_xml',
+    ),
+    'yml_tools_product' => array(
+      'variables' => array('product' => NULL),
+      'template' => 'yml_tools_product',
+      'currency' => 'RUR',
+    ),
+    'yml_tools_category' => array(
+      'variables' => array('category' => NULL),
+      'template' => 'yml_tools_category',
+    ),
+  );
+}

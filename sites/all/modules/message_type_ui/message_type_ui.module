@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function message_type_ui_entity_info_alter(&$items) {
+  // First fix plurals to be translatable. @todo Move to message.module
+  $items['message']['plural label'] = 'Messages';
+  $items['message_type']['plural label'] = 'Messages types';
+  $items['message_type_category']['plural label'] = 'Messages type categories';
+
+  $items['message_type_category']['admin ui'] = array(
+    'path' => 'admin/structure/message-types',
+    'file' => 'message_type_ui.admin.inc',
+    'file path' => drupal_get_path('module', 'message_type_ui'),
+    'controller class' => 'EntityDefaultUIController',
+  );
+
+  // Add message type category admin path.
+  // Message type category does not have bundles, so use default bundle.
+  $items['message_type_category']['bundles']['message_type_category'] += array(
+    'admin' => array(
+      'path' => 'admin/structure/message-types',
+      'access arguments' => array('administer message type categories'),
+    ),
+  );
+
+  // Add admin path for message type fields etc.
+  foreach ($items['message_type']['bundles'] as $message_type_bundle_name => &$message_type_bundle_info) {
+    $message_type_bundle_info['admin'] = array(
+      'path' => 'admin/structure/message-types/manage/%message_type_category',
+      'real path' => 'admin/structure/message-types/manage/' . $message_type_bundle_name,
+      'bundle argument' => 4,
+      'access arguments' => array('administer message type categories'),
+    );
+  }
+
+}
+
+/**
+ * Implements hook_permission().
+ */
+function message_type_ui_permission() {
+  $permissions = array();
+  $permissions['administer message type categories'] = array(
+    'title' => t('Administer message type categories'),
+    'description' => t('Administer message type categories that are used as message type bundles.'),
+  );
+  return $permissions;
+}

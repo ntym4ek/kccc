@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Nivo Slider module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function bootstrap_slider_uninstall() {
+  // Get the current slider settings
+  $slides = variable_get('bootstrap_slider_slide_settings', array());
+
+  // Delete all of the slide images
+  foreach ($slides as $slide) {
+    // Check if the slide has a file ID
+    if (isset($slide['fid'])) {
+      // Load the file that corresponds to the file ID
+      $file_object = file_load($slide['fid']);
+
+      // Delete the file
+      file_delete($file_object);
+    }
+  }
+
+  // Delete the folder the slider images were contained in
+  $banner_folder = 'public://bootstrap-slider/';
+  file_unmanaged_delete_recursive($banner_folder);
+
+  // Remove slide variables
+  variable_del('bootstrap_slider_slide_settings');
+
+  // Remove option variables
+  variable_del('bb_slideshow_effect');
+  variable_del('bb_slideshow_effect_time');
+}

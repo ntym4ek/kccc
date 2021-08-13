@@ -1,0 +1,232 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function parser_menu() {
+  $items = array();
+  
+  $items['parser/check'] = array(
+    'page callback' => 'parser_check_code',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'parser.inc',
+  );
+  
+  $items['parser/redirect/%/%'] = array(
+    'page callback' => 'parser_redirect',
+    'page arguments' => array(2, 3),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'parser.inc',
+  );
+  
+  $items['admin/structure/parser_jobs/results/%parser_job'] = array(
+    'title' => 'Parser results',
+    'page callback' => 'parser_result_page',
+    'page arguments' => array(4),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'parser.inc',
+  );
+  
+  $items['admin/structure/parser_jobs/rollback/%parser_job'] = array(
+    'title' => 'Rollback',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('parser_rollback_form', 4),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+    'file' => 'parser.inc',
+  );
+  
+  $items['admin/structure/parser_jobs/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('parser_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'parser.inc',
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function parser_entity_info() {
+  return array(
+    'parser_job' => array(
+      'label' => t('Job parsing'),
+      'entity class' => 'Entity',
+      'controller class' => 'EntityAPIController',
+      'base table' => 'parser_jobs',
+      'entity keys' => array(
+        'id' => 'jid',
+        'label' => 'title',
+      ),
+      'admin ui' => array(
+        'path' => 'admin/structure/parser_jobs',
+        'file' => 'parser.inc',
+      ),
+      'uri callback' => 'parser_job_uri',
+      'access callback' => 'parser_job_access',
+      'module' => 'parser',
+      'exportable' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Check acces rights.
+ */
+function parser_job_access($op, $entity, $account = NULL, $entity_type = 'parser_job') {
+  return user_access('administer site configuration');
+}
+ 
+/**
+ * Load entity object by id.
+ */
+function parser_job_load($jid) {
+  return entity_load_single('parser_job', $jid);
+}
+
+/**
+ * Parser job uri callback.
+ */
+function parser_job_uri($job) {
+  return array('path' => 'admin/structure/parser_jobs/manage/' . $job->jid);
+}
+
+/**
+ * Implements of hook_entity_delete().
+ * Delete record from {parser_map} table.
+ */
+function parser_entity_delete($entity, $entity_type) {
+  $entity_id = entity_id($entity_type, $entity);
+
+  $query = db_select('parser_map', 'pm');
+  $query->fields('pm', array('jid'));
+  $query->innerJoin('parser_jobs', 'pj', 'pj.jid = pm.jid');
+  $query->condition('pj.entity_type', $entity_type);
+  $query->condition('pm.entity_id', $entity_id);
+  $jid = $query->execute()->fetchField();
+
+  if ($jid) {
+    db_delete('parser_map')
+      ->condition('jid', $jid)
+      ->condition('entity_id', $entity_id)
+      ->execute();
+  }
+}
+
+/**
+ * Implements of hook_entity_view().
+ * Show link to original page. Only for admin.
+ */
+function parser_entity_view($entity, $entity_type, $view_mode, $langcode) {
+  if ($view_mode == 'full' && $GLOBALS['user']->uid == 1 && variable_get('parser_show_source_link', 1)) {
+    module_load_include('inc', 'parser');
+    $entity_id = entity_id($entity_type, $entity);
+    $url = _parser_get_url_by_entity_id($entity_type, $entity_id);
+    if ($url) {
+      $entity->content['parser_url'] = array(
+        '#markup' => '<p>Контент спарсен со страницы ' . _parser_get_external_link($url) . '</p>', 
+        '#weight' => 100, 
+      );
+    }
+  }
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter(): parser_job_overview_form.
+ */
+function parser_form_parser_job_overview_form_alter(&$form, $form_state) {
+  module_load_include('inc', 'parser');
+
+  $form['table']['#header'][2]['colspan'] = 6;
+
+  foreach ($form['table']['#rows'] as &$row) {
+    $jid = $row[0]['data']['#name'];
+    $entity_count = _parser_get_entity_count($jid);
+
+    if ($entity_count > 0) {
+      $row[] = l(t('results'), 'admin/structure/parser_jobs/results/' . $jid);
+      $row[] = l(t('rollback') . ' (' . $entity_count . ')', 'admin/structure/parser_jobs/rollback/' . $jid);
+    }
+    else {
+      $row[] = '';
+      $row[] = '';
+    }
+  }
+}
+
+/**
+ * Implements of hook_library().
+ */
+function parser_library() {
+  $parser_path = drupal_get_path('module', 'parser');
+    
+  $libraries['codemirror'] = array(
+    'title' => 'CodeMirror',
+    'website' => 'http://codemirror.net/',
+    'version' => '2.13',
+    'js' => array(
+      $parser_path . '/codemirror2/lib/codemirror.js' => array(),
+      $parser_path . '/codemirror2/mode/clike/clike.js' => array(),
+      $parser_path . '/codemirror2/mode/php/php.js' => array(),
+    ),
+    'css' => array(
+      $parser_path . '/codemirror2/lib/codemirror.css' => array(),
+      $parser_path . '/codemirror2/theme/default.css' => array(),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function parser_entity_property_info_alter(&$info) {
+  module_load_include('inc', 'parser');
+
+  foreach ($info as $entity_type => $properties) {
+    if (isset($properties['bundles'])) {
+      foreach ($properties['bundles'] as $bundle => $bundle_properties) {
+        foreach ($bundle_properties['properties'] as $property_name => $property_info) {
+          _parser_set_format_setter_callback($info[$entity_type]['bundles'][$bundle]['properties'][$property_name]);
+        }
+      }
+    }
+
+    if (isset($properties['properties'])) {
+      foreach ($properties['properties'] as $property_name => $property_info) {
+        _parser_set_format_setter_callback($info[$entity_type]['properties'][$property_name]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function parser_cron() {
+  $jids = db_select('parser_jobs', 'j')
+    ->fields('j', array('jid'))
+    ->condition('j.run_period', 0, '>')
+    ->where('j.last_run + j.run_period <= ' . REQUEST_TIME)
+    ->execute()
+    ->fetchCol();
+
+  if ($jids) {
+    module_load_include('inc', 'parser');
+
+    foreach ($jids as $jid) {
+      $job = parser_job_load($jid);
+      $job->last_run = REQUEST_TIME;
+      entity_save('parser_job', $job);
+      parser_run_in_background($jid);
+    }
+  }
+}

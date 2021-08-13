@@ -1,0 +1,26 @@
+diff --git a/webform_localization.module b/webform_localization.module
+index c23e35e..ec2be35 100644
+--- a/webform_localization.module
++++ b/webform_localization.module
+@@ -1334,11 +1334,16 @@ function webform_localization_js_alter(&$javascript) {
+       if (isset($setting['webform']['conditionals'])) {
+         foreach ($setting['webform']['conditionals'] as $k => $data) {
+           if (preg_match("/^webform-client-form-(.*)/", $k, $matches) && isset($matches[1])) {
+-            $translations = translation_node_get_translations($matches[1]);
+-            $correct_translation = isset($translations[$language->language]) ? $translations[$language->language] : FALSE;
+-            if (!empty($correct_translation)) {
+-              $setting['webform']['conditionals']['webform-client-form-' . $correct_translation->nid] = $setting['webform']['conditionals'][$k];
+-              unset($setting['webform']['conditionals'][$k]);
++            if (module_exists('translation')) {
++              $translations = translation_node_get_translations($matches[1]);
++              $correct_translation = isset($translations[$language->language]) ? $translations[$language->language] : FALSE;
++              if (!empty($correct_translation)) {
++                $setting['webform']['conditionals']['webform-client-form-' . $correct_translation->nid] = $setting['webform']['conditionals'][$k];
++                unset($setting['webform']['conditionals'][$k]);
++              }
++            }
++            else {
++              drupal_set_message(t("Current 'Webform Localization' workflow requires 'Translation' module to be enabled!"), 'error');
+             }
+           }
+         }

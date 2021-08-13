@@ -1,0 +1,12 @@
+name = Message Type UI
+description = The missing UI for message types and categories.
+core = 7.x
+package = Message
+dependencies[] = message
+
+; Information added by Drupal.org packaging script on 2016-01-26
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "message_type_ui"
+datestamp = "1453803796"
+
