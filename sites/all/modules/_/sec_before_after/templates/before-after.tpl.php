@@ -24,7 +24,7 @@
                 </a>
                 <? if (isset($item['link_edit'])): ?>
                     <a href="<? print $item['link_edit']; ?>" class="action-edit">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        <i class="fas fa-pencil-alt" aria-hidden="true"></i>
                     </a>
                 <? endif; ?>
                 <? if (isset($item['link_delete'])): ?>
