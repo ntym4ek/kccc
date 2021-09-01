@@ -15,9 +15,9 @@
             <h4 class="r-card-title"><a href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>><?php print $item['title']; ?></a></h4>
             <p class="r-card-description"><?php print $item['description']; ?></p>
 
-            <a class="btn btn-danger r-card-more" href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>>
-                <?php print empty($item['button_text']) ? t('More') : $item['button_text']; ?>
-                <i class="fas fa-chevron-right pull-right"></i>
+            <a class="show-more" href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>>
+              <i class="fas fa-chevron-right"></i>
+              <?php print empty($item['button_text']) ? t('More') : $item['button_text']; ?>
             </a>
         </div>
 

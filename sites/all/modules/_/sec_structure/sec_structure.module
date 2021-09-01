@@ -1,0 +1,375 @@
+<?
+
+
+/**
+ * Implements hook_menu().
+ */
+function sec_structure_menu()
+{
+    $items['structure'] = array(
+        'title' => 'Организационная структура',
+        'page callback' => 'sec_structure_page',
+        'page arguments' => array(1),
+        'access callback' => true,
+//        'access callback' => '_user_has_role',
+//        'access arguments' => array('6'),       // только для роли Сотрудник
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function sec_structure_theme()
+{
+  return array(
+    'structure_page' => array(
+      'render element' => 'element',
+    ),
+    'structure_level' => array(
+      'render element' => 'element',
+      'template' => 'templates/structure-level',
+    ),
+    'structure_box' => array(
+      'render element' => 'element',
+      'template' => 'templates/structure-box',
+    ),
+  );
+}
+
+/**
+ * menu callback
+ */
+function sec_structure_page()
+{
+  $structure = sec_structure_get_structure();
+
+  drupal_add_css(drupal_get_path('module', 'sec_structure') . '/css/sec_structure.css');
+  drupal_add_js(drupal_get_path('module', 'sec_structure') . '/js/sec_structure.js');
+
+  return $structure;
+}
+
+/**
+ * вернуть массив со структурой организации
+ */
+function sec_structure_get_structure()
+{
+  return [
+    '#theme' => 'structure_page',
+    'content' => [
+      'level' => [
+        '#theme' => 'structure_level',
+        'child' => [
+          [
+            'shell' => 'Директор<br>КЧЗ "Агрохимикат"',
+            'card' => 'АЛЕКСАНДРОВ<br>Валерий Николаевич',
+            'photo' => drupal_get_path('module', 'sec_structure') . '/images/aleksandrov.png',
+            'class' => 'deepblue open',
+            '#theme' => 'structure_box',
+            'level' => [
+              '#theme' => 'structure_level',
+              'child' => [
+                [
+                  'shell' => 'Административный корпус',
+                  'card' => 'Описание обитателей данного корпуса',
+                  'class' => 'deepblue',
+                  '#theme' => 'structure_box',
+                  'level' => [
+                    '#theme' => 'structure_level',
+                    'child' => [
+                      [
+                        'shell' => 'Финансовый директор',
+                        'card' => 'ПЛАТУНОВ<br>Александр Борисович',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/platunov.png',
+                        'class' => 'orange',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Финансово-экономический отдел',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+                      ],
+                      [
+                        'shell' => 'Зам. директора по правовым вопросам',
+                        'card' => 'САБРЕКОВ<br>Эдуард Тахирович',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'orange',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Какой это отдел?',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+                      ],
+                      [
+                        'shell' => 'Главный бухгалтер',
+                        'card' => 'РАЗНАРЕВИЧ<br>Ольга Викторовна',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'orange',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Бухгалтерия',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                            [
+                              'shell' => 'Отдел информационных технологий',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+                      ],
+                      [
+                        'shell' => 'Административный директор',
+                        'card' => 'САВЕНКО<br>Ольга Васильевна',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'orange',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Служба управления персоналом',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                            [
+                              'shell' => 'Отдел логистики',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                            [
+                              'shell' => 'Отдел снабжения',
+                              'card' => 'Краткое описание функционала службы и тел.',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+                      ],
+                    ],
+                  ],
+                ],
+                [
+                  'shell' => 'Производственный корпус',
+                  'card' => 'Описание обитателей данного корпуса',
+                  'class' => 'deepblue',
+                  '#theme' => 'structure_box',
+                  'level' => [
+                    '#theme' => 'structure_level',
+                    'child' => [
+                      [
+                        'shell' => 'Главный инженер',
+                        'card' => 'НАУМОВ<br>Александр Владимирович',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'orange',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Производство смол',
+                              'card' => 'ИСТАМОВ<br>Вахид Кахарович',
+                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'class' => 'purple',
+                              '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Зам. начальника производства',
+                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
+                            ],
+                            [
+                              'shell' => 'Производство ХСЗР',
+                              'card' => 'ШУМИЛОВ<br>Алексей Владимирович',
+                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'class' => 'purple',
+                              '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Зам. начальника производства',
+                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
+                            ],
+                            [
+                              'shell' => 'Служба главного технолога',
+                              'card' => 'ДЮПИН<br>Вячеслав Викторович',
+                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'class' => 'purple',
+                              '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Технологическая служба',
+                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Отдел развития новых продуктов и технологий',
+                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
+                            ],
+                            [
+                              'shell' => 'Складское хозяйство',
+                              'card' => 'ЛЯЛИНА<br>Ольга Владимировна',
+                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'class' => 'purple',
+                              '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Зам. начальника складского хозяйства',
+                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
+                            ],
+                            [
+                              'shell' => 'Прочие службы',
+                              'card' => 'Что здесь?',
+                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'class' => 'purple',
+                              '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Механическая служба',
+                                    'card' => 'ЧЕРЕПАНОВ<br>Дмитрий Владимирович',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Электрослужба',
+                                    'card' => 'ОБУХОВ<br>Михаил Сергеевич',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Служба КИПиА',
+                                    'card' => 'КВАКИН<br>Вадим Геннадьевич',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Технический отдел',
+                                    'card' => 'БАИКИНА<br>Эльвира Анатольевна',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Отдел промышленной безопасности',
+                                    'card' => 'ОЛЮНИН<br>Дмитрий Витальевич',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Хозяйственная служба',
+                                    'card' => 'ШУКЛИН<br>Алексей Александрович',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
+                            ],
+                          ],
+                        ],
+                      ],
+                      [
+                        'shell' => 'Отдел реализации проектов',
+                        'card' => 'Что-то с чем-то',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'red',
+                        '#theme' => 'structure_box',
+                      ],
+                      [
+                        'shell' => 'Испытательная лаборатория',
+                        'card' => 'ВОРОНЧИХИНА<br>Екатерина Аркадьевна',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'purple',
+                        '#theme' => 'structure_box',
+                      ],
+                      [
+                        'shell' => 'Отдел технического контроля',
+                        'card' => 'ЕВТУШЕНКО<br>Диана Юрьевна',
+                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'class' => 'blue',
+                        '#theme' => 'structure_box',
+                      ],
+
+                    ],
+                  ],
+                ],
+              ],
+            ],
+          ]
+        ]
+      ]
+    ]
+  ];
+}
+
+/**
+ * A #theme function.
+ */
+function theme_structure_page($vars)
+{
+  return '<div class="structure">' . render($vars['element']['content']) . '</div>';
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function sec_structure_preprocess_page(&$vars)
+{
+    // сменить шаблон страницы на пустой,
+    // чтобы иметь возможность развернуться на весь экран
+    if (arg(0) == 'structure' && !arg(1)) {
+//        $vars['theme_hook_suggestions'][] = 'page__empty';
+      $vars['header']['category_title'] = '';
+    }
+}
