@@ -73,19 +73,3 @@ function gard_preprocess_html(&$vars)
     //<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet">
 }
 
-/**
- * Processes variables for the "html" theme hook.
- *
- * See template for list of available variables.
- *
- * If there is a need to implement a hook_process_html() function in your
- * sub-theme (to process your own custom variables), ensure that it doesn't
- * add this base theme's logic and risk introducing breakage and performance
- * issues.
- *
- * @see html.tpl.php
- *
- * @ingroup theme_process
- */
-function gard_process_html(&$variables) {
-}
