@@ -369,7 +369,10 @@ function sec_structure_preprocess_page(&$vars)
     // сменить шаблон страницы на пустой,
     // чтобы иметь возможность развернуться на весь экран
     if (arg(0) == 'structure' && !arg(1)) {
-//        $vars['theme_hook_suggestions'][] = 'page__empty';
-      $vars['header']['category_title'] = '';
+      $vars['header'] = array(
+        'image' => '/' . drupal_get_path('module', 'sec_structure') . '/images/header_image.jpg',
+        'category_title' => '',
+      );
+
     }
 }
