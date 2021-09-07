@@ -338,7 +338,7 @@ function ext_checkout_commerce_checkout_form_submit($form, &$form_state)
   $params['mail_to'] = 'manager';
 
   if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
-//        // отправить письмо Представителю, дублировать Руководителю и Рудяк попросил отправлять ещё на td.sale3@kccc.ru
+//        // отправить письмо Представителю, дублировать Руководителю и Рудяк попросил отправлять на td.sale3@kccc.ru
 //        if ($rep) {
 //            drupal_mail('mailer', 'order_creation', $rep_mail, $GLOBALS['language'], $params, 'bot@kccc.ru');
 //        }
@@ -347,18 +347,27 @@ function ext_checkout_commerce_checkout_form_submit($form, &$form_state)
 //            drupal_mail('mailer', 'order_creation', $head['emails'][0], $GLOBALS['language'], $params);
 //        }
 
-    // Юле Камневой
-    drupal_mail('mailer', 'order_creation', 'td.sale15@kccc.ru', 'RU', $params, 'bot@kccc.ru');
+    $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
+    if ($user_mail == 'oleg.anufriev@intelsib-team.com') {
+      // todo в перспективе удалить
+      // тестеру intelsib
+      drupal_mail('mailer', 'order_creation', 'oleg.anufriev@intelsib-team.com', 'RU', $params, 'bot@kccc.ru');
+    } else {
+      // Юле Камневой
+      drupal_mail('mailer', 'order_creation', 'td.sale15@kccc.ru', 'RU', $params, 'bot@kccc.ru');
+    }
+
+    // мне
+    drupal_mail('mailer', 'order_creation', 'support@kccc.ru', 'RU', $params, 'bot@kccc.ru');
 
     // отправить письмо пользователю
-    $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
+//    $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
     if ($user_mail) {
       $params['mail_to'] = 'user';
       drupal_mail('mailer', 'order_creation', $user_mail, 'RU', $params, 'bot@kccc.ru');
     }
-//
   } else {
-    drupal_mail('mailer', 'order_creation', 'mega_comp@mail.ru', 'RU', $params, 'bot@kccc.ru');
+    drupal_mail('mailer', 'order_creation', 'support@kccc.ru', 'RU', $params, 'bot@kccc.ru');
   }
 }
 
