@@ -310,7 +310,7 @@ function contacts_get_contacts_list() {
                             'surname' => 'Былёва',
                             'name' => 'Вера',
                             'name2' => 'Александровна',
-                            'phones' => array('+7(8332) 76-15-30, доб. 1155'),
+                            'phones' => array('+7(8332) 76-15-30, доб. 1155', '+7 922 968-98-80'),
                             'emails' => array('reklama@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/byleva.png',
                         ),
