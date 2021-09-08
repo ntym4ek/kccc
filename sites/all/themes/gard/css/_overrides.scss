@@ -523,7 +523,7 @@ fieldset.panel {
 
 .form-group {
   > label {
-    color: $gray-light; font-weight: 300; text-align: right;
+    color: $text-muted; font-weight: 300; text-align: right;
   }
   //.form-group { margin-bottom: 0; }          отключено, так как нет отступов, например, в корзине
 }

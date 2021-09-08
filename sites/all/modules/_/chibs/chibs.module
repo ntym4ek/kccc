@@ -100,12 +100,6 @@ function chibs_menu_alter(&$items)
   // "Удалить" в локальные задачи материала
   // http://xandeadx.ru/blog/drupal/339
   $items['node/%node/delete']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
-
-  // убрать закладки со страницы входа
-  // https://eureka.ykyuen.info/2011/01/31/drupal-remove-the-tabs-in-user-registration-form/
-  $items['user']['type'] = MENU_CALLBACK;
-  $items['user/register']['type'] = MENU_CALLBACK;
-  $items['user/password']['type'] = MENU_CALLBACK;
 }
 
 /**
