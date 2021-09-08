@@ -22,6 +22,13 @@ define('ROLE_COMPANY',          15);
 function ext_user_menu_alter(&$items)
 {
   $items['user/%user/edit']['weight'] = 100;
+
+  // убрать закладки со страницы входа
+  $items['user']['type'] = MENU_CALLBACK;
+  $items['user/register']['type'] = MENU_CALLBACK;
+  $items['user/password']['type'] = MENU_CALLBACK;
+  $items['company/register']['type'] = MENU_CALLBACK;
+  $items['company/password']['type'] = MENU_CALLBACK;
 }
 
 function ext_user_permission()
@@ -347,6 +354,10 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     unset($form["profile_company"]["field_profile_card"]["und"][0]["#description"]);
     $form["profile_company"]["field_profile_p_address"]["#access"] = false;
     $form["profile_company"]["field_profile_l_address"]["#access"] = false;
+    $form["profile_main"]["#title"] = 'Представитель';
+    $form["profile_company"]["#title"] = 'Организация';
+  } else {
+    $form["profile_main"]["#type"] = 'container';
   }
 
   // добавить проверку
