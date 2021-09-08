@@ -32,7 +32,8 @@ function geofield_ymap_page_build(&$page) {
       'geofieldYmap' => array(
         'modulePath' => base_path() . geofield_ymap_get_module_path(),
         'presetsPath' => variable_get('geofield_ymap_presets_path', ''),
-        'preset' => variable_get('geofield_ymap_preset', ''),
+        'objectPreset' => variable_get('geofield_ymap_object_preset', ''),
+        'apiKey' => variable_get('geofield_ymap_api_key', ''),
       ),
     ), 'setting');
     drupal_add_js(geofield_ymap_get_module_path() . '/js/geofield_ymap_loader.js');
@@ -59,10 +60,11 @@ function geofield_ymap_library() {
   $settings = array(
     'geofieldYmap' => array(
       'modulePath' => base_path() . $module_path,
-      'preset' => variable_get('geofield_ymap_preset', ''),
+      'objectPreset' => variable_get('geofield_ymap_object_preset', ''),
     ),
   );
   $script_url = '//api-maps.yandex.ru/2.1/?lang=ru-RU&coordorder=longlat';
+  $script_url .= '&apikey=' . variable_get('geofield_ymap_api_key', '');
   if (variable_get('geofield_ymap_debug_mode', FALSE)) {
     $script_url .= '&mode=debug';
   }

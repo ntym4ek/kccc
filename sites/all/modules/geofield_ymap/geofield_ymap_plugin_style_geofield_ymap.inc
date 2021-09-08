@@ -14,6 +14,7 @@ class geofield_ymap_plugin_style_geofield_ymap extends views_plugin_style {
     $options['map_auto_zooming']      = array('default' => FALSE, 'bool' => TRUE);
     $options['map_clusterize']        = array('default' => FALSE, 'bool' => TRUE);
     $options['map_hide_empty']        = array('default' => FALSE, 'bool' => TRUE);
+    $options['map_save_state']        = array('default' => FALSE, 'bool' => TRUE);
     $options['map_object_preset']     = array('default' => '');
     $options['map_controls']          = array('default' => 'default');
     $options['map_behaviors']         = array('default' => 'default');
@@ -84,6 +85,12 @@ class geofield_ymap_plugin_style_geofield_ymap extends views_plugin_style {
       '#default_value' => $this->options['map_hide_empty'],
     );
 
+    $form['map_save_state'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Save user zoom and center'),
+      '#default_value' => $this->options['map_save_state'],
+    );
+
     $form['hint_content_field'] = array(
       '#type' => 'select',
       '#title' => t('Hint content field'),
@@ -132,7 +139,7 @@ class geofield_ymap_plugin_style_geofield_ymap extends views_plugin_style {
     $form['map_controls'] = array(
       '#type' => 'textfield',
       '#title' => t('Controls'),
-      '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Default set name: <code>default</code>', array(
+      '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Example: <code>fullscreenControl,searchControl</code>. Default set name: <code>default</code>', array(
         '@url' => 'http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/control.Manager.xml#add',
       )),
       '#default_value' => $this->options['map_controls'],
@@ -290,6 +297,7 @@ class geofield_ymap_plugin_style_geofield_ymap extends views_plugin_style {
       '#map_object_preset'  => $this->options['map_object_preset'],
       '#map_controls'       => $this->options['map_controls'],
       '#map_behaviors'      => $this->options['map_behaviors'],
+      '#map_save_state'     => $this->options['map_save_state'],
       '#id'                 => drupal_html_id('geofield-ymap-' . $this->view->name . '-' . $this->view->current_display),
     );
   }

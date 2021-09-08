@@ -88,7 +88,7 @@ function geofield_ymap_field_widget_settings_form($field, $instance) {
   $form['map_controls'] = array(
     '#type' => 'textfield',
     '#title' => t('Controls'),
-    '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Default set name: <code>default</code>', array(
+    '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Example: <code>fullscreenControl,searchControl</code>. Default set name: <code>default</code>', array(
       '@url' => 'http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/control.Manager.xml#add',
     )),
     '#default_value' => $settings['map_controls'],

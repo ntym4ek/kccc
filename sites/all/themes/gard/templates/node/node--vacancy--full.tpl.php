@@ -75,7 +75,7 @@
                         </div>
                         <div class="media-body">
                             <h4 class="media-heading">Огородова<br>Мария Николаевна</h4>
-                            <div class="contact-dep">Менеджер по персоналу</div>
+                            <div class="contact-dep"><? print t('Personnel manager'); ?></div>
 
 
                             <div class="contact-phones">

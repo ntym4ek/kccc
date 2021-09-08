@@ -34,6 +34,7 @@ function template_preprocess_geofield_ymap(&$variables) {
     'map_editable'         => FALSE,
     'map_multiple'         => FALSE,
     'map_clusterize'       => FALSE,
+    'map_save_state'       => FALSE,
     'map_controls'         => 'default',
     'map_behaviors'        => 'default',
     'map_selected_control' => '',
@@ -57,6 +58,10 @@ function template_preprocess_geofield_ymap(&$variables) {
   }
 
   drupal_add_library('geofield_ymap', 'geofield_ymap');
+
+  if ($map_settings['map_save_state']) {
+    drupal_add_library('system', 'jquery.cookie');
+  }
 }
 
 /**

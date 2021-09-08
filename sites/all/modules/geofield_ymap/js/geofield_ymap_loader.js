@@ -3,7 +3,7 @@
     attach: function (context, settings) {
       if (!Drupal.geofieldYmap && !window.ymaps && $('div.geofield-ymap').length > 0) {
         var scripts = [
-          '//api-maps.yandex.ru/2.1/?lang=ru-RU&coordorder=longlat',
+          '//api-maps.yandex.ru/2.1/?lang=ru-RU&coordorder=longlat&apikey=' + Drupal.settings.geofieldYmap.apiKey,
           Drupal.settings.geofieldYmap.modulePath + '/js/geofield_ymap.js'
         ];
         if (Drupal.settings.geofieldYmap.presetsPath) {

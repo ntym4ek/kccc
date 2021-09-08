@@ -4,6 +4,13 @@
  * Settings form.
  */
 function geofield_ymap_settings_form($form, &$form_state) {
+  $form['geofield_ymap_api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('API key for Yandex.Maps'),
+    '#default_value' => variable_get('geofield_ymap_api_key', ''),
+    '#required' => TRUE,
+  );
+
   $form['geofield_ymap_presets_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path to presets'),
@@ -13,13 +20,13 @@ function geofield_ymap_settings_form($form, &$form_state) {
     '#default_value' => variable_get('geofield_ymap_presets_path', ''),
   );
 
-  $form['geofield_ymap_preset'] = array(
+  $form['geofield_ymap_object_preset'] = array(
     '#type' => 'textfield',
-    '#title' => t('Global preset'),
-    '#description' => t('Global <a href="!url" target="_blank">preset name</a>. Example: <code>islands#blueDotIcon</code>', array(
+    '#title' => t('Default objects preset'),
+    '#description' => t('Default objects <a href="!url" target="_blank">preset name</a>. Example: <code>islands#blueDotIcon</code>', array(
       '!url' => 'http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage.xml',
     )),
-    '#default_value' => variable_get('geofield_ymap_preset', ''),
+    '#default_value' => variable_get('geofield_ymap_object_preset', ''),
   );
 
   $form['geofield_ymap_use_loader'] = array(

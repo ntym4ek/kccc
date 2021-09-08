@@ -40,15 +40,9 @@
  *     worker. see message_subscribe_queue_worker().
  *   - "entity access": Determine if access to view the entity should be applied
  *     when getting the list of subscribed users. Defaults to TRUE.
- *   - "notify blocked users": Determine whether blocked users
- *      should be notified. Typically this should be used in conjunction with
- *      "entity access" to ensure that blocked users don't receive notifications
- *      about entities which they used to have access to
- *      before they were blocked. Defaults to FALSE.
  *   - "notify message owner": Determines if the user that created the entity
  *      gets notified of their own action. If TRUE the author will get notified.
  *      Defaults to FALSE.
- *
  * @param $context
  *   Optional; Array keyed with the entity type and array of entity IDs as
  *   the value. For example, if the event is related to a node
@@ -66,7 +60,7 @@
  * @endcode
  *
  * @return Message
- *  The message object.
+ *   The message object.
  */
 function message_subscribe_send_message($entity_type, $entity, Message $message, $notify_options = array(), $subscribe_options = array(), $context = array()) {
   $use_queue = isset($subscribe_options['use queue']) ? $subscribe_options['use queue'] : variable_get('message_subscribe_use_queue', FALSE);
@@ -83,7 +77,6 @@ function message_subscribe_send_message($entity_type, $entity, Message $message,
     'use queue' => $use_queue,
     'queue' => FALSE,
     'entity access' => TRUE,
-    'notify blocked users' => FALSE,
     'notify message owner' => $notify_message_owner,
   );
 
@@ -130,16 +123,7 @@ function message_subscribe_send_message($entity_type, $entity, Message $message,
   if ($subscribe_options['uids']) {
     // We got a list of user IDs directly from the implementing module,
     // However we need to adhere to the range.
-    // If 'last uid' is provided, we need to start from next 'uid' key in array.
-    if (!empty($subscribe_options['last uid'])) {
-      $index = array_search($subscribe_options['last uid'], array_keys($subscribe_options['uids'])) + 1;
-    }
-    // Otherwise we start from the very beginning.
-    else {
-      $index = 0;
-    }
-
-    $uids = $subscribe_options['range'] ? array_slice($subscribe_options['uids'], $index, $subscribe_options['range'], TRUE) : $subscribe_options['uids'];
+    $uids = $subscribe_options['range'] ? array_slice($subscribe_options['uids'], 0, $subscribe_options['range'], TRUE) : $subscribe_options['uids'];
   }
 
   if (empty($uids) && !$uids = message_subscribe_get_subscribers($entity_type, $entity, $message, $subscribe_options, $context)) {
@@ -152,8 +136,6 @@ function message_subscribe_send_message($entity_type, $entity, Message $message,
     // Clone the message in case it will need to be saved, it won't
     // overwrite the existing one.
     $cloned_message = clone $message;
-    // Push a copy of the original message into the new one.
-    $cloned_message->original = $message;
     unset($cloned_message->mid);
     $cloned_message->uid = $uid;
 
@@ -230,47 +212,26 @@ function message_subscribe_get_subscribers($entity_type, $entity, Message $messa
   $notify_message_owner = isset($subscribe_options['notify message owner']) ? $subscribe_options['notify message owner'] : variable_get('message_subscribe_notify_own_actions', FALSE);
 
   $uids = array();
-
   // We don't use module_invoke_all() is we want to retain the array keys,
   // which are the user IDs.
   foreach (module_implements('message_subscribe_get_subscribers') as $module) {
     $function = $module . '_message_subscribe_get_subscribers';
     $result = $function($message, $subscribe_options, $context);
-    $uids += $result;
-  }
-
-  // If we're not notifying blocked users, exclude those users from the result
-  // set now so that we avoid unnecessarily loading those users later.
-  if (empty($subscribe_options['notify blocked users']) && !empty($uids)) {
-    $query = new EntityFieldQuery();
-    $results = $query
-      ->entityCondition('entity_type', 'user')
-      ->propertyCondition('status', 1)
-      ->propertyCondition('uid', array_keys($uids), 'IN')
-      ->execute();
-
-    if (!empty($results['user'])) {
-      $uids = array_intersect_key($uids, $results['user']);
-    }
-    else {
-      // There are no not blocked users to notify.
-      $uids = array();
-    }
-  }
-
-  // See if the author of the entity gets notified.
-  if (isset($entity->uid) && !$notify_message_owner && array_key_exists($entity->uid, $uids)) {
-    unset($uids[$entity->uid]);
-  }
-
-  $accounts = user_load_multiple(array_keys($uids));
-
-  foreach ($uids as $uid => $values) {
-    if (!empty($subscribe_options['entity access'])) {
-      if (!entity_access('view', $entity_type, $entity, $accounts[$uid])) {
-        // User doesn't have access to view the entity.
-        unset($uids[$uid]);
+    foreach ($result as $uid => $values) {
+      // See if the author of the entity gets notified.
+      if (!$notify_message_owner && $message->uid == $uid) {
+        continue;
       }
+
+      if (!empty($subscribe_options['entity access'])) {
+        $account = user_load($uid);
+        if (!entity_access('view', $entity_type, $entity, $account)) {
+          // User doesn't have access to view the entity.
+          continue;
+        }
+      }
+
+      $uids[$uid] = $values;
     }
   }
 
@@ -288,6 +249,7 @@ function message_subscribe_get_subscribers($entity_type, $entity, Message $messa
 
   return $uids;
 }
+
 
 /**
  * Get context from entity type.
@@ -439,17 +401,11 @@ function message_subscribe_message_subscribe_get_subscribers(Message $message, $
 
     $query->fields('fc')
       ->condition('fid', array_keys($fids), 'IN')
-      ->condition('fc.uid', $subscribe_options['last uid'], '>')
-      ->orderBy('fc.uid', 'ASC');
+      ->condition('uid', $subscribe_options['last uid'], '>')
+      ->orderBy('uid', 'ASC');
 
     if ($range) {
       $query->range(0, $range);
-      // If we're mpt notifying blocked users, we need to take this into account
-      // in this query so that the range is accurate.
-      if (empty($subscribe_options['notify blocked users'])) {
-        $query->join('users', 'users', 'users.uid = fc.uid');
-        $query->condition('users.status', '1', '=');
-      }
     }
 
     $result = $query->execute();
@@ -744,10 +700,6 @@ function message_subscribe_queue_worker($data, $end_time = FALSE) {
   extract($data);
 
   $entity = entity_load_single($entity_type, $entity_id);
-  if (!$entity) {
-    // Abort if the entity could not be loaded to avoid errors.
-    return;
-  }
   if (!$message = message_load($mid)) {
     // Abort if the message has been deleted to avoid errors.
     return;

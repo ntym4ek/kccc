@@ -31,15 +31,15 @@
       // Create map
       var map = Drupal.geofieldYmap.createMap(mapId, settings);
 
-      // Set geo objects global options
-      var globalOptions = {strokeWidth: 4};
-      if (Drupal.settings.geofieldYmap.preset) {
-        globalOptions.preset = Drupal.settings.geofieldYmap.preset;
+      // Set geo objects default options
+      var defaultObjectsOptions = {strokeWidth: 4};
+      if (Drupal.settings.geofieldYmap.objectPreset) {
+        defaultObjectsOptions.preset = Drupal.settings.geofieldYmap.objectPreset;
       }
       if (settings.objectPreset) {
-        globalOptions.preset = settings.objectPreset;
+        defaultObjectsOptions.preset = settings.objectPreset;
       }
-      map.geoObjects.options.set(globalOptions);
+      map.geoObjects.options.set(defaultObjectsOptions);
 
       // Add geo objects
       if (!settings.withoutObjects) {
@@ -52,14 +52,23 @@
         }
       }
 
-      // Auto centering
-      if (settings.autoCentering || !settings.center || (settings.center[0] == 0 && settings.center[1] == 0)) {
-        Drupal.geofieldYmap.autoCentering(map);
+      // Restore map state from cookie
+      if (settings.saveState && Drupal.geofieldYmap.getMapStateFromCookie(mapId)) {
+        var mapState = Drupal.geofieldYmap.getMapStateFromCookie(mapId);
+        map.setCenter(mapState.center);
+        map.setZoom(mapState.zoom);
       }
+      // Auto centering and zooming
+      else {
+        // Auto centering
+        if (settings.autoCentering || !settings.center || (settings.center[0] == 0 && settings.center[1] == 0)) {
+          Drupal.geofieldYmap.autoCentering(map);
+        }
 
-      // Auto zooming
-      if (settings.autoZooming || !settings.zoom) {
-        Drupal.geofieldYmap.autoZooming(map);
+        // Auto zooming
+        if (settings.autoZooming || !settings.zoom) {
+          Drupal.geofieldYmap.autoZooming(map);
+        }
       }
 
       // Editing features
@@ -67,7 +76,6 @@
         Drupal.geofieldYmap.addEditButtons(map, settings.objectTypes);
         map.geoObjects.events.add('remove', Drupal.geofieldYmap.objectsChangeHandler);
         map.events.add('click', Drupal.geofieldYmap.mapClickHandler);
-        map.events.add('boundschange', Drupal.geofieldYmap.mapBoundschangeHandler);
 
         // Select default edit button
         if (settings.selectedControl) {
@@ -77,7 +85,10 @@
         }
       }
 
-      // Tweak search control
+      if (settings.editable || settings.saveState) {
+        map.events.add('boundschange', Drupal.geofieldYmap.mapBoundschangeHandler);
+      }
+
       Drupal.geofieldYmap.tweakSearchControl(map);
 
       $('#' + mapId).trigger('yandexMapInit', [map]);
@@ -129,6 +140,7 @@
 
           if ($.inArray(settingKey, arrayTypeSettings) != -1 && $.type(attributeValue) != 'array') {
             attributeValue = (attributeValue == '<none>') ? [] : attributeValue.split(',');
+            attributeValue = $.map(attributeValue, $.trim);
           }
           settings[settingKey] = attributeValue;
         }
@@ -148,6 +160,42 @@
         }
       });
       return state;
+    },
+
+    /**
+     * Return map state from cookie
+     */
+    getMapStateFromCookie: function (mapId) {
+      if (!$.cookie) {
+        return;
+      }
+
+      var mapsState = $.cookie('Drupal.visitor.mapsState');
+      mapsState = mapsState ? JSON.parse(mapsState) : {};
+
+      if (!mapId) {
+        return mapsState;
+      }
+      else if (mapsState[mapId]) {
+        return mapsState[mapId];
+      }
+      return;
+    },
+
+    /**
+     * Save map state to cookie
+     */
+    saveMapStateToCookie: function (mapId, mapState) {
+      if (!$.cookie) {
+        return;
+      }
+
+      var mapsState = Drupal.geofieldYmap.getMapStateFromCookie();
+      mapsState[mapId] = mapState;
+      $.cookie('Drupal.visitor.mapsState', JSON.stringify(mapsState), {
+        path: Drupal.settings.basePath,
+        expires: 365
+      });
     },
 
     /**
@@ -373,7 +421,7 @@
           var resultIndex = event.get('index');
           var result = searchControl.getResultsArray()[resultIndex];
           result.balloon.events.add('close', function (event) {
-            result.getParent().remove(result);
+            searchControl.hideResult();
           });
         });
       }
@@ -477,8 +525,19 @@
     mapBoundschangeHandler: function (event) {
       var map = event.get('target');
       if (map) {
-        $('#' + map.mapId + ' ~ input[name$="[center]"]').val(map.getCenter().join(','));
-        $('#' + map.mapId + ' ~ input[name$="[zoom]"]').val(map.getZoom());
+        var settings = Drupal.geofieldYmap.data[map.mapId].settings;
+
+        if (settings.editable) {
+          $('#' + map.mapId + ' ~ input[name$="[center]"]').val(map.getCenter().join(','));
+          $('#' + map.mapId + ' ~ input[name$="[zoom]"]').val(map.getZoom());
+        }
+
+        if (settings.saveState) {
+          Drupal.geofieldYmap.saveMapStateToCookie(map.mapId, {
+            center: map.getCenter(),
+            zoom: map.getZoom(),
+          });
+        }
       }
     }
   };

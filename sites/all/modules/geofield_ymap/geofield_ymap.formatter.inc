@@ -73,8 +73,8 @@ function geofield_ymap_field_formatter_settings_form($field, $instance, $view_mo
 
   $element['map_object_preset'] = array(
     '#type' => 'textfield',
-    '#title' => t('Preset name'),
-    '#description' => t('<a href="@url" target="_blank">Preset name</a>. Example: <code>islands#blackDotIcon</code>', array(
+    '#title' => t('Objects preset'),
+    '#description' => t('Objects <a href="@url" target="_blank">preset name</a>. Example: <code>islands#blackDotIcon</code>', array(
       '@url' => 'http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage.xml',
     )),
     '#default_value' => $settings['map_object_preset'],
@@ -98,7 +98,7 @@ function geofield_ymap_field_formatter_settings_form($field, $instance, $view_mo
   $element['map_controls'] = array(
     '#type' => 'textfield',
     '#title' => t('Controls'),
-    '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Default set name: <code>default</code>', array(
+    '#description' => t('<a href="@url" target="_blank">Controls</a> through a comma, or controls set name. Use <code>&lt;none&gt;</code> to hide all controls. Example: <code>fullscreenControl,searchControl</code>. Default set name: <code>default</code>', array(
       '@url' => 'http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/control.Manager.xml#add',
     )),
     '#default_value' => $settings['map_controls'],
@@ -132,7 +132,7 @@ function geofield_ymap_field_formatter_settings_summary($field, $instance, $view
     t('Map auto centering: @map_auto_centering', array('@map_auto_centering' => $settings['map_auto_centering'] ? t('Yes') : t('No'))),
     t('Map auto zooming: @map_auto_zooming', array('@map_auto_zooming' => $settings['map_auto_zooming'] ? t('Yes') : t('No'))),
     t('Clusterize placemarks: @clusterize', array('@clusterize' => $settings['map_clusterize'] ? t('Yes') : t('No'))),
-    t('Preset name: @preset', array('@preset' => $settings['map_object_preset'] ? $settings['map_object_preset'] : t('<none>'))),
+    t('Objects preset: @preset', array('@preset' => $settings['map_object_preset'] ? $settings['map_object_preset'] : t('<none>'))),
     t('Balloon content: @balloon_content', array('@balloon_content' => $settings['map_object_balloon'] ? $settings['map_object_balloon'] : t('<none>'))),
     t('Controls: @controls', array('@controls' => $settings['map_controls'])),
     t('Behaviors: @behaviors', array('@behaviors' => $settings['map_behaviors'])),
