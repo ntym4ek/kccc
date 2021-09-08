@@ -441,7 +441,7 @@ function profile2_regpath_form_alter(&$form, &$form_state, $form_id) {
   }
   elseif ($form_id == 'user_register_form') {
     // Get profile2 profile types from current path.
-    $url = drupal_parse_url($form['#action']);
+    $url = drupal_parse_url(current_path());
     $path = explode('/', str_replace('/register', '', $url['path']));
     $path_key = end($path);
     $profile_types = profile2_regpath_get_profiles($path_key);
@@ -461,7 +461,7 @@ function profile2_regpath_attach_profile_fields(&$form, &$form_state, $form_id, 
   $menu_item = menu_get_item();
 
   if (!$profile_types && ($menu_item['path'] == 'system/ajax' || $menu_item['path'] == 'file/ajax')) {
-    $url = drupal_parse_url($form['#action']);
+    $url = drupal_parse_url(current_path());
     $path = end(explode('/', str_replace('/register', '', $url['path'])));
     $profile_types = profile2_regpath_get_profiles($path);
   }

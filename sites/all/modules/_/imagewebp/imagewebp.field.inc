@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Implement webpsupport for image field.
@@ -51,13 +50,10 @@ function imagewebp_field_formatter_settings_summary_alter(&$summary, $context) {
       $summary .= '<br />';
     }
 
-    if ($settings['webp_support']) {
+    if (isset($settings['webp_support']) && $settings['webp_support']) {
       $summary .= t('Webp support enabled.');
     }
-    if (!empty($settings['webp_create'])) {
-      $summary .= ' ' . t('Webp images will be created on submit.');
-    }
-    if ($settings['webp_create']) {
+    if (isset($settings['webp_create']) && $settings['webp_create']) {
       $summary .= ' ' . t('Webp images will be created on submit.');
     }
   }

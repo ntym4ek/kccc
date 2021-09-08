@@ -72,7 +72,7 @@ function _linker_replacement_list()
         'needles' => [
             'испытания', 'испытаний', 'испытаниям', 'испытании', 'опыты',
         ],
-        'url' => 'http://kccc.local/before-after',
+        'url' => 'https://kccc.ru/before-after',
     ];
     $arr[] = [
         'needles' => [
@@ -84,7 +84,7 @@ function _linker_replacement_list()
         'needles' => [
             'программы защиты', 'программа защиты', 'программ защиты', 'системы защиты', 'система защиты', 'систем защиты'
         ],
-        'url' => 'http://kccc.local/handbook/protection-programs',
+        'url' => 'https://kccc.ru/handbook/protection-programs',
     ];
 
     // препараты

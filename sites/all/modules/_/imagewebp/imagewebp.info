@@ -2,13 +2,11 @@ name = ImageWebP
 description = Modern image format that provides superior lossless and lossy compression for images.
 dependencies[] = image
 dependencies[] = field_formatter_settings
-files[] = includes/views/imagewebp.views.inc
-files[] = includes/views/imagewebp_views_handler_image_field.inc
 package = Webp
 core = "7.x"
 
-; Information added by Drupal.org packaging script on 2021-04-20
-version = "7.x-1.0"
+; Information added by Drupal.org packaging script on 2021-07-21
+version = "7.x-1.1"
 core = "7.x"
 project = "imagewebp"
-datestamp = "1618921341"
+datestamp = "1626875190"

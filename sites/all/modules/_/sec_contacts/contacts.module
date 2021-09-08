@@ -98,6 +98,16 @@ function contacts_get_contacts_list() {
                             'regions' => array(
                             ),
                         ),
+                        array(
+                            'office' => t('Head of department'),
+                            'access' => true,
+                            'surname' => 'Камнева', 'name' => 'Юлия', 'name2' => 'Юрьевна',
+                            'phones' => array('+7 (8332) 76-15-32, доб. 1219', '+7 (922) 910-03-68', '+7 (912) 714-75-41'),
+                            'emails' => array('td.sale15@kccc.ru'),
+                            'photo' => $no_photo,
+                            'regions' => array(
+                            ),
+                        ),
                       array(
                         'office' => t('Deputy head'),
                         'surname' => 'Шуклина',
@@ -192,23 +202,6 @@ function contacts_get_contacts_list() {
 //                              71673 => [], //Хабаровский край",
 //                            ),
 //                        ),
-                        array(
-                          'office' => t('Head of region'),
-                          'access' => true,
-                          'surname' => 'Асадов', 'name' => 'Кирилл', 'name2' => 'Низамович',
-                          'phones' => array('+7 (929) 209-60-40'),
-                          'emails' => array('voronezh@kccc.ru'),
-                          'photo' => '/' . $module_path . '/images/photos/asadov.png',
-                          'regions' => array(
-                            71677 => [], //Белгородская область",
-                            71678 => [], //Брянская область",
-                            71682 => [], //Воронежская область",
-                            71692 => [], //Курская область",
-                            71694 => [], //Липецкая область",
-                            71703 => [], //Орловская область",
-                            71714 => [], //Тамбовская область",
-                          ),
-                        ),
                     )
                 ),
                 'support' => array(
@@ -256,7 +249,7 @@ function contacts_get_contacts_list() {
                     'title' => t('Supply department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Head of department'),
+                            'office' => t('Head of unit'),
                             'surname' => 'Чернавский',
                             'name' => 'Александр',
                             'name2' => 'Юрьевич',
@@ -297,7 +290,7 @@ function contacts_get_contacts_list() {
                     'title' => t('Marketing and advertising department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Head of department'),
+                            'office' => t('Head of unit'),
                             'surname' => 'Широкова',
                             'name' => 'Марина',
                             'name2' => 'Олеговна',
