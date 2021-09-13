@@ -240,7 +240,6 @@ function agrocalc_form($from, &$form_state)
         '#name' => 'calc',
         '#attributes' => [
             'class' => ['pull-right', 'btn-success', 'btn-wide', 'do-not-print'],
-            'onclick' => ["yaCounter11541151.reachGoal('send_agrocalc'); return true;"],
         ],
         '#disabled' => $culture_id ? false : true,
         '#suffix' => '</div>',
@@ -321,11 +320,12 @@ function agrocalc_form($from, &$form_state)
             '#attributes' => ['class' => ['btn-info', 'btn-wide']],
             '#prefix' => '<div class="form-submit-wrapper">',
             '#suffix' => '</div>',
+            '#submit' => ['agrocalc_form_submit'],
         );
         $form['actions1']['fz152_agreement'] = [
-            '#name' => 'fz152-agreement',
-            '#type' => 'item',
-            '#markup' => t('Pressing "Get" means you agreed with !url.', array('!url' => l(t('Terms of use'), 'info/privacy-policy'), ['attributes' => ['target' => '_blank', 'rel' =>'nofollow']])),
+          '#name' => 'fz152-agreement',
+          '#type' => 'item',
+          '#markup' => variable_get_value('fz152_checkbox_title'),
         ];
     }
 
@@ -377,77 +377,32 @@ function agrocalc_form_validate($form, &$form_state)
 
 function agrocalc_form_submit($form, &$form_state)
 {
-    $program = $form_state['storage']['program'];
-    if (!empty($form_state['values']['states'])) {
-        $program = _set_program_states($program, $form_state['values']['states']);
-    }
+  $program = $form_state['storage']['program'];
+  if (!empty($form_state['values']['states'])) {
+    $program = _set_program_states($program, $form_state['values']['states']);
+  }
 
-    // отправка письма менеджеру и представителю
-    $message = 'Добрый день!<br /><br />';
-    $message .= 'На в разделе Калькулятор сайте kccc.ru была отправлена заявка на детальный расчёт.<br />';
-    $message .= '<br />';
-    $message .= '<b>Данные пользователя</b><br />';
-    $message .= 'Регион: ' . $form_state['values']['region'] . '<br />';
-    $message .= 'Имя: ' . $form_state['values']['name'] . '<br />';
-    $message .= empty($form_state['values']['phone'])    ? '' : 'Телефон: ' . $form_state['values']['phone'] . '<br />';
-    $message .= empty($form_state['values']['email'])    ? '' : 'E-Mail: ' . $form_state['values']['email'] . '<br />';
-    $message .= '<br />';
+  $params['mail_to'] = 'manager';
+  $params['data'] = [
+    'program' => $program,
+    'name' => $form_state['values']['name'],
+    'phone' => $form_state['values']['phone'],
+    'email' => valid_email_address($form_state['values']['email']) ? $form_state['values']['email'] : '',
+    'region' => $form_state['values']['region'],
+  ];
 
-    $message .= '<b>Поле</b><br />';
-    $message .= 'Культура: ' . $program['header']['title'] . '<br />';
-    $message .= 'Фаза: ' . (empty($program['phase'])  ? 'не указана' : $program['phase']) . '<br />';
-    $message .= empty($program['area'])     ? '' : 'Площадь посева: ' . $program['area'] . ' га' . '<br />';
-    $message .= empty($program['seed'])     ? '' : 'Норма высева: ' . $program['seed'] . ' кг/га' . '<br />';
-    $message .= '<br />';
+  // письмо мне
+  drupal_mail('mailer', 'agro_calculator', 'support@kccc.ru', 'RU', $params, 'bot@kccc.ru');
 
-    $message .= '<b>Препараты</b><br />';
+  // отправка письма менеджеру
+  if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
+    // Юле Камневой
+    drupal_mail('mailer', 'agro_calculator', 'td.sale15@kccc.ru', 'RU', $params, 'bot@kccc.ru');
+  }
 
-    $missed_hobjects = [];
-    $total = 0;
-    foreach ($program['categories'] as $key_cat => $cat) {
-        if (isset($cat['cnt'])) $program['categories'][$key_cat]['cnt'] = $cat['cnt'];
-        if (isset($cat['hobjects'])) $missed_hobjects = array_merge($missed_hobjects, explode(', ', $cat['hobjects']));
-        foreach ($cat['stages'] as $key_stage => $stage) {
-            foreach ($stage as $key_set => $set) {
-                foreach ($set as $key_reg => $regl) {
-                    if (isset($regl['state']) && $regl['state'] == 'on') {
-                        $mix = count($regl['preparations']['items']) > 1;
-                        if ($mix) $message .= '<i>Баковая смесь</i><br />';
-                        foreach ($regl['preparations']['items'] as $pid => $item) {
-                            $message .= $item['title'] . '<br />';
-                            if (isset($item['rate']['default'])) {
-                                $message .= '<span style="color: #999;">' . $item['rate']['default'] . ' ' . $item['units'] . ', ' . $item['rate']['default'] * $form_state['values']['area'] . ' ' . $item['unit'] . ' на сумму ' . number_format($item['rate']['default'] * $item['price'] * $form_state['values']['area'], 0, ',', ' ') . ' руб.</span><br />';
-                                $total += $item['rate']['default'] * $item['price'];
-                            }
-                        }
-                        if (!empty($regl['hobjects'])) $message .= '<span style="color: #999;">Вредные объекты: ' . $regl['hobjects'] . '</span><br />';
-                        $message .= '<br />';
-                    }
-                }
-            }
-        }
-    }
-    $message .= '<br />';
-    $message .= 'Итого: ' . number_format($total * $form_state['values']['area'], 0, ',', ' ') . ' руб.<br /><br />';
+  drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');
 
-    if ($missed_hobjects) {
-        $message .= 'Для следующих вредных объектов решения не подобраны:<br />';
-        foreach($missed_hobjects as $hobjects) {
-            $message .= '&nbsp;&nbsp;- ' . $hobjects . ';<br />';
-        }
-    }
-
-//    $email = 'mega_comp@mail.ru' . (valid_email_address($form_state['values']['email']) ? ', ' . $form_state['values']['email'] : '');
-    $email = 'support@kccc.ru' . (valid_email_address($program['email']) ? ', ' . $program['email'] : '');
-    drupal_mail('system', 'mail', $email, language_default(), array(
-        'context' => array(
-            'subject' => 'Новая заявка на сайте в разделе Калькулятор',
-            'message' => $message,
-        ),
-    ));
-
-    drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');
-    $form_state['rebuild'] = true;
+  $form_state['rebuild'] = true;
 }
 
 /**

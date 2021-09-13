@@ -228,6 +228,13 @@ function mailer_mail($key, &$message, $params)
 
             break;
 
+        case 'agro_calculator':
+            if ($params['mail_to'] == 'manager') {
+                $message['subject'] = 'Новая заявка на сайте в разделе Калькулятор';
+                $message['body'][] = mailer_get_agro_calculator_email_text($params['data'], 'manager');
+            }
+            break;
+
         case 'order_creation':
             if ($params['mail_to'] == 'manager') {
                 $message['subject'] = t('There is a new order from TradeHouse website visitor.', [], ['context' => 'Mailer']);
@@ -239,6 +246,71 @@ function mailer_mail($key, &$message, $params)
             }
             break;
     }
+}
+
+function mailer_get_agro_calculator_email_text($data, $recipient = 'manager')
+{
+  $program = $data['program'];
+  $region = $data['region'];
+  $name = $data['name'];
+  $phone = $data['phone'];
+  $email = $data['email'];
+
+  $message = 'Добрый день!<br /><br />';
+  $message .= 'В разделе Калькулятор сайте kccc.ru была отправлена заявка на детальный расчёт.<br />';
+  $message .= '<br />';
+  $message .= '<b>Данные пользователя</b><br />';
+  $message .= 'Регион: ' . $region . '<br />';
+  $message .= 'Имя: ' . $name . '<br />';
+  $message .= empty($phone)    ? '' : 'Телефон: ' . $phone . '<br />';
+  $message .= empty($email)    ? '' : 'E-Mail: ' . $email . '<br />';
+  $message .= '<br />';
+
+  $message .= '<b>Поле</b><br />';
+  $message .= 'Культура: ' . $program['header']['title'] . '<br />';
+  $message .= 'Фаза: ' . (empty($program['header']['phase'])  ? 'не указана' : $program['header']['phase']) . '<br />';
+  $message .= empty($program['header']['area'])     ? '' : 'Площадь посева: ' . $program['header']['area'] . ' га' . '<br />';
+  $message .= empty($program['header']['seed'])     ? '' : 'Норма высева: ' . $program['header']['seed'] . ' кг/га' . '<br />';
+  $message .= '<br />';
+
+  $message .= '<b>Препараты</b><br />';
+
+  $missed_hobjects = [];
+  $total = 0;
+  foreach ($program['categories'] as $key_cat => $cat) {
+    if (isset($cat['cnt'])) $program['categories'][$key_cat]['cnt'] = $cat['cnt'];
+    if (isset($cat['hobjects'])) $missed_hobjects = array_merge($missed_hobjects, explode(', ', $cat['hobjects']));
+    foreach ($cat['stages'] as $key_stage => $stage) {
+      foreach ($stage as $key_set => $set) {
+        foreach ($set as $key_reg => $regl) {
+          if (isset($regl['state']) && $regl['state'] == 'on') {
+            $mix = count($regl['preparations']['items']) > 1;
+            if ($mix) $message .= '<i>Баковая смесь</i><br />';
+            foreach ($regl['preparations']['items'] as $pid => $item) {
+              $message .= $item['title'] . '<br />';
+              if (isset($item['rate']['default'])) {
+                $message .= '<span style="color: #999;">' . $item['rate']['default'] . ' ' . $item['units'] . ', ' . $item['rate']['default'] * $program['header']['area'] . ' ' . $item['unit'] . ' на сумму ' . number_format($item['rate']['default'] * $item['price'] * $program['header']['area'], 0, ',', ' ') . ' руб.</span><br />';
+                $total += $item['rate']['default'] * $item['price'];
+              }
+            }
+            if (!empty($regl['hobjects'])) $message .= '<span style="color: #999;">Вредные объекты: ' . $regl['hobjects'] . '</span><br />';
+            $message .= '<br />';
+          }
+        }
+      }
+    }
+  }
+  $message .= '<br />';
+  $message .= 'Итого: ' . number_format($total * $program['header']['area'], 0, ',', ' ') . ' руб.<br /><br />';
+
+  if ($missed_hobjects) {
+    $message .= 'Для следующих вредных объектов решения не подобраны:<br />';
+    foreach($missed_hobjects as $hobjects) {
+      $message .= '&nbsp;&nbsp;- ' . $hobjects . ';<br />';
+    }
+  }
+
+  return $message;
 }
 
 function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')

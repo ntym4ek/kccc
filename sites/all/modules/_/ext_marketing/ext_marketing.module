@@ -1,0 +1,66 @@
+<?
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ * форма Оформления заказа
+ */
+function ext_marketing_form_alter(&$form, &$form_state, $form_id)
+{
+  switch ($form_id) {
+    case 'agrocalc_form':
+      $form['actions1']['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_agrocalc'); return true;";
+      $form['actions1']['submit']['#submit'][] = 'ext_marketing_agrocalc_form_submit';
+
+      break;
+    case 'commerce_checkout_form_checkout':
+      $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
+      $form['buttons']['continue']['#submit'][] = 'ext_marketing_commerce_checkout_form_submit';
+      break;
+  }
+}
+
+/**
+ * commerce_checkout_form submit callback
+ */
+function ext_marketing_agrocalc_form_submit($form, &$form_state)
+{
+  // отправить дополнительное письмо intelsib
+  if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
+    $program = $form_state['storage']['program'];
+    if (!empty($form_state['values']['states'])) {
+      $program = _set_program_states($program, $form_state['values']['states']);
+    }
+
+    $params['mail_to'] = 'manager';
+    $params['data'] = [
+      'program' => $program,
+      'name' => $form_state['values']['name'],
+      'phone' => $form_state['values']['phone'],
+      'email' => valid_email_address($form_state['values']['email']) ? ', ' . $form_state['values']['email'] : '',
+      'region' => $form_state['values']['region'],
+    ];
+
+    drupal_mail('mailer', 'agro_calculator', 'fsl.kccc.ru@yandex.ru', 'RU', $params, 'bot@kccc.ru');
+  }
+}
+
+/**
+ * commerce_checkout_form submit callback
+ */
+function ext_marketing_commerce_checkout_form_submit($form, &$form_state)
+{
+  // отправить тестовое письмо oleg.anufriev@intelsib-team.com
+  if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
+    $params['mail_to'] = 'manager';
+    $params['data'] = [
+      'order' => $form_state['order'],
+    ];
+
+    $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
+    if ($user_mail == 'oleg.anufriev@intelsib-team.com') {
+      // тестеру intelsib
+      drupal_mail('mailer', 'order_creation', 'oleg.anufriev@intelsib-team.com', 'RU', $params, 'bot@kccc.ru');
+    }
+  }
+
+}

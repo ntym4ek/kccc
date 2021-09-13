@@ -542,33 +542,33 @@ function _reglaments_get_protection_system2($parameters)
  */
 function _set_program_states($program, $states)
 {
-    foreach ($states['categories'] as $key_cat => $cat) {
-        if (isset($cat['cnt'])) {
-            $program['categories'][$key_cat]['cnt'] = $cat['cnt'];
+  foreach ($states['categories'] as $key_cat => $cat) {
+    if (isset($cat['cnt'])) {
+      $program['categories'][$key_cat]['cnt'] = $cat['cnt'];
 
-            foreach ($cat['stages'] as $key_stage => $stage) {
-                foreach ($stage as $key_set => $set) {
-                    foreach ($set as $key_reg => $regl) {
-                        if (isset($regl['state']) && $regl['state'] == 'on') {
-                            if (isset($program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg])) {
-                                $program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg]['state'] = $regl['state'];
+      foreach ($cat['stages'] as $key_stage => $stage) {
+        foreach ($stage as $key_set => $set) {
+          foreach ($set as $key_reg => $regl) {
+            if (isset($regl['state']) && $regl['state'] == 'on') {
+              if (isset($program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg])) {
+                $program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg]['state'] = $regl['state'];
 
-                                foreach ($regl['preparations']['items'] as $key_prep => $prep) {
-                                    if (isset($prep['rate']['default'])) {
-                                        $program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg]['preparations']['items'][$key_prep]['rate']['default'] = $prep['rate']['default'];
-                                    }
-                                }
-                            } else {
-                                if ($program['categories'][$key_cat]['cnt'] > 0) $program['categories'][$key_cat]['cnt'] = $program['categories'][$key_cat]['cnt'] - 1;
-                            }
-                        }
-                    }
+                foreach ($regl['preparations']['items'] as $key_prep => $prep) {
+                  if (isset($prep['rate']['default'])) {
+                    $program['categories'][$key_cat]['stages'][$key_stage][$key_set][$key_reg]['preparations']['items'][$key_prep]['rate']['default'] = $prep['rate']['default'];
+                  }
                 }
+              } else {
+                if ($program['categories'][$key_cat]['cnt'] > 0) $program['categories'][$key_cat]['cnt'] = $program['categories'][$key_cat]['cnt'] - 1;
+              }
             }
+          }
         }
+      }
     }
+  }
 
-    return $program;
+  return $program;
 }
 
 /**

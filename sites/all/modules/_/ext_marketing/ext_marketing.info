@@ -1,0 +1,5 @@
+name = Функционал маркетинга
+description = Весь маркетинг по сайту
+package = Custom
+core = 7.x
+
