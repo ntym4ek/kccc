@@ -5,7 +5,7 @@ define('KCCC_COMPANY_PID', 668);
 /**
  * роли
  */
-define('STAFF',                 6);
+define('ROLE_STAFF',            6);
 define('STAFF_PERSONNEL',       4);
 define('STAFF_EDITOR',          5);
 define('STAFF_REPRESENTATIVE',  14);
@@ -349,8 +349,6 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     unset($form["profile_company"]["field_profile_name"]["und"][0]['value']["#title"]);
     $form["profile_company"]["field_profile_company_inn"]["und"][0]['value']['#attributes']['placeholder'] = $form["profile_company"]["field_profile_company_inn"]["und"][0]['value']["#title"];
     unset($form["profile_company"]["field_profile_company_inn"]["und"][0]['value']["#title"]);
-    $form["profile_company"]["field_profile_phone"]["und"][0]['value']['#attributes']['placeholder'] = $form["profile_company"]["field_profile_phone"]["und"][0]['value']["#title"];
-    unset($form["profile_company"]["field_profile_phone"]["und"][0]['value']["#title"]);
     unset($form["profile_company"]["field_profile_card"]["und"][0]["#description"]);
     $form["profile_company"]["field_profile_p_address"]["#access"] = false;
     $form["profile_company"]["field_profile_l_address"]["#access"] = false;
@@ -399,7 +397,7 @@ function ext_user_user_register_form_submit($form, $form_state)
 
   // дать пользователям с почтой @kccc.ru роль сотрудника
   if (drupal_substr($form_state['values']['mail'], -8) == '@kccc.ru') {
-    $user->roles[STAFF] = 1;
+    $user->roles[ROLE_STAFF] = 1;
     user_save($user);
   }
 
@@ -547,19 +545,20 @@ function ext_user_theme()
 }
 
 // массив с информацией о пользователе
-function ext_user_get_user_array($user)
+function ext_user_get_user_info($user)
 {
   $account = is_numeric($user) ? user_load($user) : $user;
 
   $name_arr = array('', '', '');
   $email = $phone = '';
   $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
-  $role = t('User');
-  $post = $company = '';
+  $staff = [];
+  $company = [];
+  $label = t('User');
 
   if (!empty($account->uid)) {
-    if ($main = profile2_load_by_user($account, 'main')) {
-      $main_wrapper = entity_metadata_wrapper('profile2', $main);
+    if ($main_pr2 = profile2_load_by_user($account, 'main')) {
+      $main_wrapper = entity_metadata_wrapper('profile2', $main_pr2);
       $name_arr[0] = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
       $name_arr[1] = $main_wrapper->field_profile_name->value() ? $main_wrapper->field_profile_name->value() : '';
       $name_arr[2] = $main_wrapper->field_profile_name2->value() ? $main_wrapper->field_profile_name2->value() : '';
@@ -572,12 +571,34 @@ function ext_user_get_user_array($user)
     }
 
     // если утвержденный сотрудник вывести регалии
-    if ($staff = profile2_load_by_user($user, 'staff')) {
-      $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
+    if (user_has_role(ROLE_STAFF, $account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
+      $staff_wrapper = entity_metadata_wrapper('profile2', $staff_pr2);
 
       $company = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
       $post = $staff_wrapper->field_profile_post->value();
       $role = $post . ' ' . $company;
+      $staff = [
+        'post' => $post,
+        'role' => $role,
+        'company' => $company,
+      ];
+    }
+
+    if (user_has_role(ROLE_COMPANY, $account) && $company_pr2 = profile2_load_by_user($account, 'company')) {
+      $label = t('Representative'); // представитель организации
+      $company_wr = entity_metadata_wrapper('profile2', $company_pr2);
+
+      $card_url = '';
+      if ($company_wr->field_profile_card->value()) {
+        $file = $company_wr->field_profile_card->file->value();
+        $card_url = file_create_url($file->uri);
+      }
+
+      $company = [
+        'inn' => $company_wr->field_profile_company_inn->value(),
+        'name' => $company_wr->field_profile_name->value(),
+        'card_url' => $card_url,
+      ];
     }
   }
 
@@ -587,12 +608,12 @@ function ext_user_get_user_array($user)
     'name2' => $name_arr[2],
     'full_name' => implode(' ', $name_arr),
     'short_name' => $name_arr[1] . ' ' . $name_arr[0],
-    'role' => $role,
-    'post' => $post,
-    'company' => $company,
-    'photo' => $photo_url,
+    'label' => $label,
     'email' => $email,
     'phone' => $phone,
+    'photo' => $photo_url,
+    'staff' => $staff,
+    'company' => $company,
   ];
 }
 

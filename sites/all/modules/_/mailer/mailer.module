@@ -178,12 +178,12 @@ function mailer_manual_form_spam_submit($form, &$form_state)
         if ($form_state['values']['filter'][2]) {
             // только для Сотрудников
             $query->innerJoin('user_roles', 'ur');
-            $query->condition('ur.rid', STAFF);
+            $query->condition('ur.rid', ROLE_STAFF);
         }
         if ($form_state['values']['filter'][3]) {
             // все кроме Сотрудников
             $query->innerJoin('user_roles', 'ur');
-            $query->condition('ur.rid', STAFF, '!=');
+            $query->condition('ur.rid', ROLE_STAFF, '!=');
         }
         $query->fields('u', ['mail']);
         $mails = $query->execute()->fetchCol();
@@ -317,15 +317,27 @@ function mailer_get_checkout_complete_email_text($data, $recipient = 'manager')
     . '</tr>'
 
     . '<tr>'
-    . '<td style="' . $dt . '">' . t('User data') . '</td>'
+    . '<td style="' . $dt . '">' . $order_info['user']['label'] . '</td>'
     . '<td style="' . $dd . '">'
-    . $order_info['user']['name'] . '<br />'
-    . $order_info['user']['mail'] . '<br />'
+    . $order_info['user']['full_name'] . '<br />'
+    . $order_info['user']['email'] . '<br />'
     . $order_info['user']['phone']
     . '</td>'
-    . '</tr>'
+    . '</tr>';
 
-    . '<tr>'
+  if (!empty($order_info["user"]['company'])) {
+    $message .=
+      '<tr>'
+    . '<td style="' . $dt . '">' . t('Company') . '</td>'
+    . '<td style="' . $dd . '">'
+    . $order_info["user"]['company']['name'] . '<br />'
+    . $order_info["user"]['company']['inn'] . '<br />'
+    . ($recipient == 'manager' ? '<a href="' . $order_info["user"]['company']['card_url'] . '" download="">Скачать карточку компании</a>' . '<br />' : '')
+    . '</td>'
+    . '</tr>';
+  }
+
+  $message .= '<tr>'
     . '<td style="' . $dt . '">' . t('Preparations') . '</td>'
     . '<td style="' . $dd . '">'
     . $prep_table

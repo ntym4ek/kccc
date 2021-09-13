@@ -338,14 +338,6 @@ function ext_checkout_commerce_checkout_form_submit($form, &$form_state)
   $params['mail_to'] = 'manager';
 
   if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
-//        // отправить письмо Представителю, дублировать Руководителю и Рудяк попросил отправлять на td.sale3@kccc.ru
-//        if ($rep) {
-//            drupal_mail('mailer', 'order_creation', $rep_mail, $GLOBALS['language'], $params, 'bot@kccc.ru');
-//        }
-//        if (!empty($sales['heads'])) {
-//            $head = array_pop($sales['heads']);
-//            drupal_mail('mailer', 'order_creation', $head['emails'][0], $GLOBALS['language'], $params);
-//        }
 
     $user_mail = empty($GLOBALS["user"]->mail) ? '' : $GLOBALS["user"]->mail;
     if ($user_mail == 'oleg.anufriev@intelsib-team.com') {
@@ -529,9 +521,12 @@ function ext_checkout_get_order_info($order)
       }
 
       // инфо о пользователе
-      $user_name = $order_wr->field_username->value();
-      $user_phone = empty($order_wr->field_phone->value()) ? '' : $order_wr->field_phone->value();
-      $user_mail = empty($order_wr->field_email->value()) ? $order_wr->mail->value() : $order_wr->field_email->value();
+      $user_info = ext_user_get_user_info($order_wr->uid->value());
+//      $user_name = $order_wr->field_username->value();
+//      $user_label = t('Buyer');
+//      $user_phone = empty($order_wr->field_phone->value()) ? '' : $order_wr->field_phone->value();
+//      $user_mail = empty($order_wr->field_email->value()) ? $order_wr->mail->value() : $order_wr->field_email->value();
+
 
       // компоненты итоговой цены (скидки и прочее)
       $components = [];
@@ -560,13 +555,7 @@ function ext_checkout_get_order_info($order)
         'url' => $GLOBALS['base_root'] . '/user/' . $order_wr->uid->value() . '/orders/' . $order_wr->order_id->value(),
         'placed' => $order_wr->placed->value(),
         'status' => $order_wr->status->value(),
-        'user' => [
-          'uid' => $order_wr->uid->value(),
-          'mail' => $user_mail,
-          'name' => $user_name,
-          'phone' => $user_phone,
-//          'phone_formatted' => ext_user_format_phone($user_phone),
-        ],
+        'user' => $user_info,
         'products' => [
           'qty_products' => $product_count,
           'qty_pcs' => $product_pcs_count,

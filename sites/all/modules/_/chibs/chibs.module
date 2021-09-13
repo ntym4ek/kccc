@@ -554,7 +554,7 @@ function chibs_ads_contact_form($form, &$form_state, $nid) {
     if (empty($form_state['complete'])) {
         // задаём начальные значения
         if (empty($form_state['submitted'])) {
-            $account = ext_user_get_user_array($user);
+            $account = ext_user_get_user_info($user);
         }
 
         $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');
@@ -594,14 +594,16 @@ function chibs_ads_contact_form($form, &$form_state, $nid) {
 
     return $form;
 }
-function chibs_ads_contact_form_validate($form, &$form_state) {
+function chibs_ads_contact_form_validate($form, &$form_state)
+{
     if (!valid_email_address($form_state['values']['email'])) {
         form_set_error('email', 'Введите корректный E-Mail адрес.' );
     }
     if (empty($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', 'Заполните одно из полей: ' . t('E-Mail') . ' или ' . t('Phone') . '.' );
     if (empty($form_state['values']['text'])) form_set_error('text', 'Текст сообщения обязателен' );
 }
-function chibs_ads_contact_form_submit($form, &$form_state) {
+function chibs_ads_contact_form_submit($form, &$form_state)
+{
     // email автора
     $ad_wrapper = entity_metadata_wrapper('node', $form_state['adid']);
 //    $ad = $ad_wrapper->value();

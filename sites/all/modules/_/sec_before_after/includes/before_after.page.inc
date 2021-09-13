@@ -564,7 +564,7 @@ function before_after_get_atfield($sid)
       $output['season'] = $season_wrapper->field_f_s_season->value();
       $output['year'] = $season_wrapper->field_f_s_year->value();
       $output['region'] = $field_wrapper->field_f_region->label();
-      $output['author'] = ext_user_get_user_array($user);
+      $output['author'] = ext_user_get_user_info($user);
 
       // user
       $img = 'default_images/ru-default-thickbox_default.jpg';
