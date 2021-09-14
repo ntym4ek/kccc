@@ -1,6 +1,4 @@
-
 <?php print '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
-
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="<?php echo date('Y-m-d h:i'); ?>">
   <shop>

@@ -1,7 +1,7 @@
 <?php foreach ($themed_rows as $count => $row): ?>
   <offer id="<?php echo $row['nid']; ?>" available="true">
     <name><?php echo $row['title']; ?></name>
-    <description><?php echo htmlspecialchars(trim($row['body'])); ?></description>
+    <description><?php echo strip_tags(htmlspecialchars(trim($row['body']))); ?></description>
     <url><?php echo url('node/' . $row['nid'], ['absolute' => true]); ?></url>
     <price><?php echo $row['commerce_price']*0.9/100; ?></price>
     <currencyId>RUR</currencyId>
@@ -13,8 +13,8 @@
     <?php if (!empty($row['field_p_tare'])) :?>
     <param name="Тара"><?php echo $row['field_p_tare']; ?></param>
     <?php endif; ?>
-    <?php if (!empty($row['field_p_in_package'])) :?>
-    <param name="Объём"><?php echo $row['field_p_in_package']; ?></param>
+    <?php if (!empty($row['field_p_packaging'])) :?>
+    <param name="Объём"><?php echo $row['field_p_packaging']; ?></param>
     <?php endif; ?>
     <?php
       $node_wr = entity_metadata_wrapper('node', $row['nid']);
