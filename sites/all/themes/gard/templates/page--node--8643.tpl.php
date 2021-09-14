@@ -88,17 +88,17 @@
         <?php print render($primary_nav_d); ?>
     </div>
 
-    <div class="right-menu">
-        <?php print render($secondary_nav); ?>
-        <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
-            <i class="fa fa-phone" aria-hidden="true"></i>
-            <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
-        </button>
-        <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3">
-            <i class="fa fa-shopping-cart" aria-hidden="true"><?php print ext_checkout_get_cart_block(); ?></i>
-            <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
-        </a>
-    </div>
+  <div class="right-menu">
+    <?php print render($secondary_nav); ?>
+    <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
+      <img src="/sites/all/themes/gard/images/icons/phone_d.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
+      <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
+    </button>
+    <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3" rel="nofollow">
+      <img src="/sites/all/themes/gard/images/icons/cart_d.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания"><?php print ext_checkout_get_cart_block(); ?></i>
+      <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
+    </a>
+  </div>
 
 </header>
 

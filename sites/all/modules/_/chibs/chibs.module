@@ -499,7 +499,7 @@ function ctools_modal_ajax_cmd($js, $action) {
     ctools_add_js('ajax-responder');
     $commands = array();
     if ($action == 'goto_cart') {
-        $commands[] = ctools_ajax_command_redirect('checkout');;
+        $commands[] = ctools_ajax_command_redirect('checkout');
     }
     elseif ($action == 'dismiss') {
         $commands[] = ctools_modal_command_dismiss();

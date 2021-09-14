@@ -256,7 +256,7 @@ function mailer_get_agro_calculator_email_text($data, $recipient = 'manager')
   $phone = $data['phone'];
   $email = $data['email'];
 
-  $message = 'Добрый день!<br /><br />';
+  $message = '<h2>' . t('Good day!') . '</h2>';
   $message .= 'В разделе Калькулятор сайте kccc.ru была отправлена заявка на детальный расчёт.<br />';
   $message .= '<br />';
   $message .= '<b>Данные пользователя</b><br />';

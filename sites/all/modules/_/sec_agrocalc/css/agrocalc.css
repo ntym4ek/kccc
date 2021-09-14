@@ -1,0 +1,119 @@
+@charset "UTF-8";
+/**
+ * Default Variables.
+ *
+ * Modify this file to provide default Bootstrap Framework variables. The
+ * Bootstrap Framework will not override any variables defined here because it
+ * uses the `!default` flag which will only set their default if not already
+ * defined here.
+ *
+ * You can copy existing variables directly from the following file:
+ * ./THEMENAME/bootstrap/assets/stylesheets/bootstrap/_variables.scss
+ */
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper > div {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+  @media (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      margin-left: 8.3333333333%; } }
+  @media (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      float: left;
+      width: 83.3333333333%; } }
+  @media (min-width: 992px) {
+    #agrocalc-form-wrapper > div {
+      margin-left: 16.6666666667%; } }
+  @media (min-width: 992px) {
+    #agrocalc-form-wrapper > div {
+      float: left;
+      width: 66.6666666667%; } }
+
+.agrocalc-form fieldset .panel-body {
+  margin-left: -15px;
+  margin-right: -15px; }
+  .agrocalc-form fieldset .panel-body:before, .agrocalc-form fieldset .panel-body:after {
+    content: " ";
+    display: table; }
+  .agrocalc-form fieldset .panel-body:after {
+    clear: both; }
+.agrocalc-form .form-item-culture,
+.agrocalc-form .form-item-phase,
+.agrocalc-form .form-item-area,
+.agrocalc-form .form-item-seed,
+.agrocalc-form .form-item-weeds,
+.agrocalc-form .form-item-pests,
+.agrocalc-form .form-item-fert,
+.agrocalc-form .form-item-desic,
+.agrocalc-form .form-item-region,
+.agrocalc-form .form-item-phone,
+.agrocalc-form .form-item-email,
+.agrocalc-form .form-item-name,
+.agrocalc-form .form-item-diseases {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px; }
+  @media (min-width: 768px) {
+    .agrocalc-form .form-item-culture,
+    .agrocalc-form .form-item-phase,
+    .agrocalc-form .form-item-area,
+    .agrocalc-form .form-item-seed,
+    .agrocalc-form .form-item-weeds,
+    .agrocalc-form .form-item-pests,
+    .agrocalc-form .form-item-fert,
+    .agrocalc-form .form-item-desic,
+    .agrocalc-form .form-item-region,
+    .agrocalc-form .form-item-phone,
+    .agrocalc-form .form-item-email,
+    .agrocalc-form .form-item-name,
+    .agrocalc-form .form-item-diseases {
+      float: left;
+      width: 50%; } }
+.agrocalc-form .form-item-desic,
+.agrocalc-form .form-item-fert {
+  text-transform: uppercase; }
+.agrocalc-form .help-block {
+  margin: 0; }
+.agrocalc-form .form-actions {
+  position: relative; }
+.agrocalc-form [data-animate=true] {
+  position: absolute;
+  z-index: 1;
+  display: none; }
+  .agrocalc-form [data-animate=true].animate-processed {
+    display: block; }
+  .agrocalc-form [data-animate=true].animate-processed.accepted {
+    display: none; }
+.agrocalc-form .help1 {
+  top: -85px;
+  left: -150px; }
+.agrocalc-form .help2 {
+  top: 160px;
+  left: 210px; }
+.agrocalc-form .help3 {
+  top: -60px;
+  right: 180px; }
+.agrocalc-form .help4 {
+  right: 0;
+  top: 125px; }
+.agrocalc-form .help5 {
+  top: 30px;
+  right: -20px; }
+.agrocalc-form .help6 {
+  bottom: -70px;
+  right: 30px; }
+.agrocalc-form .help7 {
+  top: -5px;
+  left: -35px; }
+.agrocalc-form .help8 {
+  top: -140px;
+  left: 325px; }
+
+/*# sourceMappingURL=agrocalc.css.map */

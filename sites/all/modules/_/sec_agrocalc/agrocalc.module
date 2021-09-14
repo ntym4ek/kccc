@@ -53,6 +53,9 @@ function agrocalc_form($from, &$form_state)
                 ]
         ],
         '#attached' => [
+            'css' => [
+              drupal_get_path('module', 'agrocalc') . '/css/agrocalc.css',
+            ],
             'js' => [
                 drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
                 drupal_get_path('module', 'ext_product') . '/js/accounting.js'

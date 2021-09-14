@@ -77,7 +77,7 @@ function ext_checkout_preprocess_page(&$vars)
           $vars['header']['subtitle'] = t('Our representative will contact you soon');
           $vars['header']['print'] = true;
         } else {
-          $vars['header']['image'] = url('/' . drupal_get_path('module', 'checkout') . '/images/header_image.jpg', array('absolute' => true));
+          $vars['header']['image'] = url('/' . drupal_get_path('module', 'ext_checkout') . '/images/header_image.jpg', array('absolute' => true));
           $vars['header']['title_off'] = true;
         }
 
