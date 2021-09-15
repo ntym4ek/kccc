@@ -7825,7 +7825,8 @@ a.icon-after .glyphicon {
 .front .primary-d-menu .level-1 > li > a {
   color: #fff;
   font-size: 20px;
-  font-weight: 500; }
+  font-weight: 500;
+  text-shadow: 1px 1px 10px #000; }
 .front .content-container .content {
   padding-top: 0; }
 .front .row-1 {

@@ -328,7 +328,7 @@ function gard_menu_link__menu_main_d(array $variables) {
                                         . '<div class="row fix-heights">'
                                             . '<div class="col-sm-3 col-first">'
                                                 . '<a href="' . $category_title_url . '" class="category-title" ><h3 style="color: #' . $category_title_color . '">' . $category_title . '</h3></a>'
-                                                . '<a href="' . $category_subtitle_url . '" class="show-more" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
+                                                . '<a href="' . $category_subtitle_url . '" ' . ($category_subtitle_color ? 'style="color: #' . $category_subtitle_color . '"' : '') . '><h4>' . $category_subtitle . '&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></h4></a>'
                                                 . (!empty($szr) ? '<div class="price-list"><a href="/catalog/agrochemicals/price-list">' . t('Price-list') . '</a></div>' : '')
                                             . '</div>'
                                             . '<div class="col-sm-6">'

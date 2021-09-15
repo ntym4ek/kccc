@@ -74,31 +74,32 @@
  */
 ?>
 <header id="navbar" role="banner" class="navbar hidden-print">
-    <button type="button" class="btn btn-header btn-s4 hidden-md hidden-lg">
-        <i class="fa fa-bars" aria-hidden="true"></i>
-        <i class="fa fa-times" aria-hidden="true"></i>
-        <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
+  <button type="button" class="btn btn-header btn-s4 hidden-md hidden-lg">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+    <i class="fa fa-times" aria-hidden="true"></i>
+    <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
+  </button>
+
+  <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
+    <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+  </a>
+
+  <div class="primary-d-menu hidden-xs hidden-sm">
+    <?php print render($primary_nav_d); ?>
+  </div>
+
+  <div class="right-menu">
+    <?php print render($secondary_nav); ?>
+    <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
+      <img src="/sites/all/themes/gard/images/icons/phone.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
+      <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
     </button>
-
-    <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+    <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3" rel="nofollow">
+      <img src="/sites/all/themes/gard/images/icons/cart.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания"><?php print ext_checkout_get_cart_block(); ?></i>
+      <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
     </a>
+  </div>
 
-    <div class="primary-d-menu hidden-xs hidden-sm">
-        <?php print render($primary_nav_d); ?>
-    </div>
-
-    <div class="right-menu">
-        <?php print render($secondary_nav); ?>
-        <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
-            <img src="/sites/all/themes/gard/images/icons/phone.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
-            <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
-        </button>
-        <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3">
-          <img src="/sites/all/themes/gard/images/icons/cart.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания"><?php print ext_checkout_get_cart_block(); ?></i>
-            <div class="popup popup-top-right"><div class="popup-content"><? print t('Preparations wishlist');?></div></div>
-        </a>
-    </div>
 </header>
 
 
