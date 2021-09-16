@@ -1,14 +1,13 @@
 <?php
-// содержимое этого шаблона рендерится в шаблонах entity "Entityform" - entityform_type*.tpl.php
 ?>
 
 <div class="row contact-us">
     <div class="cu-info col-md-7">
-        <h2><? print t('ООО Trade House') . '<br />' . t('"Kirovo-Chepetsk Chemical Company"');?></h2>
+        <h2><? print t('ООО Trade House') . '<br />' . t('Kirovo-Chepetsk Chemical Company');?></h2>
         <div class="cu-title"><? print t('Address'); ?></div>
-        <div class="cu-content"><? print t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya, 6'); ?></div>
+        <div class="cu-content"><? print $contact['address']; ?></div>
         <div class="cu-title"><? print t('Phone'); ?></div>
-        <div class="cu-content"><? print '+7 (8332) 76-15-20 ' . t('add.') . ' 1107'; ?><a href="tel:+78332761520"><i class="icon-phone"></i><? print t('Call');?></a></div>
+        <div class="cu-content"><? print $contact['phone_txt']; ?><a href="tel:<? print $contact['phone']; ?>"><i class="icon-phone"></i><? print t('Call');?></a></div>
         <div class="cu-title"><? print 'Email'; ?></div>
         <div class="cu-content eAddr-encoded">e(td[s1]kc/cc[s2]ru)<a href="mailto:e(td[s1]kc/cc[s2]ru)" class="eAddr-encoded"><i class="icon-mail"></i><? print t('Email us');?></a></div>
         <div class="hr"></div>
@@ -34,5 +33,12 @@
         </div>
     </div>
     <div id="map" class="cu-map col-xs-12"></div>
+
+  <div class="col-md-12">
+    <div class="branches">
+      <h3>Филиалы в других регионах</h3>
+      <? print $branches; ?>
+    </div>
+  </div>
 </div>
 

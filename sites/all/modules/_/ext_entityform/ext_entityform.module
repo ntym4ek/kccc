@@ -44,11 +44,56 @@ function ext_entityform_form_alter(&$form, &$form_state, $form_id)
 }
 
 /**
+ * Implements hook_page_build().
+ */
+function ext_entityform_page_build()
+{
+  // If the current page is one we want to exclude from the cache,
+  // set the page caching to false temporarily.
+  //отключаем кеширование определенных страниц
+  if ($_GET['q'] == 'eform/submit/contact-us') {
+    drupal_page_is_cacheable(FALSE);
+  }
+}
+
+
+/**
+ * Pre-processes variables for
+ */
+function ext_entityform_preprocess_contact_us_entityform_edit_form(&$vars)
+{
+  // контакт в зависимости от гео
+  $iso_code = 'RU-KIR';
+  $contacts = chibs_get_representatives_address();
+  if (module_exists('dadata_api')) {
+    $user_ip = strpos($GLOBALS["base_url"], '.local') === false  ? $_SERVER['REMOTE_ADDR'] : '77.72.142.170';
+    if ($suggestion = chibs_get_location_by_ip($user_ip)) {
+      if (isset($contacts[$suggestion['location']['data']['region_iso_code']])) {
+        $iso_code = $suggestion['location']['data']['region_iso_code'];
+      }
+    }
+  }
+
+//  watchdog('ext_entityform', 'edit_form - ip ' . $user_ip . ', sugg ' . $suggestion['location']['data']['region_iso_code'] . ', iso ' . $iso_code, array(), WATCHDOG_NOTICE);
+  $vars['contact'] = $contacts[$iso_code];
+  drupal_add_js(array('ext_entityform' => array('contact' => $contacts[$iso_code])), 'setting');
+
+  $branches_html = '';
+  foreach ($contacts as $iso => $contact) {
+    if ($iso != $iso_code) {
+      $branches_html .= '<div class="branch">' . $contact['address'] . '</div>';
+    }
+  }
+
+  $vars['branches'] = $branches_html;
+}
+
+/**
  * Pre-processes variables for the "page" theme hook.
  */
 function ext_entityform_preprocess_page(&$vars)
 {
-    if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
-        $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
-    }
+  if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
+      $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
+  }
 }

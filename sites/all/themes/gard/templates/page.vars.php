@@ -358,16 +358,7 @@ function gard_preprocess_page(&$vars)
       }
     }
 
-    // контакт в футере в зависимости от гео
     $vars['site_contact'] = t('Central office') . '<br />+7 (8332) 76-15-20 ' . t('add.') . ' 1107';
-    if (module_exists('dadata_api') && $suggestion = chibs_get_location_by_ip($_SERVER['REMOTE_ADDR'])) {
-      $iso_code = $suggestion['location']['data']['region_iso_code'];
-
-      $regions = chibs_get_representatives_address();
-      if (isset($regions[$iso_code])) {
-        $vars['site_contact'] = $regions[$iso_code];
-      }
-    }
 }
 
 

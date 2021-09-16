@@ -75,7 +75,8 @@ function contacts_main_page()
     return $html;
 };
 
-function contacts_get_contacts_list() {
+function contacts_get_contacts_list()
+{
     $module_path = drupal_get_path('module', 'contacts');
     $no_photo = '/sites/default/files/default_images/no_photo.png';
 
