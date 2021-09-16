@@ -1,6 +1,17 @@
 <?
 
 /**
+ * Implements hook_init().
+ */
+function ext_entityform_init()
+{
+  //отключаем кеширование определенных страниц
+  if ($_GET['q'] == 'info/contact-us') {
+    $GLOBALS['conf']['cache'] = 0;
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function ext_entityform_theme() {
@@ -44,11 +55,41 @@ function ext_entityform_form_alter(&$form, &$form_state, $form_id)
 }
 
 /**
+ * Pre-processes variables for
+ */
+function ext_entityform_preprocess_contact_us_entityform_edit_form(&$vars)
+{
+  // контакт в зависимости от гео
+  $contacts = chibs_get_representatives_address();
+
+  if (module_exists('dadata_api')) {
+    $user_ip = strpos($GLOBALS["base_url"], '.local') == -1 ? $_SERVER['REMOTE_ADDR'] : '77.72.142.170';
+    if ($suggestion = chibs_get_location_by_ip($user_ip)) {
+      $iso_code = $suggestion['location']['data']['region_iso_code'];
+
+      if (isset($contacts[$iso_code])) {
+        $vars['contact'] = $contacts[$iso_code];
+        drupal_add_js(array('ext_entityform' => array('contact' => $contacts[$iso_code])), 'setting');
+      }
+    }
+  }
+
+  $branches_html = '';
+  foreach ($contacts as $iso => $contact) {
+    if ($iso != $iso_code) {
+      $branches_html .= '<div class="branch">' . $contact['address'] . '</div>';
+    }
+  }
+
+  $vars['branches'] = $branches_html;
+}
+
+/**
  * Pre-processes variables for the "page" theme hook.
  */
 function ext_entityform_preprocess_page(&$vars)
 {
-    if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
-        $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
-    }
+  if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
+      $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
+  }
 }
