@@ -5,7 +5,7 @@ define('CONTACTS_URL', 'info/contacts');
 function contacts_menu()
 {
     $items[CONTACTS_URL] = array(
-        'title' => 'Contacts',
+        'title' => 'Departments contacts',
         'description' => 'Company contacts',
         'page callback' => 'contacts_main_page',
         'access arguments' => array('access content'),
