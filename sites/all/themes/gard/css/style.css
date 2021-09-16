@@ -5978,17 +5978,30 @@ option:disabled {
   .footer h1 {
     font-size: 1em;
     font-weight: 400;
-    padding: 10px 0 11px 0;
-    margin: 0 0 10px; }
+    padding: 10px 0;
+    margin: 0; }
   .footer .social-title {
     font-size: 18px;
     font-weight: 500;
     margin: 10px 0; }
-  .footer .contacts {
-    color: #777777;
-    font-weight: 400;
-    line-height: 20px;
-    margin: 0; }
+  .footer .contact {
+    margin: 0 30px; }
+    .footer .contact ul {
+      font-size: 14px;
+      padding: 0;
+      margin: 0;
+      min-height: 70px; }
+    .footer .contact .carousel-control {
+      color: #b3b3b3;
+      width: 20px; }
+      .footer .contact .carousel-control.left, .footer .contact .carousel-control.right {
+        background: none; }
+      .footer .contact .carousel-control.left {
+        left: -30px; }
+      .footer .contact .carousel-control.right {
+        right: -30px; }
+      .footer .contact .carousel-control i {
+        font-size: 18px; }
   .footer .logo {
     display: block;
     margin-top: 7px; }

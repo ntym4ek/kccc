@@ -358,19 +358,20 @@ function gard_preprocess_page(&$vars)
       }
     }
 
-    $vars['site_contact'] = t('Central office') . '<br />+7 (8332) 76-15-20 ' . t('add.') . ' 1107';
+  $vars['site_contact']  = '<h4>Адреса филиалов</h4>';
+  $vars['site_contact'] .= '<div id="carousel-address" class="carousel slide" data-ride="carousel">';
+  $vars['site_contact'] .=  '<ul class="carousel-inner" role="listbox">';
+  $contacts = chibs_get_representatives_address();
+  foreach ($contacts as $iso => $contact) {
+    $vars['site_contact'] .= '<li class="item' . ($iso == 'RU-KIR' ? ' active':'') . '">' . $contact['address'] . '<br />' . $contact['phone_txt'] . '</li>';
+  }
+  $vars['site_contact'] .=   '</ul>';
+  $vars['site_contact'] .=   '<a class="left carousel-control" href="#carousel-address" role="button" data-slide="prev">' .
+                                '<i class="fas fa-chevron-left"></i>' .
+                              '</a>' .
+                              '<a class="right carousel-control" href="#carousel-address" role="button" data-slide="next">' .
+                                '<i class="fas fa-chevron-right"></i>' .
+                              '</a>';
+  $vars['site_contact'] .= '</div>';
 }
 
-
-/**
- * Processes variables for the "page" theme hook.
- *
- * See template for list of available variables.
- *
- * @see page.tpl.php
- *
- * @ingroup theme_process
- */
-function gard_process_page(&$vars) {
-
-}

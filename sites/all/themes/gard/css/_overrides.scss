@@ -165,13 +165,32 @@ a, a:hover, a:focus {
 
   h1 {
       font-size: 1em; font-weight: 400;
-      padding: 10px 0 11px 0; margin: 0 0 10px;
+      padding: 10px 0; margin: 0;
   }
     .social-title {
         font-size: 18px; font-weight: 500;
         margin: 10px 0;
     }
-  .contacts { color: $gray-light; font-weight: 400; line-height: 20px; margin: 0; }
+  .contact {
+    margin: 0 30px;
+    ul {
+      font-size: 14px;
+      padding: 0;
+      margin: 0;
+      min-height: 70px;
+    }
+    .carousel-control {
+      color: $text-muted;
+      width: 20px;
+      &.left,
+      &.right {
+        background: none;
+      }
+      &.left { left: -30px; }
+      &.right { right: -30px; }
+      i { font-size: 18px; }
+    }
+  }
   .logo {
     display: block;
     margin-top: 7px;

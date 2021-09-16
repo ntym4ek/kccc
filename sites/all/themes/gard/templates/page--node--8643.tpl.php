@@ -174,10 +174,15 @@
                 </div>
             <div class="col-sm-7 col-md-8">
                 <div class="row">
-                    <div class="col-xs-12"><?php print render($footer_nav); ?></div>
+                  <div class="col-xs-12">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-6"><h1><?php print $site_slogan; ?></h1></div>
+                      <div class="col-xs-12 col-md-6"><?php print render($footer_nav); ?></div>
+                    </div>
+                  </div>
                     <div class="col-xs-12">
                         <div class="row">
-                            <div class="col-xs-12 col-md-5 col-md-offset-1">
+                            <div class="col-xs-12 col-md-6">
                               <div id="footer_contact" class="contact"><?php print $site_contact; ?></div>
                             </div>
                             <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">

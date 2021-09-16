@@ -1447,7 +1447,7 @@ function chibs_get_representatives_address()
 
     ],
     'RU-OMS' => [
-      'address' => '644117, г. Омск, 3-Я Молодежная ул, 6',
+      'address' => '644117, г. Омск, 3-я Молодежная ул, 6',
       'phone_txt' => '',
       'phone' => '',
       'schedule' => 'Пн-Пт  8:00-17:00',
