@@ -74,14 +74,34 @@ function ext_entityform_preprocess_contact_us_entityform_edit_form(&$vars)
     }
   }
 
-//  watchdog('ext_entityform', 'edit_form - ip ' . $user_ip . ', sugg ' . $suggestion['location']['data']['region_iso_code'] . ', iso ' . $iso_code, array(), WATCHDOG_NOTICE);
-  $vars['contact'] = $contacts[$iso_code];
+  $address = '';
+  foreach ($contacts[$iso_code] as $item) {
+    $address .= $item['address'];
+    $phones_arr = [];
+    foreach ($item['phones'] as $phone) {
+      $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
+    }
+    if ($phones_arr) {
+      $address .= '<br /> ' . implode($phones_arr, ', ');
+    }
+  }
+  $vars['contact'] = $address;
   drupal_add_js(array('ext_entityform' => array('contact' => $contacts[$iso_code])), 'setting');
 
   $branches_html = '';
   foreach ($contacts as $iso => $contact) {
     if ($iso != $iso_code) {
-      $branches_html .= '<div class="branch">' . $contact['address'] . '</div>';
+      foreach ($contact as $item) {
+        $branches_html .= '<div class="branch">' . $item['address'];
+        $phones_arr = [];
+        foreach ($item['phones'] as $phone) {
+          $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
+        }
+        if ($phones_arr) {
+          $branches_html .= ', ' . implode($phones_arr, ', ');
+        }
+        $branches_html .= '</div>';
+      }
     }
   }
 

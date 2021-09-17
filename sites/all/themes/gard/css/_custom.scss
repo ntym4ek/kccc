@@ -1477,18 +1477,13 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .cu-form .form-actions { margin-bottom: 0; }
 .cu-form .form-submit { width: 100%; }
 .cu-title {
-  color: $brand-blue; font-size: 13px; line-height: 20px;
+  color: $text-muted;
   margin-top: 20px;
 }
-.cu-content { line-height: 24px; }
-.cu-content a {
-  float: right; color: $brand-blue; font-size: 13px;
-  width: 110px;
-}
-.cu-content a i {
-  font-size: 16px;
-  padding-right: 8px;
-  vertical-align: middle;
+.cu-content {
+  a {
+    font-size: 14px;
+  }
 }
 
 .cu-link {

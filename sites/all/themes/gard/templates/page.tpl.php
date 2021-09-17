@@ -214,7 +214,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                           <div class="row">
-                            <div class="col-xs-12 col-md-6"><h1><?php print $site_slogan; ?></h1></div>
+                            <div class="col-xs-12 col-md-6"><?php print $site_slogan; ?></div>
                             <div class="col-xs-12 col-md-6"><?php print render($footer_nav); ?></div>
                           </div>
                         </div>

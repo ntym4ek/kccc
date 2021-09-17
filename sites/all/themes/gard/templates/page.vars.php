@@ -197,12 +197,19 @@ function gard_preprocess_page(&$vars)
             //для продукции
             if (in_array($vars['node']->type, array('product_agro', 'product_chem', 'product_fert', 'product_mix'))) {
                 // если есть, брать название категории из которой попали в описание, иначе первую из списка
-                $cat = empty($_GET['cat']) ? $node_wrapper->field_pd_category[0]->tid->value() : $_GET['cat'];
-                foreach ($node_wrapper->field_pd_category->getIterator() as $term_wrapper) {
-                    if ($term_wrapper->tid->value() == $cat) {
-                        $category_title = '<a href="' . url('taxonomy/term/' . $cat) . '">' . $term_wrapper->name->value() . '</a>';
-                    }
+              $cat = 0;
+              if (empty($_GET['cat'])) {
+                if ($node_wrapper->field_pd_category->value()) {
+                  $cat = $node_wrapper->field_pd_category[0]->tid->value();
                 }
+              } else {
+                $cat = $_GET['cat'];
+              }
+              foreach ($node_wrapper->field_pd_category->getIterator() as $term_wrapper) {
+                  if ($term_wrapper->tid->value() == $cat) {
+                      $category_title = '<a href="' . url('taxonomy/term/' . $cat) . '">' . $term_wrapper->name->value() . '</a>';
+                  }
+              }
             }
 
             // для новостей
@@ -363,7 +370,15 @@ function gard_preprocess_page(&$vars)
   $vars['site_contact'] .=  '<ul class="carousel-inner" role="listbox">';
   $contacts = chibs_get_representatives_address();
   foreach ($contacts as $iso => $contact) {
-    $vars['site_contact'] .= '<li class="item' . ($iso == 'RU-KIR' ? ' active':'') . '">' . $contact['address'] . '<br />' . $contact['phone_txt'] . '</li>';
+    foreach ($contact as $item) {
+      $vars['site_contact'] .= '<li class="item' . ($iso == 'RU-KIR' ? ' active':'') . '">' . $item['address'] . '<br />';
+      $phones_arr = [];
+      foreach ($item['phones'] as $phone) {
+        $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
+      }
+      $vars['site_contact'] .= implode($phones_arr, ', ');
+      $vars['site_contact'] .= '</li>';
+    }
   }
   $vars['site_contact'] .=   '</ul>';
   $vars['site_contact'] .=   '<a class="left carousel-control" href="#carousel-address" role="button" data-slide="prev">' .

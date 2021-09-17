@@ -61,6 +61,8 @@ function ext_marketing_commerce_checkout_form_submit($form, &$form_state)
       // тестеру intelsib
       drupal_mail('mailer', 'order_creation', 'oleg.anufriev@intelsib-team.com', 'RU', $params, 'bot@kccc.ru');
     }
+
+    drupal_mail('mailer', 'order_creation', 'fsl.kccc.ru@yandex.ru', 'RU', $params, 'bot@kccc.ru');
   }
 
 }

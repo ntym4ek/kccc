@@ -439,6 +439,28 @@ function representatives_sales_list()
   $sales[] = array(
     'roles' =>  ['representative'],
     'access' => false,
+    'surname' => 'Домницкая', 'name' => 'Виктория', 'name2' => 'Николаевна',
+    'phones' => array('+7 (922) 900-05-73'),
+    'emails' => array('krasnodar@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/domnitskaya.png',
+    'regions' => array(
+      71669 => [], //Краснодарский край",
+    ),
+  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'access' => false,
+    'surname' => 'Петров', 'name' => 'Николай', 'name2' => 'Викторович',
+    'phones' => array('+7 (922) 957-11-19'),
+    'emails' => array('krasnodar4@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/petrov_n.png',
+    'regions' => array(
+      71669 => [], //Краснодарский край",
+    ),
+  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'access' => false,
     'surname' => 'Савенко', 'name' => 'Алексей', 'name2' => 'Михайлович',
     'phones' => array('+7 (922) 969-47-05'),
     'emails' => array('krasnoyarsk@kccc.ru'),
@@ -457,28 +479,6 @@ function representatives_sales_list()
     'photo' => '/' . $module_path . '/images/photos/rodchenko_m.png',
     'regions' => array(
       71670 => [], //Красноярский край",
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
-    'surname' => 'Домницкая', 'name' => 'Виктория', 'name2' => 'Николаевна',
-    'phones' => array('+7 (922) 900-05-73'),
-    'emails' => array('krasnodar@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/domnitskaya.png',
-    'regions' => array(
-      71669 => [], //Краснодарский край",
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
-    'surname' => 'Петров', 'name' => 'Николай', 'name2' => 'Викторович',
-    'phones' => array('+7 (922) 957-11-19'),
-    'emails' => array('krasnodar4@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/petrov_n.png',
-    'regions' => array(
-      71669 => [], //Краснодарский край",
     ),
   );
 //  $sales[] = array(

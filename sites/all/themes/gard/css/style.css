@@ -8793,24 +8793,11 @@ form.confirmation .form-actions {
   width: 100%; }
 
 .cu-title {
-  color: #0C6099;
-  font-size: 13px;
-  line-height: 20px;
+  color: #b3b3b3;
   margin-top: 20px; }
 
-.cu-content {
-  line-height: 24px; }
-
 .cu-content a {
-  float: right;
-  color: #0C6099;
-  font-size: 13px;
-  width: 110px; }
-
-.cu-content a i {
-  font-size: 16px;
-  padding-right: 8px;
-  vertical-align: middle; }
+  font-size: 14px; }
 
 .cu-link {
   line-height: 25px;
