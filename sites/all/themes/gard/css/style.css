@@ -5991,6 +5991,9 @@ option:disabled {
       padding: 0;
       margin: 0;
       min-height: 70px; }
+      .footer .contact ul a {
+        color: #333333;
+        font-size: 12px; }
     .footer .contact .carousel-control {
       color: #b3b3b3;
       width: 20px; }
@@ -8797,6 +8800,7 @@ form.confirmation .form-actions {
   margin-top: 20px; }
 
 .cu-content a {
+  color: #333333;
   font-size: 14px; }
 
 .cu-link {
@@ -8970,7 +8974,7 @@ form.confirmation .form-actions {
     .view-table > .view-footer:after,
     .view-table > .attachment:after {
       clear: both; }
-  .view-list:not(.view-shop) > .view-header > div,
+  .view-list:not(.view-shop) > .view-header > div, .view-list:not(.view-shop) > .view-header > form,
   .view-list > .view-empty > div,
   .view-list > .view-footer > div,
   .view-list > .attachment .view,
@@ -8978,6 +8982,7 @@ form.confirmation .form-actions {
   .view-list .view-content > .vbo-views-form,
   .view-list .view-content > .table-responsive,
   .view-table:not(.view-shop) > .view-header > div,
+  .view-table:not(.view-shop) > .view-header > form,
   .view-table > .view-empty > div,
   .view-table > .view-footer > div,
   .view-table > .attachment .view,
@@ -8993,7 +8998,7 @@ form.confirmation .form-actions {
     padding-left: 15px;
     padding-right: 15px; }
     @media (min-width: 768px) {
-      .view-list:not(.view-shop) > .view-header > div,
+      .view-list:not(.view-shop) > .view-header > div, .view-list:not(.view-shop) > .view-header > form,
       .view-list > .view-empty > div,
       .view-list > .view-footer > div,
       .view-list > .attachment .view,
@@ -9001,6 +9006,7 @@ form.confirmation .form-actions {
       .view-list .view-content > .vbo-views-form,
       .view-list .view-content > .table-responsive,
       .view-table:not(.view-shop) > .view-header > div,
+      .view-table:not(.view-shop) > .view-header > form,
       .view-table > .view-empty > div,
       .view-table > .view-footer > div,
       .view-table > .attachment .view,
@@ -9009,7 +9015,7 @@ form.confirmation .form-actions {
       .view-table .view-content > .table-responsive {
         margin-left: 8.3333333333%; } }
     @media (min-width: 768px) {
-      .view-list:not(.view-shop) > .view-header > div,
+      .view-list:not(.view-shop) > .view-header > div, .view-list:not(.view-shop) > .view-header > form,
       .view-list > .view-empty > div,
       .view-list > .view-footer > div,
       .view-list > .attachment .view,
@@ -9017,6 +9023,7 @@ form.confirmation .form-actions {
       .view-list .view-content > .vbo-views-form,
       .view-list .view-content > .table-responsive,
       .view-table:not(.view-shop) > .view-header > div,
+      .view-table:not(.view-shop) > .view-header > form,
       .view-table > .view-empty > div,
       .view-table > .view-footer > div,
       .view-table > .attachment .view,
@@ -9026,7 +9033,7 @@ form.confirmation .form-actions {
         float: left;
         width: 83.3333333333%; } }
     @media (min-width: 992px) {
-      .view-list:not(.view-shop) > .view-header > div,
+      .view-list:not(.view-shop) > .view-header > div, .view-list:not(.view-shop) > .view-header > form,
       .view-list > .view-empty > div,
       .view-list > .view-footer > div,
       .view-list > .attachment .view,
@@ -9034,6 +9041,7 @@ form.confirmation .form-actions {
       .view-list .view-content > .vbo-views-form,
       .view-list .view-content > .table-responsive,
       .view-table:not(.view-shop) > .view-header > div,
+      .view-table:not(.view-shop) > .view-header > form,
       .view-table > .view-empty > div,
       .view-table > .view-footer > div,
       .view-table > .attachment .view,
@@ -9042,7 +9050,7 @@ form.confirmation .form-actions {
       .view-table .view-content > .table-responsive {
         margin-left: 16.6666666667%; } }
     @media (min-width: 992px) {
-      .view-list:not(.view-shop) > .view-header > div,
+      .view-list:not(.view-shop) > .view-header > div, .view-list:not(.view-shop) > .view-header > form,
       .view-list > .view-empty > div,
       .view-list > .view-footer > div,
       .view-list > .attachment .view,
@@ -9050,6 +9058,7 @@ form.confirmation .form-actions {
       .view-list .view-content > .vbo-views-form,
       .view-list .view-content > .table-responsive,
       .view-table:not(.view-shop) > .view-header > div,
+      .view-table:not(.view-shop) > .view-header > form,
       .view-table > .view-empty > div,
       .view-table > .view-footer > div,
       .view-table > .attachment .view,

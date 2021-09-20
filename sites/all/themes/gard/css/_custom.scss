@@ -1482,7 +1482,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 }
 .cu-content {
   a {
-    font-size: 14px;
+    color: $text-color; font-size: 14px;
   }
 }
 
@@ -1600,6 +1600,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     }
 
     &:not(.view-shop) > .view-header > div,
+    &:not(.view-shop) > .view-header > form,
     > .view-empty > div,
     > .view-footer > div,
     > .attachment .view,
