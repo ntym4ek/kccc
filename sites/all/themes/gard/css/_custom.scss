@@ -862,8 +862,10 @@
     .node-author   {
         margin-bottom: 30px;
         img {
-            float: left;
-            margin-right: 30px;
+          float: left;
+          margin-right: 30px;
+          max-width: 80px; max-height: 80px;
+          overflow: hidden;
         }
         .author-body {
             display: table-cell;
@@ -1590,12 +1592,12 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .view-table {
     @include make-sm-column(12);
 
-    & > .view-header,
-    & > .view-filters,
-    & > .view-content,
-    & > .view-empty,
-    & > .view-footer,
-    & > .attachment {
+    > .view-header,
+    > .view-filters,
+    > .view-content,
+    > .view-empty,
+    > .view-footer,
+    > .attachment {
         @include make-row();
     }
 
@@ -1610,7 +1612,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         @include wrap-content();
     }
 
-    & > .view-filters {
+    > .view-filters {
         .views-exposed-widgets {
             margin-bottom: 0;
             @include make-row();
@@ -1622,7 +1624,10 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
             }
         }
     }
-    & > .view-empty { min-height: 100px; }
+    > .view-empty { min-height: 100px; }
+    .view-header > form {
+      margin-bottom: 15px;
+    }
 
     .view-content {
         & > .vbo-views-form fieldset.panel { background-color: transparent; }
@@ -1785,34 +1790,45 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 /* ------------------------------------------------- Вертикальная карточка (Product, Field) - */
 .v-card {
+  display: flex;
+  flex-direction: column;
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   header, footer {
+    flex: 0 auto;
     padding: 5px 15px;
     color: $text-muted; font-size: .9em;
-    min-height: 29px;
+    //min-height: 29px;
+  }
+  header { border-bottom: 1px solid $views-list-bg; }
+  .v-card-image {
+    flex: 0 auto;
   }
   .v-card-image, .v-card-content {
     padding: 15px;
-      position: relative;
-      img:nth-child(2) {
-          position: absolute; right: 15px; bottom: 0;
-          width: 40%;
-      }
+    position: relative;
+    img:nth-child(2) {
+        position: absolute; right: 15px; bottom: 0;
+        width: 40%;
+    }
   }
 
-  header { border-bottom: 1px solid $views-list-bg; }
   .v-card-content {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
     border-top: 1px solid $views-list-bg;
     border-bottom: 1px solid $views-list-bg;
   }
   .v-card-title {
+    flex: 0 auto;
       margin: 0 0 3px 0;
     a { color: $text-color; }
   }
 
   .v-card-summary {
+    flex: auto;
     font-size: 12px;
     //white-space: nowrap; в карточках не входят ДВ и описание
     overflow: hidden;
@@ -1822,6 +1838,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
   .v-card-subtitle { color: $gray-lighten; margin: 0 0 10px 0; min-height: 17px; }
   .v-card-more {
+    flex: 0 auto;
     text-align: left;
     width: 100%;
     position: relative;

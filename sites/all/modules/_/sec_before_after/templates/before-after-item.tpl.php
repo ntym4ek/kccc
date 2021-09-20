@@ -18,8 +18,10 @@
             <div class="v-card-summary">
                 <div class="v-card-subtitle"><?php print $content['culture']; ?></div>
                 <div>
-                    <strong>Хозяйство:</strong> <?php print $content['farm']; ?><br />
-                    <strong>Обработка:</strong> <?php print $content['preps_w_links']; ?>
+                  <strong>Хозяйство:</strong> <?php print $content['farm']; ?><br />
+                  <? if (!empty($content['preps_w_links'])): ?>
+                  <strong><?php print $content['preps_title']; ?></strong> <?php print $content['preps_w_links']; ?>
+                  <? endif; ?>
                 </div>
             </div>
             <a class="btn btn-primary v-card-more" href="<?php print $content['link']; ?>">

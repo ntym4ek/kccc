@@ -142,6 +142,7 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         if ($prep_wr->field_f_s_p_p_preparation->getBundle() != 'product_fert') {
                           $prep_form = $prep_wr->field_f_s_p_p_preparation->field_pd_formulation->field_tax_short_name->value();
                         }
+                        $preps[$nid] = $name . ($prep_form ? ', ' . $prep_form : '');
                         $preps_w_links[] = '<a href="' . url('node/' . $nid) . '">' . $name . ', ' . $prep_form . '</a>';
                       }
 
@@ -150,19 +151,21 @@ function before_after_get_atfield_list($region = null, $culture = null)
                         $name = $processing_wr->field_f_s_p_preparation->label();
                         $prep_form = '';
                         if ($processing_wr->field_f_s_p_preparation->getBundle() != 'product_fert') {
-                          $prep_form = $processing_wr->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
+                          $prep_form = ', ' . $processing_wr->field_f_s_p_preparation->field_pd_formulation->field_tax_short_name->value();
                         }
                         $nid = $processing_wr->field_f_s_p_preparation->getIdentifier();
                         $preps[$nid] = $name . ($prep_form ? ', ' . $prep_form : '');
-                        $preps_w_links[] = '<a href="' . url('node/' . $nid) . '">' . $name . ', ' . $prep_form . '</a>';
+                        $preps_w_links[] = '<a href="' . url('node/' . $nid) . '">' . $name . $prep_form . '</a>';
                       }
                     }
                 }
                 $output['preps_title'] = 'Обработка препаратами: ';
-                $output['preps_w_links'] = 'нет данных';
+                $output['preps_w_links'] = '';
                 if ($preps) {
-                    $output['preps'] = $preps;
-                    $output['preps_w_links'] = implode('; ', $preps_w_links);
+                  $preps = array_unique($preps);
+                  $preps_w_links = array_unique($preps_w_links);
+                  $output['preps'] = array_unique($preps);
+                  $output['preps_w_links'] = implode('; ', $preps_w_links);
                 }
 
                 // заголовки
