@@ -4,7 +4,7 @@
     <description><?php echo strip_tags(htmlspecialchars(trim($row['body']))); ?></description>
     <url><?php echo url('node/' . $row['nid'], ['absolute' => true]); ?></url>
     <price><?php echo $row['commerce_price']*0.9/100; ?></price>
-    <currencyId>RUR</currencyId>
+    <currencyId>RUB</currencyId>
     <categoryId><?php echo $row['field_pd_category']; ?></categoryId>
     <?php if (!empty($row['field_main_img'])): ?>
     <picture><?php echo $row['field_main_img']; ?></picture>

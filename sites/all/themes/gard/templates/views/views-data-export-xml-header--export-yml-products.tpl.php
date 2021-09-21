@@ -5,7 +5,7 @@
     <name><?php echo variable_get('site_name', 'Drupal'); ?></name>
     <company><?php echo variable_get('site_name', 'Drupal'); ?></company>
     <url><?php echo $GLOBALS['base_url']; ?></url>
-    <currencies><currency id="RUR" rate="1"/></currencies>
+    <currencies><currency id="RUB" rate="1"/></currencies>
 
     <?php print views_embed_view('export_yml_categories', 'views_data_export_1'); ?>
 

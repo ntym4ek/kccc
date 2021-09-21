@@ -75,7 +75,7 @@ function before_after_menu() {
 
     $items['source/atfield-filters.json/%/%'] = array(
         'page callback' => 'before_after_atfield_filters_source',
-        'page arguments' => [2, 3],
+        'page arguments' => [2, 3, 4],
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK
     );
@@ -326,12 +326,13 @@ function before_after_atfield_source($region, $culture)
  * callback function
  * списки для фильтров в ПвП
  */
-function before_after_atfield_filters_source($rid, $cid)
+function before_after_atfield_filters_source($rid, $cid, $iid = null)
 {
     if ($rid == 'null') $rid = null;
     if ($cid == 'null') $cid = null;
+    if ($iid == 'null') $iid = null;
 
-    $options = _before_after_filters($rid, $cid);
+    $options = _before_after_filters($rid, $cid, $iid);
     drupal_json_output($options);
     drupal_exit();
 }

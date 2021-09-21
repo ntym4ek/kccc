@@ -9,14 +9,14 @@
 
         <div class="v-card-image">
             <a href="<?php print $content['link']; ?>">
-                <img typeof="foaf:Image" src="<?php print $content['image_thumb']; ?>" class="img-responsive" title="Действие препарата в поле" alt="Защита культуры <?php print $content['culture'] . ' препаратами ООО ТД Кирово-Чепецкая Химическая Компания. ' . $content['region']; ?>" loading="lazy">
+                <img typeof="foaf:Image" src="<?php print $content['image_thumb']; ?>" class="img-responsive" title="Действие препарата в поле" alt="Защита культуры <?php print $content['culture']['title'] . $content['culture']['notes'] . ' препаратами ООО ТД Кирово-Чепецкая Химическая Компания. ' . $content['region']['name']; ?>" loading="lazy">
             </a>
         </div>
 
         <div class="v-card-content">
-            <h4 class="v-card-title"><a href="<?php print $content['link']; ?>"><?php print $content['region']; ?></a></h4>
+            <h4 class="v-card-title"><a href="<?php print $content['link']; ?>"><?php print $content['region']['name']; ?></a></h4>
             <div class="v-card-summary">
-                <div class="v-card-subtitle"><?php print $content['culture']; ?></div>
+                <div class="v-card-subtitle"><?php print $content['culture']['title'] . $content['culture']['notes']; ?></div>
                 <div>
                   <strong>Хозяйство:</strong> <?php print $content['farm']; ?><br />
                   <? if (!empty($content['preps_w_links'])): ?>

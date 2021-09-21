@@ -403,8 +403,10 @@ function _reglaments_get_protection_system2($parameters)
                     $title_arr = $ingredients_arr = $rates_arr = $photo_arr = $units_arr = $preparations = [];
                     $index = 0;
                     foreach($prep_info['items'] as $prep_item) {
+                      foreach ($prep_item['ingredients'] as $ingredient) {
+                        $ingredients_arr[] = $ingredient['full'];
+                      }
                         $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
-                        $ingredients_arr = array_merge($ingredients_arr, $prep_item['ingredients']);
                         $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
                         $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_uri']);
 

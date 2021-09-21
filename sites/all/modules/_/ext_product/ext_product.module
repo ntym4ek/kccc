@@ -245,12 +245,16 @@ function ext_product_product_get_info($node)
       foreach ($preparation_wr->field_pd_active_ingredients as $ingredient_wr) {
         if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {
           $ingredient_wr = $ingredient_wr->language($lang);
-          $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->name->value() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
+          $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->label() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
           $ingr_dose = $ingredient_wr->field_pd_ai_concentration->value();
           $cons_unit = t('l');
           if (in_array($unit_wr->field_tax_short_name->value(), array('кг', 'г', 'kg', 'g'))) $cons_unit = t('kg');
           if (in_array($unit_wr->field_tax_short_name->value(), array('л', 'мл', 'l', 'ml'))) $cons_unit = t('l');
-          $ingredients[] = $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit;
+          $ingredients[] = [
+            'tid' => $ingredient_wr->field_pd_ai_active_ingredient->getIdentifier(),
+            'name' => $ingr_name,
+            'full' => $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit
+          ];
         }
       }
     }
