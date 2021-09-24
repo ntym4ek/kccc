@@ -7,7 +7,12 @@ function before_after_list_page()
 {
     $list = '';
 
-    if ($atf_array = before_after_get_atfield_list(isset($_GET['region'])?$_GET['region']:null, isset($_GET['culture'])?$_GET['culture']:null, isset($_GET['ingredient'])?$_GET['ingredient']:null)) {
+    if ($atf_array = before_after_get_atfield_list(
+      isset($_GET['region'])?$_GET['region'] : null,
+      isset($_GET['culture'])?$_GET['culture'] : null,
+      isset($_GET['ingredient'])?$_GET['ingredient'] : null,
+      isset($_GET['year'])? $_GET['year'] : date('Y')
+    )) {
       $index = 0;
       foreach ($atf_array as $atf_item) {
             $list .= theme('before_after_item', array('content' => $atf_item));
@@ -49,7 +54,7 @@ function before_after_list_page()
  * выходные данные отсортированы по дате последнего внесенного замера или обработки
  * и зависят от вида последней внесенной записи
  */
-function before_after_get_atfield_list($filter_region = null, $filter_culture = null, $filter_dv = null)
+function before_after_get_atfield_list($filter_region = null, $filter_culture = null, $filter_dv = null, $filter_year = null)
 {
   $atf_array = &drupal_static(__FUNCTION__);
   if (!$atf_array) {
@@ -66,6 +71,11 @@ function before_after_get_atfield_list($filter_region = null, $filter_culture = 
       $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = s.field_f_sowing_value');
       $query->condition('fc.field_f_s_culture_target_id', $filter_culture);
       $query->condition('fc.bundle', 'field_f_sowing');
+    }
+    if (!empty($filter_year) && $filter_year != 'All') {
+      $query->innerJoin('field_data_field_f_s_year', 'fy', 'fy.entity_id = s.field_f_sowing_value');
+      $query->condition('fy.field_f_s_year_value', $filter_year);
+      $query->condition('fy.bundle', 'field_f_sowing');
     }
     $query->fields('s', array('field_f_sowing_value'));
     $query->orderBy('s.field_f_sowing_value', 'DESC');
@@ -191,6 +201,7 @@ function before_after_get_atfield_list($filter_region = null, $filter_culture = 
           $output['farm_title'] = 'Хозяйство: ';
           $output['farm'] = $farm;
           $output['date'] = date('d.m.Y', $process['date']);
+          $output['year'] = $season_wrapper->field_f_s_year->value();
 
           $output['footer'] = '';
           $output['type'] = $process['type'];
@@ -369,18 +380,19 @@ function before_after_get_atfield_list($filter_region = null, $filter_culture = 
 }
 
 
-function _before_after_filters($rid = null, $cid = null, $iid = null)
+function _before_after_filters($rid = null, $cid = null, $iid = null, $year = null)
 {
   $rid = (int)$rid;
   $cid = (int)$cid;
   $iid = (int)$iid;
 
   // из готового списка ПвП извлечь возможные опции
-  $atfield_list = before_after_get_atfield_list($rid, $cid, $iid);
+  $atfield_list = before_after_get_atfield_list($rid, $cid, $iid, $year);
   $options = [
     'regions' => ['filter' => [], 'full' => []],
     'cultures' => ['filter' => [], 'full' => []],
-    'ingredients' => ['filter' => [], 'full' => []]
+    'ingredients' => ['filter' => [], 'full' => []],
+    'years' => ['filter' => [], 'full' => []],
   ];
   foreach($atfield_list as $stamp => $atfield) {
     if (!isset($options['regions'][$atfield['region']['tid']])) {
@@ -398,107 +410,118 @@ function _before_after_filters($rid = null, $cid = null, $iid = null)
         }
       }
     }
+    if (!in_array($atfield['year'], $options['years']['filter'])) {
+      $options['years']['filter'][] = $atfield['year'];
+    }
   }
   asort($options['regions']['filter']);
   asort($options['cultures']['filter']);
   asort($options['ingredients']['filter']);
+  arsort($options['years']['filter']);
 
   // для региона и культуры (тк запросы небольшие)
   // находим полный список
   //
   // опция Регион
-  $query = db_select('taxonomy_term_data', 't');
-  $query->condition('t.vid', 29); // словарь 'regions'
+//  $query = db_select('taxonomy_term_data', 't');
+//  $query->condition('t.vid', 29); // словарь 'regions'
+//  $query->distinct();
+//  $query->innerJoin('field_data_field_f_region', 'fr', 't.tid = fr.field_f_region_tid');
+//  $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
+//  $query->condition('n.type', 'field');
+//  $query->fields('t', array('tid', 'name'));
+//  $options['regions']['full'] = $query->execute()->fetchAllKeyed();
+//  asort($options['regions']['full']);
+
+  // культуры
+//  $query = db_select('node', 'n');
+//  $query->condition('n.type', 'main_cultures');
+//  $query->distinct();
+//  $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
+//  $query->condition('fc.bundle', 'field_f_sowing');
+//  $query->orderBy('n.title', 'ASC');
+//  $query->fields('n', array('nid', 'title'));
+//  $options['cultures']['full'] = $query->execute()->fetchAllKeyed();
+//  asort($options['cultures']['full']);
+
+  // годы
+  $query = db_select('field_data_field_f_s_year', 'fy');
+  $query->condition('fy.bundle', 'field_f_sowing');
   $query->distinct();
-  $query->innerJoin('field_data_field_f_region', 'fr', 't.tid = fr.field_f_region_tid');
-  $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
-
-  // если уже выбрана культура, добавить её в условия
-//  if ($cid) {
-//      $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.entity_id = n.nid');
-//      $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = fs.field_f_sowing_value');
-//      $query->condition('fc.field_f_s_culture_target_id', $cid);
-//  }
-  $query->condition('n.type', 'field');
-  $query->fields('t', array('tid', 'name'));
-  $options['regions']['full'] = $query->execute()->fetchAllKeyed();
-  asort($options['regions']['full']);
-
-  $query = db_select('node', 'n');
-  $query->condition('n.type', 'main_cultures');
-  $query->distinct();
-  $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
-  $query->condition('fc.bundle', 'field_f_sowing');
-  $query->orderBy('n.title', 'ASC');
-  $query->fields('n', array('nid', 'title'));
-
-  // если уже выбран регион, добавить его в условия
-//  if ($rid) {
-//      $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.field_f_sowing_value = fc.entity_id');
-//      $query->innerJoin('node', 'nf', 'nf.nid = fs.entity_id');
-//      $query->innerJoin('field_data_field_f_region', 'fr', 'fr.entity_id = nf.nid');
-//      $query->condition('fr.field_f_region_tid', $rid);
-//  }
-  $options['cultures']['full'] = $query->execute()->fetchAllKeyed();
-  asort($options['cultures']['full']);
+  $query->addField('fy', 'field_f_s_year_value', 'year');
+  $options['years']['full'] = $query->execute()->fetchAllKeyed(0, 0);
 
   return [
       'regions' => $options['regions'],
       'cultures' => $options['cultures'],
       'ingredients' => $options['ingredients'],
+      'years' => $options['years'],
   ];
 }
 
 function before_after_exposed_filters_form($form, &$form_state)
 {
-    $form = array(
-        '#attributes' => array('class' => array('ctools-auto-submit-full-form')),
-        '#prefix' => '<div class="view-filters">',
-        '#suffix' => '</div>',
-    );
+  $form = array(
+      '#attributes' => array('class' => array('ctools-auto-submit-full-form')),
+      '#prefix' => '<div class="view-filters">',
+      '#suffix' => '</div>',
+  );
 
-    $form['c'] = array(
-        '#type' => 'container',
-        '#attributes' => array('class' => array('views-exposed-form')), // <div class="views-exposed-form"><div class="views-exposed-widgets clearfix">
-    );
-    $form['c']['c1'] = array(
-        '#type' => 'container',
-        '#attributes' => array('class' => array('views-exposed-widgets', 'clearfix')), // <div class="views-exposed-form"><div class="">
-    );
+  $form['c'] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('views-exposed-form')), // <div class="views-exposed-form"><div class="views-exposed-widgets clearfix">
+  );
+  $form['c']['c1'] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('views-exposed-widgets', 'clearfix')), // <div class="views-exposed-form"><div class="">
+  );
 
-    $culture_selected = null;
-    if (isset($_POST['culture']) && $_POST['culture'] != 'All') {
-        $culture_selected = $_POST['culture'];
-    }
-    elseif (isset($_GET['culture']) && $_GET['culture'] != 'All') {
-        $culture_selected = $_GET['culture'];
-    }
-    $region_selected = null;
-    if (isset($_POST['region']) && $_POST['region'] != 'All') {
-        $region_selected = $_POST['region'];
-    }
-    elseif (isset($_GET['region']) && $_GET['region'] != 'All') {
-        $region_selected = $_GET['region'];
-    }
+  $culture_selected = null;
+  if (isset($_POST['culture']) && $_POST['culture'] != 'All') {
+      $culture_selected = $_POST['culture'];
+  }
+  elseif (isset($_GET['culture']) && $_GET['culture'] != 'All') {
+      $culture_selected = $_GET['culture'];
+  }
+  $region_selected = null;
+  if (isset($_POST['region']) && $_POST['region'] != 'All') {
+      $region_selected = $_POST['region'];
+  }
+  elseif (isset($_GET['region']) && $_GET['region'] != 'All') {
+      $region_selected = $_GET['region'];
+  }
   $ingredient_selected = null;
-    if (isset($_POST['ingredient']) && $_POST['ingredient'] != 'All') {
-      $ingredient_selected = $_POST['ingredient'];
-    }
-    elseif (isset($_GET['ingredient']) && $_GET['ingredient'] != 'All') {
-      $ingredient_selected = $_GET['ingredient'];
-    }
-    $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected);
+  if (isset($_POST['ingredient']) && $_POST['ingredient'] != 'All') {
+    $ingredient_selected = $_POST['ingredient'];
+  }
+  elseif (isset($_GET['ingredient']) && $_GET['ingredient'] != 'All') {
+    $ingredient_selected = $_GET['ingredient'];
+  }
 
-  if (empty($form_state['options']) && $region_selected || !empty($form_state['options']) && $region_selected != $form_state['options']['region']) {
-    $options['regions']['filter'] = $options['regions']['full'];
+  if (!isset($_POST['year']) && !isset($_GET['year'])) {
+    $year_selected = date('Y');
+  } elseif (isset($_POST['year'])) {
+    $year_selected = $_POST['year'];
+  } elseif (isset($_GET['year'])) {
+    $year_selected = $_GET['year'];
   }
-  if (empty($form_state['options']) && $culture_selected || !empty($form_state['options']) && $culture_selected != $form_state['options']['culture']) {
-    $options['cultures']['filter'] = $options['cultures']['full'];
-  }
+  $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
+
+//  if (empty($form_state['options']) && $region_selected || !empty($form_state['options']) && $region_selected != $form_state['options']['region']) {
+//    $options['regions']['filter'] = $options['regions']['full'];
+//  }
+//  if (empty($form_state['options']) && $culture_selected || !empty($form_state['options']) && $culture_selected != $form_state['options']['culture']) {
+//    $options['cultures']['filter'] = $options['cultures']['full'];
+//  }
+
+  $options['years']['filter'] = $options['years']['full'];
+  arsort($options['years']['filter']);
+
   $form_state['options'] = [
     'region' => $region_selected,
     'culture' => $culture_selected,
     'ingredient' => $ingredient_selected,
+    'year' => $year_selected,
   ];
 
     $options_region = array('All' => '- Все -') + $options['regions']['filter'];
@@ -506,7 +529,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#type' => 'select',
         '#title' => t('Region'),
         '#options' => $options_region,
-        '#prefix' => '<div class="col-sm-4">',
+        '#prefix' => '<div class="col-sm-3">',
         '#suffix' => '</div>',
         '#default_value' => $region_selected ? $region_selected: 'All',
     );
@@ -516,7 +539,7 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#type' => 'select',
         '#title' => t('Culture'),
         '#options' => $options_culture,
-        '#prefix' => '<div class="col-sm-4">',
+        '#prefix' => '<div class="col-sm-3">',
         '#suffix' => '</div>',
         '#default_value' => $culture_selected ? $culture_selected : 'All',
     );
@@ -531,6 +554,19 @@ function before_after_exposed_filters_form($form, &$form_state)
         '#default_value' => $ingredient_selected ? $ingredient_selected : 'All',
     );
 
+    $options_year = array('All' => '- Все -') + $options['years']['filter'];
+    $form['c']['c1']['year'] = array(
+        '#type' => 'select',
+        '#title' => 'Год',
+        '#options' => $options_year,
+        '#prefix' => '<div class="col-sm-2">',
+        '#suffix' => '</div>',
+        '#default_value' => $year_selected ? $year_selected : 'All',
+    );
+
+    $form['c']['c1']['reset'] = [
+      '#markup' => '<div class="col-sm-12"><div class="reset"><a href="/before-after">сбросить фильтры</a></div></div>'
+    ];
     $form['c']['c1']['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Submit'),
@@ -551,6 +587,7 @@ function before_after_exposed_filters_form_submit($form, &$form_state)
                 'region' => empty($form_state['values']['region']) ? 'All' : $form_state['values']['region'],
                 'culture' => empty($form_state['values']['culture']) ? 'All' : $form_state['values']['culture'],
                 'ingredient' => empty($form_state['values']['ingredient']) ? 'All' : $form_state['values']['ingredient'],
+                'year' => empty($form_state['values']['year']) ? 'All' : $form_state['values']['year'],
             ),
         ),
     );

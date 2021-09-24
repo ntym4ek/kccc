@@ -1622,6 +1622,12 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
                 color: $text-muted; font-weight: 300;
               }
             }
+          .reset {
+            margin-top: 5px;
+            a {
+              color: $text-muted; font-size: 0.9em;
+            }
+          }
         }
     }
     > .view-empty { min-height: 100px; }

@@ -116,7 +116,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0)
     $area       = empty($form_state['values']['area'])        ? '' : $form_state['values']['area'];
 //    $seeding    = empty($form_state['values']['seeding'])     ? '' : $form_state['values']['seeding'];
     $season     = empty($form_state['values']['season'])      ? 'Весна' : $form_state['values']['season'];
-    $year       = empty($form_state['values']['year'])        ? '2018' : $form_state['values']['year'];
+    $year       = empty($form_state['values']['year'])        ? date('Y') : $form_state['values']['year'];
 
         // введенные вредные объекты
     if (!empty($form_state['values'])) {
@@ -166,7 +166,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0)
       'Осень' => 'Осень',
   );
   $options_y = array();
-  for($i = 2020; $i <= 2030; $i++) {
+  for($i = date('Y'); $i <= 2030; $i++) {
     $options_y[$i] = $i;
   }
 

@@ -9110,6 +9110,13 @@ form.confirmation .form-actions {
       .view-table > .view-filters .views-exposed-widgets .views-exposed-widget label {
         color: #b3b3b3;
         font-weight: 300; }
+    .view-list > .view-filters .views-exposed-widgets .reset,
+    .view-table > .view-filters .views-exposed-widgets .reset {
+      margin-top: 5px; }
+      .view-list > .view-filters .views-exposed-widgets .reset a,
+      .view-table > .view-filters .views-exposed-widgets .reset a {
+        color: #b3b3b3;
+        font-size: 0.9em; }
   .view-list > .view-empty,
   .view-table > .view-empty {
     min-height: 100px; }
