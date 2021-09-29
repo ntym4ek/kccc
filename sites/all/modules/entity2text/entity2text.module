@@ -88,13 +88,13 @@ function entity2text_renderarray_to_text($render_array, $print_empty_title = FAL
   }
 
   if (!empty($markup) && empty($title)) {
-    $output .= "\n" . $indent_text . $markup . "\n";
+    $output .= "<br />" . $indent_text . $markup . "<br />";
   }
   elseif (!empty($markup) && !empty($title)) {
-    $output .= "\n" . $indent_text . $title . "\n" . $indent_text . $tab_text . $markup;
+    $output .= "<br />" . $indent_text . $title . "<br />" . $indent_text . $tab_text . $markup;
   }
   elseif (empty($markup) && !empty($title)) {
-    $output .= "\n" . $indent_text . $title;
+    $output .= "<br />" . $indent_text . $title;
   }
 
   if (!empty($output)) {
