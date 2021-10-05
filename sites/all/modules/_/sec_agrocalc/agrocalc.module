@@ -411,7 +411,8 @@ function agrocalc_form_submit($form, &$form_state)
 /**
  * Pre-processes variables for the "page" theme hook.
  */
-function agrocalc_preprocess_page(&$vars) {
+function agrocalc_preprocess_page(&$vars)
+{
     // установить для страницы параметры шапки
     if ($_GET['q'] == 'agro-calculator') {
         $image = '/' . drupal_get_path('module', 'agrocalc') . '/images/header_image.jpg';

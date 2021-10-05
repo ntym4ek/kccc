@@ -2,13 +2,13 @@
   <div class="box">
     <div class="box-shell">
       <? print $element['shell']; ?>
+      <? if (!empty($element['photo'])): ?>
+        <div class="box-photo"><img src="<? print $element['photo']; ?>" /></div>
+      <? endif; ?>
     </div>
     <div class="box-card">
       <div class="box-content">
         <? print $element['card']; ?>
-        <? if (!empty($element['photo'])): ?>
-        <div class="box-photo"><img src="<? print $element['photo']; ?>" /></div>
-        <? endif; ?>
       </div>
     </div>
     <? if (!empty($element['level'])): ?>

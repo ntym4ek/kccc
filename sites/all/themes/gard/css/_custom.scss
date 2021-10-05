@@ -414,11 +414,12 @@
     }
 }
 .tabs--secondary {
-    border-bottom: 1px solid #c7c7c7;
-    float: right;
-    text-align: right; list-style: none;
-    padding: 0;
-    > li {
+  list-style: none;
+  padding: 0;
+  display: flex; justify-content: flex-end;
+  width: 100%;
+     > li {
+      border-bottom: 1px solid #c7c7c7;
         display: inline-block;
         > a {
             color: #aaa; text-decoration: none;
@@ -443,7 +444,7 @@
     background-repeat: repeat-y;
     background-color: #fff;
 
-    padding-top: $header-xs-height; padding-bottom: 178px;
+    padding-top: $header-xs-height; padding-bottom: 190px;
     position: relative;
     min-height: 100%;
     margin-left: 0;

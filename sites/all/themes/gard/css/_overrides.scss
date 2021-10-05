@@ -507,8 +507,8 @@ input, textarea, select, .uneditable-input {
   width: auto;
 }
 input.error {
-  color: $state-danger-text;
-  border-color: $state-danger-border;
+  color: $brand-danger;
+  border-color: $brand-danger;
 }
 fieldset.panel {
   border: 0; box-shadow: none;

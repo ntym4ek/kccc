@@ -5,26 +5,26 @@
  */
 function ext_message_got_menu()
 {
-    $items['message/%/got'] = array(
-        'page callback' => 'ext_message_got_process_message_action',
-        'page arguments' => array(1, 'set'),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['message/%/ungot'] = array(
-        'page callback' => 'ext_message_got_process_message_action',
-        'page arguments' => array(1, 'unset'),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['user/notifications'] = array(
-        'title' => t('Notifications'),
-        'access arguments' => array('access content'),
-        'menu_name' => 'user-menu',
-        'type' => MENU_NORMAL_ITEM,
-    );
+  $items['message/%/got'] = array(
+    'page callback' => 'ext_message_got_process_message_action',
+    'page arguments' => array(1, 'set'),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['message/%/ungot'] = array(
+    'page callback' => 'ext_message_got_process_message_action',
+    'page arguments' => array(1, 'unset'),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['user/notifications'] = array(
+    'title' => t('Notifications'),
+    'access arguments' => array('access content'),
+    'menu_name' => 'user-menu',
+    'type' => MENU_NORMAL_ITEM,
+  );
 
-    return $items;
+  return $items;
 }
 
 /**
@@ -32,12 +32,12 @@ function ext_message_got_menu()
  */
 function ext_message_got_views_api()
 {
-    // привязка своей таблицы ко Views
-    // https://habr.com/ru/sandbox/74002/
-    return array(
-        'api' => 3,
-        'path' => drupal_get_path('module', 'ext_message_got') . '/views',
-    );
+  // привязка своей таблицы ко Views
+  // https://habr.com/ru/sandbox/74002/
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'ext_message_got') . '/views',
+  );
 }
 
 /**
@@ -47,18 +47,18 @@ function ext_message_got_views_api()
  */
 function ext_message_got_process_message_action($mid, $action = null)
 {
-    if ($action) {
-        if ($action == 'set') {
-            if ($mid == 'all') ext_message_got_set_user_got_message_all();
-            else ext_message_got_set_user_got_message($mid);
-        }
-        if ($action == 'unset') ext_message_got_unset_user_got_message($mid);
+  if ($action) {
+    if ($action == 'set') {
+      if ($mid == 'all') ext_message_got_set_user_got_message_all();
+      else ext_message_got_set_user_got_message($mid);
     }
+    if ($action == 'unset') ext_message_got_unset_user_got_message($mid);
+  }
 
-    $path = empty($_GET['back']) ? drupal_not_found() : $_GET['back'];
-    $options = [];
-    if (isset($_GET['status'])) $options['query'] = ['status' => $_GET['status']];
-    drupal_goto($path, $options);
+  $path = empty($_GET['back']) ? drupal_not_found() : $_GET['back'];
+  $options = [];
+  if (isset($_GET['status'])) $options['query'] = ['status' => $_GET['status']];
+  drupal_goto($path, $options);
 }
 
 /**
@@ -69,18 +69,18 @@ function ext_message_got_process_message_action($mid, $action = null)
  */
 function ext_message_got_set_user_got_message($mid, $uid = null)
 {
-    if (!$uid) $uid = $GLOBALS['user']->uid;
-    if ($mid && $uid && !ext_message_got_check_user_got_message($mid, $uid)) {
-        $id = db_insert('message_got')
-            ->fields(array(
-                'mid' => $mid,
-                'uid' => $uid,
-                'timestamp' => REQUEST_TIME,
-            ))
-            ->execute();
-    }
+  if (!$uid) $uid = $GLOBALS['user']->uid;
+  if ($mid && $uid && !ext_message_got_check_user_got_message($mid, $uid)) {
+    $id = db_insert('message_got')
+      ->fields(array(
+        'mid' => $mid,
+        'uid' => $uid,
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->execute();
+  }
 
-    return isset($id) ? $id : false;
+  return isset($id) ? $id : false;
 }
 
 /**
@@ -91,13 +91,13 @@ function ext_message_got_set_user_got_message($mid, $uid = null)
  */
 function ext_message_got_set_user_got_message_all($uid = null)
 {
-    if (!$uid) $uid = $GLOBALS['user']->uid;
+  if (!$uid) $uid = $GLOBALS['user']->uid;
 
-    if ($mids = ext_message_got_get_user_ungot_messages($uid)) {
-        foreach($mids as $mid) {
-            ext_message_got_set_user_got_message($mid, $uid);
-        }
+  if ($mids = ext_message_got_get_user_ungot_messages($uid)) {
+    foreach($mids as $mid) {
+      ext_message_got_set_user_got_message($mid, $uid);
     }
+  }
 }
 
 /**
@@ -107,23 +107,23 @@ function ext_message_got_set_user_got_message_all($uid = null)
  */
 function ext_message_got_get_user_ungot_messages($uid)
 {
-    $mids = [];
+  $mids = [];
 
-    // получить id Типов сообщений, на которые подписан пользователь
-    if  ($subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid)) {
-        // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
-        $query = db_select('message', 'm');
-        $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
-        $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
-        $query->condition('mt.id', $subscripted_notification_ids, 'IN');
-        $query->condition('mg.id', NULL, 'IS NULL');
-        $query->addField('m', 'mid');
-        if ($result = $query->execute()) {
-            $mids = $result->fetchCol();
-        }
+  // получить id Типов сообщений, на которые подписан пользователь
+  if  ($subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid)) {
+    // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
+    $query = db_select('message', 'm');
+    $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
+    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
+    $query->condition('mt.id', $subscripted_notification_ids, 'IN');
+    $query->condition('mg.id', NULL, 'IS NULL');
+    $query->addField('m', 'mid');
+    if ($result = $query->execute()) {
+      $mids = $result->fetchCol();
     }
+  }
 
-    return $mids;
+  return $mids;
 }
 
 /**
@@ -134,16 +134,16 @@ function ext_message_got_get_user_ungot_messages($uid)
  */
 function ext_message_got_unset_user_got_message($mid, $uid = null)
 {
-    $deleted = false;
-    if (!$uid) $uid = $GLOBALS['user']->uid;
-    if ($mid && $uid) {
-        $deleted = db_delete('message_got')
-            ->condition('mid', $mid)
-            ->condition('uid', $uid)
-            ->execute();
-    }
+  $deleted = false;
+  if (!$uid) $uid = $GLOBALS['user']->uid;
+  if ($mid && $uid) {
+    $deleted = db_delete('message_got')
+      ->condition('mid', $mid)
+      ->condition('uid', $uid)
+      ->execute();
+  }
 
-    return $deleted;
+  return $deleted;
 }
 
 /**
@@ -154,15 +154,15 @@ function ext_message_got_unset_user_got_message($mid, $uid = null)
  */
 function ext_message_got_check_user_got_message($mid, $uid)
 {
-    $count = 0;
-    if ($mid && $uid) {
-        $count = db_select('message_got')
-            ->condition('mid', $mid)
-            ->condition('uid', $uid)
-            ->countQuery()
-            ->execute()
-            ->fetchField();
-    }
+  $count = 0;
+  if ($mid && $uid) {
+    $count = db_select('message_got')
+      ->condition('mid', $mid)
+      ->condition('uid', $uid)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
 
-    return (bool)$count;
+  return (bool)$count;
 }

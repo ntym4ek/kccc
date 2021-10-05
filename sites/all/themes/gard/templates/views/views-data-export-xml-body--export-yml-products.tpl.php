@@ -1,13 +1,13 @@
 <?php foreach ($themed_rows as $count => $row): ?>
   <offer id="<?php echo $row['nid']; ?>" available="true">
-    <name><?php echo $row['title']; ?></name>
-    <description><?php echo strip_tags(htmlspecialchars(trim($row['body']))); ?></description>
+    <name><?php echo str_replace('*', '', $row['title']); ?></name>
+    <description><?php echo htmlspecialchars(trim(strip_tags($row['body']))); ?></description>
     <url><?php echo url('node/' . $row['nid'], ['absolute' => true]); ?></url>
     <price><?php echo $row['commerce_price']*0.9/100; ?></price>
     <currencyId>RUB</currencyId>
     <categoryId><?php echo $row['field_pd_category']; ?></categoryId>
-    <?php if (!empty($row['field_main_img'])): ?>
-    <picture><?php echo $row['field_main_img']; ?></picture>
+    <?php if (!empty($row['field_p_images'])): ?>
+    <picture><?php echo $row['field_p_images']; ?></picture>
     <?php endif; ?>
     <country_of_origin>Россия</country_of_origin>
     <?php if (!empty($row['field_p_tare'])) :?>
@@ -18,8 +18,10 @@
     <?php endif; ?>
     <?php
       $node_wr = entity_metadata_wrapper('node', $row['nid']);
-      foreach ($node_wr->field_pd_active_ingredients->getIterator() as $ingredient_wr) {
-        echo '<param name="Действующее вещество">' . $ingredient_wr->field_pd_ai_active_ingredient->name->value() . '</param>';
+      if (!empty($node_wr->value()->field_pd_active_ingredients)) {
+        foreach ($node_wr->field_pd_active_ingredients->getIterator() as $ingredient_wr) {
+          echo '<param name="Действующее вещество">' . $ingredient_wr->field_pd_ai_active_ingredient->name->value() . '</param>';
+        }
       }
     ?>
   </offer>

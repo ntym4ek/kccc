@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Contains dadata_api.module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function dadata_api_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#dadata_api':
+      $output = '<p>' . t("This module provides integration with DaData API. It won't do much by itself - it is intended for developers.") . '</p>';
+      $output .= '<p>' . t('Please visit <a href="@dadata">DaData.ru</a> for more information about the service.', ['@dadata' => 'https://dadata.ru']);
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function dadata_api_permission() {
+  return array(
+    'administer dadata api' => array(
+      'title' => t('Administer DaData API'),
+      'description' => t('Perform administration tasks for DaData API module.'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function dadata_api_menu() {
+  $items['admin/config/services/dadata-api'] = array(
+    'title' => 'DaData API',
+    'description' => 'Administer DaData API settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dadata_api_settings_form'),
+    'access arguments' => array('administer dadata api'),
+    'file' => 'includes/admin.inc',
+  );
+  return $items;
+}

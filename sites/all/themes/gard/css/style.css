@@ -6318,8 +6318,8 @@ input, textarea, select, .uneditable-input {
   width: auto; }
 
 input.error {
-  color: #a94442;
-  border-color: #ebccd1; }
+  color: #CF142B;
+  border-color: #CF142B; }
 
 fieldset.panel {
   border: 0;
@@ -7560,12 +7560,13 @@ a.icon-after .glyphicon {
     padding: 5px 15px; }
 
 .tabs--secondary {
-  border-bottom: 1px solid #c7c7c7;
-  float: right;
-  text-align: right;
   list-style: none;
-  padding: 0; }
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%; }
   .tabs--secondary > li {
+    border-bottom: 1px solid #c7c7c7;
     display: inline-block; }
     .tabs--secondary > li > a {
       color: #aaa;
@@ -7587,7 +7588,7 @@ a.icon-after .glyphicon {
     background-repeat: repeat-y;
     background-color: #fff;
     padding-top: 60px;
-    padding-bottom: 178px;
+    padding-bottom: 190px;
     position: relative;
     min-height: 100%;
     margin-left: 0;
