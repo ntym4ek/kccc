@@ -640,30 +640,47 @@ function chibs_ads_contact_form_submit($form, &$form_state)
 
 
 
-
-
-
 /**
  * Implements of hook_cron().
- * твик производительности
- * запретить удаление закэшированных страниц при автоматическом запуске крона
  */
-function chibs_cron() {
-    if (strpos(request_uri(), 'cron.php')) {
-        if (!db_table_exists('cache_page_temp')) {
-            $schema = drupal_get_schema('cache_page');
-            db_rename_table('cache_page', 'cache_page_temp');
-            db_create_table('cache_page', $schema);
-        }
-        drupal_register_shutdown_function('chibs_restore_cache_page');
+function chibs_cron()
+{
+  // твик производительности
+  // запретить удаление закэшированных страниц при автоматическом запуске крона
+  if (strpos(request_uri(), 'cron.php')) {
+    if (!db_table_exists('cache_page_temp')) {
+      $schema = drupal_get_schema('cache_page');
+      db_rename_table('cache_page', 'cache_page_temp');
+      db_create_table('cache_page', $schema);
     }
+    drupal_register_shutdown_function('chibs_restore_cache_page');
+  }
+
+  // в Вакансиях нужно обновлять даты публикации на понедельник текущей недели
+  chibs_update_vacancy_dates();
 }
+
+function chibs_update_vacancy_dates()
+{
+  // определить timestamp, который нужно установить
+  $thisMonday = strtotime("Monday this week");
+
+  // обновить даты опубликованных вакансий в БД
+  db_update('node')
+    ->fields(array('created' => $thisMonday))
+    ->condition('type', 'vacancy')
+    ->condition('status', 1)
+    ->condition('created', $thisMonday, '<')
+    ->execute();
+}
+
 /**
  * Shutdown function for cron cleanup.
  */
-function chibs_restore_cache_page() {
-    db_drop_table('cache_page');
-    db_rename_table('cache_page_temp', 'cache_page');
+function chibs_restore_cache_page()
+{
+  db_drop_table('cache_page');
+  db_rename_table('cache_page_temp', 'cache_page');
 }
 
 /**
@@ -676,17 +693,18 @@ function chibs_restore_cache_page() {
  * твик производительности
  * добавляет во Views Fields сырые (raw) значение из БД
  */
-function chibs_views_data_alter(&$data) {
-    foreach ($data as $table_name => $table_info) {
-        foreach ($table_info as $field_name => $field_info) {
-            if (isset($field_info['field']['handler']) && $field_info['field']['handler'] == 'views_handler_field_field') {
-                $field_info['field']['handler'] = 'views_handler_field';
-                $field_info['title'] .= ' (raw)';
-                $field_info['title short'] .= ' (raw)';
-                $data[$table_name][$field_name . '_raw'] = $field_info;
-            }
-        }
+function chibs_views_data_alter(&$data)
+{
+  foreach ($data as $table_name => $table_info) {
+    foreach ($table_info as $field_name => $field_info) {
+      if (isset($field_info['field']['handler']) && $field_info['field']['handler'] == 'views_handler_field_field') {
+        $field_info['field']['handler'] = 'views_handler_field';
+        $field_info['title'] .= ' (raw)';
+        $field_info['title short'] .= ' (raw)';
+        $data[$table_name][$field_name . '_raw'] = $field_info;
+      }
     }
+  }
 }
 
 /**
