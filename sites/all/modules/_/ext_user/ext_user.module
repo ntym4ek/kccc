@@ -210,7 +210,7 @@ function ext_user_preprocess_user_profile(&$vars)
       $vars['user_profile']['counts'][] = array(
         'title' => t('Reviews'),
         'amount' => $result,
-        'link' => '/reviews/user/' . $account->uid,
+        'link' => '/reviews/' . $account->uid,
       );
       // До и После
       if (user_access('access before_after edit')) {
@@ -840,4 +840,26 @@ function ext_user_user_authenticate($name, $password)
     }
   }
   return $uid;
+}
+
+
+/**
+ * hook_after_metatag_metatags_view_alter()
+ *
+ * свой метатег Description для форума
+ */
+function ext_user_metatag_metatags_view_alter(&$output, $instance, $options)
+{
+  if (arg(0) == 'reviews' && arg(1) == 'user' && is_numeric(arg(2))) {
+    if ($account = user_load(arg(2))) {
+      $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Отзывы пользователя '. $account->realname . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
+      $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Отзывы пользователя '. $account->realname . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
+    }
+  }
+  if (arg(0) == 'blogs' && arg(1) == 'user' && is_numeric(arg(2))) {
+    if ($account = user_load(arg(2))) {
+      $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Блог пользователя '. $account->realname . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
+      $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Блог пользователя '. $account->realname . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
+    }
+  }
 }
