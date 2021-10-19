@@ -358,7 +358,10 @@ function sec_structure_get_structure()
  */
 function theme_structure_page($vars)
 {
-  return '<div class="structure">' . render($vars['element']['content']) . '</div>';
+  return  '<div class="structure">' .
+            '<h1 class="text-center">Организационная структура</h1>' .
+            render($vars['element']['content']) .
+          '</div>';
 }
 
 /**
@@ -373,6 +376,6 @@ function sec_structure_preprocess_page(&$vars)
         'image' => '/' . drupal_get_path('module', 'sec_structure') . '/images/header_image.jpg',
         'category_title' => '',
       );
-
+      $vars['theme_hook_suggestions'][] = 'page__empty';
     }
 }

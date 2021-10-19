@@ -9,130 +9,132 @@
  * You can copy existing variables directly from the following file:
  * ./THEMENAME/bootstrap/assets/stylesheets/bootstrap/_variables.scss
  */
-.structure .s-level .s-boxes {
-  min-height: 150px;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  position: relative;
-  padding-top: 15px; }
-.structure .box-wrapper .box {
-  position: relative;
-  width: 220px;
-  height: 50px;
-  margin: 15px 15px 30px 15px; }
-  .structure .box-wrapper .box .box-shell {
-    color: #eee;
-    font-size: 14px;
-    line-height: 1.1em;
-    padding: 3px 25px 3px 15px;
-    width: 200px;
-    height: 50px;
-    background: url("../images/deepblue.png");
-    position: absolute;
-    z-index: 10;
+.structure {
+  padding: 30px 150px; }
+  .structure .s-level .s-boxes {
+    min-height: 150px;
     display: flex;
-    align-items: center; }
-  .structure .box-wrapper .box .box-card {
-    background: #fefefe;
-    border-radius: 5px;
-    box-shadow: 1px 1px 5px rgba(122, 122, 122, 0.5);
-    width: 215px;
-    height: 50px;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    z-index: 0;
-    -webkit-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out; }
-  .structure .box-wrapper .box .box-trace {
-    border-left: 4px dotted orange;
-    width: 5px;
-    opacity: 0;
-    position: absolute;
-    top: 60px;
-    bottom: 0;
-    left: 50%;
-    -webkit-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out; }
-  .structure .box-wrapper .box .box-content {
-    font-size: .8em;
-    line-height: 1em;
+    justify-content: space-around;
+    flex-wrap: wrap;
     position: relative;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    height: 100%;
+    padding-top: 15px; }
+  .structure .box-wrapper .box {
+    position: relative;
+    width: 220px;
+    height: 50px;
+    margin: 15px 15px 30px 15px; }
+    .structure .box-wrapper .box .box-shell {
+      color: #eee;
+      font-size: 14px;
+      line-height: 1.1em;
+      padding: 3px 25px 3px 15px;
+      width: 200px;
+      height: 50px;
+      background: url("../images/deepblue.png");
+      position: absolute;
+      z-index: 10;
+      display: flex;
+      align-items: center; }
+    .structure .box-wrapper .box .box-card {
+      background: #fefefe;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px rgba(122, 122, 122, 0.5);
+      width: 215px;
+      height: 50px;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      z-index: 0;
+      -webkit-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out; }
+    .structure .box-wrapper .box .box-trace {
+      border-left: 4px dotted orange;
+      width: 5px;
+      opacity: 0;
+      position: absolute;
+      top: 60px;
+      bottom: 0;
+      left: 50%;
+      -webkit-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out; }
+    .structure .box-wrapper .box .box-content {
+      font-size: .8em;
+      line-height: 1em;
+      position: relative;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      opacity: 0;
+      -webkit-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out; }
+    .structure .box-wrapper .box .box-photo {
+      background: #fff;
+      border-radius: 40px;
+      box-shadow: 1px 1px 5px rgba(122, 122, 122, 0.5);
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      top: -15px;
+      right: -50px;
+      z-index: 11;
+      -webkit-transition: all 0.2s ease-in-out;
+      -o-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out; }
+      .structure .box-wrapper .box .box-photo img {
+        width: 100%; }
+    .structure .box-wrapper .box:hover {
+      z-index: 11; }
+      .structure .box-wrapper .box:hover .box-card {
+        top: 45px; }
+      .structure .box-wrapper .box:hover .box-photo {
+        top: 40px; }
+      .structure .box-wrapper .box:hover .box-content {
+        opacity: 1; }
+  .structure .box-wrapper .box-sublevel {
     opacity: 0;
-    -webkit-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out; }
-  .structure .box-wrapper .box .box-photo {
-    background: #fff;
-    border-radius: 40px;
-    box-shadow: 1px 1px 5px rgba(122, 122, 122, 0.5);
-    width: 80px;
-    height: 80px;
+    border-top: 4px dashed #aaa;
+    min-height: 150px;
     position: absolute;
-    top: -15px;
-    right: -50px;
-    z-index: 11;
-    -webkit-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out; }
-    .structure .box-wrapper .box .box-photo img {
-      width: 100%; }
-  .structure .box-wrapper .box:hover {
-    z-index: 11; }
-    .structure .box-wrapper .box:hover .box-card {
-      top: 45px; }
-    .structure .box-wrapper .box:hover .box-photo {
-      top: 40px; }
-    .structure .box-wrapper .box:hover .box-content {
-      opacity: 1; }
-.structure .box-wrapper .box-sublevel {
-  opacity: 0;
-  border-top: 4px dashed #aaa;
-  min-height: 150px;
-  position: absolute;
-  bottom: -165px;
-  left: 0;
-  right: 0; }
-.structure .box-wrapper.open {
-  z-index: 10; }
-  .structure .box-wrapper.open > .box {
-    z-index: 11; }
-    .structure .box-wrapper.open > .box > .box-card {
-      top: 45px; }
-    .structure .box-wrapper.open > .box > .box-card .box-content {
-      opacity: 1; }
-    .structure .box-wrapper.open > .box > .box-trace {
-      opacity: 1; }
-    @media screen and (min-width: 768px) {
+    bottom: -165px;
+    left: 0;
+    right: 0; }
+  .structure .box-wrapper.open {
+    z-index: 10; }
+    .structure .box-wrapper.open > .box {
+      z-index: 11; }
       .structure .box-wrapper.open > .box > .box-card {
-        top: 5px;
-        left: 180px; }
-      .structure .box-wrapper.open > .box > .box-shell .box-photo {
-        top: -15px;
-        right: -220px; } }
-  .structure .box-wrapper.open > .box-sublevel {
-    opacity: 1; }
-.structure .box-wrapper.shade {
-  z-index: 1; }
-  .structure .box-wrapper.shade > .box {
-    opacity: .2; }
-    .structure .box-wrapper.shade > .box:hover {
-      z-index: 12;
+        top: 45px; }
+      .structure .box-wrapper.open > .box > .box-card .box-content {
+        opacity: 1; }
+      .structure .box-wrapper.open > .box > .box-trace {
+        opacity: 1; }
+      @media screen and (min-width: 768px) {
+        .structure .box-wrapper.open > .box > .box-card {
+          top: 5px;
+          left: 180px; }
+        .structure .box-wrapper.open > .box > .box-shell .box-photo {
+          top: -15px;
+          right: -220px; } }
+    .structure .box-wrapper.open > .box-sublevel {
       opacity: 1; }
-.structure .box-wrapper.orange > .box > .box-shell {
-  background: url("../images/orange.png"); }
-.structure .box-wrapper.blue > .box > .box-shell {
-  background: url("../images/blue.png"); }
-.structure .box-wrapper.purple > .box > .box-shell {
-  background: url("../images/purple.png"); }
-.structure .box-wrapper.red > .box > .box-shell {
-  background: url("../images/red.png"); }
+  .structure .box-wrapper.shade {
+    z-index: 1; }
+    .structure .box-wrapper.shade > .box {
+      opacity: .2; }
+      .structure .box-wrapper.shade > .box:hover {
+        z-index: 12;
+        opacity: 1; }
+  .structure .box-wrapper.orange > .box > .box-shell {
+    background: url("../images/orange.png"); }
+  .structure .box-wrapper.blue > .box > .box-shell {
+    background: url("../images/blue.png"); }
+  .structure .box-wrapper.purple > .box > .box-shell {
+    background: url("../images/purple.png"); }
+  .structure .box-wrapper.red > .box > .box-shell {
+    background: url("../images/red.png"); }
 
 /*# sourceMappingURL=sec_structure.css.map */
