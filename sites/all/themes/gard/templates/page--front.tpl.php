@@ -80,8 +80,8 @@
     <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
   </button>
 
-  <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-    <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+  <a class="navbar-brand" href="<?php print $front_page; ?>" title="Кирово-Чепецкая Химическая Компания">
+    <img src="<?php print $logo; ?>" alt="Кирово-Чепецкая Химическая Компания" />
   </a>
 
   <div class="primary-d-menu hidden-xs hidden-sm">
