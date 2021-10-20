@@ -859,7 +859,7 @@ function before_after_get_atfield($sid)
               $prep_info2 = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation2->value())['items']);
               $title2 = $prep_info2['title'] . ($prep_info2['form_short'] ? ', ' . $prep_info2['form_short'] : '');
               $dv = [];
-              foreach ($prep_info['ingredients'] as $ingredient) {
+              foreach ($prep_info2['ingredients'] as $ingredient) {
                 $dv[] = $ingredient['full'];
               }
               $preparations[] = [

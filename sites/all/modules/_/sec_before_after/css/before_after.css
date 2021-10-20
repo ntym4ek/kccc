@@ -289,7 +289,7 @@
 .column table td {
   border-left: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  padding: 10px; }
+  padding: 5px 10px; }
 .column table th:last-child,
 .column table td:last-child {
   border-right: 1px solid #ddd;
