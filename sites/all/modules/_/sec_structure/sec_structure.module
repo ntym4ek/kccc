@@ -74,7 +74,7 @@ function sec_structure_get_structure()
               'child' => [
                 [
                   'shell' => 'Административный корпус',
-                  'card' => 'Описание обитателей данного корпуса',
+                  'card' => '',
                   'class' => 'deepblue',
                   '#theme' => 'structure_box',
                   'level' => [
@@ -91,9 +91,26 @@ function sec_structure_get_structure()
                           'child' => [
                             [
                               'shell' => 'Финансово-экономический отдел',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Экономист',
+                                    'card' => 'Блохина Светлана Ивановна<a href="mailto:svetlana.blokhina@kccc.ru">svetlana.blokhina@kccc.ru</a>т. 76-15-21 (11-15)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Экономист<span style="font-size: .8em">по нормированию труда</span>',
+                                    'card' => 'Овсейчик Елена Владимировна<br>т. 76-15-21 (11-19)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                           ],
                         ],
@@ -108,10 +125,21 @@ function sec_structure_get_structure()
                           '#theme' => 'structure_level',
                           'child' => [
                             [
-                              'shell' => 'Какой это отдел?',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'shell' => 'Юридический отдел',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Заместитель руководителя',
+                                    'card' => 'Изергин Константин Владимирович<a href="mailto:konstantin.izergin@kccc.ru">konstantin.izergin@kccc.ru</a>т. 76-15-22 (11-28)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                           ],
                         ],
@@ -127,15 +155,49 @@ function sec_structure_get_structure()
                           'child' => [
                             [
                               'shell' => 'Бухгалтерия',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Заместитель главного бухгалтера',
+                                    'card' => 'Бобков Михаил Юрьевич<a href="mailto:michael.bobkov@kccc.ru">michael.bobkov@kccc.ru</a>т. 76-15-25 (11-36)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Ведущий бухгалтер<span style="font-size: .8em">по расчету с персоналом</span>',
+                                    'card' => 'Койсина Алевтина Михайловна<a href="mailto:alevtina.koysina@kccc.ru">alevtina.koysina@kccc.ru</a>т. 76-15-25 (11-34)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                             [
                               'shell' => 'Отдел информационных технологий',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Ведущий специалист<span style="font-size: .8em">по защите информации</span>',
+                                    'card' => 'Лучников Александр Альфредович<a href="mailto:aluch@kccc.ru">aluch@kccc.ru</a>т. 76-15-21 (11-13)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Инженер-системный программист',
+                                    'card' => 'Асхадуллин Ильшат Ильдусович<a href="mailto:ilshat.askhadullin@kccc.ru">ilshat.askhadullin@kccc.ru</a>т. 76-15-21 (11-82)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                           ],
                         ],
@@ -151,21 +213,60 @@ function sec_structure_get_structure()
                           'child' => [
                             [
                               'shell' => 'Служба управления персоналом',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Зам. административного директора',
+                                    'card' => 'Огородова Мария Николаевна<a href="mailto:maria.ogorodova@kccc.ru">maria.ogorodova@kccc.ru</a>т. 76-15-22 (11-86)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
+                                    'shell' => 'Администратор офиса',
+                                    'card' => 'Гвоздкова Елена Александровна<a href="mailto:td@kccc.ru">td@kccc.ru</a>т. 76-15-21 (11-07)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                             [
                               'shell' => 'Отдел логистики',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Начальник отдела логистики',
+                                    'card' => 'Комлева Владилена Валериевна<a href="mailto:vlada.komleva@kccc.ru">vlada.komleva@kccc.ru</a>т. 76-15-23 (11-68)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                             [
                               'shell' => 'Отдел снабжения',
-                              'card' => 'Краткое описание функционала службы и тел.',
+                              'card' => '',
                               'class' => 'blue',
                               '#theme' => 'structure_box',
+                              'level' => [
+                                '#theme' => 'structure_level',
+                                'child' => [
+                                  [
+                                    'shell' => 'Начальник отдела снабжения',
+                                    'card' => 'Чернавский Александр Юрьевич<a href="mailto:aleksandr.chernavsky@kccc.ru">aleksandr.chernavsky@kccc.ru</a>т. 76-15-27 (11-23)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                ],
+                              ],
                             ],
                           ],
                         ],
@@ -175,7 +276,7 @@ function sec_structure_get_structure()
                 ],
                 [
                   'shell' => 'Производственный корпус',
-                  'card' => 'Описание обитателей данного корпуса',
+                  'card' => '',
                   'class' => 'deepblue',
                   '#theme' => 'structure_box',
                   'level' => [
@@ -191,17 +292,22 @@ function sec_structure_get_structure()
                           '#theme' => 'structure_level',
                           'child' => [
                             [
-                              'shell' => 'Производство смол',
-                              'card' => 'ИСТАМОВ<br>Вахид Кахарович',
-                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'shell' => 'Участок производства смол',
+                              'card' => '',
                               'class' => 'purple',
                               '#theme' => 'structure_box',
                               'level' => [
                                 '#theme' => 'structure_level',
                                 'child' => [
                                   [
+                                    'shell' => 'Начальник производства',
+                                    'card' => 'ИСТАМОВ Вахид Кахарович<a href="mailto:vakhid.istamov@kccc.ru">vakhid.istamov@kccc.ru</a>т. 76-15-24 (11-38)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
                                     'shell' => 'Зам. начальника производства',
-                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'card' => 'ШИБАНОВ Дмитрий Сергеевич<br>т. 76-15-24 (11-38)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
                                   ],
@@ -209,17 +315,22 @@ function sec_structure_get_structure()
                               ],
                             ],
                             [
-                              'shell' => 'Производство ХСЗР',
-                              'card' => 'ШУМИЛОВ<br>Алексей Владимирович',
-                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'shell' => 'Участок производства ХСЗР',
+                              'card' => '',
                               'class' => 'purple',
                               '#theme' => 'structure_box',
                               'level' => [
                                 '#theme' => 'structure_level',
                                 'child' => [
                                   [
+                                    'shell' => 'Начальник производства',
+                                    'card' => 'ШУМИЛОВ Алексей Владимирович<a href="mailto:aleksey.shumilov@kccc.ru">aleksey.shumilov@kccc.ru</a>т. 76-15-24 (11-97)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
                                     'shell' => 'Зам. начальника производства',
-                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'card' => 'ПЕХОТИН Александр Викторович<a href="mailto:aleksandr.pehotin@kccc.ru">aleksandr.pehotin@kccc.ru</a>т. 76-15-24 (11-97)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
                                   ],
@@ -228,40 +339,39 @@ function sec_structure_get_structure()
                             ],
                             [
                               'shell' => 'Служба главного технолога',
-                              'card' => 'ДЮПИН<br>Вячеслав Викторович',
-                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'card' => '',
                               'class' => 'purple',
                               '#theme' => 'structure_box',
                               'level' => [
                                 '#theme' => 'structure_level',
                                 'child' => [
                                   [
-                                    'shell' => 'Технологическая служба',
-                                    'card' => 'Краткое описание функционала службы и тел.',
-                                    'class' => 'blue',
-                                    '#theme' => 'structure_box',
-                                  ],
-                                  [
-                                    'shell' => 'Отдел развития новых продуктов и технологий',
-                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'shell' => 'Начальник производства',
+                                    'card' => 'ДЮПИН Вячеслав Викторович<a href="mailto:vyacheslav.dyupin@kccc.ru">vyacheslav.dyupin@kccc.ru</a>т. 76-15-24 (11-39)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
                                   ],
                                 ],
                               ],
+
                             ],
                             [
                               'shell' => 'Складское хозяйство',
-                              'card' => 'ЛЯЛИНА<br>Ольга Владимировна',
-                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'card' => '',
                               'class' => 'purple',
                               '#theme' => 'structure_box',
                               'level' => [
                                 '#theme' => 'structure_level',
                                 'child' => [
                                   [
+                                    'shell' => 'Начальник складского хозяйства',
+                                    'card' => 'ЛЯЛИНА Ольга Владимировна<a href="mailto:olga.cepaeva@kccc.ru">olga.cepaeva@kccc.ru</a>т. 76-15-26 (11-31)',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                  ],
+                                  [
                                     'shell' => 'Зам. начальника складского хозяйства',
-                                    'card' => 'Краткое описание функционала службы и тел.',
+                                    'card' => 'ДЮНЯШЕВА Лариса Викторовна<a href="mailto:larisa.dyunyasheva@kccc.ru">larisa.dyunyasheva@kccc.ru</a>т. 76-15-26 (11-31)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
                                   ],
@@ -269,9 +379,8 @@ function sec_structure_get_structure()
                               ],
                             ],
                             [
-                              'shell' => 'Прочие службы',
-                              'card' => 'Что здесь?',
-                              'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                              'shell' => 'Сервисные службы',
+                              'card' => '',
                               'class' => 'purple',
                               '#theme' => 'structure_box',
                               'level' => [
@@ -279,39 +388,155 @@ function sec_structure_get_structure()
                                 'child' => [
                                   [
                                     'shell' => 'Механическая служба',
-                                    'card' => 'ЧЕРЕПАНОВ<br>Дмитрий Владимирович',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Главный механик',
+                                          'card' => 'ЧЕРЕПАНОВ Дмитрий Владимирович<a href="mailto:dmitry.cherepanov@kccc.ru">dmitry.cherepanov@kccc.ru</a>т. 76-15-27 (11-42)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
                                   ],
                                   [
                                     'shell' => 'Электрослужба',
-                                    'card' => 'ОБУХОВ<br>Михаил Сергеевич',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Главный энергетик',
+                                          'card' => 'ОБУХОВ Михаил Сергеевич<a href="mailto:mikhail.obukhov@kccc.ru">mikhail.obukhov@kccc.ru</a>т. 76-15-26 (11-31)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                        [
+                                          'shell' => 'Зам. главного энергетика',
+                                          'card' => 'ЮФЕРЕВ Андрей Александрович<a href="mailto:andrey.yuferev@kccc.ru">andrey.yuferev@kccc.ru</a>т. 76-15-26 (11-31)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
                                   ],
                                   [
                                     'shell' => 'Служба КИПиА',
-                                    'card' => 'КВАКИН<br>Вадим Геннадьевич',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Начальник службы',
+                                          'card' => 'БАБОКИН Андрей Александрович<a href="mailto:andrey.babokin@kccc.ru">andrey.babokin@kccc.ru</a>т. +7 912 737 29 82',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
+
                                   ],
                                   [
                                     'shell' => 'Технический отдел',
-                                    'card' => 'БАИКИНА<br>Эльвира Анатольевна',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Начальник технического отдела',
+                                          'card' => 'БЕЛОЗЕРОВ Алексей Федорович<a href="mailto:alexey.belozerov@kccc.ru">alexey.belozerov@kccc.ru</a>т. 76-15-22 (11-20)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
+
                                   ],
                                   [
                                     'shell' => 'Отдел промышленной безопасности',
-                                    'card' => 'ОЛЮНИН<br>Дмитрий Витальевич',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Начальник отдела',
+                                          'card' => 'ОЛЮНИН Дмитрий Витальевич<a href="mailto:dmitriy.olyunin@kccc.ru">dmitriy.olyunin@kccc.ru</a>т. 76-15-22 (12-34)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                        [
+                                          'shell' => 'Специалист по охране труда',
+                                          'card' => 'БУЛАНОВ Андрей Николаевич<a href="mailto:andrei.bulanov@kccc.ru">andrei.bulanov@kccc.ru</a>т. 76-15-22 (11-18)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                        [
+                                          'shell' => 'Инженер по охране окружающей среды',
+                                          'card' => 'КАРГАПОЛЬЦЕВА Анастасия Аркадьевна<a href="mailto:anastasia.kargapoltseva@kccc.ru">anastasia.kargapoltseva@kccc.ru</a>т. 76-15-22 (11-17)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                        [
+                                          'shell' => 'Медработник',
+                                          'card' => 'ШУМИХИНА Светлана Петровна',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
+
                                   ],
                                   [
                                     'shell' => 'Хозяйственная служба',
-                                    'card' => 'ШУКЛИН<br>Алексей Александрович',
+                                    'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Начальник хозяйственной службы',
+                                          'card' => 'ШУКЛИН Алексей Александрович<br>т. +7 953 139 47 89',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                        [
+                                          'shell' => 'Зам. начальника хозяйственной службы',
+                                          'card' => 'МИХАЙЛОВ Эдуард Викторович<br>т. +7 909 131 66 09',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
+                                  ],
+                                  [
+                                    'shell' => 'Автотранспортная служба',
+                                    'card' => '',
+                                    'class' => 'blue',
+                                    '#theme' => 'structure_box',
+                                    'level' => [
+                                      '#theme' => 'structure_level',
+                                      'child' => [
+                                        [
+                                          'shell' => 'Специалист по автранспорту',
+                                          'card' => 'ШУКЛИН Алексей Александрович<a href="mailto:td.sale7@kccc.ru">td.sale7@kccc.ru</a>т. 76-15-21 (11-19)',
+                                          'class' => 'blue',
+                                          '#theme' => 'structure_box',
+                                        ],
+                                      ],
+                                    ],
                                   ],
                                 ],
                               ],
@@ -321,24 +546,84 @@ function sec_structure_get_structure()
                       ],
                       [
                         'shell' => 'Отдел реализации проектов',
-                        'card' => 'Что-то с чем-то',
-                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'card' => '',
                         'class' => 'red',
                         '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Руководитель проектов',
+                              'card' => 'СМИРНОВ Яков Эдуардович<a href="mailto:yakov.smirnov@kccc.ru">yakov.smirnov@kccc.ru</a>т. +7 912 820 11 11',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                            [
+                              'shell' => 'Руководитель проекта',
+                              'card' => 'ГУТОВСКИЙ Дмитрий Владимирович<a href="mailto:dmitry.gutovsky@kccc.ru">dmitry.gutovsky@kccc.ru</a>т. +7 953 689 01 31',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
                       ],
                       [
                         'shell' => 'Испытательная лаборатория',
-                        'card' => 'ВОРОНЧИХИНА<br>Екатерина Аркадьевна',
-                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'card' => '',
                         'class' => 'purple',
                         '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Начальник лаборатории',
+                              'card' => 'ВОРОНЧИХИНА Екатерина Аркадьевна<a href="mailto:ekaterina.voronchihina@kccc.ru">ekaterina.voronchihina@kccc.ru</a>т. 76-15-26 (11-92)',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                            [
+                              'shell' => 'Зам.начальника лаборатории',
+                              'card' => 'АНДРЕЕВА Наталия Игоревна<br>т. 76-15-26 (11-92)',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+                      ],
+                      [
+                        'shell' => 'Отдел развития новых продуктов и технологий',
+                        'card' => '',
+                        'class' => 'purple',
+                        '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Руководитель исследовательской группы',
+                              'card' => 'ЦЕЛИЩЕВ Дмитрий Владимирович<a href="mailto:dmitry.tselishev@kccc.ru">dmitry.tselishev@kccc.ru</a>т. 76-15-24 (11-40)',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
                       ],
                       [
                         'shell' => 'Отдел технического контроля',
-                        'card' => 'ЕВТУШЕНКО<br>Диана Юрьевна',
-                        'photo' => drupal_get_path('module', 'sec_structure') . '/images/dumb.png',
+                        'card' => '',
                         'class' => 'blue',
                         '#theme' => 'structure_box',
+                        'level' => [
+                          '#theme' => 'structure_level',
+                          'child' => [
+                            [
+                              'shell' => 'Начальник отдела',
+                              'card' => 'ЕВТУШЕНКО Диана Юрьевна<a href="mailto:diana.evtushenko@kccc.ru">diana.evtushenko@kccc.ru</a>т. 76-15-26 (11-92)',
+                              'class' => 'blue',
+                              '#theme' => 'structure_box',
+                            ],
+                          ],
+                        ],
+
                       ],
 
                     ],

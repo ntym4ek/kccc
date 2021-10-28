@@ -6,7 +6,7 @@
         <div class="box-photo"><img src="<? print $element['photo']; ?>" /></div>
       <? endif; ?>
     </div>
-    <div class="box-card">
+    <div class="box-card<? print (empty($element['card']) ? ' empty' : ''); ?>">
       <div class="box-content">
         <? print $element['card']; ?>
       </div>

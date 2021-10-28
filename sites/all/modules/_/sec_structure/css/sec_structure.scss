@@ -19,16 +19,16 @@
       margin: 15px 15px 30px 15px;
       .box-shell {
         color: #eee; font-size: 14px; line-height: 1.1em;
-        padding: 3px 25px 3px 15px;
+        padding: 3px 20px 3px 15px;
         width: 200px; height: 50px;
         background: url("../images/deepblue.png");
         position: absolute; z-index: 10;
-        display: flex; align-items: center;
+        display: flex; align-items: center; flex-wrap: wrap; align-content: center;
       }
       .box-card {
         background: #fefefe;
         border-radius: 5px; box-shadow: 1px 1px 5px rgba(122,122,122,.5);
-        width: 215px; height: 50px;
+        min-width: 235px; height: 55px;
         position: absolute; top: 5px; left: 5px; z-index: 0;
         @include transition(all 0.2s ease-in-out);
       }
@@ -43,7 +43,7 @@
         font-size: .8em; line-height: 1em;
         position: relative;
         padding: 10px 15px;
-        display: flex; align-items: center;
+        display: flex; align-items: center; flex-wrap: wrap;
         height: 100%;
         opacity: 0;
         @include transition(all 0.2s ease-in-out);
@@ -54,14 +54,14 @@
         border-radius: 40px;
         box-shadow: 1px 1px 5px rgba(122,122,122,.5);
         width: 80px; height: 80px;
-        position: absolute; top: -15px; right: -50px; z-index: 11;
+        position: absolute; top: -15px; right: -65px; z-index: 11;
         @include transition(all 0.2s ease-in-out);
         img { width: 100%; }
       }
 
       &:hover {
         z-index: 11;
-        .box-card { top: 45px; }
+        .box-card:not(.empty) { top: 45px; }
         .box-photo { top: 40px; }
         .box-content { opacity: 1; }
       }
@@ -76,12 +76,12 @@
       z-index: 10;
       > .box {
         z-index: 11;
-        > .box-card { top: 45px; }
+        > .box-card:not(.empty) { top: 45px; }
         > .box-card .box-content { opacity: 1; }
         > .box-trace { opacity: 1; }
         @media #{$tablet} {
-          > .box-card { top: 5px; left: 180px; }
-          > .box-shell .box-photo { top: -15px; right: -220px; }
+          > .box-card:not(.empty) { top: 5px; left: 180px; }
+          > .box-shell .box-photo { top: -15px; right: -235px; }
         }
       }
       > .box-sublevel {
