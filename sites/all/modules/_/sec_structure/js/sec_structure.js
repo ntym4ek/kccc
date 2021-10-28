@@ -55,12 +55,19 @@
         box.find(".box-trace").css("bottom", delta*-1);
 
         // высота страницы
-        height = getHeight($(".structure .s-level"));
-        if (height > $(".structure").height()) {
-          $(".structure").css("height", height);
+        var page_height = getHeight($(".structure .s-level"));
+        if (page_height > $(".structure").height()) {
+          $(".structure").css("height", page_height);
         }
-
       });
+
+      // trace для верхнего бокса
+      var box = $(".structure > .s-level > .s-boxes > .box-wrapper > .box");
+      var wrapper = box.closest(".box-wrapper");
+      var box_bottom = box.offset().top + box.outerHeight();
+      var parent_bottom = wrapper.closest(".s-level").offset().top + wrapper.closest(".s-level").outerHeight();
+      var delta = parent_bottom - box_bottom;
+      box.children(".box-trace").css("bottom", delta*-1);
 
     }
   };
