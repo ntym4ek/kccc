@@ -346,7 +346,7 @@ function sec_structure_get_structure()
                                 '#theme' => 'structure_level',
                                 'child' => [
                                   [
-                                    'shell' => 'Начальник производства',
+                                    'shell' => 'Главный технолог',
                                     'card' => 'ДЮПИН Вячеслав Викторович<a href="mailto:vyacheslav.dyupin@kccc.ru">vyacheslav.dyupin@kccc.ru</a>т. 76-15-24 (11-39)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
@@ -431,18 +431,6 @@ function sec_structure_get_structure()
                                     'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
-                                    'level' => [
-                                      '#theme' => 'structure_level',
-                                      'child' => [
-                                        [
-                                          'shell' => 'Начальник службы',
-                                          'card' => 'БАБОКИН Андрей Александрович<a href="mailto:andrey.babokin@kccc.ru">andrey.babokin@kccc.ru</a>т. +7 912 737 29 82',
-                                          'class' => 'blue',
-                                          '#theme' => 'structure_box',
-                                        ],
-                                      ],
-                                    ],
-
                                   ],
                                   [
                                     'shell' => 'Технический отдел',
@@ -522,7 +510,7 @@ function sec_structure_get_structure()
                                     ],
                                   ],
                                   [
-                                    'shell' => 'Автотранспортная служба',
+                                    'shell' => 'Автотранспортный отдел',
                                     'card' => '',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',

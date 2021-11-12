@@ -874,6 +874,17 @@ function representatives_sales_list()
   $sales[] = array(
     'roles' =>  ['representative'],
     'access' => false,
+    'surname' => 'Савин', 'name' => 'Денис', 'name2' => 'Александрович',
+    'phones' => array(''),
+    'emails' => array('tomsk@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/savin_d.png',
+    'regions' => array(
+      71716 => [], //Томская область",
+    ),
+  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'access' => false,
     'surname' => 'Цикунова', 'name' => 'Екатерина', 'name2' => 'Анатольевна',
     'phones' => array('+7 (922) 916-71-57'),
     'emails' => array('tula1@kccc.ru'),
