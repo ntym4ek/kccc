@@ -350,9 +350,14 @@ function gard_preprocess_page(&$vars)
         $vars['row_2']['block_2'] = $vars['page']['content']['block_19'];
       }
 
-      if (isset($vars['page']['content']['block_20'])) {
+      // блок joy или слайдер с афишей
+      if (isset($vars['page']['content']['views_sliders-block_2']) && strpos($vars["page"]["content"]["views_sliders-block_2"]["#markup"], 'empty') === false) {
+        $vars['row_3']['block_1'] = $vars['page']['content']['views_sliders-block_2'];
+      } else {
         $vars['row_3']['block_1'] = $vars['page']['content']['block_20'];
       }
+
+
       if (isset($vars['page']['content']['views_interesting_facts-block'])) {
         $vars['row_3']['block_2'] = $vars['page']['content']['views_interesting_facts-block'];
       }

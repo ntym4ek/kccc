@@ -332,7 +332,7 @@ function _chibs_check_and_place_news_to_front($node_updated)
 function _chibs_check_and_place_agenda_to_front($node)
 {
     $voc = taxonomy_vocabulary_machine_name_load('slider_category');
-    $parent = 72758;
+    $parent = 73161;
 
     // найти Слайдер, относящийся к этому Материалу
     $query = db_select('taxonomy_term_data', 't');
@@ -362,7 +362,7 @@ function _chibs_check_and_place_agenda_to_front($node)
         $url = 'node/' . $node->nid; // path_alias ещё не сформирован и неизвестен
         $term_wr->language('ru')->name_field = $node->title;
         $term_wr->language('ru')->description_field->format = 'php_code';
-        $term_wr->language('ru')->description_field->value =    '<a class="show-more" href="<?php print url(\'' . $url . '\'); ?>"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>';
+        $term_wr->language('ru')->description_field->value =    '<p>Афиша</p>';
         $term_wr->field_link = $url;
         $term_wr->field_text = 'Подробнее o мероприятии';
         $term_wr->field_promo_image->set($node->field_promo_image['und'][0]);
@@ -1597,3 +1597,4 @@ function chibs_get_representatives_address()
     ]],
   ];
 }
+
