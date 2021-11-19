@@ -646,7 +646,10 @@
   header.navbar {
     background: none;
     box-shadow: none;
-    position: absolute; top: 30px;
+    position: absolute; top: 0;
+    @media #{$tablet} {
+      top: 30px;
+    }
     .navbar-brand { display: none; }
     .btn-header {
       border-color: transparent;

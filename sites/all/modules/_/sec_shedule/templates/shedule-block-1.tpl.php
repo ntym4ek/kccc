@@ -2,7 +2,7 @@
     <div class="header">
         <div class="box1">1</div>
         <div class="box2">
-            <div class="line1"><? print $content[ROOM1]['title']; ?></div>
+          <div class="line1"><a href="/shedule/room/1"><? print $content[ROOM1]['title']; ?></a></div>
             <div class="line2"><? print $content[ROOM1]['floor_text']; ?></div>
         </div>
         <? if ($content['admin']): ?><a href="/node/add/room-event" class="add-link"><i class="fas fa-plus"></i></a><? endif; ?>

@@ -24,6 +24,14 @@ function shedule_menu()
 //        'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
+    $items['shedule/room/%'] = array(
+        'page callback' => 'shedule_room_page',
+        'page arguments' => array(2),
+        'access callback' => true,
+//        'access callback' => '_user_has_role',
+//        'access arguments' => array('6'),       // только для роли Сотрудник
+        'type' => MENU_CALLBACK,
+    );
 
     return $items;
 }
@@ -34,6 +42,10 @@ function shedule_menu()
 function shedule_theme()
 {
     return array(
+        'shedule_room_page' => array(
+            'variables' => array('room' => NULL),
+            'template' => 'templates/shedule-room-page',
+        ),
         'shedule_page' => array(
             'variables' => array('content' => NULL),
             'template' => 'templates/shedule-page',
@@ -68,58 +80,25 @@ function shedule_theme()
 /**
  * menu callback
  */
+function shedule_room_page($room_num)
+{
+  $shedule = shedule_get_events_by_date(24*60);
+
+  if (isset($shedule[constant('ROOM'.$room_num)])) {
+    $room = $shedule[constant('ROOM'.$room_num)];
+  }
+
+  return theme('shedule_room_page', ['room' => $room]);
+}
+
+/**
+ * menu callback
+ */
 function shedule_page($ajax)
 {
     if ($ajax == 'ajax') {
 
-        $content = [
-            'admin' => _user_has_role(6),
-        ];
-
-        // допустимые значения для поля Этаж
-        $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
-
-        // выбрать все текущие или идущие события на сегодняшний день
-        if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
-            foreach ($rooms as $room) {
-                $content[$room->tid] = [
-                    'title' => $room->name,
-                    'floor' => $room->field_floor['und'][0]['value'],
-                    'floor_text' => trim($field_floor_allowed_values[$room->field_floor['und'][0]['value']]),
-                ];
-            }
-        }
-
-        // выбрать все текущие или идущие события на сегодняшний день
-        if ($events = shedule_get_events_by_date(time(), false)) {
-            foreach ($events as $eid => $event) {
-                $room_id = $event->field_room_tid;
-                if (!isset($content[$room_id]['events']) || count($content[$room_id]['events']) < 3) {
-                    $content[$room_id]['events'][$eid] = [
-                        'title' => $event->title,
-                        'description' => $event->body_value,
-                        'start' => date('H:i', $event->field_period_value),
-                        'started' => (time() > $event->field_period_value) ? ' started' : '',
-                    ];
-                }
-
-                // события, до начала которых или с начала которых 15 минут в нижний блок
-                $now = time();
-    //            if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value > $now)
-    //                || ($event->field_period_value < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
-                if (($event->field_period_value - TIME_TO_FOOTER*60 < $now && $event->field_period_value + TIME_TO_FOOTER*60 > $now)) {
-                    $content['footer']['events'][$eid] = [
-                        'title' => $event->title,
-                        'start' => date('H:i', $event->field_period_value),
-                        'floor' => $content[$room_id]['floor'],
-                        'started' => $content[$room_id]['events'][$eid]['started'],
-                        'hurry' => $event->field_period_value - 2*60 < $now ? true : false,
-                    ];
-
-                }
-
-            }
-        }
+        $content = shedule_get_events_by_date(TIME_TO_FOOTER);
 
         $result = array(
             '#type' => 'ajax',
@@ -135,11 +114,52 @@ function shedule_page($ajax)
         ajax_deliver($result);
         drupal_exit();
     } else {
-        drupal_add_library('system', 'drupal.ajax');
-        drupal_add_css(drupal_get_path('module', 'shedule') . '/css/shedule.css');
-        drupal_add_js(drupal_get_path('module', 'shedule') . '/js/shedule.autorefresh.js');
         return theme('shedule_page');
     }
+}
+
+function shedule_get_events_by_date($closest_event_remain_time)
+{
+  $content = [
+    'admin' => user_has_role(ROLE_STAFF),
+  ];
+
+  // допустимые значения для поля Этаж
+  $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
+
+  // выбрать все текущие или идущие события на сегодняшний день
+  if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
+    foreach ($rooms as $room) {
+      $content[$room->tid] = [
+        'title' => $room->name,
+        'floor' => $room->field_floor['und'][0]['value'],
+        'floor_text' => trim($field_floor_allowed_values[$room->field_floor['und'][0]['value']]),
+      ];
+    }
+  }
+
+  // выбрать все текущие или идущие события на сегодняшний день
+  $now = time();
+  if ($events = _get_events_by_date($now, false)) {
+    foreach ($events as $eid => $event) {
+      $room_id = $event->field_room_tid;
+      if (!isset($content[$room_id]['events']) || count($content[$room_id]['events']) < 3) {
+        $content[$room_id]['events'][$event->field_period_value] = [
+          'eid' => $eid,
+          'title' => $event->title,
+          'description' => $event->body_value,
+          'start' => date('H:i', $event->field_period_value),
+          'finish' => date('H:i', $event->field_period_value2),
+          'started' => ($now > $event->field_period_value) ? ' started' : '',
+          'participants' => $event->field_participants,
+        ];
+      }
+    }
+
+    ksort($content[$room_id]['events']);
+  }
+
+  return $content;
 }
 
 /**
@@ -187,7 +207,7 @@ function shedule_form_room_event_node_form_submit($form, &$form_state)
  * @param bool $all - все или за исключением прошедших
  * @return array
  */
-function shedule_get_events_by_date($date, $all = true)
+function _get_events_by_date($date, $all = true)
 {
     $query = db_select('node', 'n');
     $query->condition('n.type', 'room_event');
@@ -202,7 +222,19 @@ function shedule_get_events_by_date($date, $all = true)
     $query->fields('fb', ['body_value']);
     $query->fields('fr', ['field_room_tid']);
     $query->orderBy('field_period_value');
-    return $query->execute()->fetchAllAssoc('nid');
+    if ($results = $query->execute()->fetchAllAssoc('nid')) {
+      foreach ($results as $eid => &$result) {
+        $query = db_select('field_data_field_participants', 'fp');
+        $query->condition('fp.entity_id', $result->nid);
+        $query->fields('fp', ['field_participants_value']);
+        $query->leftJoin('field_data_field_company', 'fc', 'fc.entity_id = fp.field_participants_value');
+        $query->fields('fc', ['field_company_value']);
+        $query->leftJoin('field_data_field_participants_list', 'fpl', 'fpl.entity_id = fp.field_participants_value');
+        $query->fields('fpl', ['field_participants_list_value']);
+        $result->field_participants = $query->execute()->fetchAllAssoc('field_participants_value');
+      }
+    }
+    return $results;
 }
 
 /**
@@ -212,7 +244,10 @@ function shedule_preprocess_page(&$vars)
 {
     // сменить шаблон страницы на пустой,
     // чтобы иметь возможность развернуться на весь экран
-    if (arg(0) == 'shedule' && !arg(1)) {
+    if (arg(0) == 'shedule') {
         $vars['theme_hook_suggestions'][] = 'page__empty';
+      drupal_add_css(drupal_get_path('module', 'shedule') . '/css/shedule.css');
+      drupal_add_library('system', 'drupal.ajax');
+      drupal_add_js(drupal_get_path('module', 'shedule') . '/js/shedule.autorefresh.js');
     }
 }

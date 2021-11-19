@@ -5842,7 +5842,7 @@ button.close {
   color: #36AA3D; }
 
 .brand-blue {
-  color: #0C6099; }
+  color: #213a6e; }
 
 .brand-red {
   color: #CF142B; }
@@ -5854,7 +5854,7 @@ button.close {
   background-color: #36AA3D; }
 
 .brand-blue-bkg {
-  background-color: #0C6099; }
+  background-color: #213a6e; }
 
 .brand-red-bkg {
   background-color: #CF142B; }
@@ -7518,36 +7518,36 @@ a.icon-after .glyphicon {
         color: inherit; }
       .tabs.secondary li.active {
         color: #fff;
-        background-color: #0C6099;
-        border-color: #08426a;
+        background-color: #213a6e;
+        border-color: #152547;
         -webkit-transition: all 0.3s ease-in-out;
         -o-transition: all 0.3s ease-in-out;
         transition: all 0.3s ease-in-out; }
         .tabs.secondary li.active:focus, .tabs.secondary li.active.focus {
           color: #fff;
-          background-color: #08426a;
+          background-color: #152547;
           border-color: black;
           text-decoration: none; }
         .tabs.secondary li.active:hover {
           color: #fff;
-          background-color: #08426a;
-          border-color: #041f31;
+          background-color: #152547;
+          border-color: #070c18;
           text-decoration: none; }
         .tabs.secondary li.active:active, .tabs.secondary li.active.active, .open > .tabs.secondary li.active.dropdown-toggle {
           color: #fff;
-          background-color: #08426a;
-          border-color: #041f31; }
+          background-color: #152547;
+          border-color: #070c18; }
           .tabs.secondary li.active:active:hover, .tabs.secondary li.active:active:focus, .tabs.secondary li.active:active.focus, .tabs.secondary li.active.active:hover, .tabs.secondary li.active.active:focus, .tabs.secondary li.active.active.focus, .open > .tabs.secondary li.active.dropdown-toggle:hover, .open > .tabs.secondary li.active.dropdown-toggle:focus, .open > .tabs.secondary li.active.dropdown-toggle.focus {
             color: #fff;
-            background-color: #062e49;
+            background-color: #0d172b;
             border-color: black; }
         .tabs.secondary li.active:active, .tabs.secondary li.active.active, .open > .tabs.secondary li.active.dropdown-toggle {
           background-image: none; }
         .tabs.secondary li.active.disabled:hover, .tabs.secondary li.active.disabled:focus, .tabs.secondary li.active.disabled.focus, .tabs.secondary li.active[disabled]:hover, .tabs.secondary li.active[disabled]:focus, .tabs.secondary li.active[disabled].focus, fieldset[disabled] .tabs.secondary li.active:hover, fieldset[disabled] .tabs.secondary li.active:focus, fieldset[disabled] .tabs.secondary li.active.focus {
-          background-color: #0C6099;
-          border-color: #08426a; }
+          background-color: #213a6e;
+          border-color: #152547; }
         .tabs.secondary li.active .badge {
-          color: #0C6099;
+          color: #213a6e;
           background-color: #fff; }
 
 .tabs--primary {
@@ -7726,7 +7726,7 @@ a.icon-after .glyphicon {
       color: #333333;
       text-transform: none; }
     #bootstrap-slider.carousel .carousel-caption h2 {
-      color: #0C6099;
+      color: #213a6e;
       font-size: 22px;
       font-weight: 500;
       letter-spacing: -1px;
@@ -7832,7 +7832,10 @@ a.icon-after .glyphicon {
   background: none;
   box-shadow: none;
   position: absolute;
-  top: 30px; }
+  top: 0; }
+  @media screen and (min-width: 768px) {
+    .front header.navbar {
+      top: 30px; } }
   .front header.navbar .navbar-brand {
     display: none; }
   .front header.navbar .btn-header {
@@ -8678,36 +8681,36 @@ form.confirmation .form-actions {
   line-height: 14px;
   border-radius: 2px;
   color: #fff;
-  background-color: #0C6099;
-  border-color: #08426a;
+  background-color: #213a6e;
+  border-color: #152547;
   -webkit-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
   .af-button-large:focus, .af-button-large.focus {
     color: #fff;
-    background-color: #08426a;
+    background-color: #152547;
     border-color: black;
     text-decoration: none; }
   .af-button-large:hover {
     color: #fff;
-    background-color: #08426a;
-    border-color: #041f31;
+    background-color: #152547;
+    border-color: #070c18;
     text-decoration: none; }
   .af-button-large:active, .af-button-large.active, .open > .af-button-large.dropdown-toggle {
     color: #fff;
-    background-color: #08426a;
-    border-color: #041f31; }
+    background-color: #152547;
+    border-color: #070c18; }
     .af-button-large:active:hover, .af-button-large:active:focus, .af-button-large:active.focus, .af-button-large.active:hover, .af-button-large.active:focus, .af-button-large.active.focus, .open > .af-button-large.dropdown-toggle:hover, .open > .af-button-large.dropdown-toggle:focus, .open > .af-button-large.dropdown-toggle.focus {
       color: #fff;
-      background-color: #062e49;
+      background-color: #0d172b;
       border-color: black; }
   .af-button-large:active, .af-button-large.active, .open > .af-button-large.dropdown-toggle {
     background-image: none; }
   .af-button-large.disabled:hover, .af-button-large.disabled:focus, .af-button-large.disabled.focus, .af-button-large[disabled]:hover, .af-button-large[disabled]:focus, .af-button-large[disabled].focus, fieldset[disabled] .af-button-large:hover, fieldset[disabled] .af-button-large:focus, fieldset[disabled] .af-button-large.focus {
-    background-color: #0C6099;
-    border-color: #08426a; }
+    background-color: #213a6e;
+    border-color: #152547; }
   .af-button-large .badge {
-    color: #0C6099;
+    color: #213a6e;
     background-color: #fff; }
 
 /* ------------------------------------------------- Поля (Fields) -------------------------------------------------- */
@@ -8772,7 +8775,7 @@ form.confirmation .form-actions {
       .contacts .nav-tabs > li {
         margin-bottom: 0; } }
 .contacts .department-title {
-  color: #0C6099; }
+  color: #213a6e; }
 
 /* ------------------------------------------------- Entityforms - */
 .entityform .pre-instructions {
@@ -9500,7 +9503,7 @@ form.confirmation .form-actions {
   position: relative; }
 
 #magic-line {
-  background: #0C6099;
+  background: #213a6e;
   position: absolute;
   bottom: -5px;
   left: 0;
@@ -9731,19 +9734,19 @@ form.confirmation .form-actions {
   width: 70%; }
 
 .webform-progressbar-outer {
-  border-color: #0C6099; }
+  border-color: #213a6e; }
 
 .webform-progressbar-inner {
-  background-color: #0C6099;
+  background-color: #213a6e;
   height: 2px; }
 
 .webform-progressbar-page {
-  border-color: #0C6099;
+  border-color: #213a6e;
   width: 8px;
   height: 8px; }
 
 .webform-progressbar-page.completed {
-  background-color: #0C6099; }
+  background-color: #213a6e; }
 
 .webform-progressbar-page.current {
   background-color: #01b0f1; }

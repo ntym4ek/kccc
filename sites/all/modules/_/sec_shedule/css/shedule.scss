@@ -1,29 +1,32 @@
+// подключаем миксины и переменные темы
+@import "../../../../themes/gard/css/_include";
+
 $sh-gutter-width: 1rem;
 $sh-column-b-width: 25%;
 $sh-block-header-height: 25%;
 
 html {
-    @media only screen and (min-width : 0) and (max-width : 768px) { font-size: 3px!important; }
-    @media only screen and (min-width : 769px) and (max-width : 1024px) { font-size: 4px!important; }
-    @media only screen and (min-width : 1025px) and (max-width : 1280px) { font-size: 5px!important; }
-    @media only screen and (min-width : 1281px) and (max-width : 1440px) { font-size: 6px!important; }
-    @media only screen and (min-width : 1441px) and (max-width : 1920px) { font-size: 8px!important; }
+    @media only screen                          and (max-width : 767px)  { font-size: 2px!important; }
+    @media only screen and (min-width : 768px)  and (max-width : 1023px) { font-size: 5px!important; }
+    @media only screen and (min-width : 1024px) and (max-width : 1279px) { font-size: 5px!important; }
+    @media only screen and (min-width : 1280px) and (max-width : 1439px) { font-size: 6px!important; }
+    @media only screen and (min-width : 1440px)                          { font-size: 8px!important; }
 }
 body {
     .page-shedule { overflow: hidden; }
 }
+.group {
+  flex: auto;
+  display: flex;
+  margin-top: $sh-gutter-width;
+  height: 100%; max-height: 100%;
+}
 .shedule {
     background: white;
-    display: flex;
-    flex-wrap: wrap;
+    display: flex; flex-wrap: wrap; align-content: flex-start;
     height: 100%; max-width: 100%;
     overflow: hidden;
-    .group {
-        flex: auto;
-        display: flex;
-        margin-top: $sh-gutter-width;
-        max-height: 100%;
-    }
+
     .block {
         flex: auto;
         display: flex; flex-direction: column;
@@ -31,7 +34,7 @@ body {
         overflow: hidden;
         //&.disabled { opacity: .8; }
         .header {
-            background: #0019d6;
+            background: $brand-blue;
             flex: 0 0 10rem;
             color: white;
             padding: 1rem;
@@ -43,6 +46,7 @@ body {
                 font-size: 6rem;
                 flex: 0 0 6rem;
                 padding-right: 1rem;
+              a { color: white; }
             }
             .box2 {
                 display: flex; align-items: center; flex-wrap: wrap;
@@ -50,10 +54,12 @@ body {
                 flex: auto;
                 padding: 0 2rem;
                 div { flex: 100%; }
+              a { color: white; }
             }
             .line1 { line-height: 1.2; }
             .line1 span,
             .line2 { font-weight: 100; white-space: nowrap; }
+            .line3 { position: absolute; top: 0; right: 0; bottom: 0; }
             .add-link {
                 color: white;
                 position: absolute; right: 1rem; top: 1rem; opacity: 0;
@@ -63,7 +69,7 @@ body {
             &:hover .add-link { opacity: 1; }
         }
         .content {
-            background: #17ba23;
+            background: $brand-success;
             flex: auto;
             color: white; font-size: 2rem;
             padding: 1rem;
@@ -87,20 +93,20 @@ body {
         .content {
             .row1 {
                 flex: 0 0 1px;
-                font-size: 3rem;
+                font-size: 4rem;
                 justify-content: center;
                 padding-right: 2rem;
             }
             .row2 { flex: auto; }
-            .line1 { font-weight: 600; font-size: 3rem; }
-            .line2 { font-weight: 100; font-size: 2rem; }
+            .line1 { font-weight: 500; font-size: 4rem; }
+            .line2 { font-weight: 100; font-size: 3rem; }
         }
     }
     .column-a {
         flex: 100%-$sh-column-b-width;
         display: flex;
         flex-direction: column;
-        height: 80%;
+        height: 85%;
         .group {
             flex: 50%;
             .block {
@@ -115,15 +121,15 @@ body {
         flex: $sh-column-b-width;
         display: flex;
         flex-direction: column;
-        height: 80%;
+        height: 85%;
         .block { margin-right: 0; }
     }
 
-    .column-f {
-        flex: 100%;
-        height: 20%;
-        display: flex;
-        flex-direction: column;
+    .header {
+      flex: 100%;
+      height: 15%;
+      display: flex;
+      padding: 3rem 9rem;
         .group {
             margin: 0;
         }
@@ -163,22 +169,131 @@ body {
         }
     }
     .block-l {
-        flex: 0 0 20vh;
+      flex: 0 0 auto;
         .content {
-            flex-direction: column;
-            padding-bottom: 0;
+          display: flex; flex-direction: column; justify-content: flex-end;
+          width: 14rem;
+          padding: 0;
         }
-        .logo {
-            flex: 1 0 auto;
-            background: url(/sites/all/themes/gard/images/logo/logo_blue.png) no-repeat;
-            background-size: contain;
-            background-position: center;
-            width: 100%;
-        }
+      .logo {
+        padding: 0 2rem;
+        width: 100%;
+        img { max-width: 100%; }
+      }
         .clock {
-            color: #21396e; font-weight: 600; font-size: 3rem; text-align: center;
-            flex: 0 0 auto;
-            .seconds { color: #aaa; font-size: 2rem; font-weight: 400; }
+          color: $text-muted; font-weight: 500; font-size: 4rem; text-align: center;
+          flex: 0 0 auto;
+          line-height: 1;
+          margin-top: 1rem;
+          .seconds { color: $text-muted; font-size: 2rem; font-weight: 400; }
         }
     }
+}
+
+.room {
+  background: white;
+  display: flex; flex-direction: column;
+  height: 100%;
+  .line1 { font-size: 5rem; }
+  .line2 { font-size: 4rem; }
+  .line3 { font-size: 7rem; }
+  .block-wrap {
+    display: flex;
+  }
+
+  .room-header {
+    flex: 0 0 15%;
+    position: relative;
+    padding: 3rem 9rem;
+    .block-wrap { height: 100%; }
+    .block-i {
+      flex: auto;
+      .box {
+        color: $text-muted;
+        position: absolute; bottom: 0;
+      }
+      .live {
+        display: none;
+        background: $brand-danger;
+        color: white; font-size: 4rem; font-weight: 500;
+        width: auto; height: auto;
+        position: absolute; right: 10px; bottom: 0;
+        padding: 0 3rem;
+      }
+    }
+    .block-l {
+      flex: 0 0 auto;
+      .content {
+        display: flex; flex-direction: column; justify-content: flex-end;
+        width: 14rem;
+      }
+      .logo {
+        padding: 0 2rem;
+        width: 100%;
+        img { max-width: 100%; }
+      }
+      .clock {
+        color: $text-muted; font-weight: 500; font-size: 4rem; text-align: center; line-height: 1;
+        flex: 0 0 auto;
+        margin-top: 1rem;
+        .seconds { color: $text-muted; font-size: 2rem; font-weight: 400; }
+      }
+    }
+    .back {
+      color: #f0f0f0; font-size: 5rem;
+      position: absolute; top: 15px; left: 15px;
+    }
+  }
+  &.started .block-i .live {
+    display: block;
+  }
+  .room-event {
+    background: $brand-blue;
+    color: white;
+    display: flex; flex-wrap: wrap; align-content: space-around;
+    flex: 0 0 15%;
+    padding: 3rem 9rem;
+    div { flex: 100%; }
+  }
+  .room-participants {
+    flex: 0 1 45%;
+    padding: 6rem 9rem;
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      width: 100%;
+      .participant {
+        font-size: 1.1em;
+        flex: 0 0 50%;
+        .line1 {
+          color: $brand-blue;
+          margin-bottom: 15px;
+        }
+        &:nth-child(2) {
+          padding-left: 15px;
+        }
+      }
+    }
+  }
+  .room-footer {
+    background: $brand-green;
+    color: white;
+    flex: 0 0 25%;
+    padding: 3rem 9rem;
+    .block {
+      flex-wrap: wrap; align-content: flex-start;
+      flex: 0 0 50%;
+      margin-top: 15px;
+      div { flex: 100%; }
+    }
+    .line1 { margin-bottom: 5px; }
+    .line3 { font-size: 6rem; }
+  }
+
+  .block {
+    display: flex;
+    position: relative;
+  }
+
 }

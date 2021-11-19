@@ -1,16 +1,17 @@
 <div class="shedule">
 
-    <div class="column-f">
+    <div class="header">
         <div class="group">
             <div class="block-f block"></div>
 
             <div class="block-l block">
                 <div class="content">
-                    <div class="logo">
-                    </div>
-                    <div class="clock">
-                        08:00:00
-                    </div>
+                  <div class="logo">
+                    <img src="/sites/all/themes/gard/images/logo/logo_blue.png">
+                  </div>
+                  <div class="clock">
+                    <span class="hours">00</span><span class="minutes">:00</span><span class="seconds"> 00</span>
+                  </div>
                 </div>
             </div>
 

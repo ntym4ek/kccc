@@ -2,7 +2,7 @@
     <div class="header">
         <div class="box1">3</div>
         <div class="box2">
-            <div class="line1"><? print $content[ROOM3]['title']; ?></div>
+          <div class="line1"><a href="/shedule/room/3"><? print $content[ROOM3]['title']; ?></a></div>
             <div class="line2"><? print $content[ROOM3]['floor_text']; ?></div>
         </div>
     </div>

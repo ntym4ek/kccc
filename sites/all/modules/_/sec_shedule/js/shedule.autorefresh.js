@@ -20,7 +20,7 @@
                         ajax.eventResponse(ajax, {});
                         $(document).dequeue();
                     });
-                    return false; }, 5000);
+                    return false; }, 50000);
 
                 // часы
                 setInterval(function () {
