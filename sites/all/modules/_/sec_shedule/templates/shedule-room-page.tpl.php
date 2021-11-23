@@ -50,22 +50,22 @@ $next = array_shift($room['events']);
   </div>
 
   <div class="room-footer">
-    <? if (!empty($current)): ?>
+    <? if (!empty($next)): ?>
       <div class="line1">Следующая встреча</div>
-      <div class="line2"><? print $current['description']; ?></div>
+      <div class="line2"><? print $next['description']; ?></div>
       <div class="block-wrap">
         <div class="block">
-          <div class="line3"><? print $current['start'] . ' - ' . $current['finish']; ?></div>
+          <div class="line3"><? print $next['start'] . ' - ' . $next['finish']; ?></div>
         </div>
         <div class="block">
-          <? foreach($current['participants'] as $pp): ?>
+          <? foreach($next['participants'] as $pp): ?>
             <div class="line1"><? print $pp->field_company_value; ?></div>
           <? endforeach; ?>
         </div>
       </div>
 
     <? elseif (!empty($current)): ?>
-      <div class="line1">На сегодня нет мероприятий</div>
+      <div class="line1">Далее на сегодня нет мероприятий</div>
     <? endif; ?>
   </div>
 

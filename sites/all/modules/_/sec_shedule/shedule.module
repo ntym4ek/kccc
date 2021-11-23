@@ -121,7 +121,7 @@ function shedule_page($ajax)
 function shedule_get_events_by_date($closest_event_remain_time)
 {
   $content = [
-    'admin' => user_has_role(ROLE_STAFF),
+    'admin' => user_has_role(ROLE_STAFF_ADMINISTRATOR),
   ];
 
   // допустимые значения для поля Этаж
@@ -250,4 +250,96 @@ function shedule_preprocess_page(&$vars)
       drupal_add_library('system', 'drupal.ajax');
       drupal_add_js(drupal_get_path('module', 'shedule') . '/js/shedule.autorefresh.js');
     }
+}
+
+/**
+ * ---------------------------------- ИМПОРТ --------------------------------------------------------------------------
+ */
+
+/**
+ * Implements hook_cron()
+ */
+function shedule_cron()
+{
+  // выполнить импорт мероприятий
+  shedule_process_incoming_files();
+}
+
+function shedule_process_incoming_files()
+{
+  $directory = 'private://exchange/';
+
+  // получить список файлов по шаблону
+  $mask = '/event_import.*\.json/';
+  $files = file_scan_directory($directory, $mask, ['recurse' => false], 0);
+
+//  watchdog('import', 'Крон запущен <pre>@v</pre>', array('@v' => print_r( $files, TRUE)), WATCHDOG_INFO);
+
+  // импортировать
+  if ($files) {
+    foreach ($files as $file) {
+      $c = file_get_contents($file->uri);
+      $array = drupal_json_decode(file_get_contents($file->uri));
+      if (shedule_event_import($array)) {
+        $path = $directory . 'success/' . date('Y') . '/' . date('m') . '/' . date('d');
+      } else {
+        $path = $directory . 'fail/' . date('Y') . '/' . date('m') . '/' . date('d');
+      }
+      file_prepare_directory($path, FILE_CREATE_DIRECTORY);
+      file_unmanaged_move($file->uri, $path . '/' . $file->filename);
+    }
+  }
+}
+
+function shedule_event_import($array)
+{
+  if (is_array($array) && isset($array['room_id'])) {
+
+    $query = new EntityFieldQuery();
+    $events = $query
+      ->entityCondition('entity_type', 'node')
+      ->propertyCondition('type', 'room_event')
+      ->fieldCondition('field_id_1c', 'value', trim($array['id_1c']))
+      ->execute();
+
+    if (!$events) {
+      $event = (object)array(
+        'title' => $array['title'],
+        'type' => 'room_event',
+        'status' => 1,
+      );
+      node_save($event);
+    } else {
+      $event = current($events['node']);
+    }
+
+    $node_wr = entity_metadata_wrapper('node', $event->nid);
+    $node_wr->body->value->set($array['description']);
+    $node_wr->field_id_1c = $array['id_1c'];
+    $node_wr->field_room = $array['room_id'];
+    $node_wr->field_period->value->set(strtotime($array['start']));
+    $node_wr->field_period->value2->set(strtotime($array['finish']));
+    foreach ($node_wr->field_participants->getIterator() as $pp_wr) {
+      $pp_wr->delete();
+    }
+    $node_wr->field_participants->set(null);
+    $node_wr->save();
+
+    foreach($array['participants'] as $item_pp) {
+      $participant = entity_create('field_collection_item', array('field_name' => 'field_participants'));
+      $participant->setHostEntity('node', $node_wr->value());
+      $participant_wr = entity_metadata_wrapper('field_collection_item', $participant);
+      $participant_wr->field_company = $item_pp['company'];
+      $participant_wr->field_participants_list = implode('<br>', $item_pp['list']);
+      $participant_wr->save();
+    }
+
+    drupal_set_message('Мероприятие импортировано.');
+    watchdog('import', 'Мероприятие импортировано.', [], WATCHDOG_INFO);
+    return true;
+  } else {
+    drupal_set_message('Импорт мероприятия не выполнен.', 'warning');
+    watchdog('import', 'Импорт мероприятия не выполнен.', [], WATCHDOG_ERROR);
+    return false;
+  }
 }

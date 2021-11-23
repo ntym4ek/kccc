@@ -7,6 +7,7 @@ define('KCCC_COMPANY_PID', 668);
  */
 define('ROLE_STAFF',            6);
 define('STAFF_PERSONNEL',       4);
+define('ROLE_STAFF_ADMINISTRATOR',  13);
 define('STAFF_EDITOR',          5);
 define('STAFF_REPRESENTATIVE',  14);
 define('STAFF_SHOP',            11);

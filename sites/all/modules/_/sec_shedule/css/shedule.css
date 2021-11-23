@@ -94,12 +94,9 @@ body .page-shedule {
         position: absolute;
         right: 1rem;
         top: 1rem;
-        opacity: 0;
         transition: all 0.3s ease-in-out; }
         .shedule .block .header .add-link i {
           font-size: 3rem; }
-      .shedule .block .header:hover .add-link {
-        opacity: 1; }
     .shedule .block .content {
       background: #36AA3D;
       flex: auto;
@@ -117,10 +114,7 @@ body .page-shedule {
           position: absolute;
           right: 10px;
           top: 10px;
-          opacity: 0;
           transition: all 0.3s ease-in-out; }
-        .shedule .block .content .event:hover .edit-link {
-          opacity: 1; }
   .shedule .column-a .content .row1,
   .shedule .column-b .content .row1 {
     flex: 0 0 1px;
