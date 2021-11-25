@@ -11,6 +11,21 @@ define('ROOM6', 73068);
 // в течение которых выводить События в серую зону
 define('TIME_TO_FOOTER', 15);
 
+function shedule_init()
+{
+  if (!$_GET['q']) drupal_init_path();
+
+  // отключаем кеширование определенных страниц
+  // и разрешаем доступ только с корп ip
+  if (arg(0) == 'shedule') {
+    $GLOBALS['conf']['cache'] = 0;
+    if (!in_array($GLOBALS["user"]->hostname, ['127.0.0.1', '77.72.142.170'])) {
+      watchdog('ip block', 'IP <pre>@v</pre>', array('@v' => $GLOBALS["user"]->hostname), WATCHDOG_INFO);
+      drupal_not_found();
+    }
+  }
+}
+
 /**
  * Implements hook_menu().
  */
@@ -20,16 +35,12 @@ function shedule_menu()
         'page callback' => 'shedule_page',
         'page arguments' => array(1),
         'access callback' => true,
-//        'access callback' => '_user_has_role',
-//        'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
     $items['shedule/room/%'] = array(
         'page callback' => 'shedule_room_page',
-        'page arguments' => array(2),
+        'page arguments' => array(2,3),
         'access callback' => true,
-//        'access callback' => '_user_has_role',
-//        'access arguments' => array('6'),       // только для роли Сотрудник
         'type' => MENU_CALLBACK,
     );
 
@@ -46,6 +57,11 @@ function shedule_theme()
             'variables' => array('room' => NULL),
             'template' => 'templates/shedule-room-page',
         ),
+        'shedule_room_content' => array(
+            'variables' => array('room' => NULL),
+            'template' => 'templates/shedule-room-content',
+        ),
+
         'shedule_page' => array(
             'variables' => array('content' => NULL),
             'template' => 'templates/shedule-page',
@@ -80,15 +96,27 @@ function shedule_theme()
 /**
  * menu callback
  */
-function shedule_room_page($room_num)
+function shedule_room_page($room_num, $ajax)
 {
-  $shedule = shedule_get_events_by_date(24*60);
+  $shedule = shedule_get_events_by_date(24 * 60);
 
-  if (isset($shedule[constant('ROOM'.$room_num)])) {
-    $room = $shedule[constant('ROOM'.$room_num)];
+  if (isset($shedule[constant('ROOM' . $room_num)])) {
+    $room = $shedule[constant('ROOM' . $room_num)];
   }
 
-  return theme('shedule_room_page', ['room' => $room]);
+  if ($ajax == 'ajax') {
+
+    $result = array(
+      '#type' => 'ajax',
+      '#commands' => [
+        ajax_command_invoke('.room-content', 'replaceWith', [theme('shedule_room_content', ['room' => $room])]),
+      ],
+    );
+    ajax_deliver($result);
+    drupal_exit();
+  } else {
+    return theme('shedule_room_page', ['room' => $room]);
+  }
 }
 
 /**
@@ -148,7 +176,9 @@ function shedule_get_events_by_date($closest_event_remain_time)
           'eid' => $eid,
           'title' => $event->title,
           'description' => $event->body_value,
+          'start_unix' => $event->field_period_value,
           'start' => date('H:i', $event->field_period_value),
+          'finish_unix' => $event->field_period_value2,
           'finish' => date('H:i', $event->field_period_value2),
           'started' => ($now > $event->field_period_value) ? ' started' : '',
           'participants' => $event->field_participants,
@@ -314,6 +344,7 @@ function shedule_event_import($array)
     }
 
     $node_wr = entity_metadata_wrapper('node', $event->nid);
+    $node_wr->title->set($array['title']);
     $node_wr->body->value->set($array['description']);
     $node_wr->field_id_1c = $array['id_1c'];
     $node_wr->field_room = $array['room_id'];

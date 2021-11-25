@@ -247,18 +247,6 @@ body .page-shedule {
         color: #b3b3b3;
         position: absolute;
         bottom: 0; }
-      .room .room-header .block-i .live {
-        display: none;
-        background: #CF142B;
-        color: white;
-        font-size: 4rem;
-        font-weight: 500;
-        width: auto;
-        height: auto;
-        position: absolute;
-        right: 10px;
-        bottom: 0;
-        padding: 0 3rem; }
     .room .room-header .block-l {
       flex: 0 0 auto; }
       .room .room-header .block-l .content {
@@ -289,20 +277,41 @@ body .page-shedule {
       position: absolute;
       top: 15px;
       left: 15px; }
-  .room.started .block-i .live {
-    display: block; }
+  .room .room-content {
+    flex: 0 0 85%;
+    display: flex;
+    flex-direction: column;
+    height: 100%; }
   .room .room-event {
     background: #213a6e;
     color: white;
     display: flex;
-    flex-wrap: wrap;
-    align-content: space-around;
-    flex: 0 0 15%;
-    padding: 3rem 9rem; }
-    .room .room-event div {
-      flex: 100%; }
+    justify-content: space-between;
+    flex: 0 0 18%;
+    padding: 3rem 9rem;
+    position: relative; }
+    .room .room-event .block {
+      flex: 0 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-around; }
+      .room .room-event .block div {
+        flex: 100%; }
+    .room .room-event .live,
+    .room .room-event .free {
+      color: white;
+      font-size: 6rem;
+      font-weight: 700;
+      padding: 1rem 4rem; }
+    .room .room-event .live {
+      display: none;
+      background: #CF142B; }
+    .room .room-event .free {
+      background: #36AA3D; }
+    .room .room-event.started .live {
+      display: block; }
   .room .room-participants {
-    flex: 0 1 45%;
+    flex: 0 1 50%;
     padding: 6rem 9rem; }
     .room .room-participants .content {
       display: flex;
@@ -320,7 +329,7 @@ body .page-shedule {
   .room .room-footer {
     background: #36AA3D;
     color: white;
-    flex: 0 0 25%;
+    flex: 0 0 32%;
     padding: 3rem 9rem; }
     .room .room-footer .block {
       flex-wrap: wrap;

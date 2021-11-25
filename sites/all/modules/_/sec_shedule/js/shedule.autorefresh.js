@@ -5,10 +5,11 @@
             $("body").once(function () {
 
                 // обновление страницы с интервалом 5 сек
-                var ajax = new Drupal.ajax(
+              var path = $(location).attr("pathname");
+              var ajax = new Drupal.ajax(
                         false,
                         false,
-                        { url : "/shedule/ajax" }
+                        { url : path + "/ajax" }
                     );
                 $(document).queue(function() {
                     ajax.eventResponse(ajax, {});
@@ -20,7 +21,7 @@
                         ajax.eventResponse(ajax, {});
                         $(document).dequeue();
                     });
-                    return false; }, 50000);
+                    return false; }, 5000);
 
                 // часы
                 setInterval(function () {
