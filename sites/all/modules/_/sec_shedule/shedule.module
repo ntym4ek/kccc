@@ -155,7 +155,7 @@ function shedule_get_events_by_date($closest_event_remain_time)
   // допустимые значения для поля Этаж
   $field_floor_allowed_values = list_allowed_values(field_info_field('field_floor'));
 
-  // выбрать все текущие или идущие события на сегодняшний день
+  // массив комнат
   if ($rooms = taxonomy_get_tree(47, 0 ,null, true)) {
     foreach ($rooms as $room) {
       $content[$room->tid] = [
@@ -345,6 +345,7 @@ function shedule_event_import($array)
 
     $node_wr = entity_metadata_wrapper('node', $event->nid);
     $node_wr->title->set($array['title']);
+    $node_wr->status->set($array['status']);
     $node_wr->body->value->set($array['description']);
     $node_wr->field_id_1c = $array['id_1c'];
     $node_wr->field_room = $array['room_id'];
