@@ -247,10 +247,11 @@ body {
     padding: 3rem 9rem;
     position: relative;
     .block {
-      flex: 0 0 auto;
+      flex: 0 1 auto;
       display: flex; flex-wrap: wrap; align-content: space-around;
       div { flex: 100%; }
     }
+    .block-m { flex: 0 0 auto; }
     .live,
     .free {
       color: white; font-size: 6rem; font-weight: 700;
@@ -272,15 +273,19 @@ body {
     padding: 6rem 9rem;
     .content {
       display: flex;
-      flex-wrap: wrap;
       align-content: flex-start;
       width: 100%;
       .participant {
         font-size: 1.1em;
-        flex: 0 0 50%;
+        flex: 0 1 auto;
+        min-width: 30%;
         .line1 {
           color: $brand-blue;
           margin-bottom: 15px;
+        }
+        span {
+          display: inline-block;
+          min-width: 50%;
         }
         &:nth-child(2) {
           padding-left: 15px;

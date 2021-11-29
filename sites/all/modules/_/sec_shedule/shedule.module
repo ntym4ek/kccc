@@ -19,7 +19,7 @@ function shedule_init()
   // и разрешаем доступ только с корп ip
   if (arg(0) == 'shedule') {
     $GLOBALS['conf']['cache'] = 0;
-    if (!in_array($GLOBALS["user"]->hostname, ['127.0.0.1', '77.72.142.170'])) {
+    if (!in_array($GLOBALS["user"]->hostname, ['127.0.0.1', '77.72.142.170', '85.93.54.94'])) {
       watchdog('ip block', 'IP <pre>@v</pre>', array('@v' => $GLOBALS["user"]->hostname), WATCHDOG_INFO);
       drupal_not_found();
     }
@@ -362,7 +362,13 @@ function shedule_event_import($array)
       $participant->setHostEntity('node', $node_wr->value());
       $participant_wr = entity_metadata_wrapper('field_collection_item', $participant);
       $participant_wr->field_company = $item_pp['company'];
-      $participant_wr->field_participants_list = implode('<br>', $item_pp['list']);
+      $p_markup = '';
+      if (!empty($item_pp['list'])) {
+        foreach($item_pp['list'] as $pp) {
+          $p_markup .= '<span>' . $pp . '</span>';
+        }
+      }
+      $participant_wr->field_participants_list = $p_markup;
       $participant_wr->save();
     }
 

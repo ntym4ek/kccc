@@ -291,12 +291,14 @@ body .page-shedule {
     padding: 3rem 9rem;
     position: relative; }
     .room .room-event .block {
-      flex: 0 0 auto;
+      flex: 0 1 auto;
       display: flex;
       flex-wrap: wrap;
       align-content: space-around; }
       .room .room-event .block div {
         flex: 100%; }
+    .room .room-event .block-m {
+      flex: 0 0 auto; }
     .room .room-event .live,
     .room .room-event .free {
       color: white;
@@ -315,15 +317,18 @@ body .page-shedule {
     padding: 6rem 9rem; }
     .room .room-participants .content {
       display: flex;
-      flex-wrap: wrap;
       align-content: flex-start;
       width: 100%; }
       .room .room-participants .content .participant {
         font-size: 1.1em;
-        flex: 0 0 50%; }
+        flex: 0 1 auto;
+        min-width: 30%; }
         .room .room-participants .content .participant .line1 {
           color: #213a6e;
           margin-bottom: 15px; }
+        .room .room-participants .content .participant span {
+          display: inline-block;
+          min-width: 50%; }
         .room .room-participants .content .participant:nth-child(2) {
           padding-left: 15px; }
   .room .room-footer {

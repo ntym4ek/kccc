@@ -280,21 +280,23 @@ function mailer_get_agro_calculator_email_text($data, $recipient = 'manager')
   foreach ($program['categories'] as $key_cat => $cat) {
     if (isset($cat['cnt'])) $program['categories'][$key_cat]['cnt'] = $cat['cnt'];
     if (isset($cat['hobjects'])) $missed_hobjects = array_merge($missed_hobjects, explode(', ', $cat['hobjects']));
-    foreach ($cat['stages'] as $key_stage => $stage) {
-      foreach ($stage as $key_set => $set) {
-        foreach ($set as $key_reg => $regl) {
-          if (isset($regl['state']) && $regl['state'] == 'on') {
-            $mix = count($regl['preparations']['items']) > 1;
-            if ($mix) $message .= '<i>Баковая смесь</i><br />';
-            foreach ($regl['preparations']['items'] as $pid => $item) {
-              $message .= $item['title'] . '<br />';
-              if (isset($item['rate']['default'])) {
-                $message .= '<span style="color: #999;">' . $item['rate']['default'] . ' ' . $item['units'] . ', ' . $item['rate']['default'] * $program['header']['area'] . ' ' . $item['unit'] . ' на сумму ' . number_format($item['rate']['default'] * $item['price'] * $program['header']['area'], 0, ',', ' ') . ' руб.</span><br />';
-                $total += $item['rate']['default'] * $item['price'];
+    if (!empty($cat['stages'])) {
+      foreach ($cat['stages'] as $key_stage => $stage) {
+        foreach ($stage as $key_set => $set) {
+          foreach ($set as $key_reg => $regl) {
+            if (isset($regl['state']) && $regl['state'] == 'on') {
+              $mix = count($regl['preparations']['items']) > 1;
+              if ($mix) $message .= '<i>Баковая смесь</i><br />';
+              foreach ($regl['preparations']['items'] as $pid => $item) {
+                $message .= $item['title'] . '<br />';
+                if (isset($item['rate']['default'])) {
+                  $message .= '<span style="color: #999;">' . $item['rate']['default'] . ' ' . $item['units'] . ', ' . $item['rate']['default'] * $program['header']['area'] . ' ' . $item['unit'] . ' на сумму ' . number_format($item['rate']['default'] * $item['price'] * $program['header']['area'], 0, ',', ' ') . ' руб.</span><br />';
+                  $total += $item['rate']['default'] * $item['price'];
+                }
               }
+              if (!empty($regl['hobjects'])) $message .= '<span style="color: #999;">Вредные объекты: ' . $regl['hobjects'] . '</span><br />';
+              $message .= '<br />';
             }
-            if (!empty($regl['hobjects'])) $message .= '<span style="color: #999;">Вредные объекты: ' . $regl['hobjects'] . '</span><br />';
-            $message .= '<br />';
           }
         }
       }

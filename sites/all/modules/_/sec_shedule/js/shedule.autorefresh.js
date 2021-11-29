@@ -2,6 +2,13 @@
     Drupal.behaviors.SheduleAutoRefresh = {
         attach: function (context, settings) {
 
+          // заменить вывод alert на вывод в консоль
+          window.alert = function(arg) {
+            if (window.console && console.log) {
+              console.log(arg);
+            }
+          };
+
             $("body").once(function () {
 
                 // обновление страницы с интервалом 5 сек

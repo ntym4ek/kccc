@@ -16,14 +16,14 @@ if (!empty($room['events'])) {
         <div class="line2"><? print empty($current['description']) ? $current['title'] : $current['description']; ?></div>
         <div class="line3"><? print $current['start'] . ' - ' . $current['finish']; ?></div>
       </div>
-    <div class="block">
-      <div class="live">ИДЁТ</div>
+    <div class="block block-m">
+      <div class="live">ИДЁТ СОВЕЩАНИЕ</div>
     </div>
     <? else: ?>
     <div class="block">
       <div class="line2">Нет мероприятий</div>
     </div>
-    <div class="block block">
+    <div class="block block-m">
       <div class="free">СВОБОДНО</div>
     </div>
     <? endif; ?>
