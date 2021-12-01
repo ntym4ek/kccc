@@ -20,10 +20,11 @@ function linker_node_presave($node)
           // список искомых фраз и их ссылок
           foreach (_linker_replacement_list() as $replacement_item) {
             $patterns = _linker_convert_needles_to_preg_patterns($replacement_item['needles']);
-            $replace = '<a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>';
+            $replace = '<a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>\\2';
             foreach ($patterns as $pattern) {
-              preg_match($patterns[0], $text, $match);
-              $text = preg_replace($pattern, $replace, $text);
+              $text_old = $text;
+              $text = preg_replace($pattern, $replace, $text, 1);
+              if ($text != $text_old) break;
             }
           }
 
@@ -58,19 +59,20 @@ function _linker_replacement_list()
             'Торговый Дом "Кирово-Чепецкая Химическая Компания"',
             'Торговый Дом "КЧХК"',
             'ТД "КЧХК"',
+            'Кирово-Чепецкой Химической Компании',
         ],
         'url' => '<front>',
     ];
     $arr[] = [
         'needles' => [
-            'представители', 'представительства', 'представительство', 'представитель', 'представителей', 'представителя', 'представителю', 'представителем', 'представителями',
+            'представител',
             'купить', 'приобрести'
         ],
         'url' => 'https://kccc.ru/info/representatives',
     ];
     $arr[] = [
         'needles' => [
-            'испытания', 'испытаний', 'испытаниям', 'испытании', 'опыты',
+            'испытани', 'опыты',
         ],
         'url' => 'https://kccc.ru/before-after',
     ];
@@ -123,7 +125,7 @@ function _linker_convert_needles_to_preg_patterns($needles)
         // кавычки могут быть любыми
         $needle = str_replace('"', '["\']', $needle);
         // искомое слово не должно быть уже ссылкой
-        $patterns[] = '/(?<!target="_blank">)(' . $needle . ')(?!<\/a>)/si';
+        $patterns[] = '/(?<!target="_blank">)(' . $needle . '.*?)([\.\!\?\,\s])(?!<\/a>)/si';
     }
 
     return $patterns;
