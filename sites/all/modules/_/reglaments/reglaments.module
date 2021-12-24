@@ -452,7 +452,7 @@ function _reglaments_get_protection_system2($parameters)
                         'preparations' => $preparations,
                         'hobjects' => $hobjects,
 //                        'description' => $reglament_wr->field_pd_r_processing->value(),
-                        'state' => empty($parameters['area']) ? 'on' : 'off',
+                        'state' => empty($parameters['area']) ? 'off' : 'on',
                     );
 
                     // так как норма расхода связана с препаратом в БС порядковым номером

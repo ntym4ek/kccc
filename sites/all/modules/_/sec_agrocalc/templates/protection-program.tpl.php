@@ -214,8 +214,8 @@ $path = drupal_get_path('module', 'agrocalc');
                             </div>
                         </div>
                         <h4 class="clr-category"><? print t('Program summary'); ?></h4>
-                        <p class="note font-small"><? print t('Presented prices could be lower. Contact our representatives for discount.'); ?></p>
-                        <p class="choose-one font-small hidden-print text-danger"><? print t('You did not chose any preparation. Click on switch above image.'); ?></p>
+                        <p class="note"><? print t('Presented prices could be lower. Contact our representatives for discount.'); ?></p>
+                        <p class="choose-one hidden-print text-danger"><? print t('You did not chose any preparation. Click on switch above image.'); ?></p>
                     </div>
                  </div>
                 <?php endif; ?>

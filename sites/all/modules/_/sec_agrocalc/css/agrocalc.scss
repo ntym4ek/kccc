@@ -37,7 +37,7 @@
   .form-actions { position: relative; }
 
   [data-animate=true] {
-    position: absolute; z-index: 1;
+    position: absolute; z-index: 100;
     display: none;
     &.animate-processed { display: block; }
     &.animate-processed.accepted { display: none; }

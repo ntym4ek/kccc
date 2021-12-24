@@ -373,9 +373,15 @@ function agrocalc_form_validate($form, &$form_state)
             $query->fields('t', array('name'));
             if ($region = $query->execute()->fetchField()) $form_state['values']['region'] = $region;
         }
-        if (!valid_email_address($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', t('Set one of fields: ') . t('E-Mail') . ' или ' . t('Phone') . '.' );
-        if (empty($form_state['values']['name'])) form_set_error('name', t('Set your name') );
-    }
+      if (!valid_email_address($form_state['values']['email'])) {
+        form_set_error('email', 'Необходимо заполнить поле E-Mail');
+      }
+      if (empty($form_state['values']['phone'])) {
+        form_set_error('phone', 'Необходимо заполнить поле Телефон');
+      }
+      if (empty($form_state['values']['name'])) {
+        form_set_error('name', 'Напишите, как к Вам обращаться' );
+      }    }
 }
 
 function agrocalc_form_submit($form, &$form_state)
