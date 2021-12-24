@@ -105,7 +105,7 @@ function contacts_get_contacts_list()
                             'surname' => 'Камнева', 'name' => 'Юлия', 'name2' => 'Юрьевна',
                             'phones' => array('+7 (8332) 76-15-32, доб. 1219', '+7 (922) 910-03-68', '+7 (912) 714-75-41'),
                             'emails' => array('td.sale15@kccc.ru'),
-                            'photo' => $no_photo,
+                            'photo' => '/' . $module_path . '/images/photos/kamneva_j.png',
                             'regions' => [
                               71668 => [], //Алтайский край",
                               71674 => [], //Амурская область",
