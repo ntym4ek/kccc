@@ -5,14 +5,20 @@
  */
 function before_after_list_page()
 {
+  $filters_html = '';
+  if ($filters_form = drupal_get_form('before_after_exposed_filters_form')) {
+    ctools_add_js('auto-submit');
+    $filters_html = drupal_render($filters_form);
+  }
+
+  $region_selected = isset($filters_form["c"]["c1"]["region"]["#default_value"]) && $filters_form["c"]["c1"]["region"]["#default_value"] != 'All' ? $filters_form["c"]["c1"]["region"]["#default_value"] : null;
+  $culture_selected = isset($filters_form["c"]["c1"]["culture"]["#default_value"]) && $filters_form["c"]["c1"]["culture"]["#default_value"] != 'All' ? $filters_form["c"]["c1"]["culture"]["#default_value"] : null;
+  $ingredient_selected = isset($filters_form["c"]["c1"]["ingredient"]["#default_value"]) && $filters_form["c"]["c1"]["ingredient"]["#default_value"] != 'All' ? $filters_form["c"]["c1"]["ingredient"]["#default_value"] : null;
+  $year_selected = isset($filters_form["c"]["c1"]["year"]["#default_value"]) && $filters_form["c"]["c1"]["year"]["#default_value"] != 'All' ? $filters_form["c"]["c1"]["year"]["#default_value"] : null;
+
     $list = '';
 
-    if ($atf_array = before_after_get_atfield_list(
-      isset($_GET['region'])?$_GET['region'] : null,
-      isset($_GET['culture'])?$_GET['culture'] : null,
-      isset($_GET['ingredient'])?$_GET['ingredient'] : null,
-      isset($_GET['year'])? $_GET['year'] : date('Y')
-    )) {
+    if ($atf_array = before_after_get_atfield_list($region_selected, $culture_selected, $ingredient_selected, $year_selected)) {
       $index = 0;
       foreach ($atf_array as $atf_item) {
             $list .= theme('before_after_item', array('content' => $atf_item));
@@ -23,11 +29,6 @@ function before_after_list_page()
 
     drupal_add_css(drupal_get_path('module', 'before_after') . '/css/before_after.css');
 
-    $filters_html = '';
-    if ($filters_form = drupal_get_form('before_after_exposed_filters_form')) {
-        ctools_add_js('auto-submit');
-        $filters_html = drupal_render($filters_form);
-    }
 
     $html = '<div class="view view-before-after view-list">' . $filters_html;
     // отправляем список
@@ -506,6 +507,13 @@ function before_after_exposed_filters_form($form, &$form_state)
     $year_selected = $_GET['year'];
   }
   $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
+
+  asort($options['years']['full']);
+  $arr_k = array_keys($options["years"]["full"]);
+  if (!in_array($year_selected, $arr_k)) {
+    $year_selected = array_pop($arr_k);
+    $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
+  }
 
 //  if (empty($form_state['options']) && $region_selected || !empty($form_state['options']) && $region_selected != $form_state['options']['region']) {
 //    $options['regions']['filter'] = $options['regions']['full'];

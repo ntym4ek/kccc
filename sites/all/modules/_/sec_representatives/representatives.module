@@ -403,6 +403,17 @@ function representatives_sales_list()
       71682 => [], //Воронежская область",
     ),
   );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'access' => false,
+    'surname' => 'Бурминский', 'name' => 'Максим', 'name2' => 'Игоревич',
+    'phones' => array('+7 (922) 900-09-87'),
+    'emails' => array('voronezh2@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/burminskiy_m.png',
+    'regions' => array(
+      71682 => [], //Воронежская область",
+    ),
+  );
 
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
@@ -497,17 +508,17 @@ function representatives_sales_list()
 //      71669 => [], //Краснодарский край",
 //    ),
 //  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
-    'surname' => 'Постникова', 'name' => 'Наталья', 'name2' => 'Николаевна',
-    'phones' => array('+7 (922) 922-76-22'),
-    'emails' => array('kursk1@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/postnikova_n.png',
-    'regions' => array(
-      71692 => [], //Курская область",
-    ),
-  );
+//  $sales[] = array(
+//    'roles' =>  ['representative'],
+//    'access' => false,
+//    'surname' => 'Постникова', 'name' => 'Наталья', 'name2' => 'Николаевна',
+//    'phones' => array('+7 (922) 922-76-22'),
+//    'emails' => array('kursk1@kccc.ru'),
+//    'photo' => '/' . $module_path . '/images/photos/postnikova_n.png',
+//    'regions' => array(
+//      71692 => [], //Курская область",
+//    ),
+//  );
 //  $sales[] = array(
 //    'roles' =>  ['representative'],
 //    'access' => false,
