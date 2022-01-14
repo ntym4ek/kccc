@@ -9495,6 +9495,9 @@ form.confirmation .form-actions {
   font-weight: 300;
   vertical-align: super; }
 
+.price_field {
+  color: #000; }
+
 /* ------------------------------------------------- MagicLine Menu ------------------------------------------------- */
 .magic-line-menu {
   position: relative; }
