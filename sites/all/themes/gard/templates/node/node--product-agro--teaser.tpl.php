@@ -101,7 +101,7 @@
 
     <footer>
         <?php if (!empty($content['field_pd_price_per_unit']['#items'][0]['amount'])): ?>
-            <?php print '<strong>' . t('Price per ') . ' ' . mb_strtolower($content['field_pd_units'][0]['#markup']) . '</strong> ' . t('(with NDS)') . ': ' . $content['field_pd_price_per_unit'][0]['#markup']; ?>
+            <?php print '<span class="price_field">Цена: ' . $content['field_pd_price_per_unit'][0]['#markup'] .' за '.mb_strtolower($content['field_pd_units'][0]['#markup']).' (с НДС)</span>'; ?>
         <?php endif; ?>
     </footer>
 </div>
