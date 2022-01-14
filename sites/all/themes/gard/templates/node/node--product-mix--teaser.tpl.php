@@ -103,7 +103,7 @@
     </div>
 
     <footer>
-        <?php print '<strong>' . t('Price') . '</strong> ' . t('(with NDS)') . ': ' . implode(' + ', $prices_arr) . ' ' . t('roub.'); ?>
+        <?php print '<span class="price_field">Цена: ' . implode(' + ', $prices_arr) . ' руб. (с НДС)</span>'; ?>
     </footer>
 </div>
 
