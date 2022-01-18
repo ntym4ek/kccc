@@ -1685,6 +1685,16 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     }
 }
 
+.view-classification-seo-list {
+  padding-top: $grid-gutter-width;
+  .view-content {
+    @include make-row();
+  }
+  .views-row {
+    display: inline-block;
+    padding: 0 $grid-gutter-width/2;
+  }
+}
 
 // подкатегории в списке препаратов (в программе защиты и баковых смесях)
 .list-category-header {
