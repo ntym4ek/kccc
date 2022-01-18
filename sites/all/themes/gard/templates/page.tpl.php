@@ -238,4 +238,208 @@
 </div>
 
 <div id="modalBackdrop"></div>
+<script type="application/ld+json">
+[ {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 966-64-34",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Толмачевская, д. 43/4",
+    "addressLocality" : "Новосибирск",
+    "postalCode" : "630052"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 900-01-52",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Розы Люксембург, д. 180, пом. 12А",
+    "addressLocality" : "Иркутск",
+    "postalCode" : "664040"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 969-47-05",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Северное шоссе, д. 17",
+    "addressLocality" : "Красноярск",
+    "postalCode" : "660020"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 900-05-73",
+  "address" : {                                             
+    "@type" : "PostalAddress",
+    "streetAddress" : "Привокзальная, д. 21",
+    "addressLocality" : "Белая Глина",
+    "postalCode" : "353040"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 922-76-22",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Московская, д. 11А, пом. 3",
+    "addressLocality" : "Курск",
+    "postalCode" : "305007"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 900-74-73",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "3-я Молодежная, д. 6",
+    "addressLocality" : "Омск",
+    "postalCode" : "644117"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 970-60-55",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Шарлыкское шоссе, д. 4",
+    "addressLocality" : "Оренбург",
+    "postalCode" : "460019"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (929) 209-00-80",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Байдукова, д. 94",
+    "addressLocality" : "Пенза",
+    "postalCode" : "440015"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 665-00-15",
+  "address" : {                             
+    "@type" : "PostalAddress",
+    "streetAddress" : "Школьная, д. 6А",
+    "addressLocality" : "Чесноковка",
+    "postalCode" : "450591"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 957-10-20",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Тенистая, д. 2",
+    "addressLocality" : "Ленинское",
+    "postalCode" : "346703"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Толстого, д. 15",
+    "addressLocality" : "Новоалександровск",
+    "postalCode" : "356001"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Свердлова, д. 1Б",
+    "addressLocality" : "Ржакса",
+    "postalCode" : "393520"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Совхозная, д. 2Ж",
+    "addressLocality" : "Новая Ляда",
+    "postalCode" : "392515"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 966-60-04",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "50 лет Октября, д. 200А",
+    "addressLocality" : "Тюмень",
+    "postalCode" : "625048"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (922) 905-89-84",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Российская, д. 17",
+    "addressLocality" : "Есаульский",
+    "postalCode" : "456530"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (8332) 76-15-20",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Производственная, д. 6",
+    "addressLocality" : "Кирово-Чепецк",
+    "postalCode" : "613048"
+  }
+} , {
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
+  "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
+  "telephone" : "+7 (929) 209-92-21",
+  "address" : {
+    "@type" : "PostalAddress",
+    "streetAddress" : "Индустриальная, д. 46",
+    "addressLocality" : "Бабяково",
+    "postalCode" : "396313"
+  }
+} ]
+</script>
 <?php print render($page['ajax_throbber']); ?>
