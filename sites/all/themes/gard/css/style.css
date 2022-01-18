@@ -6932,6 +6932,9 @@ a.icon-after .glyphicon {
   .btn.r-card-more .fa.pull-right {
     margin-left: 1em; }
 
+.price_field {
+  color: #000; }
+
 /* ------------------------------------------------- Ссылки на соцсети ---------------------------------------------- */
 .social-links a {
   display: inline-block;
@@ -9497,9 +9500,6 @@ form.confirmation .form-actions {
   line-height: 10px;
   font-weight: 300;
   vertical-align: super; }
-
-.price_field {
-  color: #000; }
 
 /* ------------------------------------------------- MagicLine Menu ------------------------------------------------- */
 .magic-line-menu {

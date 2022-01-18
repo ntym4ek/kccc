@@ -97,13 +97,13 @@
             <div><?php print $summary; ?></div>
         </div>
         <a class="btn btn-primary v-card-more" href="<?php print $product_url; ?>">
-            <?php print t('Купить'); ?>
+            <?php print t('Buy'); ?>
             <i class="fas fa-chevron-right pull-right"></i>
         </a>
     </div>
 
     <footer>
-        <?php print '<span class="price_field">Цена: ' . implode(' + ', $prices_arr) . ' руб. (с НДС)</span>'; ?>
+        <?php print '<span class="price_field">' . t('Price') . ': ' . implode(' + ', $prices_arr) . ' ' . t('roub.') . ' ' . t('(with NDS)') . '</span>'; ?>
     </footer>
 </div>
 
