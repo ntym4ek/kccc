@@ -9190,6 +9190,20 @@ form.confirmation .form-actions {
   padding-top: 30px;
   padding-bottom: 30px; }
 
+.view-classification-seo-list {
+  padding-top: 30px; }
+  .view-classification-seo-list .view-content {
+    margin-left: -15px;
+    margin-right: -15px; }
+    .view-classification-seo-list .view-content:before, .view-classification-seo-list .view-content:after {
+      content: " ";
+      display: table; }
+    .view-classification-seo-list .view-content:after {
+      clear: both; }
+  .view-classification-seo-list .views-row {
+    display: inline-block;
+    padding: 0 15px; }
+
 .list-category-header {
   margin-bottom: 15px;
   cursor: pointer; }

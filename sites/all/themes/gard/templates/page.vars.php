@@ -97,16 +97,25 @@ function gard_preprocess_page(&$vars)
 
     /** -------------------------------------------- для таксономии - */
     if (arg(0) == 'taxonomy' && arg(1) == 'term' && $term = taxonomy_term_load(arg(2))) {
-        $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
-        $subtitle = $term_wrapper->description->value();
-        if (!empty($term->field_image_header)) {
-            $image = $term_wrapper->field_image_header->file->url->value();
-        }
 
-        // определяем родительскую категорию для термина
-        if ($parent_term = current(taxonomy_get_parents($term->tid))) {
-            $category_title = '<a href="' . url('taxonomy/term/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
-        }
+      // определяем родительскую категорию для термина Классификации для SEO
+      if (!empty($term->field_pd_category)) {       // это термин родительской Категории для терминов Классификации для SEO
+        if ($main_tid = $term->field_pd_category['und'][0]['tid'])
+          $term = taxonomy_term_load($main_tid);
+      }
+
+      $term_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+
+      $subtitle = $term_wrapper->description->value();
+      if (!empty($term->field_image_header)) {
+          $image = $term_wrapper->field_image_header->file->url->value();
+      }
+
+      // определяем родительскую категорию для термина Каталога
+      if ($parent_term = current(taxonomy_get_parents($term->tid))) {
+          $category_title = '<a href="' . url('taxonomy/term/' . $parent_term->tid) . '">'. $parent_term->name . '</a>';
+      }
+
     }
 
 
