@@ -92,7 +92,7 @@
     </header>
 
     <div class="card-image">
-        <a href="<?php print $node_url; ?>">
+        <a href="<?php print $node_url; ?>" title="<?php print $title; ?>">
             <img src="<?php print $image ?>" class="img-responsive" alt="<?php print $title; ?>" />
         </a>
     </div>

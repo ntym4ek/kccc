@@ -83,7 +83,7 @@
 <div class="v-card product">
     <div class="v-card-top">
         <div class="v-card-image">
-            <a href="<?php print $product_url; ?>">
+            <a href="<?php print $product_url; ?>" title="<?php print $titles_arr[0]; ?>">
                 <img src="<?php print $images[0]; ?>" class="img-responsive" alt="<?php print $titles_arr[0]; ?>" />
                 <?php if (!empty($images[1])): ?><img src="<?php print $images[1]; ?>" class="img-responsive" alt="<?php print $titles_arr[1]; ?>" /><?php endif; ?>
             </a>
@@ -96,7 +96,7 @@
             <?php print empty($ingredients_arr) ? '' : '<div class="v-card-subtitle">' . implode(' +<br />', $ingredients_arr) . '</div>'; ?>
             <div><?php print $summary; ?></div>
         </div>
-        <a class="btn btn-primary v-card-more" href="<?php print $product_url; ?>">
+        <a class="btn btn-primary v-card-more" href="<?php print $product_url; ?>" title="<?php print $titles_arr[0]; ?>">
             <?php print t('Buy'); ?>
             <i class="fas fa-chevron-right pull-right"></i>
         </a>
