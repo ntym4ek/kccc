@@ -147,7 +147,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['director_c'],
-    'access' => true,
     'surname' => 'Рудяк', 'name' => 'Дмитрий', 'name2' => 'Вячеславович',
     'phones' => array('+7 (8332) 76-15-31, доб. 1187', '+7 (912) 726-36-23'),
     'emails' => array('dmitry.rudyak@kccc.ru'),
@@ -156,7 +155,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['director_c'],
-    'access' => true,
     'surname' => 'Камнева', 'name' => 'Юлия', 'name2' => 'Юрьевна',
     'phones' => array('+7 (8332) 76-15-32, доб. 1219', '+7 (922) 910-03-68', '+7 (912) 714-75-41'),
     'emails' => array('td.sale15@kccc.ru'),
@@ -201,7 +199,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['head'],
-    'access' => true,
     'surname' => 'Шуклина', 'name' => 'Наталья', 'name2' => 'Геннадьевна',
     'phones' => array('+7 (8332) 76-15-28, доб. 1154', '+7 922 936-16-62'),
     'emails' => array('natalia.shuklina@kccc.ru'),
@@ -237,7 +234,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['manager'],
-    'access' => true,
     'surname' => 'Устюжанин', 'name' => 'Данила', 'name2' => 'Игоревич',
     'phones' => array('+7 (912) 738-11-11'),
     'emails' => array('td.sale1@kccc.ru'),
@@ -283,7 +279,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['manager'],
-    'access' => true,
     'surname' => 'Князев', 'name' => 'Алексей', 'name2' => 'Юрьевич',
     'phones' => array('+7 (912) 700-12-07'),
     'emails' => array('td.sale2@kccc.ru'),
@@ -307,7 +302,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['manager'],
-    'access' => true,
     'surname' => 'Крупин', 'name' => 'Александр', 'name2' => 'Алексеевич',
     'phones' => array('+7 922 970-85-15'),
     'emails' => array('td.sale14@kccc.ru'),
@@ -323,6 +317,20 @@ function representatives_sales_list()
       71717 => [], //Тульская область",
     ),
   );
+
+  $sales[] = array(
+    'roles' =>  ['manager'],
+    'surname' => 'Бурминский', 'name' => 'Максим', 'name2' => 'Игоревич',
+    'phones' => array('+7 (922) 900-09-87'),
+    'emails' => array('voronezh2@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/burminskiy_m.png',
+    'regions' => array(
+      71677 => [], //Белгородская область",
+      71682 => [], //Воронежская область",
+      71694 => [], //Липецкая область",
+    ),
+  );
+
 
   /** ------------------------ Представители --------------------------------------------------------------------- */
   $sales[] = array(
@@ -371,7 +379,6 @@ function representatives_sales_list()
 //    );
     $sales[] = array(
         'roles' =>  ['representative'],
-        'access' => false,
         'surname' => 'Бельских', 'name' => 'Евгений', 'name2' => 'Юрьевич',
         'phones' => array('+7 (922) 900-08-31'),
         'emails' => array('belgorod1@kccc.ru'),
@@ -383,7 +390,6 @@ function representatives_sales_list()
 
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => true,
     'surname' => 'Асадов', 'name' => 'Кирилл', 'name2' => 'Низамович',
     'phones' => array('+7 (929) 209-60-40'),
     'emails' => array('voronezh@kccc.ru'),
@@ -394,22 +400,10 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Халецкий', 'name' => 'Александр', 'name2' => 'Викторович',
     'phones' => array('+7 (929) 209-92-21'),
     'emails' => array('voronezh1@kccc.ru'),
     'photo' => '/' . $module_path . '/images/photos/khaletskiy.png',
-    'regions' => array(
-      71682 => [], //Воронежская область",
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'access' => false,
-    'surname' => 'Бурминский', 'name' => 'Максим', 'name2' => 'Игоревич',
-    'phones' => array('+7 (922) 900-09-87'),
-    'emails' => array('voronezh2@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/burminskiy_m.png',
     'regions' => array(
       71682 => [], //Воронежская область",
     ),
@@ -443,7 +437,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Бойко ', 'name' => 'Павел', 'name2' => 'Валерьевич',
     'phones' => array('+7 (922) 900-01-52'),
     'emails' => array('irkutsk@kccc.ru'),
@@ -454,7 +447,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Домницкая', 'name' => 'Виктория', 'name2' => 'Николаевна',
     'phones' => array('+7 (922) 900-05-73'),
     'emails' => array('krasnodar@kccc.ru'),
@@ -465,7 +457,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Петров', 'name' => 'Николай', 'name2' => 'Викторович',
     'phones' => array('+7 (922) 957-11-19'),
     'emails' => array('krasnodar4@kccc.ru'),
@@ -476,7 +467,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Савенко', 'name' => 'Алексей', 'name2' => 'Михайлович',
     'phones' => array('+7 (922) 969-47-05'),
     'emails' => array('krasnoyarsk@kccc.ru'),
@@ -487,7 +477,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['specialist'],
-    'access' => false,
     'surname' => 'Родченко', 'name' => 'Максим', 'name2' => 'Сергеевич',
     'phones' => array('+7 (922) 902-27-78'),
     'expert' => '+7 (922) 902-27-78',
@@ -499,7 +488,6 @@ function representatives_sales_list()
   );
 //  $sales[] = array(
 //    'roles' =>  ['representative'],
-//    'access' => false,
 //    'surname' => 'Лысенко', 'name' => 'Иван', 'name2' => 'Игоревич',
 //    'phones' => array('+7 (922) 900-74-41'),
 //    'emails' => array('krasnodar2@kccc.ru'),
@@ -510,7 +498,6 @@ function representatives_sales_list()
 //  );
 //  $sales[] = array(
 //    'roles' =>  ['representative'],
-//    'access' => false,
 //    'surname' => 'Постникова', 'name' => 'Наталья', 'name2' => 'Николаевна',
 //    'phones' => array('+7 (922) 922-76-22'),
 //    'emails' => array('kursk1@kccc.ru'),
@@ -521,7 +508,6 @@ function representatives_sales_list()
 //  );
 //  $sales[] = array(
 //    'roles' =>  ['representative'],
-//    'access' => false,
 //    'surname' => 'Курасов', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
 //    'phones' => array('+7 (922) 922-76-10'),
 //    'emails' => array('kursk2@kccc.ru'),
@@ -532,7 +518,6 @@ function representatives_sales_list()
 //  );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Плешков', 'name' => 'Владимир', 'name2' => 'Геннадьевич',
     'phones' => array('+7 (922) 908-41-44'),
     'emails' => array('lipetsk@kccc.ru'),
@@ -618,7 +603,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Усатов', 'name' => 'Валерий', 'name2' => 'Васильевич',
     'phones' => array('+7 (922) 900-74-73'),
     'emails' => array('omsk@kccc.ru'),
@@ -640,7 +624,6 @@ function representatives_sales_list()
     );
 //  $sales[] = array(
 //    'roles' =>  ['representative', 'expert'],
-//    'access' => false,
 //    'surname' => 'Токарев', 'name' => 'Виктор', 'name2' => 'Анатольевич',
 //    'expert' => '+7 (922) 555-08-96',
 //    'phones' => array('+7 (922) 966-05-52'),
@@ -652,7 +635,6 @@ function representatives_sales_list()
 //  );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => true,
     'surname' => 'Попов', 'name' => 'Виктор', 'name2' => 'Михайлович',
     'phones' => array('+7 922 966-65-00'),
     'emails' => array('orenburg@kccc.ru'),
@@ -664,7 +646,6 @@ function representatives_sales_list()
 
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Бурлаков', 'name' => 'Владимир', 'name2' => 'Григорьевич',
     'phones' => array('+7 (922) 970-60-55'),
     'emails' => array('orenburg5@kccc.ru'),
@@ -675,7 +656,6 @@ function representatives_sales_list()
   );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Неретин', 'name' => 'Максим', 'name2' => 'Сергеевич',
 //        'phones' => array('+7 (922) 970-65-00'),
 //        'emails' => array('orenburg4@kccc.ru'),
@@ -686,7 +666,6 @@ function representatives_sales_list()
 //    );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Боронкин', 'name' => 'Андрей', 'name2' => 'Михайлович',
 //        'phones' => array('+7 (922) 970-60-55'),
 //        'emails' => array('orenburg5@kccc.ru'),
@@ -697,7 +676,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Юдин', 'name' => 'Сергей', 'name2' => 'Васильевич',
     'phones' => array('+7 (922) 900-01-22'),
     'emails' => array('penza1@kccc.ru'),
@@ -708,7 +686,6 @@ function representatives_sales_list()
   );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Кобозев', 'name' => 'Сергей', 'name2' => 'Валерьевич',
 //        'phones' => array('+7 (922) 900-07-73'),
 //        'emails' => array('penza2@kccc.ru'),
@@ -719,7 +696,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Калинин', 'name' => 'Александр', 'name2' => 'Александрович',
     'phones' => array('+7 (929) 209-00-80'),
     'emails' => array('penza3@kccc.ru'),
@@ -730,7 +706,6 @@ function representatives_sales_list()
   );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Агеев', 'name' => 'Дмитрий', 'name2' => 'Анатольевич',
 //        'phones' => array('+7 (929) 209-00-90'),
 //        'emails' => array('penza4@kccc.ru'),
@@ -741,7 +716,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Тураев', 'name' => 'Радик', 'name2' => 'Галиевич',
     'phones' => array('+7 (922) 900-74-77'),
     'emails' => array('bashkortostan@kccc.ru'),
@@ -752,7 +726,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Зарипов', 'name' => 'Эльвир', 'name2' => 'Зирякович',
     'phones' => array('+7 (922) 665-00-15'),
     'emails' => array('bashkortostan1@kccc.ru'),
@@ -763,7 +736,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Агеев', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
     'phones' => array('+7 (922) 900-75-85'),
     'emails' => array('mordoviya@kccc.ru'),
@@ -775,7 +747,6 @@ function representatives_sales_list()
 
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Швец', 'name' => 'Олег', 'name2' => 'Викторович',
 //        'phones' => array('+7 (922) 900-14-43', '+7 (909) 435-82-89'),
 //        'emails' => array('rostov2@kccc.ru'),
@@ -786,7 +757,6 @@ function representatives_sales_list()
 //    );
 //    $sales[] = array(
 //        'roles' =>  ['expert'],
-//        'access' => false,
 //        'surname' => 'Четвертаков', 'name' => 'Максим', 'name2' => 'Викторович',
 //        'phones' => array('+7 (922) 955-60-07'),
 //        'expert' => '+7 (922) 955-60-07',
@@ -800,7 +770,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Сейранов', 'name' => 'Карен', 'name2' => 'Николаевич',
     'phones' => array('+7 (922) 957-10-20'),
     'emails' => array('rostov4@kccc.ru'),
@@ -811,7 +780,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Кунцевич', 'name' => 'Алексей', 'name2' => 'Александрович',
     'phones' => array('+7 (922) 910-04-71'),
     'emails' => array('ryazan@kccc.ru'),
@@ -822,7 +790,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Аверченков', 'name' => 'Константин', 'name2' => 'Викторович',
     'phones' => array('+7 (922) 910-04-29'),
     'emails' => array('smolensk@kccc.ru'),
@@ -833,7 +800,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Русанов', 'name' => 'Алексей', 'name2' => 'Владимирович',
     'phones' => array('+7 (918) 742-67-28', '+7 (922) 966-59-77'),
     'emails' => array('stavropol@kccc.ru'),
@@ -844,7 +810,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
 //        'expert' => '+7 (902) 730-80-22',
     'surname' => 'Сироткин', 'name' => 'Евгений', 'name2' => 'Николаевич',
     'phones' => array('+7 (922) 966-59-88'),
@@ -856,7 +821,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Сироткин', 'name' => 'Николай', 'name2' => 'Николаевич',
     'phones' => array('+7 (922) 967-12-55'),
     'emails' => array('tambov2@kccc.ru'),
@@ -867,7 +831,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Дёмин', 'name' => 'Андрей', 'name2' => 'Дмитриевич',
     'phones' => array('+7 (922) 665-01-07'),
     'emails' => array('tambov1@kccc.ru'),
@@ -878,7 +841,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Ситкевич', 'name' => 'Людмила', 'name2' => 'Алексеевна',
     'phones' => array('+7 (922) 910-04-61'),
     'emails' => array('tula@kccc.ru'),
@@ -889,7 +851,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Савин', 'name' => 'Денис', 'name2' => 'Александрович',
     'phones' => array(''),
     'emails' => array('tomsk@kccc.ru'),
@@ -900,7 +861,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Цикунова', 'name' => 'Екатерина', 'name2' => 'Анатольевна',
     'phones' => array('+7 (922) 916-71-57'),
     'emails' => array('tula1@kccc.ru'),
@@ -911,7 +871,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Знаменщиков', 'name' => 'Василий', 'name2' => 'Александрович',
     'phones' => array('+7 (922) 966-60-04'),
     'emails' => array('tyumen@kccc.ru'),
@@ -922,7 +881,6 @@ function representatives_sales_list()
   );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Пиленков', 'name' => 'Михаил', 'name2' => 'Владимирович',
 //        'phones' => array('+7 (922) 900-23-43'),
 //        'emails' => array('tyumen1@kccc.ru'),
@@ -933,7 +891,6 @@ function representatives_sales_list()
 //    );
 //    $sales[] = array(
 //        'roles' =>  ['representative'],
-//        'access' => false,
 //        'surname' => 'Основин', 'name' => 'Александр', 'name2' => 'Анатольевич',
 //        'phones' => array('+7 (922) 966-60-16'),
 //        'emails' => array('tyumen2@kccc.ru'),
@@ -944,7 +901,6 @@ function representatives_sales_list()
 //    );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Микряшов', 'name' => 'Владислав', 'name2' => 'Вячеславович',
     'phones' => array('+7 (912) 332-99-69'),
     'emails' => array('udmurtia@kccc.ru'),
@@ -955,7 +911,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Гималов', 'name' => 'Радик', 'name2' => 'Ревгатович',
     'phones' => array('+7 (922) 903-02-46'),
     'emails' => array('ulyanovsk@kccc.ru'),
@@ -966,7 +921,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Солодовников', 'name' => 'Александр', 'name2' => 'Васильевич',
     'phones' => array('+7 (922) 747-26-41'),
     'emails' => array('chelyabinsk@kccc.ru'),
@@ -977,7 +931,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Подкорытов', 'name' => 'Дмитрий', 'name2' => 'Александрович',
     'phones' => array('+7 (922) 747-26-40'),
     'emails' => array('chelyabinsk1@kccc.ru'),
@@ -988,7 +941,6 @@ function representatives_sales_list()
   );
 //  $sales[] = array(
 //    'roles' =>  ['specialist'],
-//    'access' => false,
 //    'surname' => 'Красножон', 'name' => 'Сергей', 'name2' => 'Михайлович',
 //    'phones' => array('+7 (922) 747-26-46'),
 //    'expert' => '+7 (922) 747-26-46',
@@ -1000,7 +952,6 @@ function representatives_sales_list()
 //  );
   $sales[] = array(
     'roles' =>  ['expert'],
-    'access' => false,
     'surname' => 'Саитов', 'name' => 'Салимхан', 'name2' => 'Букумбаевич',
     'phones' => array('+7 (922) 967-12-55'),
     'expert' => '+7 (922) 967-12-55',
@@ -1018,7 +969,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['expert'],
-    'access' => false,
     'surname' => 'Кузнецова', 'name' => 'Елизавета', 'name2' => 'Алексеевна',
     'phones' => [''],
     'expert' => '',
@@ -1032,7 +982,6 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'access' => false,
     'surname' => 'Шалаев', 'name' => 'Андрей', 'name2' => 'Сергеевич',
     'phones' => array('+7 (922) 905-89-84'),
     'emails' => array('chelyabinsk4@kccc.ru'),
