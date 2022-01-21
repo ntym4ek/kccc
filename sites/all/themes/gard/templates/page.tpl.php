@@ -90,6 +90,10 @@
     </div>
 
     <div class="right-menu">
+      <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
+        <div><a class="link-header-black" href="tel:88332761520">8 (8332) 76-15-20 доб.1107</a></div>
+        <div><a class="link-header-black" href="mailto:td@kccc.ru">td@kccc.ru</a></div>
+      </div>
         <?php print render($secondary_nav); ?>
         <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
           <img src="/sites/all/themes/gard/images/icons/phone_d.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
