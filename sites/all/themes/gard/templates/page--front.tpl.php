@@ -90,7 +90,7 @@
 
   <div class="right-menu">
       <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
-        <div><a class="link-header-white" href="tel:+88332761520">8 (8332) 76-15-20 доб.1107</a></div>
+        <div><a class="link-header-white" href="tel:88332761520">8 (8332) 76-15-20 доб.1107</a></div>
         <div><a class="link-header-white" href="mailto:td@kccc.ru">td@kccc.ru</a></div>
       </div>
     <?php print render($secondary_nav); ?>
