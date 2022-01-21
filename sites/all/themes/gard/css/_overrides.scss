@@ -1246,7 +1246,20 @@ a {
 }
 
 .price_field { color: #000; }
-
+.right-menu-links {
+    padding: 18px 4px;
+}
+.link-header-white {
+    color: #fff;
+}
+.link-header-black {
+    color: #000;
+}
+@media (max-width: 767px) {
+    .right-menu-links {
+        padding: 10px 4px;
+    }
+}
 
 /* ------------------------------------------------- Ссылки на соцсети ---------------------------------------------- */
 .social-links {
