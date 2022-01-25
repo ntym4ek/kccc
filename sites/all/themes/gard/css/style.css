@@ -6228,6 +6228,18 @@ option:disabled {
     @media screen and (min-width: 768px) {
       .navbar .btn-header {
         padding: 25px 17px; } }
+  .navbar .right-menu-links {
+    padding: 18px 4px; }
+  .navbar .link-header-white,
+  .navbar .link-header-white:hover {
+    color: #fff;
+    text-shadow: 1px 1px 8px #333; }
+  .navbar .link-header-black,
+  .navbar .link-header-black:hover {
+    color: #333333; }
+  @media (max-width: 767px) {
+    .navbar .right-menu-links {
+      padding: 10px 4px; } }
   .navbar.slide-in .fa-bars {
     display: none; }
   .navbar.slide-in .btn-s4 .fa-times {

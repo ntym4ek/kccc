@@ -91,8 +91,8 @@
 
     <div class="right-menu">
       <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
-        <div><a class="link-header-black" href="tel:88332761520">8 (8332) 76-15-20 доб.1107</a></div>
-        <div><a class="link-header-black" href="mailto:td@kccc.ru">td@kccc.ru</a></div>
+        <div><a class="link-header-black" href="tel:88332761531">8 (8332) 76-15-31 доб.1154</a></div>
+        <div><a class="link-header-black" href="mailto:td.sale3@kccc.ru">td.sale3@kccc.ru</a></div>
       </div>
         <?php print render($secondary_nav); ?>
         <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
@@ -285,7 +285,7 @@
   "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
   "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
   "telephone" : "+7 (922) 900-05-73",
-  "address" : {                                             
+  "address" : {
     "@type" : "PostalAddress",
     "streetAddress" : "Привокзальная, д. 21",
     "addressLocality" : "Белая Глина",
@@ -345,7 +345,7 @@
   "name" : "ООО Торговый Дом Кирово-Чепецкая Химическая компания",
   "image" : "https://kccc.ru/sites/default/files/images/logo/logo.svg",
   "telephone" : "+7 (922) 665-00-15",
-  "address" : {                             
+  "address" : {
     "@type" : "PostalAddress",
     "streetAddress" : "Школьная, д. 6А",
     "addressLocality" : "Чесноковка",

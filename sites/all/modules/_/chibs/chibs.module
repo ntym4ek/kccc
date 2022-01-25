@@ -27,9 +27,6 @@ function chibs_init()
     if ($_GET['q'] == 'cart') drupal_goto('/checkout');
 
     // редирект с expo на en/expo
-//    if (drupal_get_path_alias($_GET['q']) == 'expo' && $GLOBALS['language']->language == 'ru') drupal_goto('en/expo');
-
-    // редирект с expo на en/expo
     if (drupal_get_path_alias($_GET['q']) == 'china' && $GLOBALS['language']->language == 'ru') drupal_goto('en/china');
 
     // запретить доступ анонимным пользователям к заданным страницам (админка - "Настройки страниц")
@@ -116,8 +113,8 @@ function chibs_empty_front_page_callback()
 /**
  * Implements hook_js_alter().
  */
-function chibs_js_alter(&$js) {
-
+function chibs_js_alter(&$js)
+{
     // замена версии библиотеки jquery.form с 2.69 на последнюю - 3.51
     // старая библиотека не загружала файл при использовании поля managed_file в форме с аяксифицированным сабмитом
     // или форме, размещенной во всплывающем окне
@@ -202,9 +199,11 @@ function chibs_preprocess_menu_link(&$variables)
     }
 }
 
-// не менять расширение js на js.txt для поля field_page_files, тип контента: Страница
-function chibs_file_presave($file) {
-
+/**
+ * не менять расширение js на js.txt для поля field_page_files, тип контента: Страница
+ */
+function chibs_file_presave($file)
+{
     // Bypass secure file extension for .js for field_additional_js field only
     if((isset($file->source) && strpos($file->source, "field_page_files") !== FALSE) && substr($file->filename, strlen($file->filename) - 7) == ".js.txt") {
 
@@ -228,7 +227,7 @@ function chibs_file_presave($file) {
 
 
 
-/*
+/**
  * автозаполнение полей title и alt изображений в продукции при сохранении ноды
  */
 function chibs_node_submit($node, $form, &$form_state)
@@ -516,127 +515,127 @@ function ctools_modal_ajax_cmd($js, $action) {
  *
  * Новая модальная форма отправки сообщения по email
  */
-function chibs_ads_ajax_contact($nid, $js = NULL) {
-    if (!$js) {
-        return drupal_get_form('chibs_ads_contact_form', $nid);
-    }
-
-    ctools_include('modal'); ctools_include('ajax');
-    $form_state = array(
-        'title' => t('Send message'),
-        'ajax' => TRUE,
-        'build_info' => array('args' => array('nid' => $nid)),
-    );
-
-
-    $output = ctools_modal_form_wrapper('chibs_ads_contact_form', $form_state);
-    print ajax_render($output);
-    exit;
-}
+//function chibs_ads_ajax_contact($nid, $js = NULL) {
+//    if (!$js) {
+//        return drupal_get_form('chibs_ads_contact_form', $nid);
+//    }
+//
+//    ctools_include('modal'); ctools_include('ajax');
+//    $form_state = array(
+//        'title' => t('Send message'),
+//        'ajax' => TRUE,
+//        'build_info' => array('args' => array('nid' => $nid)),
+//    );
+//
+//
+//    $output = ctools_modal_form_wrapper('chibs_ads_contact_form', $form_state);
+//    print ajax_render($output);
+//    exit;
+//}
 
 /**
  * форма запроса контактных данных на странице описания попрошка
  */
-function chibs_ads_contact_form($form, &$form_state, $nid) {
-    global $user;
-    $account = array();
-    $form_state['adid'] = $nid;
-
-    // СОЗДАНИЕ ФОРМЫ
-    $form = array(
-        '#prefix' => '<div id="contact-frm">',
-        '#suffix' => '</div>',
-        '#attributes' => array('class' => array('custom-form')),
-    );
-
-
-    // при инициализвции выводим форму
-    if (empty($form_state['complete'])) {
-        // задаём начальные значения
-        if (empty($form_state['submitted'])) {
-            $account = ext_user_get_user_info($user);
-        }
-
-        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');
-        $form['fs1']['text'] = array(
-            '#type' => 'textarea',
-        );
-        $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Представьтесь и оставьте контакты<i>, для связи</i>', '#attributes' => array('class' => array('label-inline')));
-        $form['fs2']['name'] = array(
-            '#type' => 'textfield',
-            '#title' => 'ФИО',
-            '#default_value' => $account['full_name'],
-        );
-        $form['fs2']['phone'] = array(
-            '#type' => 'textfield',
-            '#title' => t('Phone'),
-            '#default_value' => $account['phone'],
-        );
-        $form['fs2']['email'] = array(
-            '#type' => 'textfield',
-            '#title' => t('E-Mail'),
-            '#default_value' => $account['email'],
-        );
-
-        $form['fs4'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
-        $form['fs4']['send'] = array(
-            '#type' => 'submit',
-            '#value' => 'Отправить',
-        );
-    }
-    // при завершении генерируем информационное сообщение
-    else {
-        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Сообщение отправлено');
-        $form['fs1']['info'] = array(
-            '#markup' => 'Письмо с вашим сообщением отправлено автору объявления.',
-        );
-    }
-
-    return $form;
-}
-function chibs_ads_contact_form_validate($form, &$form_state)
-{
-    if (!valid_email_address($form_state['values']['email'])) {
-        form_set_error('email', 'Введите корректный E-Mail адрес.' );
-    }
-    if (empty($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', 'Заполните одно из полей: ' . t('E-Mail') . ' или ' . t('Phone') . '.' );
-    if (empty($form_state['values']['text'])) form_set_error('text', 'Текст сообщения обязателен' );
-}
-function chibs_ads_contact_form_submit($form, &$form_state)
-{
-    // email автора
-    $ad_wrapper = entity_metadata_wrapper('node', $form_state['adid']);
-//    $ad = $ad_wrapper->value();
-    $ad_email = $ad_wrapper->author->mail->value();
-    $ad_title = $ad_wrapper->title->value();
-
-    // отправка письма автору
-    $author = '';
-    $message = 'Добрый день!<br /><br />';
-    $message .= 'Вам отправлено новое сообщение по объявлению "' . $ad_title . '".<br />';
-    $message .= '<br />';
-    $author .= empty($form_state['values']['name']) ? '' : $form_state['values']['name'] . '<br />';
-    $author .= empty($form_state['values']['phone']) ? '' : 'Телефон: ' . $form_state['values']['phone'] . '<br />';
-    $author .= empty($form_state['values']['email']) ? '' : 'E-Mail: ' . $form_state['values']['email'] . '<br />';
-
-
-    $message .= '<b>Данные пользователя</b><br />' . $author;
-    $message .= '<br />';
-    $message .= '<b>Текст сообщения</b><br />';
-    $message .= $form_state['values']['text'] . '<br />';
-
-    drupal_mail('system', 'mail', $ad_email, language_default(), array(
-        'context' => array(
-            'subject' => 'Новое сообщение по объявлению "' . $ad_title . '"',
-            'message' => $message,
-        ),
-    ));
-
-
-    // сообщаем форме, что можно выводить сообщение об успешном сабмите и перестроить её
-    $form_state['complete'] = true;
-    $form_state['rebuild'] = true;
-}
+//function chibs_ads_contact_form($form, &$form_state, $nid) {
+//    global $user;
+//    $account = array();
+//    $form_state['adid'] = $nid;
+//
+//    // СОЗДАНИЕ ФОРМЫ
+//    $form = array(
+//        '#prefix' => '<div id="contact-frm">',
+//        '#suffix' => '</div>',
+//        '#attributes' => array('class' => array('custom-form')),
+//    );
+//
+//
+//    // при инициализвции выводим форму
+//    if (empty($form_state['complete'])) {
+//        // задаём начальные значения
+//        if (empty($form_state['submitted'])) {
+//            $account = ext_user_get_user_info($user);
+//        }
+//
+//        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');
+//        $form['fs1']['text'] = array(
+//            '#type' => 'textarea',
+//        );
+//        $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Представьтесь и оставьте контакты<i>, для связи</i>', '#attributes' => array('class' => array('label-inline')));
+//        $form['fs2']['name'] = array(
+//            '#type' => 'textfield',
+//            '#title' => 'ФИО',
+//            '#default_value' => $account['full_name'],
+//        );
+//        $form['fs2']['phone'] = array(
+//            '#type' => 'textfield',
+//            '#title' => t('Phone'),
+//            '#default_value' => $account['phone'],
+//        );
+//        $form['fs2']['email'] = array(
+//            '#type' => 'textfield',
+//            '#title' => t('E-Mail'),
+//            '#default_value' => $account['email'],
+//        );
+//
+//        $form['fs4'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+//        $form['fs4']['send'] = array(
+//            '#type' => 'submit',
+//            '#value' => 'Отправить',
+//        );
+//    }
+//    // при завершении генерируем информационное сообщение
+//    else {
+//        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Сообщение отправлено');
+//        $form['fs1']['info'] = array(
+//            '#markup' => 'Письмо с вашим сообщением отправлено автору объявления.',
+//        );
+//    }
+//
+//    return $form;
+//}
+//function chibs_ads_contact_form_validate($form, &$form_state)
+//{
+//    if (!valid_email_address($form_state['values']['email'])) {
+//        form_set_error('email', 'Введите корректный E-Mail адрес.' );
+//    }
+//    if (empty($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', 'Заполните одно из полей: ' . t('E-Mail') . ' или ' . t('Phone') . '.' );
+//    if (empty($form_state['values']['text'])) form_set_error('text', 'Текст сообщения обязателен' );
+//}
+//function chibs_ads_contact_form_submit($form, &$form_state)
+//{
+//    // email автора
+//    $ad_wrapper = entity_metadata_wrapper('node', $form_state['adid']);
+////    $ad = $ad_wrapper->value();
+//    $ad_email = $ad_wrapper->author->mail->value();
+//    $ad_title = $ad_wrapper->title->value();
+//
+//    // отправка письма автору
+//    $author = '';
+//    $message = 'Добрый день!<br /><br />';
+//    $message .= 'Вам отправлено новое сообщение по объявлению "' . $ad_title . '".<br />';
+//    $message .= '<br />';
+//    $author .= empty($form_state['values']['name']) ? '' : $form_state['values']['name'] . '<br />';
+//    $author .= empty($form_state['values']['phone']) ? '' : 'Телефон: ' . $form_state['values']['phone'] . '<br />';
+//    $author .= empty($form_state['values']['email']) ? '' : 'E-Mail: ' . $form_state['values']['email'] . '<br />';
+//
+//
+//    $message .= '<b>Данные пользователя</b><br />' . $author;
+//    $message .= '<br />';
+//    $message .= '<b>Текст сообщения</b><br />';
+//    $message .= $form_state['values']['text'] . '<br />';
+//
+//    drupal_mail('system', 'mail', $ad_email, language_default(), array(
+//        'context' => array(
+//            'subject' => 'Новое сообщение по объявлению "' . $ad_title . '"',
+//            'message' => $message,
+//        ),
+//    ));
+//
+//
+//    // сообщаем форме, что можно выводить сообщение об успешном сабмите и перестроить её
+//    $form_state['complete'] = true;
+//    $form_state['rebuild'] = true;
+//}
 
 
 
@@ -660,6 +659,9 @@ function chibs_cron()
   chibs_update_vacancy_dates();
 }
 
+/**
+ * автообновление даты публикации Вакансий
+ */
 function chibs_update_vacancy_dates()
 {
   // определить timestamp, который нужно установить
@@ -1313,7 +1315,7 @@ function chibs_preprocess_image_style(&$vars) {
 }
 
 /**
- * --------------------------------- Создание собственной бибилиотеки --------------------------------------------------
+ * --------------------------------- Создание собственной библиотеки --------------------------------------------------
  * Implements hook_libraries_info().
  * https://www.drupal.org/docs/7/modules/libraries-api-7x/using-libraries-api-2x-as-a-module-developer
  * For defining external libraries.

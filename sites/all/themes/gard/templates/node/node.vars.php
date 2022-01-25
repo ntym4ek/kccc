@@ -202,6 +202,7 @@ function gard_preprocess_node(&$vars) {
         }
         // минимальная цена - Скидка 10%
         $vars['price_start_formatted'] = str_replace(',00', '', commerce_currency_format($price_in_tare_amount*.9, 'RUB'));
+//        $vars['price_start_formatted'] = str_replace(',00', '', commerce_currency_format($price_in_tare_amount, 'RUB'));
 
         $vars['summary'] = $vars['body'][0]['safe_summary'];
 

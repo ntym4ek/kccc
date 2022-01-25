@@ -27,6 +27,46 @@ function ext_product_module_implements_alter(&$implementations, $hook)
   }
 }
 
+function ext_product_form_alter(&$form, &$form_state, $form_id)
+{
+
+  switch ($form_id) {
+    case 'product_agro_node_form':
+    case 'product_mix_node_form':
+    case 'product_fert_node_form':
+    case 'product_chem_node_form':
+      // из за включения мультиязычности поля body все тексты остались в UND, а на редактирование выводится RU
+      // скопировать из UND в RU, если там пусто
+      if (empty($form['body']['ru'][0]['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['value'])) {
+        $form['body']['ru'][0]['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['value'];
+      }
+      if (empty($form['body']['ru'][0]['summary']['#default_value']) && !empty($form['body']['ru'][0]['#entity']->body['und'][0]['summary'])) {
+        $form['body']['ru'][0]['summary']['#default_value'] = $form['body']['ru'][0]['#entity']->body['und'][0]['summary'];
+      }
+
+      // отключить возможность ввода цены для варианта товара
+      // цена расчитывается автоматически от цены за шт.
+      if (isset($form['field_product']['und']['entities'])) {
+        foreach ($form['field_product']['und']['entities'] as $key_e => $entity) {
+          if (is_numeric($key_e) && !empty($entity['form']['commerce_price'])) {
+            $form['field_product']['und']['entities'][$key_e]['form']['commerce_price']['#access'] = false;
+          }
+        }
+      }
+      if (!empty($form['field_product']['und']['form']['commerce_price'])) {
+        $form['field_product']['und']['form']['commerce_price']['#access'] = false;
+        $form['field_product']['und']['form']['commerce_price']['und'][0]['amount']['#type'] = 'value';
+        $form['field_product']['und']['form']['commerce_price']['und'][0]['amount']['#default_value'] = '0';
+        $form['field_product']['und']['form']['commerce_price']['und'][0]['currency_code']['#type'] = 'value';
+        $form['field_product']['und']['form']['commerce_price']['und'][0]['currency_code']['#default_value'] = 'RUB';
+      }
+      // пересчитать цены вариантов товаров в админке при редактировании товара
+      $form['#submit'][] = 'ext_product_product_calc_price';
+      break;
+
+  }
+}
+
 /**
  *
  */
@@ -178,8 +218,8 @@ function ext_product_cart_add_to_cart_form_submit($form, $form_state)
 {
   // если это сфера или таб, перейти на сайт страды
   if (isset($form_state['context']['entity_id'])) {
-    if ($form_state['context']['entity_id'] == 8505) drupal_goto('https://joy-magazin.ru/product/finfire-sfera');
-    if ($form_state['context']['entity_id'] == 8770) drupal_goto('https://joy-magazin.ru/product/finfire-tab');
+    if ($form_state['context']['entity_id'] == 8505) drupal_goto('https://joy-magazin.ru/catalog/ot-pozhara/avtonomnoe-ustroystvo-pozharotusheniya-finfire-sfera-1-shar/');
+    if ($form_state['context']['entity_id'] == 8770) drupal_goto('https://joy-magazin.ru/catalog/ot-pozhara/avtonomnoe-ustroystvo-pozharotusheniya-finfire-tab-1-sht/');
   }
 }
 
@@ -453,4 +493,21 @@ function ext_product_get_order_product_ids($uid)
     }
   }
   return $pids;
+}
+
+/**
+ * пересчитать цены вариантов товаров в админке при редактировании дисплее товара, если цена за единицу изменилась
+ */
+function ext_product_product_calc_price($form, &$form_state)
+{
+  if (isset($form['field_pd_price_per_unit'])) {
+    $price = (float) $form_state['values']['field_pd_price_per_unit']['und'][0]['amount'];
+
+    foreach ($form_state['inline_entity_form'] as $inline_form) {
+      foreach ($inline_form['entities'] as $key => &$line_item) {
+        $qty = (float) $line_item['entity']->field_p_qty['und'][0]['value'];
+        $line_item['entity']->commerce_price['und'][0]['amount'] = $qty * $price;
+      }
+    }
+  }
 }
