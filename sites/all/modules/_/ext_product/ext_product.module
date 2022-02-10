@@ -507,6 +507,14 @@ function ext_product_product_calc_price($form, &$form_state)
       foreach ($inline_form['entities'] as $key => &$line_item) {
         $qty = (float) $line_item['entity']->field_p_qty['und'][0]['value'];
         $line_item['entity']->commerce_price['und'][0]['amount'] = $qty * $price;
+
+        $product_id = $line_item['entity']->product_id;
+        // если товар уже сохранён и имеет ID, загрузить и внести изменения
+        if ($product_id) {
+          $product = commerce_product_load($product_id);
+          $product->commerce_price['und'][0]['amount'] = $qty * $price;
+          commerce_product_save($product);
+        }
       }
     }
   }
