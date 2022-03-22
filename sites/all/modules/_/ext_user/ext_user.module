@@ -159,9 +159,13 @@ function ext_user_preprocess_user_profile(&$vars)
 //      $output .= views_embed_view('user_notifications', 'page', implode('+', $subscripted_notification_ids), $status);
 
 
-      // фото
       $vars['user_profile']['photo'] = '/sites/default/files/default_images/no_photo.png';
-      $vars['user_profile']['add_photo_link'] = l(t('add photo'), '/user/' . $acid . '/main/edit');
+      $vars['user_profile']['add_photo_link'] = '';
+
+      if (!user_has_role(ROLE_UNCONFIRMED)) {
+        // фото
+        $vars['user_profile']['add_photo_link'] = l(t('add photo'), '/user/' . $acid . '/main/edit');
+      }
 
       $profile2 = profile2_load_by_user($acid);
       if (!empty($profile2['main']->pid)) {
@@ -314,6 +318,7 @@ function ext_user_login_name_validate($form, &$form_state)
  */
 function ext_user_form_user_register_form_alter(&$form, &$form_state)
 {
+//  variable_set('user_mail_register_no_approval_required_notify', true);
   // изменение формы регистрации
   $form['account']['mail']['#attributes']['placeholder'] = 'E-Mail';
   unset($form['account']['mail']['#title']);
@@ -402,7 +407,7 @@ function ext_user_user_register_form_submit($form, &$form_state)
     user_save($user);
   }
 
-  $form_state['redirect'] = 'user/' . $user->uid . '/edit/main';
+//  $form_state['redirect'] = 'user/' . $user->uid . '/edit/main';
 }
 
 /**
@@ -635,92 +640,6 @@ function ext_user_get_user_name($user, $format = 'short_ns')
   return $user_name;
 }
 
-/**
- * -------------------------------------- функции для работы с Баллами ------------------------------------------------
- *
- */
-
-/**
- * начисление Баллов за различные действия
- *
- * @param $user - account || account id кому начисляем
- * @param $action - действие, за которое начисляется награда
- * @param array $params - 'id' : id объекта для уточнения, за что начислены Баллы
- *                      - 'points' : количество списываемых или начисляемых Баллов, нужно для некоторых действий
- * @return int/false - добавленное количество Баллов или false в случае неудачной операции
- */
-function ext_user_activity_reward($user, $action, $params = array())
-{
-  $points = 0;
-  $info = '';
-  switch($action) {
-    case PREPARATION_REVIEW:
-      $points = 10;
-      $info = empty($params['id']) ? '' : $params['id'];
-      break;
-
-    case ORDER_USE:
-      $points = empty($params['points']) ? 0 : $params['points'];
-      $info = empty($params['id']) ? '' : $params['id'];
-      break;
-  }
-
-  if ($points && ext_user_set_points($user, $points, $action, $info)) return $points;
-  else return false;
-}
-
-/**
- * вернуть текущее количество Баллов пользователя
- *
- * @param $acid - account || account id
- */
-function ext_user_get_points($user)
-{
-  if (is_numeric($user)) $account = user_load($user);
-  else $account = $user;
-
-  $points = 0;
-  if (!empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
-    $main_wrapper = entity_metadata_wrapper('profile2', $main);
-    if (isset($main_wrapper->field_profile_points)) {
-      foreach($main_wrapper->field_profile_points->getIterator() as $record_ppts) {
-        $points += $record_ppts->field_ppts_points->value();
-        if ($points < 0) $points = 0;
-      }
-    }
-  }
-
-  return $points;
-}
-
-/**
- * Изменить воличество Баллов на счету Юзера путём внесения новой записи в историю изменения Баллов
- *
- * @param $user - account || account id
- * @param $points - положительное или отрицательное количество Баллов
- * @param $comment - комментарий к изменению Баллов
- * @return int - результируюее количество Баллов или false в случае неудачной операции
- */
-function ext_user_set_points($user, $points, $action_id, $info)
-{
-  if (is_numeric($user)) $account = user_load($user);
-  else $account = $user;
-
-  $points_new = false;
-  if (is_numeric($points) && !empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
-    $fc_item = entity_create('field_collection_item', array('field_name' => 'field_profile_points'));
-    $fc_item_wrapper = entity_metadata_wrapper('field_collection_item', $fc_item);
-    $fc_item->setHostEntity('profile2', $main);
-    $fc_item_wrapper->field_ppts_points->set($points);
-    $fc_item_wrapper->field_ppts_action_id->set($action_id);
-    $fc_item_wrapper->field_ppts_info->set($info);
-    $fc_item_wrapper->save(TRUE);
-
-    $points_new = ext_user_get_points($account);
-  }
-
-  return $points_new;
-}
 
 // проверка заданного или текущего пользователя на наличие роли
 function _user_has_role($role, $acc = NULL)
@@ -851,16 +770,15 @@ function ext_user_user_authenticate($name, $password)
  */
 function ext_user_metatag_metatags_view_alter(&$output, $instance, $options)
 {
-  if (arg(0) == 'reviews' && arg(1) == 'user' && is_numeric(arg(2))) {
-    if ($account = user_load(arg(2))) {
-      $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Отзывы пользователя '. $account->realname . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
-      $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Отзывы пользователя '. $account->realname . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
+  if (arg(1) == 'user' && is_numeric(arg(2))) {
+    $user_info = ext_user_get_user_info(arg(2));
+    if (arg(0) == 'reviews') {
+        $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Отзывы пользователя '. $user_info['short_name'] . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
+        $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Отзывы пользователя '. $user_info['short_name'] . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
     }
-  }
-  if (arg(0) == 'blogs' && arg(1) == 'user' && is_numeric(arg(2))) {
-    if ($account = user_load(arg(2))) {
-      $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Блог пользователя '. $account->realname . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
-      $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Блог пользователя '. $account->realname . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
+    if (arg(0) == 'blogs') {
+        $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Блог пользователя '. $user_info['short_name'] . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
+        $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Блог пользователя '. $user_info['short_name'] . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
     }
   }
 }

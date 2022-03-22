@@ -152,6 +152,12 @@
 
     .profile-left {
         @include make-md-column(4);
+      .photo img { max-width: 100%; }
+      .profile-add-photo {
+        margin-top: 15px;
+        text-align: center;
+        a { color: $text-muted; font-size: .8em; }
+      }
     }
     .profile-right {
         @include make-md-column(8);

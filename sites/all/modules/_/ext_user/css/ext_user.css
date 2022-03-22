@@ -180,6 +180,14 @@
     .profile-wrapper .profile-left {
       float: left;
       width: 33.3333333333%; } }
+  .profile-wrapper .profile-left .photo img {
+    max-width: 100%; }
+  .profile-wrapper .profile-left .profile-add-photo {
+    margin-top: 15px;
+    text-align: center; }
+    .profile-wrapper .profile-left .profile-add-photo a {
+      color: #b3b3b3;
+      font-size: .8em; }
 .profile-wrapper .profile-right {
   position: relative;
   min-height: 1px;

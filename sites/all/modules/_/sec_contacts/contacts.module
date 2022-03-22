@@ -243,6 +243,30 @@ function contacts_get_contacts_list()
                             71717 => [], //Тульская область",
                           ),
                         ),
+                      array(
+                        'office' => t('Head of sales department'),
+                        'access' => true,
+                        'surname' => 'Бурминский', 'name' => 'Максим', 'name2' => 'Игоревич',
+                        'phones' => array('+7 (922) 900-09-87'),
+                        'emails' => array('voronezh2@kccc.ru'),
+                        'photo' => '/' . $module_path . '/images/photos/burminskiy_m.png',
+                        'regions' => array(
+                          71677 => [], //Белгородская область",
+                          71682 => [], //Воронежская область",
+                          71694 => [], //Липецкая область",
+                        ),
+                      ),
+                      array(
+                        'office' => t('Head of sales department'),
+                        'access' => true,
+                        'surname' => 'Русанов', 'name' => 'Алексей', 'name2' => 'Владимирович',
+                        'phones' => array('+7 (918) 742-67-28', '+7 (922) 966-59-77'),
+                        'emails' => array('stavropol@kccc.ru'),
+                        'photo' => '/' . $module_path . '/images/photos/rusanov.png',
+                        'regions' => array(
+                          71672 => [], //Ставропольский край",
+                        ),
+                      )
                     )
                 ),
                 'support' => array(

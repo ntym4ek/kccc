@@ -5,13 +5,13 @@
  */
 function ext_product_menu()
 {
-    $items['source/qsearch'] = array(
-        'page callback' => 'ext_product_qsearch_callback',
-        'page arguments' => array(2),
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-    );
-    return $items;
+//    $items['source/qsearch'] = array(
+//        'page callback' => 'ext_product_qsearch_callback',
+//        'page arguments' => array(2),
+//        'access arguments' => array('access content'),
+//        'type' => MENU_CALLBACK,
+//    );
+//    return $items;
 }
 
 /**

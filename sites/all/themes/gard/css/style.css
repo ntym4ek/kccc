@@ -5862,6 +5862,10 @@ button.close {
 .brand-orange-bkg {
   background-color: #f2a500; }
 
+.field-name-commerce-price,
+.price_field {
+  visibility: hidden; }
+
 * {
   outline: 0 !important; }
 

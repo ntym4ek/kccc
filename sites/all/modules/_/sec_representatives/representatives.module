@@ -339,6 +339,16 @@ function representatives_sales_list()
       71694 => [], //Липецкая область",
     ),
   );
+  $sales[] = array(
+    'roles' =>  ['manager'],
+    'surname' => 'Русанов', 'name' => 'Алексей', 'name2' => 'Владимирович',
+    'phones' => array('+7 (918) 742-67-28', '+7 (922) 966-59-77'),
+    'emails' => array('stavropol@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/rusanov.png',
+    'regions' => array(
+      71672 => [], //Ставропольский край",
+    ),
+  );
 
 
   /** ------------------------ Представители --------------------------------------------------------------------- */
@@ -515,16 +525,16 @@ function representatives_sales_list()
 //      71692 => [], //Курская область",
 //    ),
 //  );
-//  $sales[] = array(
-//    'roles' =>  ['representative'],
-//    'surname' => 'Курасов', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
-//    'phones' => array('+7 (922) 922-76-10'),
-//    'emails' => array('kursk2@kccc.ru'),
-//    'photo' => '/' . $module_path . '/images/photos/kurasov_s.png',
-//    'regions' => array(
-//      71692 => [], //Курская область",
-//    ),
-//  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'surname' => 'Курасов', 'name' => 'Сергей', 'name2' => 'Евгеньевич',
+    'phones' => array('+7 (922) 922-76-10'),
+    'emails' => array('kursk2@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/kurasov_s.png',
+    'regions' => array(
+      71692 => [], //Курская область",
+    ),
+  );
   $sales[] = array(
     'roles' =>  ['representative'],
     'surname' => 'Плешков', 'name' => 'Владимир', 'name2' => 'Геннадьевич',
@@ -535,17 +545,17 @@ function representatives_sales_list()
       71694 => [], //Липецкая область",
     )
   );
-//    $sales[] = array(
-//        'roles' =>  ['representative'],
-//        'access' => false,
-//        'surname' => 'Соломахин', 'name' => 'Николай', 'name2' => 'Викторович',
-//        'phones' => array('+7 (922) 966-60-12'),
-//        'emails' => array('lipetsk2@kccc.ru'),
-//        'photo' => '/' . $module_path . '/images/photos/solomahin_n.png',
-//        'regions' => array(
-//            71694 => [], //Липецкая область",
-//        )
-//    );
+    $sales[] = array(
+        'roles' =>  ['representative'],
+        'access' => false,
+        'surname' => 'Казанцев', 'name' => 'Сергей', 'name2' => 'Николаевич',
+        'phones' => array('+7 (922) 916-70-72'),
+        'emails' => array('lipetsk2@kccc.ru'),
+        'photo' => $no_photo,
+        'regions' => array(
+            71694 => [], //Липецкая область",
+        )
+    );
   $sales[] =  array(
     'roles' =>  ['expert'],
     'surname' => 'Бекасова', 'name' => 'Марина', 'name2' => 'Викторовна',
@@ -792,6 +802,16 @@ function representatives_sales_list()
     'surname' => 'Кунцевич', 'name' => 'Алексей', 'name2' => 'Александрович',
     'phones' => array('+7 (922) 910-04-71'),
     'emails' => array('ryazan@kccc.ru'),
+    'photo' =>  '/' . $module_path . '/images/photos/kuncevich.png',
+    'regions' => array(
+      71708 => [], //Рязанская область",
+    ),
+  );
+  $sales[] = array(
+    'roles' =>  ['representative'],
+    'surname' => 'Новиков', 'name' => 'Алексей', 'name2' => 'Владимирович',
+    'phones' => array('+7 (922) 900-12-61'),
+    'emails' => array('ryazan1@kccc.ru'),
     'photo' => $no_photo,
     'regions' => array(
       71708 => [], //Рязанская область",
@@ -805,16 +825,6 @@ function representatives_sales_list()
     'photo' => '/' . $module_path . '/images/photos/averchenkov_k.png',
     'regions' => array(
       71713 => [], //Смоленская область",
-    ),
-  );
-  $sales[] = array(
-    'roles' =>  ['representative'],
-    'surname' => 'Русанов', 'name' => 'Алексей', 'name2' => 'Владимирович',
-    'phones' => array('+7 (918) 742-67-28', '+7 (922) 966-59-77'),
-    'emails' => array('stavropol@kccc.ru'),
-    'photo' => '/' . $module_path . '/images/photos/rusanov.png',
-    'regions' => array(
-      71672 => [], //Ставропольский край",
     ),
   );
   $sales[] = array(

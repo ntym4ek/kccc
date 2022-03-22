@@ -18,6 +18,9 @@
           box-shadow: $shadow;
 }
 
+.field-name-commerce-price,
+.price_field { visibility: hidden; }
+
 * {
   outline: 0 !important;
 }

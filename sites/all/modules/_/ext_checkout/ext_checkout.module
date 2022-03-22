@@ -425,7 +425,7 @@ function ext_checkout_preprocess_commerce_checkout_form_complete(&$vars)
  */
 function ext_checkout_get_order_info($order)
 {
-  $result = drupal_static(__FUNCTION__);
+  $result = &drupal_static(__FUNCTION__);
   if (empty($result)) {
     $order_id = is_numeric($order) ? $order : $order->order_id;
 

@@ -165,20 +165,21 @@ function gard_menu_link__user_menu(array $variables)
         unset($element['#below']['#theme_wrappers']);
         $sub_menu .= '<div class="dropdown-menu level-' . ($depth + 1) . '-wrapper">';
         if ($mlid == 12880 && $GLOBALS['user']->uid) {
-
+          $user_info = ext_user_get_user_info($GLOBALS['user']);
             $sub_menu .= '<div class="user-info">' .
-                            (module_exists('realname') ? realname_load($GLOBALS['user']) : $GLOBALS['user']->name) .
+                            $user_info['short_name'] .
                             '<span>' . $GLOBALS['user']->mail . '</span>' .
                         '</div>';
         }
         // навигация
         $nav_menu = menu_tree_all_data('navigation');
-        $nav_menu = menu_tree_output($nav_menu);
-        $nav_menu['#theme_wrappers'] = ['menu_tree__navigation_submenu'];
-
-        $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
+        if ($nav_menu = menu_tree_output($nav_menu)) {
+          $nav_menu['#theme_wrappers'] = ['menu_tree__navigation_submenu'];
+          $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
                             drupal_render($nav_menu) .
-                        '</ul>';
+                          '</ul>';
+        }
+
         $sub_menu .=    '<ul class="level-' . ($depth + 1) . '">' .
                             drupal_render($element['#below']) .
                         '</ul>' .

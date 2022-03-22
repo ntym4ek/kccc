@@ -196,7 +196,7 @@ function gard_preprocess_node(&$vars) {
             $vars['images'][] = image_style_url('large', $item['photo_uri']);
 
             if ($vars['type'] == 'product_mix') {
-              $vars['preps_arr'][] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['title'] . ', ' . $item['form_short'] . '</a><br /><span class="ingredients">' . drupal_strtolower(implode(' + ', $item['ingredients'])) . '</span>';
+              $vars['preps_arr'][] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['title'] . ', ' . $item['form_short'] . '</a><br /><span class="ingredients">' . drupal_strtolower(implode(' + ', $dv)) . '</span>';
             }
           }
         }
