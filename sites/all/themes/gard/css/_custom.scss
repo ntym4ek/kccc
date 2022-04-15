@@ -575,6 +575,7 @@
 
 // оформление блоков с инфо поверх фото и под фото
 .block-content {
+  display: flex; flex-wrap: wrap;
   margin-bottom: 2px;
   @include transition(all .3s linear);
   position: relative;
@@ -1786,6 +1787,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     }
     footer {
         border-top: 1px solid $views-list-bg;
+        min-height: 38px;
         .passed span { color: $brand-warning; }
         .not-passed span { color: $brand-green; }
     }

@@ -367,6 +367,23 @@ function before_after_season_form_validate(&$form, &$form_state)
     // если нажат submit
     if (!empty($form_state['submitted'])) {
 
+      $season_value = $form_state['values']['season'];
+      $year_value = $form_state['values']['year'];
+
+      // проверить наличие аналогичного сезона
+      if (empty($form_state["sid"])) {
+        $query = db_select('field_data_field_f_sowing', 'fs');
+        $query->condition('fs.entity_id', $form_state["fid"]);
+        $query->innerJoin('field_data_field_f_s_season', 'fss', 'fss.entity_id = fs.field_f_sowing_value');
+        $query->condition('fss.field_f_s_season_value', $season_value);
+        $query->innerJoin('field_data_field_f_s_year', 'fsy', 'fsy.entity_id = fs.field_f_sowing_value');
+        $query->condition('fsy.field_f_s_year_value', $year_value);
+        $query->addField('fs', 'field_f_sowing_value');
+        if ($result = $query->execute()->fetchField()) {
+          form_set_error('season', 'Для заданного сезона ' . $season_value . ' ' . $year_value . ' уже существует запись, новую информацию о поле необходимо добавлять в неё (<a href="/field/' . $form_state["fid"] . '/season/edit/' . $result . '">ссылка</a>).');
+        }
+      }
+
         // заполняем массив ВО
         $form_state['hobjects'] = array();
         foreach ($form_state['values'] as $key => $value) {
@@ -390,7 +407,8 @@ function before_after_season_form_validate(&$form, &$form_state)
 
         // проверка наличия Культуры
         if (empty($form_state['values']['culture'])
-            || $form_state['values']['culture'] == '_none') {
+            || $form_state['values']['culture'] == '_none')
+        {
             form_set_error('culture', 'Задайте основную культуру.');
         }
     }
@@ -411,7 +429,7 @@ function before_after_season_form_submit(&$form, &$form_state)
     // задать Культуру, Субкультуру и площадь
     $season_wrapper->field_f_s_culture->set($form_state['values']['culture']);
     $season_wrapper->field_f_s_culture_note->set($form_state['values']['culture_note']);
-    $season_wrapper->field_f_s_sub_culture->set($form_state['values']['sub_culture']);
+    $season_wrapper->field_f_s_sub_culture->set($form_state['values']['subculture']);
     if (!empty($form_state['values']['previous_culture'])) {
         if ($form_state['values']['previous_culture'] == '_none') $season_wrapper->field_f_s_previous_culture->set(null);
         else $season_wrapper->field_f_s_previous_culture->set($form_state['values']['previous_culture']);

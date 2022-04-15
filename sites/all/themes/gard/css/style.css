@@ -6243,7 +6243,7 @@ option:disabled {
     color: #333333; }
   @media (max-width: 767px) {
     .navbar .right-menu-links {
-      padding: 10px 4px; } }
+      display: none; } }
   .navbar.slide-in .fa-bars {
     display: none; }
   .navbar.slide-in .btn-s4 .fa-times {
@@ -7764,6 +7764,8 @@ a.icon-after .glyphicon {
 
 /* ------------------------------------------------- Главная | Блоки - */
 .block-content {
+  display: flex;
+  flex-wrap: wrap;
   margin-bottom: 2px;
   -webkit-transition: all 0.3s linear;
   -o-transition: all 0.3s linear;
@@ -9334,7 +9336,8 @@ form.confirmation .form-actions {
     .card footer:after {
       clear: both; }
   .card footer {
-    border-top: 1px solid #e1e1e1; }
+    border-top: 1px solid #e1e1e1;
+    min-height: 38px; }
     .card footer .passed span {
       color: #f2a500; }
     .card footer .not-passed span {

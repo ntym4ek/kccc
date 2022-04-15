@@ -880,7 +880,7 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['representative'],
-    'surname' => 'Цикунова', 'name' => 'Екатерина', 'name2' => 'Анатольевна',
+    'surname' => 'Коновалова', 'name' => 'Екатерина', 'name2' => 'Анатольевна',
     'phones' => array('+7 (922) 916-71-57'),
     'emails' => array('tula1@kccc.ru'),
     'photo' => $no_photo,
@@ -988,17 +988,19 @@ function representatives_sales_list()
   );
   $sales[] = array(
     'roles' =>  ['expert'],
-    'surname' => 'Кузнецова', 'name' => 'Елизавета', 'name2' => 'Алексеевна',
-    'phones' => [''],
-    'expert' => '',
+    'surname' => 'Горьковская', 'name' => 'Елизавета', 'name2' => 'Алексеевна',
+    'phones' => ['+7 (922) 900-17-18'],
+    'expert' => '+7 (988) 760-92-50',
     'emails' => ['krasnodar3@kccc.ru'],
-    'photo' => $no_photo,
+    'photo' => '/' . $module_path . '/images/photos/gorkovskaya.png',
     'regions' => [
       71669 => [], //Краснодарский край",
       71707 => [], //Ростовская область",
+      71730 => [], //Республика Крым",
       71672 => [], //Ставропольский край",
     ],
   );
+
   $sales[] = array(
     'roles' =>  ['representative'],
     'surname' => 'Шалаев', 'name' => 'Андрей', 'name2' => 'Сергеевич',

@@ -5,7 +5,7 @@
 
 <article class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
-    <? if (!empty($author)): ?>
+    <? if (!empty($author) && empty($author['anonimous'])): ?>
     <div class="node-author">
         <img src="<? print $author['photo']; ?>" alt="<? print $author['staff']['role']; ?>" class="img-circle">
         <div class="author-body">

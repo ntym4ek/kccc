@@ -123,7 +123,8 @@ function ext_user_preprocess_user_profile(&$vars)
 
     // разрешаем просмотр аккаунтов представителей
     if ($account_view_access) {
-      $vars['user_profile']['name'] = ext_user_get_user_name($account->uid);
+      $user_info = ext_user_get_user_info($account->uid);
+      $vars['user_profile']['name'] = $user_info['short_name'];
 
       if (user_has_role(STAFF_REPRESENTATIVE, $account)) {
         // todo должность, регион
@@ -252,7 +253,7 @@ function ext_user_preprocess_user_profile(&$vars)
 
 
 //    $output = theme('ext_user_summary', array('content' => $content));
-      drupal_set_title($vars['user_profile']['name']);
+      drupal_set_title($user_info['short_name']);
     }
   }
 }
@@ -319,6 +320,7 @@ function ext_user_login_name_validate($form, &$form_state)
 function ext_user_form_user_register_form_alter(&$form, &$form_state)
 {
 //  variable_set('user_mail_register_no_approval_required_notify', true);
+
   // изменение формы регистрации
   $form['account']['mail']['#attributes']['placeholder'] = 'E-Mail';
   unset($form['account']['mail']['#title']);

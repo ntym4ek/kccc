@@ -66,10 +66,10 @@ function zhip_form($form, $form_state)
 function zhip_form_ajax_callback($form, $form_state)
 {
   $form['message'] = [
-    '#markup' => '<p class="bg-success">' . t('Your message was sent.') . '</p><a href="/' . ZHIP_URL . '">' . t('back') . '</a>',
+    '#markup' => '<p>' . t('Your message was sent.') . '</p><a href="/' . ZHIP_URL . '">' . t('back') . '</a>',
   ];
 
-  return $form['text'];
+  return $form['message'];
 }
 
 function zhip_form_submit($form, &$form_state)

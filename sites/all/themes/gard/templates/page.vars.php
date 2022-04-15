@@ -352,12 +352,18 @@ function gard_preprocess_page(&$vars)
         $vars['row_1']['block_17'] = $vars['page']['content']['block_17'];
       }
 
+      // видеоролик
+      if (isset($vars['page']['content']['block_24'])) {
+        $vars['row_2']['block_1'] = $vars['page']['content']['block_24'];
+      }
+      // обновляемый блок с новостями
       if (isset($vars['page']['content']['block_18'])) {
-        $vars['row_2']['block_1'] = $vars['page']['content']['block_18'];
+        $vars['row_2']['block_2'] = $vars['page']['content']['block_18'];
       }
-      if (isset($vars['page']['content']['block_19'])) {
-        $vars['row_2']['block_2'] = $vars['page']['content']['block_19'];
-      }
+      // обновляемый блок с новостями
+//      if (isset($vars['page']['content']['block_19'])) {
+//        $vars['row_2']['block_2'] = $vars['page']['content']['block_19'];
+//      }
 
       // блок joy или слайдер с афишей
       if (isset($vars['page']['content']['views_sliders-block_2']) && strpos($vars["page"]["content"]["views_sliders-block_2"]["#markup"], 'empty') === false) {

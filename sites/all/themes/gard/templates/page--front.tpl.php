@@ -165,7 +165,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="row">
-                                <div class="col-xs-12 col-md-6"><h1><?php print $site_slogan; ?></h1></div>
+                                <div class="col-xs-12 col-md-6 hidden-xs"><h1><?php print $site_slogan; ?></h1></div>
                                 <div class="col-xs-12 col-md-6"><?php print render($footer_nav); ?></div>
                             </div>
                         </div>
@@ -174,7 +174,7 @@
                                 <div class="col-xs-12 col-md-6 col-lg-6">
                                     <div id="footer_contact" class="contact"><?php print $site_contact; ?></div>
                                 </div>
-                                <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2">
+                                <div class="col-xs-12 hidden-sm col-md-4 col-md-offset-2 hidden-xs">
                                     <a class="navbar-brand" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
                                         <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" loading="lazy" />
                                     </a>

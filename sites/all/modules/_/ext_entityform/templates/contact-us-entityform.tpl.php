@@ -10,6 +10,7 @@
         <div class="cu-link"><i class="fas fa-user"></i><a href="/info/contacts"><? print t('Central office departments contacts'); ?></a></div>
         <div class="cu-link"><i class="fas fa-download"></i><a href="/sites/default/files/etc/contact_us/card_th_kccc.pdf" target="_blank"><? print t('Download OOO TD "KCCC" requisites'); ?></a></div>
         <div class="cu-link"><i class="fas fa-map"></i><a href="/info/representatives"><? print t('Official representatives'); ?></a></div>
+        <div class="cu-link"><i class="fas fa-user"></i><a href="/agro-expert/online"><? print t('Agronomic service'); ?></a></div>
     </div>
     <div class="col-md-5 do-not-print">
         <div class="cu-form">
