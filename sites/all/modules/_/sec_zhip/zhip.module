@@ -1,0 +1,83 @@
+<?php
+
+define('ZHIP_URL', 'complaints');
+
+function zhip_menu()
+{
+  $items[ZHIP_URL] = array(
+      'title' => 'Complaints and suggestions',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => ['zhip_form'],
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function zhip_preprocess_page(&$vars)
+{
+    // установить для страницы параметры шапки
+    if ($_GET['q'] == ZHIP_URL) {
+        $vars['header'] = array(
+            'image' => url('/' . drupal_get_path('module', 'zhip') . '/images/header_image.jpg', array('absolute' => true)),
+            'category_title' => '',
+            'subtitle' => '',
+            'print' => false,
+        );
+    }
+}
+
+// главная страница
+function zhip_form($form, $form_state)
+{
+  $form = [
+    '#prefix' => '<div id="zhip-form-wrapper">',
+    '#suffix' => '</div>',
+  ];
+
+  $form['intro'] = [
+    '#markup' =>  '<div style="font-size: 18px;"><p>Сообщите о своих идеях, пожеланиях или замечаниях. Заполните форму ниже.<br><br></p>' .
+                  '<p>ВНИМАНИЕ!<br>' .
+                  'Это форма отправки сообщения без идентификации пользователя и обратной связи. Если вы хотите получить ответ на своё обращение, воспользуйтесь другой формой по <a href="/idea">ссылке</a>.</p></div>',
+  ];
+
+  $form['text'] = [
+    '#type' => 'textarea',
+    '#title' => t('Text'),
+  ];
+  $form['actions'] = [
+    '#type' => 'actions',
+  ];
+  $form['actions']['submit'] = [
+    '#type' => 'submit',
+    '#value' => t('Send'),
+    '#ajax' => [
+      'callback' => 'zhip_form_ajax_callback',
+      'wrapper' => 'zhip-form-wrapper',
+    ],
+  ];
+
+  return $form;
+};
+
+function zhip_form_ajax_callback($form, $form_state)
+{
+  $form['message'] = [
+    '#markup' => '<p class="bg-success">' . t('Your message was sent.') . '</p><a href="/' . ZHIP_URL . '">' . t('back') . '</a>',
+  ];
+
+  return $form['text'];
+}
+
+function zhip_form_submit($form, &$form_state)
+{
+  $params = [
+    'subject' => 'Новое обращение в разделе "Жалобы и предложения"',
+    'body' => check_plain($form_state['values']['text']),
+  ];
+  drupal_mail('mailer', 'manual_mail', variable_get('email_otdel_kadrov', 'support@kccc.ru'), 'RU', $params, 'bot@kccc.ru');
+  drupal_set_message(t('Your message was sent.'));
+}
