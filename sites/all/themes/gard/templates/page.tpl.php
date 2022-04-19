@@ -176,7 +176,6 @@
                             <div class="header-share closed">
                                 <div class="social-links">
                                     <a class="vk" href="http://vkontakte.ru/share.php?url=<?php print $header['url']; ?>" target="_blank" title="вконтакте"><i class="fab fa-vk" aria-hidden="true"></i></a>
-                                    <a class="tw" href="https://twitter.com/intent/tweet?text=<?php print $header['url']; ?>" target="_blank" title="twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                                     <a class="em" href="mailto:?to=&subject=Subject&body=Link:%20<?php print $header['url']; ?>%0D%0D" target="_blank" title="email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                                 </div>
                             </div>
@@ -207,7 +206,6 @@
                     <div class="social-links">
                       <a class="vk" href="http://vk.com/public147827276" rel="nofollow" target="_blank" title="ВКонтакте"><i class="fab fa-vk" aria-hidden="true"></i></a>
                       <a class="ok" href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="Одноклассники"><i class="fab fa-odnoklassniki" aria-hidden="true"></i></a>
-                      <a class="tw" href="https://twitter.com/kccc_ru" rel="nofollow" target="_blank" title="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                       <a class="yt" href="http://www.youtube.com/channel/UCFenAWL6Wa0iJzpVpsvn64w" rel="nofollow" target="_blank" title="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
