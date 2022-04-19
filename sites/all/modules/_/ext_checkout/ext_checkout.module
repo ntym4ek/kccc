@@ -103,10 +103,11 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
   $order = $form_state['order'];
 
   // данные о пользователе
-  if ($user = user_load($GLOBALS['user']->uid)) {
-    $order_wr = entity_metadata_wrapper('commerce_order', $order);
-    $order_wr->field_username = $user->realname;
-    $order_wr->field_email = $user->mail;
+  $user_info = ext_user_get_user_info($GLOBALS['user']->uid);
+  $order_wr = entity_metadata_wrapper('commerce_order', $order);
+  if ($order_wr->field_username->value() != $user_info['full_name']) {
+    $order_wr->field_username = $user_info['full_name'];
+    $order_wr->field_email = $user_info['email'];
     $order_wr->save();
   }
 
@@ -218,9 +219,10 @@ function ext_checkout_form_commerce_checkout_form_checkout_alter(&$form, &$form_
 
       $notice = '';
       // запретить выбор Отсрочки платежа для физлиц
-      if (!user_has_role(ROLE_COMPANY, $GLOBALS['user'])) {
+      if (!user_has_role(ROLE_COMPANY, $GLOBALS['user']) || !$user_info['is_company'] || empty($user_info['company']['inn'])) {
         $form['commerce_payment']['payment_method']['#disabled_options'] = ['commerce_payment_credit|commerce_payment_commerce_payment_credit'];
-        $notice = '<p class="header-notice">Отсрочка платежа доступна только для юридических лиц.<br /><a href="/user/' . $GLOBALS['user']->uid . '/edit">Добавить необходимую информацию</a>.</p>';
+        $url = $user_info['is_company'] ? '/user/' . $GLOBALS['user']->uid . '/edit/company' : '/user/' . $GLOBALS['user']->uid . '/edit';
+        $notice = '<p class="header-notice">Отсрочка платежа доступна только для юридических лиц.<br /><a href="' . $url . '">Добавить необходимую информацию</a>.</p>';
       }
 
       $form["commerce_payment"]['#prefix'] = '<h2>Оплата</h2>' . $notice;

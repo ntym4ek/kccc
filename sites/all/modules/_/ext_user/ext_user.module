@@ -486,6 +486,13 @@ function ext_user_form_user_profile_form_alter (&$form, $form_state)
       $form["account"]["pass"]["#type"] = 'password';
     }
 
+    // если пришли с чекаута и нет профиля, то выдать сообщение с подсказкой
+    if (strpos($_SERVER["HTTP_REFERER"], '/checkout/') !== false) {
+      if (empty($form["#user"]->field_profile_has_company["und"][0]["value"])) {
+        form_set_error('field_profile_has_company', 'Поставьте галочку в выделенном поле и нажмите "Сохранить".');
+      }
+    }
+
     // меняем тему формы всем, кроме Админа
     $form["#theme"] = ['user_profile_form_custom'];
 
@@ -495,19 +502,22 @@ function ext_user_form_user_profile_form_alter (&$form, $form_state)
 
 function ext_user_user_profile_form_submit($form, &$form_state)
 {
-  // проверить галку Аккаунтт Юрлица и создать профиль, если отсутствует
   global $user;
-  if (!empty($form_state["values"]["field_profile_has_company"]["und"][0]["value"])) {
-    if (!user_has_role(ROLE_COMPANY, $user)) {
-      $roles = user_roles();
-      $user->roles[ROLE_COMPANY] = $roles[ROLE_COMPANY];
-      user_save($user);
-      $form_state['redirect'] = 'user/' . $user->uid . '/edit/company';
-    }
-  } else {
-    if (user_has_role(ROLE_COMPANY, $user)) {
-      unset($user->roles[ROLE_COMPANY]);
-      user_save($user);
+
+  // проверить галку Аккаунтт Юрлица и создать профиль, если отсутствует
+  if (isset($form_state["values"]["field_profile_has_company"])) {
+    if ($form_state["values"]["field_profile_has_company"]["und"][0]["value"]) {
+      if (!user_has_role(ROLE_COMPANY, $user)) {
+        $roles = user_roles();
+        $user->roles[ROLE_COMPANY] = $roles[ROLE_COMPANY];
+        user_save($user);
+        $form_state['redirect'] = 'user/' . $user->uid . '/edit/company';
+      }
+    } else {
+      if (user_has_role(ROLE_COMPANY, $user)) {
+        unset($user->roles[ROLE_COMPANY]);
+        user_save($user);
+      }
     }
   }
 }
@@ -539,12 +549,15 @@ function ext_user_get_user_info($user)
 {
   $account = is_numeric($user) ? user_load($user) : $user;
 
+  $account_wr = entity_metadata_wrapper('user', $user);
+
   $name_arr = array('', '', '');
   $email = $phone = '';
   $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
   $staff = [];
   $company = [];
   $label = t('User');
+  $is_company = $account_wr->field_profile_has_company->value();
 
   if (!empty($account->uid)) {
     if ($main_pr2 = profile2_load_by_user($account, 'main')) {
@@ -603,6 +616,7 @@ function ext_user_get_user_info($user)
     'phone' => $phone,
     'photo' => $photo_url,
     'staff' => $staff,
+    'is_company' => $is_company,
     'company' => $company,
   ];
 }
