@@ -85,11 +85,16 @@ function ext_user_preprocess_page(&$vars)
   global $user;
 
   // отключить заголовок на странице
-  if (arg(0) == 'user' || arg(0) == 'company') {
+  if (arg(0) == 'user') {
     if (in_array(arg(1), ['login', 'register', 'password', 'reset']) || arg(2) == 'before_after') {
       $vars['header']['title_off'] = true;
     }
+    $user_info = ext_user_get_user_info($GLOBALS['user']->uid);
     $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'ext_user') . '/images/header_image.jpg';
+
+    if (!arg(1) || !arg(2)) {
+      $vars['header']['title'] = $user_info['short_name'];
+    }
 
     drupal_add_js(drupal_get_path('module', 'ext_user') . '/js/ext_user.js');
     drupal_add_css(drupal_get_path('module', 'ext_user') . '/css/ext_user.css');

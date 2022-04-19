@@ -11,8 +11,7 @@
  * ./THEMENAME/bootstrap/assets/stylesheets/bootstrap/_variables.scss
  */
 .user-acc-add-link {
-  margin-bottom: 15px;
-  text-align: right; }
+  margin-bottom: 15px; }
 
 /* ------------------------------------------------- Форма восстановления пароля - */
 .user-auth-wr {

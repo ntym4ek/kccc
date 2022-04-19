@@ -2291,3 +2291,20 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         &.slide-right { transform: translateX(0px); }
     }
 }
+
+
+.file-widget {
+  display: flex;
+  align-items: center;
+  .file-info {
+    a {
+      width: 100%;
+      display: inline-block;
+    }
+    span {
+      color: $text-muted; font-size: 0.8em;
+    }
+  }
+  .badge { font-weight: 500; }
+  button { margin-left: 10px; }
+}

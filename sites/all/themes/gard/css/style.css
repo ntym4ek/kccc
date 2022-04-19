@@ -9852,6 +9852,20 @@ form.confirmation .form-actions {
     [data-animate=true].visible.slide-left, [data-animate=true].visible.slide-right {
       transform: translateX(0px); }
 
+.file-widget {
+  display: flex;
+  align-items: center; }
+  .file-widget .file-info a {
+    width: 100%;
+    display: inline-block; }
+  .file-widget .file-info span {
+    color: #b3b3b3;
+    font-size: 0.8em; }
+  .file-widget .badge {
+    font-weight: 500; }
+  .file-widget button {
+    margin-left: 10px; }
+
 .chosen-container {
   border: 0 !important;
   padding: 0 !important;
