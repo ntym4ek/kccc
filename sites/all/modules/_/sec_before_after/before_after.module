@@ -281,7 +281,10 @@ function before_after_atfield_source($region, $culture)
 {
     if ($region == 'null') $region = null;
     if ($culture == 'null') $culture = null;
-    $seasons_all = before_after_get_atfield_list($region, $culture);
+
+    $atf_ids = before_after_get_atfield_ids($region, $culture);
+    $seasons_all = before_after_get_atfield_list($atf_ids);
+
     $count = count($seasons_all);
     $limit = 10;
     $pages = ceil($count/$limit);
