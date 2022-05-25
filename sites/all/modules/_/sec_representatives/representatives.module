@@ -545,17 +545,17 @@ function representatives_sales_list()
       71694 => [], //Липецкая область",
     )
   );
-    $sales[] = array(
-        'roles' =>  ['representative'],
-        'access' => false,
-        'surname' => 'Казанцев', 'name' => 'Сергей', 'name2' => 'Николаевич',
-        'phones' => array('+7 (922) 916-70-72'),
-        'emails' => array('lipetsk2@kccc.ru'),
-        'photo' => $no_photo,
-        'regions' => array(
-            71694 => [], //Липецкая область",
-        )
-    );
+  $sales[] = array(
+      'roles' =>  ['representative'],
+      'access' => false,
+      'surname' => 'Казанцев', 'name' => 'Сергей', 'name2' => 'Николаевич',
+      'phones' => array('+7 (922) 916-70-72'),
+      'emails' => array('lipetsk2@kccc.ru'),
+    'photo' => '/' . $module_path . '/images/photos/kazantsev_s.png',
+      'regions' => array(
+          71694 => [], //Липецкая область",
+      )
+  );
   $sales[] =  array(
     'roles' =>  ['expert'],
     'surname' => 'Бекасова', 'name' => 'Марина', 'name2' => 'Викторовна',
