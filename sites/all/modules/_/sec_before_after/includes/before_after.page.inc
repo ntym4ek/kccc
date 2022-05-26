@@ -100,11 +100,15 @@ function before_after_get_atfield_ids($filter_region = null, $filter_culture = n
         $query2->innerJoin('field_data_field_f_s_p_p_preparation', 'fppp', 'fppp.entity_id = fpp.field_f_s_p_preparations_value');
         $query2->condition('fppp.field_f_s_p_p_preparation_target_id', $result_n, 'IN');
         if ($result_p1 = $query2->execute()->fetchCol()) $result_p = array_merge($result_p, $result_p1);
-        // (старый вариант с полем field_f_s_p_preparation)
+        // (старый вариант с полями field_f_s_p_preparation и field_f_s_p_preparation2)
         $query3 = db_select('field_data_field_f_s_p_preparation', 'fpp');
         $query3->addField('fpp', 'entity_id');
         $query3->condition('fpp.field_f_s_p_preparation_target_id', $result_n, 'IN');
         if ($result_p2 = $query3->execute()->fetchCol()) $result_p = array_merge($result_p, $result_p2);
+        $query4 = db_select('field_data_field_f_s_p_preparation2', 'fpp');
+        $query4->addField('fpp', 'entity_id');
+        $query4->condition('fpp.field_f_s_p_preparation2_target_id', $result_n, 'IN');
+        if ($result_p3 = $query4->execute()->fetchCol()) $result_p = array_merge($result_p, $result_p3);
 
         if ($result_p) {
           $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.entity_id = s.field_f_sowing_value');
@@ -767,12 +771,12 @@ function before_after_get_atfield_list_old($filter_region = null, $filter_cultur
     return $atf_array;
 }
 
-
+// определить списки для фильтров
 function _before_after_filters($rid = null, $cid = null, $iid = null, $year = null)
 {
-  $rid = (int)$rid;
-  $cid = (int)$cid;
-  $iid = (int)$iid;
+//  $rid = (int)$rid;
+//  $cid = (int)$cid;
+//  $iid = (int)$iid;
 
   $options = [
     'regions' => ['filter' => [], 'full' => []],
@@ -781,22 +785,27 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
     'years' => ['filter' => [], 'full' => []],
   ];
 
-  // из готового списка ПвП извлечь возможные опции
+  // определить список ID сезонов по установленным фильтрам
   $atf_ids = before_after_get_atfield_ids($rid, $cid, $iid, $year);
 
-  // опция Культура
+  // определить id - название опции из найденных сезонов
+    // опция Культура
   $query = db_select('node', 'n');
   $query->condition('n.type', 'main_cultures');
   $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.field_f_s_culture_target_id = n.nid');
   $query->condition('fc.bundle', 'field_f_sowing');
-  $query->condition('fc.entity_id', $atf_ids, 'IN');
   $query->orderBy('n.title', 'ASC');
   $query->distinct();
   $query->fields('n', array('nid', 'title'));
+  $query_full = clone $query;
+  $query->condition('fc.entity_id', $atf_ids, 'IN');
   $options['cultures']['filter'] = $query->execute()->fetchAllKeyed();
+  $options['cultures']['full'] = $query_full->execute()->fetchAllKeyed();
+
+  asort($options['cultures']['full']);
   asort($options['cultures']['filter']);
 
-  // опция Регион
+    // опция Регион
   $query = db_select('taxonomy_term_data', 't');
   $query->condition('t.vid', 29); // словарь 'regions'
   $query->distinct();
@@ -804,21 +813,31 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('node', 'n', 'n.nid = fr.entity_id');
   $query->condition('n.type', 'field');
   $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.entity_id = n.nid');
-  $query->condition('fs.field_f_sowing_value', $atf_ids, 'IN');
   $query->fields('t', array('tid', 'name'));
+  $query_full = clone $query;
+  $query->condition('fs.field_f_sowing_value', $atf_ids, 'IN');
   $options['regions']['filter'] = $query->execute()->fetchAllKeyed();
-  asort($options['regions']['filter']);
+  $options['regions']['full'] = $query_full->execute()->fetchAllKeyed();
 
-  // годы
+  asort($options['regions']['filter']);
+  asort($options['regions']['full']);
+
+     // годы
   $query = db_select('field_data_field_f_s_year', 'fy');
   $query->condition('fy.bundle', 'field_f_sowing');
-  $query->condition('fy.entity_id', $atf_ids, 'IN');
   $query->distinct();
   $query->addField('fy', 'field_f_s_year_value', 'year');
+  $query_full = clone $query;
+  $options['years']['full'] = $query_full->execute()->fetchAllKeyed(0, 0);
+  $query->condition('fy.entity_id', $atf_ids, 'IN');
   $options['years']['filter'] = $query->execute()->fetchAllKeyed(0, 0);
-  arsort($options['years']['filter']);
 
-  // todo ДВ
+  arsort($options['years']['filter']);
+  arsort($options['years']['full']);
+
+
+    // ДВ
+      // новое поле с препаратами
   $query = db_select('taxonomy_term_data', 't');
   $query->fields('t', ['tid', 'name']);
   $query->innerJoin('field_data_field_pd_ai_active_ingredient', 'fi', 'fi.field_pd_ai_active_ingredient_tid = t.tid');
@@ -826,18 +845,36 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('field_data_field_f_s_p_p_preparation', 'fppp', 'fppp.field_f_s_p_p_preparation_target_id = fis.entity_id');
   $query->innerJoin('field_data_field_f_s_p_preparations', 'fpp', 'fpp.field_f_s_p_preparations_value = fppp.entity_id');
   $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
+  $query_full = clone $query;
+  $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
   $query->condition('fp.entity_id', $atf_ids, 'IN');
-  if ($result_t1 = $query->execute()->fetchAllKeyed()) $options['ingredients']['filter'] += $result_t1;
+  $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
 
+      // устар. поля с препаратом
   $query = db_select('taxonomy_term_data', 't');
   $query->fields('t', ['tid', 'name']);
   $query->innerJoin('field_data_field_pd_ai_active_ingredient', 'fi', 'fi.field_pd_ai_active_ingredient_tid = t.tid');
   $query->innerJoin('field_data_field_pd_active_ingredients', 'fis', 'fis.field_pd_active_ingredients_value = fi.entity_id');
   $query->innerJoin('field_data_field_f_s_p_preparation', 'fpp', 'fpp.field_f_s_p_preparation_target_id = fis.entity_id');
   $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
+  $query_full = clone $query;
+  $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
   $query->condition('fp.entity_id', $atf_ids, 'IN');
-  if ($result_t2 = $query->execute()->fetchAllKeyed()) $options['ingredients']['filter'] += $result_t2;
+  $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
+
+  $query = db_select('taxonomy_term_data', 't');
+  $query->fields('t', ['tid', 'name']);
+  $query->innerJoin('field_data_field_pd_ai_active_ingredient', 'fi', 'fi.field_pd_ai_active_ingredient_tid = t.tid');
+  $query->innerJoin('field_data_field_pd_active_ingredients', 'fis', 'fis.field_pd_active_ingredients_value = fi.entity_id');
+  $query->leftJoin('field_data_field_f_s_p_preparation2', 'fpp', 'fpp.field_f_s_p_preparation2_target_id = fis.entity_id');
+  $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
+  $query_full = clone $query;
+  $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
+  $query->condition('fp.entity_id', $atf_ids, 'IN');
+  $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
+
   asort($options['ingredients']['filter']);
+  asort($options['ingredients']['full']);
 
   return [
       'regions' => $options['regions'],
@@ -893,31 +930,11 @@ function before_after_exposed_filters_form($form, &$form_state)
     $year_selected = $_GET['year'];
   }
 
-//  if (!isset($_POST['year']) && !isset($_GET['year'])) {
-//    $year_selected = date('Y');
-//  } elseif (isset($_POST['year'])) {
-//    $year_selected = $_POST['year'];
-//  } elseif (isset($_GET['year'])) {
-//    $year_selected = $_GET['year'];
-//  }
   $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
-
-//  asort($options['years']['full']);
-//  $arr_k = array_keys($options["years"]["full"]);
-//  if (!in_array($year_selected, $arr_k)) {
-//    $year_selected = array_pop($arr_k);
-//    $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
-//  }
-
-//  if (empty($form_state['options']) && $region_selected || !empty($form_state['options']) && $region_selected != $form_state['options']['region']) {
-//    $options['regions']['filter'] = $options['regions']['full'];
-//  }
-//  if (empty($form_state['options']) && $culture_selected || !empty($form_state['options']) && $culture_selected != $form_state['options']['culture']) {
-//    $options['cultures']['filter'] = $options['cultures']['full'];
-//  }
-
-//  $options['years']['filter'] = $options['years']['full'];
-  arsort($options['years']['filter']);
+  if (!isset($culture_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['regions']['filter'] = $options['regions']['full'];
+  if (!isset($region_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['cultures']['filter'] = $options['cultures']['full'];
+  if (!isset($region_selected) && !isset($culture_selected) && !isset($year_selected)) $options['ingredients']['filter'] = $options['ingredients']['full'];
+  if (!isset($region_selected) && !isset($culture_selected) && !isset($ingredient_selected)) $options['years']['filter'] = $options['years']['full'];
 
   $form_state['options'] = [
     'region' => $region_selected,
