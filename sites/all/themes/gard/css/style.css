@@ -8465,7 +8465,8 @@ a.icon-after .glyphicon {
       .product-description div.horizontal-tabs .group-tab-descr .fc-mn-name {
         font-size: 11px;
         height: 25%;
-        padding: 3px 5px; }
+        padding: 3px 5px;
+        white-space: nowrap; }
       .product-description div.horizontal-tabs .group-tab-descr .fc-micronutrient:hover {
         background: #2a832f; }
       .product-description div.horizontal-tabs .group-tab-descr .fc-micronutrient:hover .fc-mn-number {

@@ -10,6 +10,9 @@
  * @{
  */
 
+// The escapeshellarg() is stripping non-ASCII characters from a UTF-8 string.
+setlocale(LC_CTYPE, "en_US.UTF-8");
+
 /**
  * Implements hook_image_toolkits().
  */

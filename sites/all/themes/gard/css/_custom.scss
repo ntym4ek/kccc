@@ -1103,6 +1103,7 @@
           font-size: 11px;
           height: 25%;
           padding: 3px 5px;
+        white-space: nowrap;
       }
       .fc-micronutrient:hover { background: $brand-green-hover; }
       .fc-micronutrient:hover .fc-mn-number {
