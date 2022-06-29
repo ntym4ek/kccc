@@ -484,7 +484,7 @@ function ext_message_spam_subscribe()
 
         // подписать пользователя на все подписки
         foreach ($users as $user) {
-            ext_message_subscribe_all($user->uid);
+            ext_message_subscribe_all($user);
 
             // отправить письмо (через очередь)
             $params['subject'] = 'Обновление функционала на сайте kccc.ru';
@@ -504,15 +504,33 @@ function ext_message_spam_subscribe()
 /**
  * Подписать пользователя на все Уведомления
  */
-function ext_message_subscribe_all($uid)
+function ext_message_subscribe_all($account)
 {
-    if ($account = user_load($uid)) {
-        // пройтись по всем подпискам
-        if ($subscription_terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('subscribes')->vid)) {
-            foreach($subscription_terms as $sterm) {
-                flag('flag', 'subscribe_subscribes', $sterm->tid, $account);
-                flag('flag', 'subscribe_subscribes_email', $sterm->tid, $account);
-            }
+  ext_message_subscribe_to_account($account);
+  ext_message_subscribe_to_email($account);
+}
+
+/**
+ * Подписать пользователя на все Уведомления а ЛК
+ */
+function ext_message_subscribe_to_account($account)
+{
+    // пройтись по всем подпискам
+    if ($subscription_terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('subscribes')->vid)) {
+        foreach($subscription_terms as $sterm) {
+            flag('flag', 'subscribe_subscribes', $sterm->tid, $account, true);
+        }
+    }
+}
+/**
+ * Подписать пользователя на все Уведомления по email
+ */
+function ext_message_subscribe_to_email($account)
+{
+    // пройтись по всем подпискам
+    if ($subscription_terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('subscribes')->vid)) {
+        foreach($subscription_terms as $sterm) {
+          flag('flag', 'subscribe_subscribes_email', $sterm->tid, $account, true);
         }
     }
 }

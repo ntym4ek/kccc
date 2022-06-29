@@ -78,7 +78,7 @@ function ext_user_account_edit_access($acid, $op)
 
 
 /**
- * Implements hook_preprocess_user_profile().
+ * Implements hook_preprocess_user_page().
  */
 function ext_user_preprocess_page(&$vars)
 {
@@ -353,6 +353,12 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     unset($form["profile_main"]["field_profile_phone"]["und"][0]['value']["#title"]);
     $form["profile_main"]["field_profile_name2"]["#access"] = false;
     $form["profile_main"]["field_profile_photo"]["#access"] = false;
+    $form["subscriptions"] = [
+      '#type' => 'checkbox',
+      '#title' => t('get content updates on e-mail'),
+      '#default_value' => 1,
+      '#weight' => 10,
+    ];
   }
 
   if (isset($form["profile_company"])) {
@@ -412,6 +418,13 @@ function ext_user_user_register_form_submit($form, &$form_state)
   if (drupal_substr($form_state['values']['mail'], -8) == '@kccc.ru') {
     $user->roles[ROLE_STAFF] = 1;
     user_save($user);
+  }
+
+  // оформить подписку на e-mail и ЛК обновления контента на сайте
+  if (!empty($form_state['values']['subscriptions'])) {
+    ext_message_subscribe_all($user);
+  } else {
+    ext_message_subscribe_to_account($user);
   }
 
 //  $form_state['redirect'] = 'user/' . $user->uid . '/edit/main';
