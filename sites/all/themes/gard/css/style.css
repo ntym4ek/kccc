@@ -9675,14 +9675,15 @@ form.confirmation .form-actions {
 .protection-program .collapse {
   page-break-before: auto; }
 .protection-program .v-card {
-  transition: all 500ms ease-in-out;
-  filter: grayscale(100%);
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: gray;
-  /* IE 6-9 */ }
+  transition: all 500ms ease-in-out; }
+  .page-agro-calculator .protection-program .v-card {
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: gray;
+    /* IE 6-9 */ }
   .protection-program .v-card header {
     display: flex;
     justify-content: space-between;

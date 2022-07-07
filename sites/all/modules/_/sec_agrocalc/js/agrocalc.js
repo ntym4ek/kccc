@@ -108,50 +108,58 @@ var dev = false;
 
             function recalculate() {
                 try {
-                    var calc_arr = {};
-                    $(".reglament").each(function (key, item) {
-                        if ($(item).find("[id^=switch_]").prop("checked")) {
-                            // обновить Запрос
-                            var tid = $(item).find("[id^=switch_]").data("tid");
-                            // посчитать стоимость
-                            var amountByItem = 0;
-                            $(item).find("[id^=range_]").each(function (index, slider) {
-                                var price = $(item).find("[id^=switch_]").data("price" + index);
-                                var rate = $(slider).val();
-                                amountByItem += amountByItem + rate * price;
-                            });
-                            // для протравителей умножить на норму высева
-                            if (tid == 71533) { amountByItem = amountByItem * Seeding/1000; }
-                            var price_html = amountByItem ? accounting.formatNumber(amountByItem, 0, " ") + " руб." + " x " + Area + " га = " + accounting.formatNumber(amountByItem * Area, 0, " ") + " руб." : "цена не задана";
-                            $(item).find(".amountByItem").html(price_html);
+                    var calc_arr = {
+                      "total" : 0,
+                    };
+                  var prep_qty = 0; // колво препаратов в программе
+                  $(".reglament").each(function (key, item) {
+                    if ($(item).find("[id^=switch_]").prop("checked")) {
+                      // обновить Запрос
+                      var tid = $(item).find("[id^=switch_]").data("tid");
+                      // посчитать стоимость
+                      var amountByItem = 0;
+                      $(item).find("[id^=range_]").each(function (index, slider) {
+                          var price = $(item).find("[id^=switch_]").data("price" + index);
+                          var rate = $(slider).val();
+                          amountByItem += amountByItem + rate * price;
+                      });
+                      // для протравителей умножить на норму высева
+                      if (tid == 71533) { amountByItem = amountByItem * Seeding/1000; }
+                      var price_html = amountByItem ? accounting.formatNumber(amountByItem, 0, " ") + " руб." + " x " + Area + " га = " + accounting.formatNumber(amountByItem * Area, 0, " ") + " руб." : "цена не задана";
+                      $(item).find(".amountByItem").html(price_html);
 
-                            var cat_id = $(item).data("cat");
-                            if (!calc_arr[cat_id]) { calc_arr[cat_id] = 0; }
-                            if (!calc_arr.total) { calc_arr.total = 0; }
-                            calc_arr[cat_id] += amountByItem;
-                            calc_arr.total += amountByItem;
-                        }
-                    });
-
-                    for (var index in calc_arr) {
-                        $("#" + index).find(".amountByCat .amount").html(accounting.formatNumber(calc_arr[index], 0, " ") + " руб.");
-                        $("#" + index).find(".amountByCat .total").html(accounting.formatNumber(calc_arr[index] * Area, 0, " ") + " руб.");
+                      var cat_id = $(item).data("cat");
+                      if (calc_arr[cat_id] === undefined) { calc_arr[cat_id] = 0; }
+                      calc_arr[cat_id] += amountByItem;
+                      calc_arr.total += amountByItem;
                     }
-                    $(".amountByProgram .amount").html(accounting.formatNumber(calc_arr.total, 0, " ") + " руб.");
-                    $(".amountByProgram .total").html(accounting.formatNumber(calc_arr.total * Area, 0, " ") + " руб.");
+                    prep_qty++;
+                  });
 
+                  for (var index in calc_arr) {
+                      $("#" + index).find(".amountByCat .amount").html(accounting.formatNumber(calc_arr[index], 0, " ") + " руб.");
+                      $("#" + index).find(".amountByCat .total").html(accounting.formatNumber(calc_arr[index] * Area, 0, " ") + " руб.");
+                  }
+                  $(".amountByProgram .amount").html(accounting.formatNumber(calc_arr.total, 0, " ") + " руб.");
+                  $(".amountByProgram .total").html(accounting.formatNumber(calc_arr.total * Area, 0, " ") + " руб.");
+
+                  // console.log("total - " + calc_arr.total);
+                  // console.log("prep_qty - " + prep_qty);
+
+                  $(".calculation-total > p.choose-one").css("display", "none");
+                  $(".calculation-total > p.note").css("display", "none");
+                  if (prep_qty) {
                     if (calc_arr.total) {
-                        $(".calculation-total > p.note").css("display", "block");
-                        $(".calculation-total > p.choose-one").css("display", "none");
+                      $(".calculation-total > p.note").css("display", "block");
+
+                    } else {
+                      $(".calculation-total > p.choose-one").css("display", "block");
                     }
-                    else {
-                        $(".calculation-total > p.note").css("display", "none");
-                        $(".calculation-total > p.choose-one").css("display", "block");
-                    }
+                  }
                 }
                 catch (error) { console.log("recalculate - " + error); }
             }
-            
+
             $("[id^=switch_]").on("change", function() {
                 _switch_flip(this);
                 recalculate();
