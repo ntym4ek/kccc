@@ -90,8 +90,8 @@
 
   <div class="right-menu">
       <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
-        <div><a class="link-header-white" href="tel:88332761531">8 (8332) 76-15-31 доб.1154</a></div>
-        <div><a class="link-header-white" href="mailto:td.sale3@kccc.ru">td.sale3@kccc.ru</a></div>
+        <div><span class="link-header-white">Телефон</span></div>
+        <div><a class="link-header-white" href="tel:88332761530">8 (8332) 76-15-30</a></div>
       </div>
     <?php print render($secondary_nav); ?>
     <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">

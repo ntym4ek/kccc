@@ -260,7 +260,7 @@ if ($fc_wrapper->field_pd_a_hobjects->value()) {
 ?>
 <div class="panel panel-default panel-<? print $classes['tid'] ?>">
     <div class="panel-heading">
-        <h3><? print $classes['name']; ?></h3>
+        <h4><? print $classes['name']; ?></h4>
         <? if ($classes['description']) print '<span>' . $classes['description'] . '</span>'; ?>
     </div>
     <div class="panel-body">
