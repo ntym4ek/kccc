@@ -87,21 +87,3 @@ function gard_theme_registry_alter(&$theme_registry) {
 //  }
 }
 
-function gard_username($vars)
-{
-  $user_info = ext_user_get_user_info($vars["account"]->uid);
-  $username = $user_info['is_company'] ? $user_info["company"] : $user_info["short_name"];
-  if (isset($vars['link_path'])) {
-    // We have a link path, so we should generate a link using l().
-    // Additional classes may be added as array elements like
-    // $variables['link_options']['attributes']['class'][] = 'myclass';
-    $output = l($username . $vars['extra'], $vars['link_path'], $vars['link_options']);
-  }
-  else {
-    // Modules may have added important attributes so they must be included
-    // in the output. Additional classes may be added as array elements like
-    // $variables['attributes_array']['class'][] = 'myclass';
-    $output = '<span ' . drupal_attributes($vars['attributes_array']) . '>' . $username . $vars['extra'] . '</span>';
-  }
-  return $output;
-}

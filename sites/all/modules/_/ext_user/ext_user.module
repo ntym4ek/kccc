@@ -93,7 +93,7 @@ function ext_user_preprocess_page(&$vars)
     $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'ext_user') . '/images/header_image.jpg';
 
     if (!arg(1) || !arg(2)) {
-      $vars['header']['title'] = $user_info['short_name'];
+//      $vars['header']['title'] = $user_info['short_name'];
     }
 
     drupal_add_js(drupal_get_path('module', 'ext_user') . '/js/ext_user.js');
@@ -126,20 +126,18 @@ function ext_user_preprocess_user_profile(&$vars)
   if ($acid && $account = user_load($acid)) {
     $account_view_access = ($user->uid == $account->uid) || $user->uid == 1;
 
-    // разрешаем просмотр аккаунтов представителей
-    if ($account_view_access) {
-      $user_info = ext_user_get_user_info($account->uid);
-      $vars['user_profile']['name'] = $user_info['short_name'];
+    $user_info = ext_user_get_user_info($account->uid);
+    $vars['user_profile']['name'] = $user_info['short_name'];
 
-      if (user_has_role(STAFF_REPRESENTATIVE, $account)) {
-        // todo должность, регион
+    if (user_has_role(STAFF_REPRESENTATIVE, $account)) {
+      // todo должность, регион
 
-        // todo Препараты в поле
-        // todo Отзывы
-        // todo активность на Форуме
-      }
+      // todo Препараты в поле
+      // todo Отзывы
+      // todo активность на Форуме
+    }
 
-      // todo вывести ссылки на новые и все уведомления в виде local actions
+    // todo вывести ссылки на новые и все уведомления в виде local actions
 //      $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($acid);
 //
 //      // определить фильтр, если установлен
@@ -165,101 +163,84 @@ function ext_user_preprocess_user_profile(&$vars)
 //      $output .= views_embed_view('user_notifications', 'page', implode('+', $subscripted_notification_ids), $status);
 
 
-      $vars['user_profile']['photo'] = '/sites/default/files/default_images/no_photo.png';
-      $vars['user_profile']['add_photo_link'] = '';
+    $vars['user_profile']['photo'] = '/sites/default/files/default_images/no_photo.png';
+    $vars['user_profile']['add_photo_link'] = '';
 
+    if ($account_view_access) {
       if (!user_has_role(ROLE_UNCONFIRMED)) {
         // фото
         $vars['user_profile']['add_photo_link'] = l(t('add photo'), '/user/' . $acid . '/main/edit');
       }
-
-      $profile2 = profile2_load_by_user($acid);
-      if (!empty($profile2['main']->pid)) {
-        $main_wrapper = entity_metadata_wrapper('profile2', $profile2['main']->pid);
-        $main_wrapper->language($account->language);
-
-        // добавить фото
-        if ($main_wrapper->field_profile_photo->value()) {
-          $file = $main_wrapper->field_profile_photo->file->value();
-          $vars['user_profile']['photo'] = image_style_url('profile_photo', $file->uri);
-          $vars['user_profile']['add_photo_link'] = '';
-        }
-      }
-
-      // статус
-      $vars['user_profile']['is_online'] = ($user->uid == $account->uid) || (time() - $account->access) / 60 < 5;
-
-      // роли
-      $vars['user_profile']['role'] = 'Пользователь';
-//      if (!empty($profile2['staff'])) {
-//        $staff_wrapper = entity_metadata_wrapper('profile2', $profile2['staff']->pid);
-//        if ($staff_wrapper->field_profile_company2->value()) {
-//          $company_type = $staff_wrapper->field_profile_company2->field_profile_company_type->name->value();
-//          $company_name = $staff_wrapper->field_profile_company2->field_profile_name->value();
-//          $vars['user_profile']['role'] .= '<br>Cотрудник ' . $company_type . ' ' . $company_name;
-//        }
-//      }
-
-      // счётчики
-      // блоги
-      $query = db_select('node');
-      $query->addExpression('COUNT(*)');
-      $query->condition('uid', $account->uid);
-      $query->condition('type', 'blog');
-      $result = $query->execute()->fetchField();
-      $vars['user_profile']['counts'][] = array(
-        'title' => t('Blog'),
-        'amount' => $result,
-        'link' => '/blogs/user/' . $account->uid,
-      );
-      // отзывы
-      $query = db_select('node');
-      $query->addExpression('COUNT(*)');
-      $query->condition('uid', $account->uid);
-      $query->condition('type', 'review');
-      $result = $query->execute()->fetchField();
-      $vars['user_profile']['counts'][] = array(
-        'title' => t('Reviews'),
-        'amount' => $result,
-        'link' => '/reviews/' . $account->uid,
-      );
-      // До и После
-      if (user_access('access before_after edit')) {
-        $query = db_select('field_data_field_f_sowing', 's');
-        $query->addExpression('COUNT(*)');
-        $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
-        $query->condition('n.uid', $account->uid);
-        $result = $query->execute()->fetchField();
-
-        $vars['user_profile']['counts'][] = array(
-          'title' => t('Before & After'),
-          'amount' => $result,
-          //'link' => '/before-after/user/' . $account->uid,
-          'link' => '/before-after',
-        );
-      }
-
-
-      if ($account_view_access) {
-        // заказы
-        $vars['user_profile']['counts'][] = array(
-          'title' => t('Orders'),
-          'amount' => ext_user_orders_count($acid),
-          'link' => "/user/$acid/orders",
-        );
-        // баллы
-//            $content['counts'][] = array(
-//                'title' => t('Points'),
-//                'amount' => ext_user_get_points($acid),
-//                'link' => "",
-//                'class' => '',
-//            );
-      }
-
-
-//    $output = theme('ext_user_summary', array('content' => $content));
-      drupal_set_title($user_info['short_name']);
     }
+
+    $profile2 = profile2_load_by_user($acid);
+    if (!empty($profile2['main']->pid)) {
+      $main_wrapper = entity_metadata_wrapper('profile2', $profile2['main']->pid);
+      $main_wrapper->language($account->language);
+
+      // добавить фото
+      if ($main_wrapper->field_profile_photo->value()) {
+        $file = $main_wrapper->field_profile_photo->file->value();
+        $vars['user_profile']['photo'] = image_style_url('profile_photo', $file->uri);
+        $vars['user_profile']['add_photo_link'] = '';
+      }
+    }
+
+    // статус
+    $vars['user_profile']['is_online'] = ($user->uid == $account->uid) || (time() - $account->access) / 60 < 5;
+
+    // роль
+    $vars['user_profile']['role'] = $user_info["label"];
+
+    // счётчики
+      // блоги
+    $query = db_select('node');
+    $query->addExpression('COUNT(*)');
+    $query->condition('uid', $account->uid);
+    $query->condition('type', 'blog');
+    $result = $query->execute()->fetchField();
+    $vars['user_profile']['counts'][] = array(
+      'title' => t('Blog'),
+      'amount' => $result,
+      'link' => '/blogs/user/' . $account->uid,
+    );
+      // отзывы
+    $query = db_select('node');
+    $query->addExpression('COUNT(*)');
+    $query->condition('uid', $account->uid);
+    $query->condition('type', 'review');
+    $result = $query->execute()->fetchField();
+    $vars['user_profile']['counts'][] = array(
+      'title' => t('Reviews'),
+      'amount' => $result,
+      'link' => '/reviews/' . $account->uid,
+    );
+      // До и После
+    if (user_access('access before_after edit')) {
+      $query = db_select('field_data_field_f_sowing', 's');
+      $query->addExpression('COUNT(*)');
+      $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
+      $query->condition('n.uid', $account->uid);
+      $result = $query->execute()->fetchField();
+
+      $vars['user_profile']['counts'][] = array(
+        'title' => t('Before & After'),
+        'amount' => $result,
+        //'link' => '/before-after/user/' . $account->uid,
+        'link' => '/before-after',
+      );
+    }
+
+
+    if ($account_view_access) {
+      // заказы
+      $vars['user_profile']['counts'][] = array(
+        'title' => t('Orders'),
+        'amount' => ext_user_orders_count($acid),
+        'link' => "/user/$acid/orders",
+      );
+    }
+
   }
 }
 
@@ -565,115 +546,86 @@ function ext_user_theme()
 // массив с информацией о пользователе
 function ext_user_get_user_info($user)
 {
-  $account = is_numeric($user) ? user_load($user) : $user;
+  $result = &drupal_static(__FUNCTION__ . serialize($user), array());
 
-  $account_wr = entity_metadata_wrapper('user', $user);
+  if (empty($result)) {
+    $account = is_numeric($user) ? user_load($user) : $user;
 
-  $name_arr = array('', '', '');
-  $email = $phone = '';
-  $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
-  $staff = [];
-  $company = [];
-  $label = t('User');
-  $is_company = $account_wr->field_profile_has_company->value();
+    $account_wr = entity_metadata_wrapper('user', $user);
 
-  if (!empty($account->uid)) {
-    if ($main_pr2 = profile2_load_by_user($account, 'main')) {
-      $main_wrapper = entity_metadata_wrapper('profile2', $main_pr2);
-      $name_arr[0] = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
-      $name_arr[1] = $main_wrapper->field_profile_name->value() ? $main_wrapper->field_profile_name->value() : '';
-      $name_arr[2] = $main_wrapper->field_profile_name2->value() ? $main_wrapper->field_profile_name2->value() : '';
-      $email = $account->mail;
-      $phone = $main_wrapper->field_profile_phone->value() ? $main_wrapper->field_profile_phone->value() : '';
-      if ($main_wrapper->field_profile_photo->value()) {
-        $file = $main_wrapper->field_profile_photo->file->value();
-        $photo_url = image_style_url('user_photo', $file->uri);
+    $name_arr = array('', '', '');
+    $email = $phone = '';
+    $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
+    $staff = [];
+    $company = [];
+    $label = t('User');
+    $is_company = $account_wr->field_profile_has_company->value();
+
+    if (!empty($account->uid)) {
+      if ($main_pr2 = profile2_load_by_user($account, 'main')) {
+        $main_wrapper = entity_metadata_wrapper('profile2', $main_pr2);
+        $name_arr[0] = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
+        $name_arr[1] = $main_wrapper->field_profile_name->value() ? $main_wrapper->field_profile_name->value() : '';
+        $name_arr[2] = $main_wrapper->field_profile_name2->value() ? $main_wrapper->field_profile_name2->value() : '';
+        $email = $account->mail;
+        $phone = $main_wrapper->field_profile_phone->value() ? $main_wrapper->field_profile_phone->value() : '';
+        if ($main_wrapper->field_profile_photo->value()) {
+          $file = $main_wrapper->field_profile_photo->file->value();
+          $photo_url = image_style_url('user_photo', $file->uri);
+        }
+      }
+
+      // если утвержденный сотрудник вывести регалии
+      if (user_has_role(ROLE_STAFF, $account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
+        $staff_wrapper = entity_metadata_wrapper('profile2', $staff_pr2);
+
+        $company = t('Trade House Kirovo-Chepetsk Chemical Company');
+        $role = $staff_wrapper->field_profile_post->value() ? $staff_wrapper->field_profile_post->value() : t('Employee');
+        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
+        $staff = [
+          'post' => $role,
+          'company' => $company,
+        ];
+      }
+
+      if (user_has_role(ROLE_COMPANY, $account) && $company_pr2 = profile2_load_by_user($account, 'company')) {
+        $company_wr = entity_metadata_wrapper('profile2', $company_pr2);
+
+        $company = $company_wr->field_profile_name->value();
+        $role = t('Representative'); // представитель организации
+        $card_url = '';
+        if ($company_wr->field_profile_card->value()) {
+          $file = $company_wr->field_profile_card->file->value();
+          $card_url = file_create_url($file->uri);
+        }
+
+        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
+        $company = [
+          'inn' => $company_wr->field_profile_company_inn->value(),
+          'name' => $company,
+          'card_url' => $card_url,
+        ];
       }
     }
 
-    // если утвержденный сотрудник вывести регалии
-    if (user_has_role(ROLE_STAFF, $account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
-      $staff_wrapper = entity_metadata_wrapper('profile2', $staff_pr2);
-
-      $company = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
-      $post = $staff_wrapper->field_profile_post->value();
-      $role = $post . ' ' . $company;
-      $staff = [
-        'post' => $post,
-        'role' => $role,
-        'company' => $company,
-      ];
-    }
-
-    if (user_has_role(ROLE_COMPANY, $account) && $company_pr2 = profile2_load_by_user($account, 'company')) {
-      $label = t('Representative'); // представитель организации
-      $company_wr = entity_metadata_wrapper('profile2', $company_pr2);
-
-      $card_url = '';
-      if ($company_wr->field_profile_card->value()) {
-        $file = $company_wr->field_profile_card->file->value();
-        $card_url = file_create_url($file->uri);
-      }
-
-      $company = [
-        'inn' => $company_wr->field_profile_company_inn->value(),
-        'name' => $company_wr->field_profile_name->value(),
-        'card_url' => $card_url,
-      ];
-    }
+    $result = [
+      'surname' => $name_arr[0],
+      'name' => $name_arr[1],
+      'name2' => $name_arr[2],
+      'full_name' => implode(' ', $name_arr),
+      'short_name' => $name_arr[1] . ' ' . $name_arr[0],
+      'label' => $label,
+      'email' => $email,
+      'phone' => $phone,
+      'photo' => $photo_url,
+      'staff' => $staff,
+      'is_company' => $is_company,
+      'company' => $company,
+    ];
   }
 
-  return [
-    'surname' => $name_arr[0],
-    'name' => $name_arr[1],
-    'name2' => $name_arr[2],
-    'full_name' => implode(' ', $name_arr),
-    'short_name' => $name_arr[1] . ' ' . $name_arr[0],
-    'label' => $label,
-    'email' => $email,
-    'phone' => $phone,
-    'photo' => $photo_url,
-    'staff' => $staff,
-    'is_company' => $is_company,
-    'company' => $company,
-  ];
+  return $result;
 }
-
-
-/**
- * возвращает имя пользователя аккаунта в разных форматах
- * @param $user
- * @param string $format
- * @return bool|string
- */
-function ext_user_get_user_name($user, $format = 'short_ns')
-{
-  if (is_numeric($user)) $account = user_load($user);
-  else $account = $user;
-
-  $user_name = false;
-  if (!empty($account->uid) && $main = profile2_load_by_user($account, 'main')) {
-    $main_wrapper = entity_metadata_wrapper('profile2', $main);
-    $name       = $main_wrapper->field_profile_name->value()    ? $main_wrapper->field_profile_name->value()    : '';
-    $surname    = $main_wrapper->field_profile_surname->value() ? $main_wrapper->field_profile_surname->value() : '';
-    $name2      = $main_wrapper->field_profile_name2->value()   ? $main_wrapper->field_profile_name2->value()   : '';
-    switch($format) {
-      case 'short_sn':
-        $user_name = $surname . ' ' . $name;
-        break;
-      case 'short_ns':
-        $user_name = $name . ' ' . $surname;
-        break;
-      case 'full':
-        $user_name = $surname . ' ' . $name . ' ' . $name2;
-        break;
-    }
-  }
-  if (!trim($user_name)) $user_name = $account->name;
-
-  return $user_name;
-}
-
 
 // проверка заданного или текущего пользователя на наличие роли
 function _user_has_role($role, $acc = NULL)
@@ -814,5 +766,22 @@ function ext_user_metatag_metatags_view_alter(&$output, $instance, $options)
         $output["title"]["#attached"]["metatag_set_preprocess_variable"][0][2] = 'Блог пользователя '. $user_info['short_name'] . ' - ООО ТД Кирово-Чепецкая Химическая Компания';
         $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'Блог пользователя '. $user_info['short_name'] . ' о работе средств защиты растений ООО ТД Кирово-Чепецкая Химическая Компания';
     }
+  }
+}
+
+/**
+ * Implements hook_username_alter().
+ */
+function ext_user_username_alter(&$name, $account)
+{
+  if (empty($account->uid)) {
+    // Don't alter anonymous users or objects that do not have any user ID.
+    return;
+  }
+
+  // Real name was loaded/generated via hook_user_load(), so re-use it.
+  if ($account_info = ext_user_get_user_info($account->uid)) {
+    $name = $account_info['is_company'] ? $account_info["company"] : $account_info["short_name"];
+    return;
   }
 }
