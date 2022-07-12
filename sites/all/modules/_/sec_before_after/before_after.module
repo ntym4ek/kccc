@@ -87,9 +87,9 @@ function before_after_menu() {
 /**
  * Access callback.
  */
-function before_after_account_access_callback($user)
+function before_after_account_access_callback($account)
 {
-  return (user_has_role(STAFF_REPRESENTATIVE, $user) || user_has_role(STAFF_ADMIN, $user));
+  return ((user_has_role(STAFF_REPRESENTATIVE, $account) && $account->uid == $GLOBALS['user']->uid) || user_has_role(ROLE_STAFF_ADMIN, $account));
 }
 
 

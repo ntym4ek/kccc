@@ -875,7 +875,7 @@
         .author-body {
             display: table-cell;
             .author-title {
-                font-size: 1.2em; font-weight: 500;
+                color: $text-color; font-size: 1.2em;
                 margin: 5px 0 10px 0;
             }
             .author-subtitle { color: $text-muted; font-size: .9em; }

@@ -60,7 +60,7 @@ function forms_ex_form_alter(&$form, &$form_state, $form_id)
             $form['language']['#access'] = false;
             $form['field_image_gallery']['und']['#title'] = 'Добавьте одно или несколько изображений<i>, относящихся к теме записи</i>';
           }
-          if (!user_has_role(STAFF_EDITOR, $GLOBALS['user']) && $GLOBALS['user']->uid != 1 ) {
+          if (!user_has_role(ROLE_STAFF_EDITOR, $GLOBALS['user']) && $GLOBALS['user']->uid != 1 ) {
             $form['field_promo_image']['#access'] = false;
             $form["options"]["promote"]["#access"] = false;
           }

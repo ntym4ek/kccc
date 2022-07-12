@@ -8190,8 +8190,8 @@ a.icon-after .glyphicon {
   .node .node-author .author-body {
     display: table-cell; }
     .node .node-author .author-body .author-title {
+      color: #333333;
       font-size: 1.2em;
-      font-weight: 500;
       margin: 5px 0 10px 0; }
     .node .node-author .author-body .author-subtitle {
       color: #b3b3b3;

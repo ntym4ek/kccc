@@ -8,8 +8,8 @@ $before = array_shift($content['measurements']);
   <div class="node-author">
     <img typeof="foaf:Image" src="<? print $content['author']['photo']; ?>" alt="Представитель ООО ТД Кирово-Чепецкая Химическая Компания в регионе <? print $content['region'];?>" class="img-circle" loading="lazy">
     <div class="author-body">
-      <div class="author-title"><? print $content['author']['surname'] . ' ' . $content['author']['name'] . ' ' . $content['author']['name2']; ?></div>
-      <div class="author-subtitle"><? print $content['author']['staff']['role']; ?></div>
+      <div class="author-title"><a href="/user/<? print $content['author']['id']; ?>"><? print $content['author']['full_name']; ?></a></div>
+      <div class="author-subtitle"><? print $content['author']['staff']['role_full']; ?></div>
     </div>
   </div>
 

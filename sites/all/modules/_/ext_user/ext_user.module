@@ -5,17 +5,17 @@ define('KCCC_COMPANY_PID', 668);
 /**
  * роли
  */
-define('ROLE_STAFF',            6);
-define('STAFF_PERSONNEL',       4);
+define('ROLE_STAFF',                 6);
+define('ROLE_STAFF_PERSONNEL',       4);
 define('ROLE_STAFF_ADMINISTRATOR',  13);
-define('STAFF_EDITOR',          5);
-define('STAFF_REPRESENTATIVE',  14);
-define('STAFF_SHOP',            11);
-define('STAFF_CHIEF',           8);
-define('STAFF_ADMIN',           3);
+define('ROLE_STAFF_EDITOR',          5);
+define('ROLE_STAFF_REPRESENTATIVE', 14);
+define('ROLE_STAFF_SHOP',           11);
+define('ROLE_STAFF_CHIEF',           8);
+define('ROLE_STAFF_ADMIN',           3);
 
-define('ROLE_UNCONFIRMED',      7);
-define('ROLE_COMPANY',          15);
+define('ROLE_UNCONFIRMED',           7);
+define('ROLE_COMPANY',              15);
 
 /**
  * Implements hook_menu_alter()
@@ -32,6 +32,16 @@ function ext_user_menu_alter(&$items)
   $items['company/password']['type'] = MENU_CALLBACK;
 }
 
+function ext_user_menu_local_tasks_alter(&$data, $router_item, $root_path)
+{
+  // найти закладки, к которым нужно проверить доступ
+  foreach ($data['tabs'][0]['output'] as &$tab) {
+    if (in_array($tab['#link']['path'], ['user/%/notifications', 'user/%/subscriptions', 'user/%/idea'])) {
+      // если они ссылаются не на текущего пользователя, запретить вывод
+      if (strpos($tab['#link']['href'], 'user/' . $GLOBALS['user']->uid) !== 0) $tab["#access"] = false;
+    }
+  }
+}
 function ext_user_permission()
 {
   return [
@@ -129,7 +139,7 @@ function ext_user_preprocess_user_profile(&$vars)
     $user_info = ext_user_get_user_info($account->uid);
     $vars['user_profile']['name'] = $user_info['short_name'];
 
-    if (user_has_role(STAFF_REPRESENTATIVE, $account)) {
+    if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {
       // todo должность, регион
 
       // todo Препараты в поле
@@ -216,7 +226,7 @@ function ext_user_preprocess_user_profile(&$vars)
       'link' => '/reviews/' . $account->uid,
     );
       // До и После
-    if (user_access('access before_after edit')) {
+    if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {
       $query = db_select('field_data_field_f_sowing', 's');
       $query->addExpression('COUNT(*)');
       $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
@@ -226,7 +236,6 @@ function ext_user_preprocess_user_profile(&$vars)
       $vars['user_profile']['counts'][] = array(
         'title' => t('Before & After'),
         'amount' => $result,
-        //'link' => '/before-after/user/' . $account->uid,
         'link' => '/before-after',
       );
     }
@@ -581,10 +590,11 @@ function ext_user_get_user_info($user)
 
         $company = t('Trade House Kirovo-Chepetsk Chemical Company');
         $role = $staff_wrapper->field_profile_post->value() ? $staff_wrapper->field_profile_post->value() : t('Employee');
-        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
+        $label = t('!company !role', ['!company' => '"' . $company . '"', '!role' => $role]);
         $staff = [
-          'post' => $role,
+          'role' => $role,
           'company' => $company,
+          'role_full' => $label,
         ];
       }
 
@@ -599,7 +609,7 @@ function ext_user_get_user_info($user)
           $card_url = file_create_url($file->uri);
         }
 
-        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
+        $label = t('!company !role', ['!company' => '"' . $company . '"', '!role' => $role]);
         $company = [
           'inn' => $company_wr->field_profile_company_inn->value(),
           'name' => $company,
@@ -609,6 +619,7 @@ function ext_user_get_user_info($user)
     }
 
     $result = [
+      'id' => $account->uid,
       'surname' => $name_arr[0],
       'name' => $name_arr[1],
       'name2' => $name_arr[2],
