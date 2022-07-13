@@ -8180,7 +8180,9 @@ a.icon-after .glyphicon {
     font-size: .8em;
     padding: 0; }
 .node .node-author {
-  margin-bottom: 30px; }
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center; }
   .node .node-author img {
     float: left;
     margin-right: 30px;
@@ -8190,12 +8192,13 @@ a.icon-after .glyphicon {
   .node .node-author .author-body {
     display: table-cell; }
     .node .node-author .author-body .author-title {
-      color: #333333;
-      font-size: 1.2em;
-      margin: 5px 0 10px 0; }
+      font-size: 1.2em; }
+      .node .node-author .author-body .author-title a {
+        color: #333333; }
     .node .node-author .author-body .author-subtitle {
       color: #b3b3b3;
-      font-size: .9em; }
+      font-size: .9em;
+      margin-bottom: 15px; }
   .node .node-author:before, .node .node-author:after {
     content: " ";
     display: table; }

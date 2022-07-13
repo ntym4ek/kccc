@@ -274,14 +274,18 @@
     border-right: 1px solid #ddd;
     text-align: center;
   }
-  td:first-child a { color: inherit; }
+  td a {
+    color: inherit;
+    i { color: $text-muted; }
+  }
+
   .head th {
     background: $brand-primary;
     color: #fff; font-weight: 100; text-align: center;
   }
-  .dom td  {
-    a { color: $brand-primary; }
-  }
+  //.dom td  {
+    //a { color: $brand-primary; }
+  //}
   //.title td { font-size: 14px; }
 }
 

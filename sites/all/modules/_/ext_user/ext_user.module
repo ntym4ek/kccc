@@ -35,10 +35,12 @@ function ext_user_menu_alter(&$items)
 function ext_user_menu_local_tasks_alter(&$data, $router_item, $root_path)
 {
   // найти закладки, к которым нужно проверить доступ
-  foreach ($data['tabs'][0]['output'] as &$tab) {
-    if (in_array($tab['#link']['path'], ['user/%/notifications', 'user/%/subscriptions', 'user/%/idea'])) {
-      // если они ссылаются не на текущего пользователя, запретить вывод
-      if (strpos($tab['#link']['href'], 'user/' . $GLOBALS['user']->uid) !== 0) $tab["#access"] = false;
+  if (!empty($data['tabs'][0]['output'])) {
+    foreach ($data['tabs'][0]['output'] as &$tab) {
+      if (in_array($tab['#link']['path'], ['user/%/notifications', 'user/%/subscriptions', 'user/%/idea'])) {
+        // если они ссылаются не на текущего пользователя, запретить вывод
+        if (strpos($tab['#link']['href'], 'user/' . $GLOBALS['user']->uid) !== 0) $tab["#access"] = false;
+      }
     }
   }
 }
@@ -590,7 +592,7 @@ function ext_user_get_user_info($user)
 
         $company = t('Trade House Kirovo-Chepetsk Chemical Company');
         $role = $staff_wrapper->field_profile_post->value() ? $staff_wrapper->field_profile_post->value() : t('Employee');
-        $label = t('!company !role', ['!company' => '"' . $company . '"', '!role' => $role]);
+        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
         $staff = [
           'role' => $role,
           'company' => $company,
@@ -609,7 +611,7 @@ function ext_user_get_user_info($user)
           $card_url = file_create_url($file->uri);
         }
 
-        $label = t('!company !role', ['!company' => '"' . $company . '"', '!role' => $role]);
+        $label = t('!company !role', ['!company' => $company, '!role' => $role]);
         $company = [
           'inn' => $company_wr->field_profile_company_inn->value(),
           'name' => $company,

@@ -294,15 +294,15 @@
 .column table td:last-child {
   border-right: 1px solid #ddd;
   text-align: center; }
-.column table td:first-child a {
+.column table td a {
   color: inherit; }
+  .column table td a i {
+    color: #b3b3b3; }
 .column table .head th {
   background: #36AA3D;
   color: #fff;
   font-weight: 100;
   text-align: center; }
-.column table .dom td a {
-  color: #36AA3D; }
 
 .after .no-content,
 .processings .no-content {

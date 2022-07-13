@@ -864,23 +864,27 @@
             }
         }
     }
-    .node-author   {
-        margin-bottom: 30px;
-        img {
-          float: left;
-          margin-right: 30px;
-          max-width: 80px; max-height: 80px;
-          overflow: hidden;
-        }
-        .author-body {
-            display: table-cell;
-            .author-title {
-                color: $text-color; font-size: 1.2em;
-                margin: 5px 0 10px 0;
-            }
-            .author-subtitle { color: $text-muted; font-size: .9em; }
-        }
-        @include clearfix;
+    .node-author {
+      margin-bottom: 30px;
+      display: flex; align-items: center;
+      img {
+        float: left;
+        margin-right: 30px;
+        max-width: 80px; max-height: 80px;
+        overflow: hidden;
+      }
+      .author-body {
+          display: table-cell;
+          .author-title {
+              font-size: 1.2em;
+            a { color: $text-color;  }
+          }
+          .author-subtitle {
+            color: $text-muted; font-size: .9em;
+            margin-bottom: 15px;
+          }
+      }
+      @include clearfix;
     }
     .node-stuff {
         color: $text-muted;
