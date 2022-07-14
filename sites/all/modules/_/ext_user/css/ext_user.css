@@ -145,7 +145,7 @@
   .profile-wrapper .profile .profile-status {
     position: absolute;
     right: 10px;
-    top: 5px; }
+    top: 0; }
   .profile-wrapper .profile .profile-online {
     color: #40ae1a; }
   .profile-wrapper .profile .profile-offline {

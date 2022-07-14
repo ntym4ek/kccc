@@ -292,15 +292,9 @@ function advagg_schema() {
     'indexes' => array(
       'porder' => array('porder'),
       'filename_hash' => array('filename_hash'),
-      'aggregate_filenames_hash_porder' => array(
-        'aggregate_filenames_hash',
-        'porder',
-      ),
+      'aggregate_filenames_hash_porder' => array('aggregate_filenames_hash', 'porder'),
     ),
-    'primary key' => array(
-      'aggregate_filenames_hash',
-      'filename_hash',
-    ),
+    'primary key' => array('aggregate_filenames_hash', 'filename_hash'),
   );
 
   $schema['advagg_aggregates_versions'] = array(
@@ -349,10 +343,7 @@ function advagg_schema() {
         'atime',
       ),
     ),
-    'primary key' => array(
-      'aggregate_filenames_hash',
-      'aggregate_contents_hash',
-    ),
+    'primary key' => array('aggregate_filenames_hash', 'aggregate_contents_hash'),
   );
 
   // Copy the variable table and change a couple of things.
@@ -507,9 +498,7 @@ function advagg_update_7206(&$sandbox) {
     return t('Nothing needed to happen in AdvAgg.');
   }
 
-  return t('The following columns inside of these database tables where converted to utf8_bin: <br />@data', array(
-    '@data' => print_r($tables_altered, TRUE),
-  ));
+  return t('The following columns inside of these database tables where converted to utf8_bin: <br />@data', array('@data' => print_r($tables_altered, TRUE)));
 }
 
 /**
@@ -775,11 +764,7 @@ function advagg_update_7217(&$sandbox) {
   else {
     return t('Nothing happened.');
   }
-  return t('Old DNS Prefetch variable transferred to the new variable. Other options are under Resource Hints on the <a href="@url">configuration page</a>', array(
-    '@url' => url($config_path . '/advagg', array(
-      'fragment' => 'edit-resource-hints',
-    )),
-  ));
+  return t('Old DNS Prefetch variable transferred to the new variable. Other options are under Resource Hints on the <a href="@url">configuration page</a>', array('@url' => url($config_path . '/advagg', array('fragment' => 'edit-resource-hints'))));
 }
 
 /**
@@ -851,8 +836,7 @@ function advagg_update_7220() {
  */
 function advagg_update_7221(&$sandbox) {
   if (!db_index_exists('advagg_aggregates', 'aggregate_filenames_hash_porder')) {
-    $fields = array('aggregate_filenames_hash', 'porder');
-    db_add_index('advagg_aggregates', 'aggregate_filenames_hash_porder', $fields);
+    db_add_index('advagg_aggregates', 'aggregate_filenames_hash_porder', array('aggregate_filenames_hash', 'porder'));
     return t('Database index added to the aggregate_filenames_hash and porder column of the advagg_aggregates table.');
   }
   return t('Nothing needed to be done.');
@@ -1030,11 +1014,7 @@ function advagg_install_fast_checks($phase = 'runtime') {
         'title' => $t('Adv CSS/JS Agg - Core Variables'),
         'severity' => REQUIREMENT_ERROR,
         'value' => $t('Core CSS and/or JS aggregation is disabled.'),
-        'description' => $t('"Aggregate and compress CSS files" and "Aggregate JavaScript files" on the <a href="@performance">performance page</a> should be enabled.', array(
-          '@performance' => url('admin/config/development/performance', array(
-            'fragment' => 'edit-bandwidth-optimization',
-          )),
-        )),
+        'description' => $t('"Optimize CSS files" and "Optimize JavaScript files" on the <a href="@performance">performance page</a> should be enabled.', array('@performance' => url('admin/config/development/performance', array('fragment' => 'edit-bandwidth-optimization')))),
       );
     }
   }
@@ -1433,13 +1413,13 @@ function advagg_install_check_via_http(array &$requirements) {
       }
 
       // Try request without https.
-      if ($request->code == 0 && isset($request->error) && stripos($request->error, 'Error opening socket ssl://') !== FALSE) {
+      if ($request->code == 0 && stripos($request->error, 'Error opening socket ssl://') !== FALSE) {
         $url = advagg_force_http_path($url);
         $request = drupal_http_request($url, $options);
       }
 
       // Try request to 127.0.0.1.
-      if ($request->code == 0 && isset($request->error) && stripos($request->error, 'getaddrinfo failed') !== FALSE) {
+      if ($request->code == 0 && stripos($request->error, 'getaddrinfo failed') !== FALSE) {
         $parts = @parse_url($url);
         if ($parts['host'] !== '127.0.0.1') {
           $options['headers']['Host'] = $parts['host'];
@@ -1563,7 +1543,7 @@ function advagg_install_check_via_http(array &$requirements) {
             )),
           );
         }
-        elseif (isset($request->data) && stripos($request->data, 'nginx')) {
+        elseif (stripos($request->data, 'nginx')) {
           $config_location = '';
           if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
             $config_location = ' ' . $t('You might be able to find the nginx configuration file by running <pre>@command_1</pre> or <pre>@command_2</pre>', array(
@@ -1612,7 +1592,7 @@ location ~* files/advagg_(?:css|js)/ {
               '@drush' => 'drush --root=' . DRUPAL_ROOT . '/ --uri=' . advagg_glue_url($parsed_base_url) . ' ',
               '@url' => url($config_path . '/advagg/operations', array('fragment' => 'edit-htaccess')),
               '@htaccess_loc' => $location,
-              '@code' => "  ErrorDocument 404 {$GLOBALS['base_path']}index.php",
+              '@code' => "ErrorDocument 404 {$GLOBALS['base_path']}index.php",
             )),
           );
         }
@@ -1841,15 +1821,6 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
     }
 
     if (!variable_get('advagg_skip_gzip_check', ADVAGG_SKIP_GZIP_CHECK)) {
-      // Try again on a code 0.
-      if ($request->code == 0) {
-        $request = drupal_http_request($url, $options);
-        $encoding_type = 'gzip';
-        if (!empty($request->options['headers']['Accept-Encoding']) && strpos($request->options['headers']['Accept-Encoding'], 'br') !== FALSE) {
-          $encoding_type = 'br';
-        }
-      }
-
       // Check response. Report an error if
       // - Not a 200.
       // - Headers do not contain "content-encoding".
@@ -2162,9 +2133,7 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
             'title' => $t('Adv CSS/JS Agg - Incorrect readings'),
             'severity' => REQUIREMENT_WARNING,
             'value' => $t('The request for a file was served by Drupal instead of the web server (like Apache).'),
-            'description' => $t('It means that AdvAgg can not test for Far-Future headers internally and you will need to use an external tool in order to do so. Warnings given or not given about AdvAgg Expires, Cache-Control, and If-Modified-Since might be incorrect. In the <a href="@readme">readme</a>, under Troubleshooting try the Far-Future recommendations.', array(
-              '@readme' => url(drupal_get_path('module', 'advagg') . '/README.txt'),
-            )),
+            'description' => $t('It means that AdvAgg can not test for Far-Future headers internally and you will need to use an external tool in order to do so. Warnings given or not given about AdvAgg Expires, Cache-Control, and If-Modified-Since might be incorrect. In the <a href="@readme">readme</a>, under Troubleshooting try the Far-Future recommendations.', array('@readme' => url(drupal_get_path('module', 'advagg') . '/README.txt'))),
           );
         }
       }
@@ -2732,7 +2701,7 @@ function advagg_install_change_table_collation($table_name, array $fields, $coll
  */
 function advagg_install_delete_empty_file_if_stale($uri) {
   // Set stale file threshold to 60 seconds.
-  if (is_file($uri) && filesize($uri) < 3 && REQUEST_TIME - filemtime($uri) > 60) {
+  if (filesize($uri) < 3 && REQUEST_TIME - filemtime($uri) > 60) {
     file_unmanaged_delete($uri);
   }
 }
@@ -2892,7 +2861,7 @@ function advagg_install_s3fs_proxy_settings() {
   $config .= "  ProxyPass {$GLOBALS['base_path']}s3fs-js/ $js_target\n";
   $config .= "  ProxyPassReverse {$GLOBALS['base_path']}s3fs-js/ $js_target\n";
   $config .= "  ProxyErrorOverride On\n";
-  $config .= "\n  ErrorDocument 404 {$GLOBALS['base_path']}index.php\n";
+  $config .= "  ErrorDocument 404 {$GLOBALS['base_path']}index.php\n";
   $config .= "</VirtualHost>\n";
 
   return $config;

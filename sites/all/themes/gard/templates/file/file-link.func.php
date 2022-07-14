@@ -63,7 +63,7 @@ function gard_file_link($variables) {
 
     // добавить кнопку на скачивание
     if (!empty($file->display)) {
-        $output .= '<div class="file-download"><a href="' . $url . '" class="btn btn-info btn-block" download>' . t('Download') . '</a></div>';
+        $output .= '<div class="file-download"><a href="' . $url . '" class="btn btn-primary btn-block" download>' . t('Download') . '</a></div>';
     }
     $output .= '</div>';
 

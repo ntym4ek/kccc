@@ -17,6 +17,7 @@ define('ROLE_STAFF_ADMIN',           3);
 define('ROLE_UNCONFIRMED',           7);
 define('ROLE_COMPANY',              15);
 
+
 /**
  * Implements hook_menu_alter()
  */
@@ -101,7 +102,7 @@ function ext_user_preprocess_page(&$vars)
     if (in_array(arg(1), ['login', 'register', 'password', 'reset']) || arg(2) == 'before_after') {
       $vars['header']['title_off'] = true;
     }
-    $user_info = ext_user_get_user_info($GLOBALS['user']->uid);
+//    $user_info = ext_user_get_user_info($GLOBALS['user']->uid);
     $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'ext_user') . '/images/header_image.jpg';
 
     if (!arg(1) || !arg(2)) {
@@ -798,3 +799,5 @@ function ext_user_username_alter(&$name, $account)
     return;
   }
 }
+
+

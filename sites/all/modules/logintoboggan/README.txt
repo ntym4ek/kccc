@@ -29,7 +29,7 @@ module by offering the following features:
   11. Optionally have unvalidated users purged from the system at a pre-defined
       interval
       (please read the CAVEATS section of INSTALL.txt for important information
-       on configuring this feature!).
+       on configuringthis feature!).
 
 Users who choose their own password can be automatically assigned to a selected
 'non-authenticated' role. This role could have more permissions than anonymous
@@ -37,7 +37,4 @@ but less than authenticated - thus preventing spoof accounts and spammers. The
 user will only be removed from the non-authenticated role and granted
 authenticated permissions when they verify their account via a special email
 link, or when an administrator removes them from the non-authenticated role.
-It is important to check that this non-authenticated role does not cause
-problems when used with other contrib modules such as OG that assume all site
-users hold the authenticated user role.
 

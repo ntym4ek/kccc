@@ -764,7 +764,7 @@
 }
 
 /* ------------------------------------------------- 404 - */
-.page404 {
+.page40x {
     display: flex; flex-wrap: wrap; justify-content: center;
     .b1 {
         flex: 1 1 100%;
@@ -783,8 +783,11 @@
         text-align: left;
         color: $text-muted;
         padding-left: $grid-gutter-width;
-        margin-bottom: $grid-gutter-width;
+      margin-bottom: $grid-gutter-width;
     }
+  p {
+    margin-bottom: $grid-gutter-width;
+  }
     @media #{$tablet} {
         margin-top: 6vh;
         .b1 { flex: 1 1 50%; order: 2; text-align: left; }
@@ -900,13 +903,17 @@
             span { display: inline-block; }
         }
         p {
-            margin: 0 0 $grid-gutter-width;
+            margin: 0 0 $grid-gutter-width/2;
             text-align: justify;
           a {
             color: $text-color;
             text-decoration: underline;
           }
         }
+      ul {
+        margin-top: 0;
+        margin-bottom: $grid-gutter-width/2;
+      }
         &.node-body-bordered {
             border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
             padding: $grid-gutter-width 0;
@@ -2309,8 +2316,8 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 
 
 .file-widget {
-  display: flex;
-  align-items: center;
+  // display: flex; закомментировано, тк на странице вакансии поле выходит за пределы блока
+  // align-items: center;
   .file-info {
     a {
       width: 100%;

@@ -18,5 +18,10 @@ If for some reason you'd like to modify the hreflang tags on a page, you can do
 so by implementing the core hook_language_switch_links_alter() or
 hook_html_head_alter() hooks in a custom module.
 
+If you would like to add an additional hreflang="x-default" tag pointing at your
+site's default language, go to the settings page at admin/config/search/hreflang
+and enable the "Add x-default hreflang tag for default language" setting. Read
+more about x-default: https://en.wikipedia.org/wiki/Hreflang#X-Default
+
 To file a bug report, feature request or support request for this module, please
 visit the module project page: https://www.drupal.org/project/hreflang

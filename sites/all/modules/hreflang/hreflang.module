@@ -23,7 +23,7 @@ function hreflang_page_build(&$page) {
   if (empty($links->links)) {
     return;
   }
-  foreach ($links->links as $link) {
+  foreach ($links->links as $langcode => $link) {
     // Content translation module may unset the href attribute.
     if (!isset($link['href']) || !isset($link['attributes']['hreflang'])) {
       continue;
@@ -40,8 +40,12 @@ function hreflang_page_build(&$page) {
     $attributes = array(
       'href' => url($link['href'], $link),
       'rel' => 'alternate',
-      'hreflang' => $link['attributes']['hreflang'],
     );
+    if ($langcode === language_default('language') && variable_get('hreflang_x_default', FALSE)) {
+      $attributes['hreflang'] = 'x-default';
+      drupal_add_html_head_link($attributes);
+    }
+    $attributes['hreflang'] = $link['attributes']['hreflang'];
     drupal_add_html_head_link($attributes);
   }
 }
@@ -52,5 +56,34 @@ function hreflang_page_build(&$page) {
 function hreflang_language_switch_links_alter(array &$links, $type, $path) {
   foreach ($links as $langcode => &$link) {
     $link['attributes']['hreflang'] = $langcode;
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function hreflang_menu() {
+  $items['admin/config/search/hreflang'] = array(
+    'title' => 'Hreflang tags',
+    'description' => 'Configure hreflang tag settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hreflang_admin'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'hreflang.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_help().
+ */
+function hreflang_help($path) {
+  if ($path === 'admin/config/search/hreflang') {
+    return theme('html_tag', array(
+      'element' => array(
+        '#tag' => 'p',
+        '#value' => t('Hreflang module automatically adds an hreflang tag to the page for each enabled language.'),
+      ),
+    ));
   }
 }

@@ -213,8 +213,7 @@ function advagg_insert_update_files(array $files, $type) {
           ->execute();
         if ($return) {
           if (variable_get('advagg_debug', ADVAGG_DEBUG) >= 2) {
-            $variables = array('@record' => print_r($record, TRUE));
-            watchdog('advagg-debug', 'Inserting into db <pre>@record</pre>.', $variables, WATCHDOG_DEBUG);
+            watchdog('advagg-debug', 'Inserting into db <pre>@record</pre>.', array('@record' => print_r($record, TRUE)), WATCHDOG_DEBUG);
           }
           $write_done = TRUE;
         }
@@ -259,8 +258,7 @@ function advagg_insert_update_files(array $files, $type) {
             ->execute();
           if ($return) {
             if (variable_get('advagg_debug', ADVAGG_DEBUG) >= 2) {
-              $variables = array('@diff' => print_r($diff, TRUE));
-              watchdog('advagg-debug', 'Updating db <pre>@diff</pre>.', $variables, WATCHDOG_DEBUG);
+              watchdog('advagg-debug', 'Updating db <pre>@diff</pre>.', array('@diff' => print_r($diff, TRUE)), WATCHDOG_DEBUG);
             }
             $write_done = TRUE;
           }
@@ -1169,8 +1167,7 @@ function advagg_split_css_file(array $file_info, $file_contents = '') {
     $subfile = advagg_create_subfile($value, $overall_counter, $file_info);
     if (empty($subfile)) {
       // Something broke; do not create a subfile.
-      $variables = array('@info' => var_export($file_info, TRUE));
-      watchdog('advagg', 'Spliting up a CSS file failed. File info: <code>@info</code>', $variables);
+      watchdog('advagg', 'Spliting up a CSS file failed. File info: <code>@info</code>', array('@info' => var_export($file_info, TRUE)));
       return array();
     }
     $parts[] = $subfile;

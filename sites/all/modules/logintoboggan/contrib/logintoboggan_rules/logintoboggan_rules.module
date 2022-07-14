@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * @file
  * Logintoboggan Rules module
@@ -7,11 +8,15 @@
  * This module provides integration of LoginToboggan module with Rules module
  */
 
+
+
 /**
- * Implements hook_user_update().
+ * Implement hook_user()
+ *
  */
 function logintoboggan_rules_user_update(&$edit, $account) {
   if (!empty($account->logintoboggan_email_validated)) {
     rules_invoke_event('logintoboggan_validated', $account);
   }
 }
+

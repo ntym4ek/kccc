@@ -31,6 +31,7 @@ class HreflangTest extends DrupalWebTestCase {
     $this->adminUser = $this->drupalCreateUser(array(
       'access administration pages',
       'administer languages',
+      'administer site configuration',
     ));
     $this->drupalLogin($this->adminUser);
 
@@ -55,10 +56,19 @@ class HreflangTest extends DrupalWebTestCase {
     $this->drupalGet('');
     $this->assertRaw('<link href="' . $url . $path . '" rel="alternate" hreflang="fr" />', 'French hreflang found on English page.');
     $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on English page.');
+    $this->assertNoRaw('<link href="' . $url . '" rel="alternate" hreflang="x-default" />', 'X-default hreflang not found on English page.');
 
     $this->drupalGet('fr');
     $this->assertRaw('<link href="' . $url . $path . '" rel="alternate" hreflang="fr" />', 'French hreflang found on French page.');
     $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on French page.');
+
+    // Enable hreflang="x-default" tag.
+    $edit = array('hreflang_x_default' => 1);
+    $this->drupalPost('admin/config/search/hreflang', $edit, t('Save configuration'));
+
+    $this->drupalGet('');
+    $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="x-default" />', 'X-default hreflang found on English page.');
+    $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on English page.');
   }
 
   /**
@@ -214,7 +224,10 @@ class HreflangCommentTest extends DrupalWebTestCase {
     drupal_static_reset('locale_url_outbound_alter');
     $languages = language_list();
     $this->assertRaw('<link href="' . url('node/1', array('absolute' => TRUE)) . '" rel="alternate" hreflang="en" />');
-    $this->assertRaw('<link href="' . url('node/1', array('absolute' => TRUE, 'language' => $languages['fr'])) . '" rel="alternate" hreflang="fr" />');
+    $this->assertRaw('<link href="' . url('node/1', array(
+      'absolute' => TRUE,
+      'language' => $languages['fr'],
+    )) . '" rel="alternate" hreflang="fr" />');
   }
 
 }

@@ -3,9 +3,10 @@ core = 7.x
 description = Adds hreflang link elements to the header of each page.
 package = Multilingual
 files[] = hreflang.test
+configure = admin/config/search/hreflang
 
-; Information added by Drupal.org packaging script on 2019-10-18
-version = "7.x-1.5"
+; Information added by Drupal.org packaging script on 2021-12-01
+version = "7.x-1.6"
 core = "7.x"
 project = "hreflang"
-datestamp = "1571427194"
+datestamp = "1638376149"

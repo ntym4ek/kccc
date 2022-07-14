@@ -322,7 +322,7 @@ $before = array_shift($content['measurements']);
 
       <? else: ?>
         <div class="no-content">
-          Замеры<br />не проводились
+          Контроль<br />не проводился
         </div>
       <? endif; ?>
     </div>

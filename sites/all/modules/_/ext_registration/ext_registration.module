@@ -79,7 +79,7 @@ function ext_registration_form_alter(&$form, &$form_state, $form_id)
                 unset($form['registrant_self']);
 
                 $form['actions']['cancel']['#access'] = false;
-                $form['actions']['submit']['#attributes']['class'][] = 'btn-info btn-wide-full';
+                $form['actions']['submit']['#attributes']['class'][] = 'btn-wide-full';
                 $form['actions']['submit']['#value'] = t('Submit');
                 $form['actions']['submit']['#ajax'] = array(
                     'callback' => 'ext_registration_form_refresh',

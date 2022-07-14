@@ -320,7 +320,7 @@ function agrocalc_form($from, &$form_state)
             '#type' => 'submit',
             '#value' => t('Get'),
             '#name' => 'send',
-            '#attributes' => ['class' => ['btn-info', 'btn-wide']],
+            '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
             '#prefix' => '<div class="form-submit-wrapper">',
             '#suffix' => '</div>',
             '#submit' => ['agrocalc_form_submit'],
