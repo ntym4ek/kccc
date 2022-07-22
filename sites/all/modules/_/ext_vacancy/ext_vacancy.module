@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function ext_vacancy_menu()
+{
+  $items['info/no-job'] = [
+    'page callback' => 'ext_vacancy_no_job_page',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+    'title' => 'Vacancy closed',
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function ext_vacancy_theme()
+{
+  return [
+    'no_job' => array(
+      'variables' => [],
+      'template' => 'templates/no-job',
+    ),
+  ];
+}
+
+function ext_vacancy_403_redirect_alter(&$data)
+{
+  if ($redirect_url = ext_vacancy_get_redirect_url($data['path'])) {
+    $data['redirect_url'] = $redirect_url;
+  }
+}
+
+function ext_vacancy_404_redirect_alter(&$data) {
+  if ($redirect_url = ext_vacancy_get_redirect_url($data['path'])) {
+    $data['redirect_url'] = $redirect_url;
+  }
+}
+
+function ext_vacancy_get_redirect_url($path)
+{
+  $page_match = drupal_match_path($path, 'info/job/*');
+  if ($page_match) {
+    // ссылка для редиректа
+    $path = $_GET['destination'];
+    $query = drupal_http_build_query(drupal_get_query_parameters(NULL, array('q', 'destination')));
+    if ($query != '') {
+      $path .= '?' . $query;
+    }
+    $original_url = array('original_url' => $path);
+    $options['query'] = $original_url;
+    return url('info/no-job', $options);
+  }
+
+  return false;
+}
+
+function ext_vacancy_no_job_page()
+{
+  $original_url = isset($_GET['original_url']) ? explode('?', $_GET['original_url'])[0] : null;
+  if ($original_url && arg(0, $original_url) == 'node' && is_numeric(arg(1, $original_url))) {
+
+    $node_wr = entity_metadata_wrapper('node', arg(1, $original_url));
+    drupal_set_title($node_wr->label());
+  }
+
+  return theme('no_job');
+}
+
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_vacancy_preprocess_page(&$vars)
+{
+  if ($_GET['q'] == 'info/no-job') {
+    $image = '/sites/default/files/images/header_images/info/job/header_image.jpg';
+    $vars['header'] = array(
+      'image' => $image,
+      'category_title' => 'Вакансия закрыта',
+      'title_off' => in_array(drupal_get_title(), ['Vacancy closed', 'Вакансия закрыта']),
+      'print' => false,
+    );
+  }
+}
