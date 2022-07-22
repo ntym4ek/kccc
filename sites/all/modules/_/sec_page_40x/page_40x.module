@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function page_40x_menu()
+{
+  $items['403-page'] = [
+    'page callback' => 'page_40x_403_redirect',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+    'title' => 'Access denied',
+  ];
+  $items['404-page'] = [
+    'page callback' => 'page_40x_404_redirect',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+    'title' => 'Page not found',
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function page_40x_theme()
+{
+  return [
+    '403_page' => array(
+      'variables' => array(),
+      'template' => 'templates/403-page',
+    ),
+    '404_page' => array(
+      'variables' => array(),
+      'template' => 'templates/404-page',
+    ),
+  ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function page_40x_preprocess_page(&$vars)
+{
+  $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+  if (drupal_match_path($path, '40*-page')) {
+    $image = null;
+    if (drupal_match_path($path, '403-page')) $image = '/' . drupal_get_path('module', 'page_40x') . '/images/header_image_403.jpg';
+    if (drupal_match_path($path, '404-page')) $image = '/' . drupal_get_path('module', 'page_40x') . '/images/header_image_404.jpg';
+    $vars['header'] = array(
+      'image' => $image,
+      'category_title' => drupal_get_title(),
+      'title_off' => true,
+      'print' => false,
+    );
+  }
+}
+
+
+/**
+ * MENU_CALLBACK for /r4032login
+ *
+ * Redirect anonymous users from 403 Access Denied pages to the /user/login page
+ * with a message explaining that they must log in to view the requested page
+ * and a query string parameter appended to the url to return after login.
+ */
+function page_40x_403_redirect()
+{
+  // другие модули могут изменить страницу или предоставить url для редиректа
+  $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
+  drupal_alter('403_redirect', $data);
+
+  if (!empty($data['output'])) return $data['output'];
+  if (!empty($data['redirect_url'])) {
+    header('Location: ' . $data['redirect_url'], TRUE, 301);
+    drupal_exit();
+  }
+
+  // иначе стандартное сообщение 403
+  return theme('403_page');
+}
+
+function page_40x_404_redirect()
+{
+  // другие модули могут изменить страницу или предоставить url для редиректа
+  $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
+  drupal_alter('404_redirect', $data);
+
+  if (!empty($data['output'])) return $data['output'];
+  if (!empty($data['redirect_url'])) {
+    header('Location: ' . $data['redirect_url'], TRUE, 301);
+    drupal_exit();
+  }
+
+  // стандартное сообщение 404
+  return theme('404_page');
+}
+
