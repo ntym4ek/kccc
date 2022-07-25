@@ -63,7 +63,6 @@ function ext_product_form_alter(&$form, &$form_state, $form_id)
       // пересчитать цены вариантов товаров в админке при редактировании товара
       $form['#submit'][] = 'ext_product_product_calc_price';
       break;
-
   }
 }
 
@@ -193,7 +192,7 @@ function ext_product_form_commerce_cart_add_to_cart_form_alter(&$form, $form_sta
   $form['submit']['#attributes']['class'][] = 'btn-wide-full';
 
   // если Out_of_stock, сделать Добавление в корзину неактивным
-  if ($product_info["status"]) {
+  if ($product_info["stock"]) {
     if (in_array($product_id, ext_product_get_order_product_ids($GLOBALS['user']->uid))) {
       $form['submit']['#value'] = 'Добавлено';
     } else {
@@ -236,14 +235,14 @@ function ext_product_product_get_info($node)
 
   $lang = $GLOBALS['language']->language;
 
-  $preparation_wr = entity_metadata_wrapper('node', $node)->language($lang);
+  $product_wr = entity_metadata_wrapper('node', $node)->language($lang);
 
   // составить массив препаратов
   // один препарат для химии, два препарата для смесей
   $preparations = [];
-  if ($preparation_wr->getBundle() == 'product_mix') {
+  if ($product_wr->getBundle() == 'product_mix') {
     foreach (['field_pd_mix_component1', 'field_pd_mix_component2'] as $key => $field) {
-      $wrapper = $preparation_wr->{$field};
+      $wrapper = $product_wr->{$field};
       $preparations[] = array(
         'order' => $key,
         'item' => $wrapper,
@@ -252,37 +251,37 @@ function ext_product_product_get_info($node)
   } else {
     $preparations[] = array(
       'order' => 0,
-      'item' => $preparation_wr,
+      'item' => $product_wr,
     );
   }
 
   // формируем результирующий массив
   $preparation = array(
-    'nid'    => $preparation_wr->getIdentifier(),
-    'type'   => $preparation_wr->getBundle(),
-    'status' => $preparation_wr->status->value(),
-    'icon'   => isset($preparation_wr->field_icon) && $preparation_wr->field_icon->value() ? $preparation_wr->field_icon->file->url->value() : '',
-    'url'    => url('node/' . $preparation_wr->getIdentifier()),
+    'nid'    => $product_wr->getIdentifier(),
+    'type'   => $product_wr->getBundle(),
+    'status' => $product_wr->status->value(),
+    'icon'   => isset($product_wr->field_icon) && $product_wr->field_icon->value() ? $product_wr->field_icon->file->url->value() : '',
+    'url'    => url('node/' . $product_wr->getIdentifier()),
   );
   $titles_w_form = [];
   foreach($preparations as $item) {
-    $preparation_wr = $item['item'];
-    $id = $preparation_wr->getIdentifier();
+    $prep_item_wr = $item['item'];
+    $id = $prep_item_wr->getIdentifier();
 
     // препаративная форма
     $form_short = $form_full = '';
-    if (isset($preparation_wr->field_pd_formulation) && $preparation_wr->field_pd_formulation->value()) {
-      $form_short = $preparation_wr->field_pd_formulation->language($lang)->field_tax_short_name->value();
-      $form_full = $preparation_wr->field_pd_formulation->language($lang)->name->value();
+    if (isset($prep_item_wr->field_pd_formulation) && $prep_item_wr->field_pd_formulation->value()) {
+      $form_short = $prep_item_wr->field_pd_formulation->language($lang)->field_tax_short_name->value();
+      $form_full = $prep_item_wr->field_pd_formulation->language($lang)->name->value();
     }
 
     // единицы измерения препарата
-    $unit_wr = $preparation_wr->field_pd_units->language($lang);
+    $unit_wr = $prep_item_wr->field_pd_units->language($lang);
 
     // ДВ
     $ingredients = [];
-    if (isset($preparation_wr->field_pd_active_ingredients) && $preparation_wr->field_pd_active_ingredients->value()) {
-      foreach ($preparation_wr->field_pd_active_ingredients as $ingredient_wr) {
+    if (isset($prep_item_wr->field_pd_active_ingredients) && $prep_item_wr->field_pd_active_ingredients->value()) {
+      foreach ($prep_item_wr->field_pd_active_ingredients as $ingredient_wr) {
         if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {
           $ingredient_wr = $ingredient_wr->language($lang);
           $ingr_name = ($lang == 'ru') ? $ingredient_wr->field_pd_ai_active_ingredient->label() : $ingredient_wr->field_pd_ai_active_ingredient->field_name_latin->value();
@@ -302,23 +301,23 @@ function ext_product_product_get_info($node)
     // определить по категории ед. изм. применения препарата (га или т)
     // и занести в массив, т.к. неизвестно, какие из них будут использованы
     $unit_field = [];
-    foreach ($preparation_wr->field_pd_category as $cat_wrapper) {
+    foreach ($prep_item_wr->field_pd_category as $cat_wrapper) {
       $tid = $cat_wrapper->getIdentifier();
       $unit_field[$tid] = $tid == AGRO_CATEGORY_DISINFECTANTS_TID ? t(AGRO_SEED_MEASURE) : t(AGRO_FIELD_MEASURE);
     }
 
     // фото
     $photo_uri = 'public://default_images/no_image.jpg';
-    if ($photo = $preparation_wr->field_product[0]->field_p_images[0]->value()) {
+    if ($photo = $prep_item_wr->field_product[0]->field_p_images[0]->value()) {
       $photo_uri = $photo['uri'];
     }
     $photo_url = file_create_url($photo_uri);
     $photo_medium = image_style_url('medium', $photo_uri);
 
-    // наличие
-    $stock = $preparation_wr->status->value();
+    // наличие (field_pd_out_of_stock есть не у всех типов)
+    $stock = isset($prep_item_wr->value()->field_pd_out_of_stock) ? !$prep_item_wr->field_pd_out_of_stock->value() : $prep_item_wr->status->value();
 
-    $product_0_wr = $preparation_wr->field_product[0];
+    $product_0_wr = $prep_item_wr->field_product[0];
     // тара
     $tare = $product_0_wr->field_p_tare->name->value();
 
@@ -328,8 +327,8 @@ function ext_product_product_get_info($node)
 
     // категория и цвет
     $cats = [];
-    if ($preparation_wr->field_pd_category->value()) {
-      foreach($preparation_wr->field_pd_category->getIterator() as $category_wr) {
+    if ($prep_item_wr->field_pd_category->value()) {
+      foreach($prep_item_wr->field_pd_category->getIterator() as $category_wr) {
         $cats[$category_wr->tid->value()] = [
           'tid' => $category_wr->getIdentifier(),
           'name' => $category_wr->label(),
@@ -340,13 +339,13 @@ function ext_product_product_get_info($node)
 
     $preparation['items'][$id] = array(
       'id'            => $id,
-      'title'         => $preparation_wr->language($lang)->title_field->value(),
-      'description'   => strip_tags($preparation_wr->body->summary->value()),
+      'title'         => $prep_item_wr->language($lang)->title_field->value(),
+      'description'   => strip_tags($prep_item_wr->body->summary->value()),
       'url'           => url('node/' . $id),
       'form_short'    => $form_short,
       'form_full'     => $form_full,
       'ingredients'   => $ingredients,
-      'price'         => $preparation_wr->field_pd_price_per_unit->amount->value()/100,
+      'price'         => $prep_item_wr->field_pd_price_per_unit->amount->value()/100,
       'unit'          => $unit_wr->name->value(),
       'unit_short'    => $unit_wr->field_tax_short_name->value(),
       'unit_field'    => $unit_field,
@@ -362,9 +361,12 @@ function ext_product_product_get_info($node)
       'price_in_tare_amount'  => $price_in_tare_amount,
       'price_in_tare_formatted'  => $price_in_tare_formatted,
     );
-    $titles_w_form[] = $form_short ? $preparation_wr->title_field->value() . ', ' . $form_short : $preparation_wr->title_field->value();
+    $titles_w_form[] = $form_short ? $prep_item_wr->title_field->value() . ', ' . $form_short : $prep_item_wr->title_field->value();
   }
   $preparation['title'] = implode(' + ', $titles_w_form);
+  if (in_array($preparation['type'], ['product_agro', 'product_fert'])) {
+    $preparation['stock'] = $preparation['items'][$preparation['nid']]['stock'];
+  }
 
   $result[$preparation['nid']] = $preparation;
 
