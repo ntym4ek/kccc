@@ -1452,7 +1452,7 @@ function chibs_get_representatives_address()
     'RU-KIR' => [[
       'address' => '613048, Кировская обл., г. Кирово-Чепецк, ул.Производственная, 6',
       'phones' => [
-        ['raw' => '+78332761520', 'txt' => '+7 (8332) 76-15-20 ' . t('add.') . ' 1107'],
+        ['raw' => str_replace(['(', ')', '-', ' '], '', variable_get('phone_reception', '8 (8332) 76-15-30')), 'txt' => variable_get('phone_reception', '8 (8332) 76-15-30')],
       ],
       'schedule' => 'Пн-Пт  8:00-17:00',
       'coords' => ['x' => 58.540577, 'y' => 49.976613],

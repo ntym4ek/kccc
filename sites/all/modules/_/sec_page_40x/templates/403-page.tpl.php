@@ -2,7 +2,7 @@
 <div class="page40x">
     <div class="b1">
         <h1>403</h1>
-        <h2><?php print t('Access denied'); ?></h2>
+        <h2><?php print t('Page is unavailable'); ?></h2>
         <h4><?php print t('But still you could be interested in:'); ?></h4>
         <ul>
             <li><?php print l(t('Preparations catalog'), 'catalog/agrochemicals'); ?></li>

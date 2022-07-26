@@ -91,7 +91,7 @@
   <div class="right-menu">
       <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
         <div><span class="link-header-white">Телефон</span></div>
-        <div><a class="link-header-white" href="tel:88332761530">8 (8332) 76-15-30</a></div>
+        <div><a class="link-header-white" href="tel:<? print str_replace(['(', ')', '-', ' '], '', variable_get('phone_reception', '8 (8332) 76-15-30')); ?>"><? print variable_get('phone_reception', ''); ?></a></div>
       </div>
     <?php print render($secondary_nav); ?>
     <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
@@ -103,7 +103,6 @@
       <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
     </a>
   </div>
-
 </header>
 
 
