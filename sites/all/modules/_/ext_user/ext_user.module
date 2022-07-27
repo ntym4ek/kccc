@@ -226,7 +226,7 @@ function ext_user_preprocess_user_profile(&$vars)
     $vars['user_profile']['counts'][] = array(
       'title' => t('Reviews'),
       'amount' => $result,
-      'link' => '/reviews/' . $account->uid,
+      'link' => '/reviews/user/' . $account->uid,
     );
       // До и После
     if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {

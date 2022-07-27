@@ -8223,9 +8223,9 @@ a.icon-after .glyphicon {
   .node .node-body p {
     margin: 0 0 15px;
     text-align: justify; }
-    .node .node-body p a {
-      color: #333333;
-      text-decoration: underline; }
+  .node .node-body a {
+    color: #333333;
+    text-decoration: underline; }
   .node .node-body ul {
     margin-top: 0;
     margin-bottom: 15px; }

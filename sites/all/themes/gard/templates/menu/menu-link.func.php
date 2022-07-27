@@ -40,9 +40,9 @@ function gard_menu_link(array $variables) {
         '12858' => '<i class="fas fa-user"></i>',
         '2675'  => '<i class="fas fa-cog"></i>',
         '9459'  => '<i class="fas fa-check"></i>',
-        '3819'  => '<i class="fas fa-map-marker"></i>',
-        '8980'  => '<i class="fab fa-pagelines"></i>',
-        '893'   => '<i class="fas fa-comment-alt"></i>',
+//        '3819'  => '<i class="fas fa-map-marker"></i>',
+        '17015' => '<i class="fab fa-pagelines"></i>',
+//        '893'   => '<i class="fas fa-comment-alt"></i>',
         '9731'  => '<i class="fas fa-user-circle"></i>',
     );
     // убрать текст из пунктов меню Пользователя (будут только иконки)

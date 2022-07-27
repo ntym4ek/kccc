@@ -37,9 +37,4 @@
         <? print render($content); ?>
     </div>
 
-    <? if (!empty($tags)): ?>
-    <div class="node-tags">
-        <? print $tags; ?>
-    </div>
-    <? endif; ?>
 </article>

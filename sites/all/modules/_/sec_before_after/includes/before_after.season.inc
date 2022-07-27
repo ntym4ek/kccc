@@ -132,41 +132,48 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0)
             }
         }
     }
-    // если редактирование, то задать переменные из редактируемого объекта
-    if ($sid && empty($form_state['triggering_element'])) {
-        $form_state['sid'] = $sid;
-        $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-        $culture            = $season_wrapper->field_f_s_culture->nid->value();
-        $culture_note       = $season_wrapper->field_f_s_culture_note->value();
-        $previous_culture   = $season_wrapper->field_f_s_previous_culture->value() ? $season_wrapper->field_f_s_previous_culture->nid->value() : 0;
-        $sub_culture        = $season_wrapper->field_f_s_sub_culture->value() ? $season_wrapper->field_f_s_sub_culture->value() : '';
-        $area               = $season_wrapper->field_f_s_area->value();
-        $season             = $season_wrapper->field_f_s_season->value();
-        $year               = $season_wrapper->field_f_s_year->value();
 
-        // при открытии формы загрузить массив ВО в form_state
-        $hobjects = array();
-        if ($season_wrapper->field_f_s_hobjects->count()) {
-            foreach ($season_wrapper->field_f_s_hobjects->getIterator() as $ho_wrapper) {
-              if ($ho_wrapper->value() && $ho_wrapper->field_f_s_h_hobject->value()) {
-                $ho_nid = $ho_wrapper->field_f_s_h_hobject->nid->value();
+  $start_year = date('Y')-1;
+  $end_year = date('Y');
 
-                $hobjects[$ho_wrapper->item_id->value()] = array(
-                    'nid' => $ho_nid,
-                    'dominant' => $ho_wrapper->field_f_s_h_dominant->value() ? $ho_wrapper->field_f_s_h_dominant->value() : 0,
-                    'phase' => $ho_wrapper->field_f_s_h_phase->value(),
-                );
-              }
+  // если редактирование, то задать переменные из редактируемого объекта
+  if ($sid && empty($form_state['triggering_element'])) {
+      $form_state['sid'] = $sid;
+      $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
+      $culture            = $season_wrapper->field_f_s_culture->nid->value();
+      $culture_note       = $season_wrapper->field_f_s_culture_note->value();
+      $previous_culture   = $season_wrapper->field_f_s_previous_culture->value() ? $season_wrapper->field_f_s_previous_culture->nid->value() : 0;
+      $sub_culture        = $season_wrapper->field_f_s_sub_culture->value() ? $season_wrapper->field_f_s_sub_culture->value() : '';
+      $area               = $season_wrapper->field_f_s_area->value();
+      $season             = $season_wrapper->field_f_s_season->value();
+      $year               = $season_wrapper->field_f_s_year->value();
+
+      // при открытии формы загрузить массив ВО в form_state
+      $hobjects = array();
+      if ($season_wrapper->field_f_s_hobjects->count()) {
+          foreach ($season_wrapper->field_f_s_hobjects->getIterator() as $ho_wrapper) {
+            if ($ho_wrapper->value() && $ho_wrapper->field_f_s_h_hobject->value()) {
+              $ho_nid = $ho_wrapper->field_f_s_h_hobject->nid->value();
+
+              $hobjects[$ho_wrapper->item_id->value()] = array(
+                  'nid' => $ho_nid,
+                  'dominant' => $ho_wrapper->field_f_s_h_dominant->value() ? $ho_wrapper->field_f_s_h_dominant->value() : 0,
+                  'phase' => $ho_wrapper->field_f_s_h_phase->value(),
+              );
             }
-        }
-    }
+          }
+      }
+
+    $start_year = $year;
+    $end_year = $year;
+  }
 
   $options_s = array(
       'Весна' => 'Весна',
       'Осень' => 'Осень',
   );
   $options_y = array();
-  for($i = date('Y'); $i <= 2030; $i++) {
+  for($i = $start_year; $i <= $end_year; $i++) {
     $options_y[$i] = $i;
   }
 
