@@ -3,7 +3,7 @@
  * Implements hook_node_presave()
  * @param $node
  */
-function linker_node_presave($node)
+function ext_node_node_presave($node)
 {
     // только для заданных типов
     if (in_array($node->type, ['news', 'blog', 'review'])) {
@@ -17,16 +17,10 @@ function linker_node_presave($node)
           $text = str_replace('«', '"', $text);
           $text = str_replace('»', '"', $text);
 
-          // список искомых фраз и их ссылок
-          foreach (_linker_replacement_list() as $replacement_item) {
-            $patterns = _linker_convert_needles_to_preg_patterns($replacement_item['needles']);
-            $replace = '<a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>\\2';
-            foreach ($patterns as $pattern) {
-              $text_old = $text;
-              $text = preg_replace($pattern, $replace, $text, 1);
-              if ($text != $text_old) break;
-            }
-          }
+          $text = str_replace('&nbsp;', ' ', $text);
+
+          $text = ext_node_remove_all_links($text);
+          $text = ext_node_place_internal_links($text);
 
           // дополнительные обработки
           $text = str_replace('http://kccc.', 'https://kccc.', $text);
@@ -35,6 +29,29 @@ function linker_node_presave($node)
           $node->body[$lang][0]['value'] = $text;
         }
     }
+}
+
+function ext_node_remove_all_links($text)
+{
+  $text = preg_replace('#<a.*?>(.*?)</a>#is', '\1', $text);
+
+  return $text;
+}
+
+function ext_node_place_internal_links($text)
+{
+  // список искомых фраз и их ссылок
+  foreach (_ext_node_replacement_list() as $replacement_item) {
+    $patterns = _ext_node_convert_needles_to_preg_patterns($replacement_item['needles']);
+    $replace = ' <a href="' . url($replacement_item['url']) . '" target="_blank">\\1</a>\\2';
+    foreach ($patterns as $pattern) {
+      $text_old = $text;
+      $text = preg_replace($pattern, $replace, $text, 1);
+      if ($text != $text_old) break;
+    }
+  }
+
+  return $text;
 }
 
 /**
@@ -47,7 +64,7 @@ function linker_node_presave($node)
 
  * @return array
  */
-function _linker_replacement_list()
+function _ext_node_replacement_list()
 {
     $arr = [];
 
@@ -58,10 +75,12 @@ function _linker_replacement_list()
             'ТД "Кирово-Чепецкая Химическая Компания"',
             'Торговый Дом "Кирово-Чепецкая Химическая Компания"',
             'Торговый Дом "КЧХК"',
-            'ТД "КЧХК"',
+            'ООО ТД "КЧХК"', 'ТД "КЧХК"',
             'Кирово-Чепецкой Химической Компании',
+            'KCCC Group', 'KCCC GROUP',
+            'KCCC', 'КССС',
         ],
-        'url' => '<front>',
+        'url' => 'https://kccc.ru',
     ];
     $arr[] = [
         'needles' => [
@@ -116,7 +135,7 @@ function _linker_replacement_list()
     return $arr;
 }
 
-function _linker_convert_needles_to_preg_patterns($needles)
+function _ext_node_convert_needles_to_preg_patterns($needles)
 {
     if (empty($needles)) return false;
 
@@ -124,8 +143,9 @@ function _linker_convert_needles_to_preg_patterns($needles)
     foreach ($needles as $needle) {
         // кавычки могут быть любыми
         $needle = str_replace('"', '["\']', $needle);
-        // искомое слово не должно быть уже ссылкой
-        $patterns[] = '/(?<!target="_blank">)(' . $needle . '.*?)([\.\!\?\,\s])(?!<\/a>)/si';
+        // искомое слово или фраза не должны быть ссылкой (?<!target="_blank">)
+        // искомое слово или фраза не должны быть адресом ссылки (?<!\/\/) - для "kccc"
+        $patterns[] = '/(?<!target="_blank">)(?<!\/\/)\s(' . $needle . '.*?)([\.\!\?\,\s\"])(?!<\/a>)/si';
     }
 
     return $patterns;
