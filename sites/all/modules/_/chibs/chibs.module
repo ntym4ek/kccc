@@ -12,10 +12,6 @@ const AGRO_CATEGORY_SURFACTANTS_TID     = 72763;        // tid термина к
 const AGRO_FIELD_MEASURE                = 'ha';         // ед. измерения площади поля (гектар)
 const AGRO_SEED_MEASURE                 = 't';          // ед. измерения веса семян (тонна)
 
-//устарело
-const HOBJECTS_WEEDS_TID                = 71340;        // tid термина категории Сорняки
-const HOBJECTS_PESTS_TID                = 71341;        // tid термина категории Вредители
-const HOBJECTS_FUNGIS_TID               = 72339;        // tid термина категории Болезни
 
 
 /**

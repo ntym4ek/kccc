@@ -8223,7 +8223,7 @@ a.icon-after .glyphicon {
   .node .node-body p {
     margin: 0 0 15px;
     text-align: justify; }
-  .node .node-body a {
+  .node .node-body a:not(.btn) {
     color: #333333;
     text-decoration: underline; }
   .node .node-body ul {
@@ -8755,8 +8755,8 @@ form.confirmation .form-actions {
 /* ------------------------------------------------- Поля (Fields) -------------------------------------------------- */
 /* ------------------------------------------------- Скачивание файла (File-link) - */
 .field-type-file .field-item {
-  border: 1px solid rgba(1, 176, 241, 0.2);
-  border-right: 10px solid #01b0f1;
+  border: 1px solid rgba(54, 170, 61, 0.2);
+  border-right: 10px solid #36AA3D;
   padding: 0 38px 0 20px;
   margin: 15px 0; }
   .field-type-file .field-item .file {

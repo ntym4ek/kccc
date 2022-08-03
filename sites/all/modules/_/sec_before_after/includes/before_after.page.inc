@@ -1067,10 +1067,6 @@ function before_after_get_atfield($sid)
       $field_wrapper = entity_metadata_wrapper('node', $fid);
       $field = $field_wrapper->value();
 
-      $uid = $field->uid;
-      $user_wrapper = entity_metadata_wrapper('user', $uid);
-      $user = $user_wrapper->value();
-
       $output['farm'] = $field_wrapper->field_f_farm->value();
       $output['culture'] = $season_wrapper->field_f_s_culture->label();
       $output['culture_note'] = $season_wrapper->field_f_s_culture_note->value();
@@ -1079,23 +1075,23 @@ function before_after_get_atfield($sid)
       $output['season'] = $season_wrapper->field_f_s_season->value();
       $output['year'] = $season_wrapper->field_f_s_year->value();
       $output['region'] = $field_wrapper->field_f_region->label();
-      $output['author'] = ext_user_get_user_info($user);
+      $output['author'] = ext_user_get_user_info($field->uid);
 
       // user
-      $img = 'default_images/ru-default-thickbox_default.jpg';
-
-      if ($profile_main = profile2_load_by_user($user, 'main')) {
-        if (isset($profile_main->field_profile_photo['und'][0]['uri'])) $img = $profile_main->field_profile_photo['und'][0]['uri'];
-      }
-      $output['author_img'] = image_style_url('user_photo', $img);
-
-      // если утвержденный сотрудник вывести регалии
-      if ($staff = profile2_load_by_user($user, 'staff')) {
-        $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
-
-        $output['author_company'] = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
-        $output['author_post'] = $staff_wrapper->field_profile_post->value();
-      }
+//      $img = 'default_images/ru-default-thickbox_default.jpg';
+//
+//      if ($profile_main = profile2_load_by_user($user, 'main')) {
+//        if (isset($profile_main->field_profile_photo['und'][0]['uri'])) $img = $profile_main->field_profile_photo['und'][0]['uri'];
+//      }
+//      $output['author_img'] = image_style_url('user_photo', $img);
+//
+//       если утвержденный сотрудник вывести регалии
+//      if ($staff = profile2_load_by_user($user, 'staff')) {
+//        $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
+//
+//        $output['author_company'] = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
+//        $output['author_post'] = $staff_wrapper->field_profile_post->value();
+//      }
 
 
       // процессы сезона

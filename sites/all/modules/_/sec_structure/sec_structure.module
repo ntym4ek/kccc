@@ -221,7 +221,7 @@ function sec_structure_get_structure()
                                 'child' => [
                                   [
                                     'shell' => 'Зам. административного директора',
-                                    'card' => 'Огородова Мария Николаевна<a href="mailto:maria.ogorodova@kccc.ru">maria.ogorodova@kccc.ru</a>т. 76-15-22 (11-86)',
+                                    'card' => 'Огородова Мария Николаевна<a href="mailto:maria.ogorodova@kccc.ru">maria.ogorodova@kccc.ru</a>т. 76-15-45 (11-86)',
                                     'class' => 'blue',
                                     '#theme' => 'structure_box',
                                   ],

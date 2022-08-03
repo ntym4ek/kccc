@@ -67,8 +67,10 @@ function page_40x_preprocess_page(&$vars)
  */
 function page_40x_403_redirect()
 {
+  if (isset($_GET['destination'])) {
+    $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
+  }
   // другие модули могут изменить страницу или предоставить url для редиректа
-  $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
   drupal_alter('403_redirect', $data);
 
   if (!empty($data['output'])) return $data['output'];

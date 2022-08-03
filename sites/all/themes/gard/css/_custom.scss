@@ -906,7 +906,7 @@
           margin: 0 0 $grid-gutter-width/2;
           text-align: justify;
       }
-        a {
+        a:not(.btn) {
           color: $text-color;
           text-decoration: underline;
         }
@@ -1410,8 +1410,8 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 /* ------------------------------------------------- Скачивание файла (File-link) - */
 .field-type-file {
   .field-item {
-    border: 1px solid transparentize($brand-info, .8);
-    border-right: 10px solid $brand-info;
+    border: 1px solid transparentize($brand-primary, .8);
+    border-right: 10px solid $brand-primary;
     padding: 0 38px 0 20px; margin: $grid-gutter-width/2 0;
     .file {
       background: url('../images/icons/file_sheet.png') 0 13px no-repeat;

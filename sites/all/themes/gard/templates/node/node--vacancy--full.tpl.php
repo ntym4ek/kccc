@@ -79,7 +79,7 @@
 
 
                             <div class="contact-phones">
-                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-22, доб. 1186</a></div>
+                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-45, доб. 1186</a></div>
                             </div>
                             <div class="contact-emails">
                                 <div class="contact-email"><a href="mailto:maria.ogorodova@kccc.ru" class="" rel="nofollow">maria.ogorodova@kccc.ru</a></div>

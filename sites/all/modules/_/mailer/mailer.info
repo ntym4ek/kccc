@@ -1,4 +1,4 @@
-name = Mailer
-description = "Всё что связано с рассылкой писем"
+name = Дополнения для E-Mail
+description = Всё что связано с рассылкой писем
 package = Custom
 core = 7.x
