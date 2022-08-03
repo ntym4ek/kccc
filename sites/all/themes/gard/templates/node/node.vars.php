@@ -126,14 +126,16 @@ function gard_preprocess_node(&$vars) {
           $author['anonimous'] = true;
         }
         $vars['author'] = $author;
-//        $vars['author'] = $author['name'] . ' ' . $author['surname'];
-        //$vars['commented'] = $vars['node']->comment_count;
     }
 
     /** ------------------------------------ Вакансии --------------------------------------------------------------- */
     if ($vars['type'] == 'vacancy') {
-        $vars['employer'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
-        $vars['place'] = empty($vars['content']['field_vacancy_location'][0]['#markup']) ? '' : $vars['content']['field_vacancy_location'][0]['#markup'];
+      $vars['employer'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
+      $vars['place'] = empty($vars['content']['field_vacancy_location'][0]['#markup']) ? '' : $vars['content']['field_vacancy_location'][0]['#markup'];
+
+      $users = ext_user_get_users_by_office([OFFICE_ADMIN_DEPUTY]);
+      $contact = ext_user_get_user_contact(key($users[OFFICE_ADMIN_DEPUTY]));
+      $vars['contact'] = theme('contact_card', ['contact' => $contact, 'options' => ['class' => 'col-md-6']]);
     }
 
 

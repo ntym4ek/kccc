@@ -2,8 +2,6 @@
     hide($content['links']);
     hide($content['field_vacancy_form']);
     hide($content['body']);
-    $st = (isset($field_vacancy_employer[0]) && $field_vacancy_employer[0]['value'] == 'st') ? true : false;
-    $photo_url = '/' . drupal_get_path('module', 'contacts') . '/images/photos/ogorodova.png'
 ?>
 
 <article class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
@@ -69,23 +67,7 @@
                     <span class="panel-title fieldset-legend"><? print t('Contacts'); ?></span>
                 </legend>
                 <div class="panel-body">
-                    <div class="media contact-card col-md-6">
-                        <div class="media-left">
-                            <img class="media-object" src="<? print $photo_url; ?>" alt="Отдел кадров">
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">Огородова<br>Мария Николаевна</h4>
-                            <div class="contact-dep"><? print t('Personnel manager'); ?></div>
-
-
-                            <div class="contact-phones">
-                                <div class="contact-phone"><a href="tel:+78332761522" rel="nofollow">+7(8332) 76-15-45, доб. 1186</a></div>
-                            </div>
-                            <div class="contact-emails">
-                                <div class="contact-email"><a href="mailto:maria.ogorodova@kccc.ru" class="" rel="nofollow">maria.ogorodova@kccc.ru</a></div>
-                            </div>
-                        </div>
-                    </div>
+                  <? print $contact; ?>
                 </div>
             </fieldset>
         </div>

@@ -1,8 +1,6 @@
 <?php
 // карта России на базе SVG
 // интерактив на карте на базе плагина https://mapsvg.com
-
-$director = array_shift($sales['heads']);
 ?>
 
 <div class="representatives">
@@ -13,30 +11,32 @@ $director = array_shift($sales['heads']);
         <h3><? print t('The list of head managers'); ?></h3>
       </div>
       <div class="row">
-        <? print theme('contact_card', array(
-          'contact' => $director,
+        <? if (!empty($sales['director'])) print theme('contact_card', array(
+          'contact' => $sales['director'],
           'collapse' => [],
           'options' => ['class' => 'col-md-6']));
           print '<div class="clearfix"></div>';
         ?>
 
-        <? $i = 0; ?>
-        <? foreach ($sales['heads'] as $key_c => $rep): ?>
-          <? $collapse = [];
-          if (isset($rep['regions'])) {
-            $collapse['id'] = 'head-' . $key_c;
-            $collapse['title'] = t('Regions list');
-            $regions = [];
-            foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
-            $collapse['content'] = implode(', ', $regions);
-          }
-          print theme('contact_card', array(
-            'contact' => $rep,
-            'collapse' => $collapse,
-            'options' => ['class' => 'col-md-6']));
-            if (($i++) % 2) print '<div class="clearfix"></div>';
-          ?>
-        <? endforeach; ?>
+        <? if (!empty($sales['heads'])): ?>
+          <? $i = 0; ?>
+          <? foreach ($sales['heads'] as $key_c => $rep): ?>
+            <? $collapse = [];
+            if (isset($rep['regions'])) {
+              $collapse['id'] = 'head-' . $key_c;
+              $collapse['title'] = t('Regions list');
+              $regions = [];
+              foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
+              $collapse['content'] = implode(', ', $regions);
+            }
+            print theme('contact_card', array(
+              'contact' => $rep,
+              'collapse' => $collapse,
+              'options' => ['class' => 'col-md-6']));
+              if (($i++) % 2) print '<div class="clearfix"></div>';
+            ?>
+          <? endforeach; ?>
+        <? endif; ?>
       </div>
     </div>
 
@@ -66,7 +66,7 @@ $director = array_shift($sales['heads']);
           foreach ($rep['regions'] as $region) { $regions[] = $region['name']; }
           $collapse['content'] = implode(', ', $regions);
         } else {
-          $rep['office'] .= '<br />' . current($rep['regions'])['name'];
+          $rep['subtitle'] .= '<br />' . current($rep['regions'])['name'];
         }
         $rep_iso = [];
         foreach($rep['regions'] as $reg) { $rep_iso[] = $reg['iso']; }
