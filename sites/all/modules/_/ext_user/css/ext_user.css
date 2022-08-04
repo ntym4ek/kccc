@@ -129,7 +129,7 @@
       width: 66.6666666667%; } }
   .profile-wrapper .profile .profile-save {
     margin-left: 33.3333333333%; }
-  .profile-wrapper .profile .profile-info-top {
+  .profile-wrapper .profile .profile-header {
     padding-bottom: 15px;
     border-bottom: 1px solid #e7e8ec;
     position: relative; }
@@ -152,6 +152,19 @@
     color: #01b0f1; }
   .profile-wrapper .profile .profile-counts {
     text-align: center; }
+  .profile-wrapper .profile .profile-info {
+    margin-top: 30px; }
+    .profile-wrapper .profile .profile-info .profile-row {
+      display: flex;
+      margin-bottom: 10px; }
+      .profile-wrapper .profile .profile-info .profile-row .profile-col-left {
+        color: #b3b3b3;
+        margin: 0 15px 0 0;
+        flex: 0 0 100px; }
+      .profile-wrapper .profile .profile-info .profile-row .profile-col-right {
+        flex: auto; }
+    .profile-wrapper .profile .profile-info a {
+      color: #333333; }
   .profile-wrapper .profile .profile-count {
     display: inline-block;
     color: #000;

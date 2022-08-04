@@ -149,7 +149,8 @@ function ext_user_preprocess_user_profile(&$vars)
     $account_view_access = ($user->uid == $account->uid) || $user->uid == 1;
 
     $user_info = ext_user_get_user_info($account->uid);
-    $vars['user_profile']['name'] = $user_info['short_name'];
+    $vars['user_profile'] = $user_info;
+    $vars['user_profile']['show_contacts'] = false;
 
     if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {
       // todo должность, регион
@@ -160,85 +161,56 @@ function ext_user_preprocess_user_profile(&$vars)
     }
 
     // todo вывести ссылки на новые и все уведомления в виде local actions
-//      $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($acid);
-//
-//      // определить фильтр, если установлен
-//      $status = '';
-//      if (!isset($_GET['status']) || strtolower($_GET['status']) == 'new') {
-//        $status = 0;
-//      }
-//
-//      // сформировать вывод
-//      $output =   '<div class="notifications">' .
-//        '<div class="n-controls">' .
-//        '<div class="n-filter">' .
-//        '<a href="/person/' . $acid . '/notifications?status=new" ' . ($status === 0 ? 'class="active" ' : '') . '>' . t('Only new') . '</a>' .
-//        '<a href="/person/' . $acid . '/notifications?status=all" ' . ($status === '' ? 'class="active" ' : '') . '>' . t('All notifications') . '</a>' .
-//        '</div>' .
-//        '<div class="n-read-all">' .
-//        '<a href="/message/all/got?back=' .$_GET['q'] . (isset($_GET['status']) ? '&status=' . $_GET['status'] : '') . '" title="' . t('Set all notification read') . '" class="n-all-got"><i class="fas fa-check-double"></i></a>' .
-//        '</div>' .
-//        '</div>' .
-//        '</div>';
-//
-//      // списко Уведомлений по полученным Типам сообщений
-//      $output .= views_embed_view('user_notifications', 'page', implode('+', $subscripted_notification_ids), $status);
+    // $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($acid);
 
 
+    // фото
     $vars['user_profile']['photo'] = '/sites/default/files/default_images/no_photo.png';
     $vars['user_profile']['add_photo_link'] = '';
-
     if ($account_view_access) {
       if (!user_has_role(ROLE_UNCONFIRMED)) {
-        // фото
         $vars['user_profile']['add_photo_link'] = l(t('add photo'), '/user/' . $acid . '/main/edit');
       }
     }
-
-    $profile2 = profile2_load_by_user($acid);
-    if (!empty($profile2['main']->pid)) {
-      $main_wrapper = entity_metadata_wrapper('profile2', $profile2['main']->pid);
-      $main_wrapper->language($account->language);
-
-      // добавить фото
-      if ($main_wrapper->field_profile_photo->value()) {
-        $file = $main_wrapper->field_profile_photo->file->value();
-        $vars['user_profile']['photo'] = image_style_url('profile_photo', $file->uri);
-        $vars['user_profile']['add_photo_link'] = '';
-      }
+    if ($user_info['photo_uri']) {
+      $vars['user_profile']['photo'] = image_style_url('profile_photo', $user_info["photo_uri"]);
+      $vars['user_profile']['add_photo_link'] = '';
     }
 
-    // статус
     $vars['user_profile']['is_online'] = ($user->uid == $account->uid) || (time() - $account->access) / 60 < 5;
 
-    // роль
-    $vars['user_profile']['role'] = $user_info["label"];
+    if (user_has_role(ROLE_STAFF, $account) && isset($user_info["staff"]["offices"])
+      && array_intersect([OFFICE_SALES_REPRESENTATIVE, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT], array_keys($user_info["staff"]["offices"])))
+    {
+      $vars['user_profile']['show_contacts'] = true;
 
-    // счётчики
-      // блоги
-    $query = db_select('node');
-    $query->addExpression('COUNT(*)');
-    $query->condition('uid', $account->uid);
-    $query->condition('type', 'blog');
-    $result = $query->execute()->fetchField();
-    $vars['user_profile']['counts'][] = array(
-      'title' => t('Blog'),
-      'amount' => $result,
-      'link' => '/blogs/user/' . $account->uid,
-    );
+      $vars['user_profile']['regions'] = implode(', ', $user_info["staff"]["regions"]);
+      $vars['user_profile']['label'] = $user_info["staff"]["role_full"];
+
+      // счётчики
+        // блоги
+      $query = db_select('node');
+      $query->addExpression('COUNT(*)');
+      $query->condition('uid', $account->uid);
+      $query->condition('type', 'blog');
+      $result = $query->execute()->fetchField();
+      $vars['user_profile']['counts'][] = array(
+        'title' => t('Blog'),
+        'amount' => $result,
+        'link' => '/blogs/user/' . $account->uid,
+      );
       // отзывы
-    $query = db_select('node');
-    $query->addExpression('COUNT(*)');
-    $query->condition('uid', $account->uid);
-    $query->condition('type', 'review');
-    $result = $query->execute()->fetchField();
-    $vars['user_profile']['counts'][] = array(
-      'title' => t('Reviews'),
-      'amount' => $result,
-      'link' => '/reviews/user/' . $account->uid,
-    );
-      // До и После
-    if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {
+      $query = db_select('node');
+      $query->addExpression('COUNT(*)');
+      $query->condition('uid', $account->uid);
+      $query->condition('type', 'review');
+      $result = $query->execute()->fetchField();
+      $vars['user_profile']['counts'][] = array(
+        'title' => t('Reviews'),
+        'amount' => $result,
+        'link' => '/reviews/user/' . $account->uid,
+      );
+      // Препараты в поле
       $query = db_select('field_data_field_f_sowing', 's');
       $query->addExpression('COUNT(*)');
       $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
@@ -260,6 +232,12 @@ function ext_user_preprocess_user_profile(&$vars)
         'amount' => ext_user_orders_count($acid),
         'link' => "/user/$acid/orders",
       );
+    }
+
+    // органичения на вывод информации о сотрудниках
+    // Потапов
+    if ($vars['user_profile']['id'] == 12371) {
+      $vars['user_profile']['show_contacts'] = false;
     }
 
   }
@@ -592,7 +570,7 @@ function ext_user_get_user_info($user)
 
     $name_arr = array('', '', '');
     $email = $phone = '';
-    $photo_url = image_style_url('user_photo', 'public://default_images/no_photo.png');
+    $photo_uri = 'public://default_images/no_photo.png';
     $staff = [];
     $company = [];
     $label = t('User');
@@ -608,11 +586,11 @@ function ext_user_get_user_info($user)
         $phone = $main_wrapper->field_profile_phone->value() ? $main_wrapper->field_profile_phone->value() : '';
         if ($main_wrapper->field_profile_photo->value()) {
           $file = $main_wrapper->field_profile_photo->file->value();
-          $photo_url = image_style_url('user_photo', $file->uri);
+          $photo_uri = $file->uri;
         }
       }
 
-      // если утвержденный сотрудник вывести регалии
+      // сотрудник
       if (user_has_role(ROLE_STAFF, $account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
         $staff_wr = entity_metadata_wrapper('profile2', $staff_pr2);
 
@@ -624,9 +602,7 @@ function ext_user_get_user_info($user)
             $offices[$office_wr->getIdentifier()] = $office_wr->label();
           }
         }
-        $role = $offices ? reset($offices) : '';
-        // устар.
-        $role = empty($role) && $staff_wr->field_profile_post->value() ? $staff_wr->field_profile_post->value() : $role;
+        $role = $offices ? reset($offices) : $label;
 
         $regions = [];
         if ($staff_wr->field_profile_regions->value()) {
@@ -656,6 +632,7 @@ function ext_user_get_user_info($user)
         ];
       }
 
+      // компания
       if (user_has_role(ROLE_COMPANY, $account) && $company_pr2 = profile2_load_by_user($account, 'company')) {
         $company_wr = entity_metadata_wrapper('profile2', $company_pr2);
 
@@ -686,7 +663,7 @@ function ext_user_get_user_info($user)
       'label' => $label,
       'email' => $email,
       'phone' => ext_user_normalize_phone($phone),
-      'photo' => $photo_url,
+      'photo_uri' => $photo_uri,
       'staff' => $staff,
       'is_company' => $is_company,
       'company' => $company,

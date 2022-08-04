@@ -104,7 +104,7 @@
         }
         .profile-save { @include make-xs-column-offset(4); }
 
-        .profile-info-top {
+        .profile-header {
             padding-bottom: 15px;
             border-bottom: 1px solid #e7e8ec;
             position: relative;
@@ -128,6 +128,20 @@
         /* счётчики активности */
         .profile-counts {
             text-align: center;
+        }
+        .profile-info {
+          margin-top: 30px;
+          .profile-row {
+            display: flex;
+            margin-bottom: 10px;
+            .profile-col-left {
+              color: $text-muted;
+              margin: 0 15px 0 0;
+              flex: 0 0 100px;
+            }
+            .profile-col-right  { flex: auto; }
+          }
+          a { color: $text-color; }
         }
         .profile-count {
             display: inline-block;

@@ -197,24 +197,19 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
       if (isset($user_info['staff']['offices'][OFFICE_SALES_EXPERT])) $roles[] = 'expert';
       if (isset($user_info['staff']['offices'][OFFICE_SALES_SPECIALIST])) $roles[] = 'specialist';
 
+      $photo_url = image_style_url('user_photo', $user_info["photo_uri"]);
 
-      $seller += [
+      $seller = array_merge($seller, [
         // для мобильного приложения
         'roles' =>  $roles,
         'expert' => $user_info["staff"]["ephone"] ? $user_info["staff"]["ephone"] : null,
         'surname' => $user_info["surname"],
         'name' => $user_info["name"],
         'name2' => $user_info["name2"],
-//        'phones' => $phones,
-//        'ephone' => $user_info["staff"]["ephone"],
-//        'email' => $user_info["email"],
-//        'photo' => $user_info["photo"],
-      // коллапс на десктопе
+        'photo' => $photo_url,
+        // коллапс на десктопе
         'regions' => $user_info["staff"]["regions"],
-
-//        'offices' => $user_info['staff']['offices'],
-
-      ];
+      ]);
 
       if (empty($filter_region_tid) || isset($seller['regions'][$filter_region_tid])) {
         // транслит имён

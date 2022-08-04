@@ -121,11 +121,12 @@ function gard_preprocess_node(&$vars) {
 
     /** ------------------------------------ Авторство - */
     if (in_array($vars['type'], array('blog', 'review'))) {
-        $author = ext_user_get_user_info($vars['node']->uid);
-        if (!empty($vars["field_flag"]["und"][0]["value"])) {
-          $author['anonimous'] = true;
-        }
-        $vars['author'] = $author;
+      $user_info = ext_user_get_user_info($vars['node']->uid);
+      if (!empty($vars["field_flag"]["und"][0]["value"])) {
+        $user_info['anonimous'] = true;
+      }
+      $user_info['photo'] = image_style_url('user_photo', $user_info["photo_uri"]);
+      $vars['author'] = $user_info;
     }
 
     /** ------------------------------------ Вакансии --------------------------------------------------------------- */
