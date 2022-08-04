@@ -230,31 +230,27 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
         if (!empty($seller['regions'])) {
           foreach($seller['regions'] as $region_tid => &$region_arr) {
             $region_arr = empty($regions_by_tid[$region_tid]) ? [] : $regions_by_tid[$region_tid];
-            if (isset($seller['offices'][OFFICE_SALES_REPRESENTATIVE])) {
+            if ($office_tid == OFFICE_SALES_REPRESENTATIVE) {
               $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps'] = empty($regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']) ? 1 : $regions_by_iso[$regions_by_tid[$region_tid]['iso']]['reps']+1;
             }
           }
         }
 
         // записать сотрудника с в массив с его должностью (у одного может быть несколько должностей)
-//        foreach($seller['offices'] as $office_tid => $office) {
-//          $seller['office'] = $seller['offices'][$office_tid];
-
-          if ($office_tid == OFFICE_SALES_DIRECTOR) {
-            $seller['emails'] = null;
-            $seller['phones'] = null;
-            $director = $seller;
-          }
-          if (in_array($office_tid, [OFFICE_SALES_DEP_HEAD, OFFICE_SALES_DEP_HEAD_DEPUTY, OFFICE_SALES_HEAD])) {
-            $heads[$office_tid][] = $seller;
-          }
-          if ($office_tid == OFFICE_SALES_REPRESENTATIVE) {
-            $reps[] = $seller;
-          }
-          if ($office_tid == OFFICE_SALES_EXPERT || $office_tid == OFFICE_SALES_SPECIALIST) {
-            $exps[] = $seller;
-          }
-//        }
+        if ($office_tid == OFFICE_SALES_DIRECTOR) {
+          $seller['emails'] = null;
+          $seller['phones'] = null;
+          $director = $seller;
+        }
+        if (in_array($office_tid, [OFFICE_SALES_DEP_HEAD, OFFICE_SALES_DEP_HEAD_DEPUTY, OFFICE_SALES_HEAD])) {
+          $heads[$office_tid][] = $seller;
+        }
+        if ($office_tid == OFFICE_SALES_REPRESENTATIVE) {
+          $reps[] = $seller;
+        }
+        if ($office_tid == OFFICE_SALES_EXPERT || $office_tid == OFFICE_SALES_SPECIALIST) {
+          $exps[] = $seller;
+        }
       }
     }
   }

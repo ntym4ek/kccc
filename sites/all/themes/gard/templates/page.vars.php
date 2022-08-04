@@ -15,19 +15,23 @@
  */
 function gard_preprocess_page(&$vars)
 {
-    // некоторые пути, типа node/8650/registrations не загружают ноду
-    if (empty($vars['node']) && arg(0) == 'node' && is_numeric(arg(1))) {
-        $vars['node'] = node_load(arg(1));
-        $path_alias_wo_lang = url('node/' . arg(1));
-    }
+  // некоторые пути, типа node/8650/registrations не загружают ноду
+  if (empty($vars['node']) && arg(0) == 'node' && is_numeric(arg(1))) {
+      $vars['node'] = node_load(arg(1));
+      $path_alias_wo_lang = url('node/' . arg(1));
+  }
 
-    $lang = $GLOBALS['language']->language;
+  $lang = $GLOBALS['language']->language;
 
-    $vars['search_input_placeholder'] = t('Enter your search query');
-    $vars['logo'] = file_create_url('public://images/logo/logo.svg');
-    $vars['logo_bl'] = file_create_url('public://images/logo/logo_bl.svg');
-    $vars['site_name'] = t('Trading House Kirovo-Chepetsk Chemical Company'); //ООО ТД Кирово-Чепецкая Химическая Компания
-    $vars['site_slogan'] = t('Production and selling of fertilizers, plant protection and fire-fighting products');//Производство и продажа удобрений, средств защиты растений и пожаротушения
+  $vars['search_input_placeholder'] = t('Enter your search query');
+  $vars['logo'] = file_create_url('public://images/logo/logo.svg');
+  $vars['logo_bl'] = file_create_url('public://images/logo/logo_bl.svg');
+  $vars['site_name'] = t('Trading House Kirovo-Chepetsk Chemical Company'); //ООО ТД Кирово-Чепецкая Химическая Компания
+  $vars['site_slogan'] = t('Production and selling of fertilizers, plant protection and fire-fighting products');//Производство и продажа удобрений, средств защиты растений и пожаротушения
+
+  $phone_reception = ext_user_normalize_phone(variable_get('phone_reception', ''));
+  $vars['reception_phone'] = $phone_reception;
+  $vars['reception_phone_formatted'] = ext_user_format_phone($phone_reception);
 
 
     /** -------------------------------------------- Шаблон страницы ------------------------------------------------ */
@@ -285,7 +289,8 @@ function gard_preprocess_page(&$vars)
 
     if (!isset($vars['wrapper_off'])) $vars['wrapper_off'] = $wrapper_off;
 
-    /** -------------------------------------------- Меню  ---------------------------------------------------------- */
+
+  /** -------------------------------------------- Меню  ---------------------------------------------------------- */
     // Primary desktop nav.
     $vars['primary_nav_d'] = FALSE;
     $menu = menu_tree_all_data('menu-main-d');

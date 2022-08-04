@@ -80,8 +80,8 @@
     <span class="btn-mark hidden-xs"><?php print t('Menu');?></span>
   </button>
 
-  <a class="navbar-brand" href="<?php print $front_page; ?>" title="Кирово-Чепецкая Химическая Компания">
-    <img src="<?php print $logo; ?>" alt="Кирово-Чепецкая Химическая Компания" />
+  <a class="navbar-brand" href="<?php print $front_page; ?>" title="<? print $site_name; ?>">
+    <img src="<?php print $logo; ?>" alt="<? print $site_name; ?>" />
   </a>
 
   <div class="primary-d-menu hidden-xs hidden-sm">
@@ -91,15 +91,15 @@
   <div class="right-menu">
       <div class="btn btn-header popup-trigger btn-s3 right-menu-links">
         <div><span class="link-header-white">Телефон</span></div>
-        <div><a class="link-header-white" href="tel:<? print str_replace(['(', ')', '-', ' '], '', variable_get('phone_reception', '8 (8332) 76-15-30')); ?>"><? print variable_get('phone_reception', ''); ?></a></div>
+        <div><a class="link-header-white" href="tel:<? print $reception_phone; ?>"><? print $reception_phone_formatted; ?></a></div>
       </div>
     <?php print render($secondary_nav); ?>
     <button type="button" class="btn btn-header popup-trigger btn-s2 call_back_post">
-      <img src="/sites/all/themes/gard/images/icons/phone.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания">
+      <img src="/sites/all/themes/gard/images/icons/phone.png" alt="Позвонить <? print $site_name; ?>">
       <div class="popup popup-top-center"><div class="popup-content"><? print t('Callback request');?></div></div>
     </button>
     <a href="<?php print url('/checkout'); ?>" class="btn btn-header popup-trigger btn-s3" rel="nofollow">
-      <img src="/sites/all/themes/gard/images/icons/cart.png" alt="Позвонить ООО ТД Кирово-Чепецкая химическая компания"><?php print ext_checkout_get_cart_block(); ?></i>
+      <img src="/sites/all/themes/gard/images/icons/cart.png" alt="Корзина"><?php print ext_checkout_get_cart_block(); ?></i>
       <div class="popup popup-top-right"><div class="popup-content"><? print t('Cart');?></div></div>
     </a>
   </div>
