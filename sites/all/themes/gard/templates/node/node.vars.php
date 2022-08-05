@@ -134,8 +134,8 @@ function gard_preprocess_node(&$vars) {
       $vars['employer'] = $vars['content']['field_vacancy_employer'][0]['#markup'];
       $vars['place'] = empty($vars['content']['field_vacancy_location'][0]['#markup']) ? '' : $vars['content']['field_vacancy_location'][0]['#markup'];
 
-      $users = ext_user_get_users_by_office([OFFICE_ADMIN_DEPUTY]);
-      $contact = ext_user_get_user_contact(key($users[OFFICE_ADMIN_DEPUTY]));
+      $users = ext_user_get_users_by_office([OFFICE_ADMIN_HEAD_DEPUTY]);
+      $contact = ext_user_get_user_contact(key($users[OFFICE_ADMIN_HEAD_DEPUTY]));
       $vars['contact'] = theme('contact_card', ['contact' => $contact, 'options' => ['class' => 'col-md-6']]);
     }
 

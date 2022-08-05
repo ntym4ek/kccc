@@ -43,29 +43,26 @@ function contacts_preprocess_page(&$vars)
 // главная страница
 function contacts_main_page()
 {
-    $lang = $GLOBALS['language']->language;
-
     $contacts = contacts_get_contacts_list();
 
     // отрендерить карточки контактов
     foreach($contacts as $key_t => $tabs) {
         foreach($tabs['departments'] as $key_d => $department) {
             foreach($department['contacts'] as $key_c => $contact) {
-                $contact['surname']    = $lang == 'ru' ? $contact['surname'] : translit($contact['surname']);
-                $contact['name']       = $lang == 'ru' ? $contact['name'] : translit($contact['name']);
-                $contact['name2']      = $lang == 'ru' ? $contact['name2'] : translit($contact['name2']);
                 $collapse = [];
                 if (!empty($contact['regions'])) {
                     $collapse['id'] = $key_c;
                     $collapse['title'] = t('Regions list');
                     $regions = [];
-                    foreach ($contact['regions'] as $region) { $regions[] = $region['name']; }
+                    foreach ($contact['regions'] as $region) { $regions[] = $region; }
                     $collapse['content'] = implode(', ', $regions);
                 }
-                $contacts[$key_t]['departments'][$key_d]['contacts'][$key_c]['contact_html'] = theme('contact_card', array(
+                $contacts[$key_t]['departments'][$key_d]['contacts'][$key_c]['contact_html'] =
+                  theme('contact_card', array(
                     'contact' => $contact,
                     'collapse' => $collapse,
-                    'options' => ['class' => 'col-md-6']));
+                    'options' => ['class' => 'col-md-6'])
+                  );
             }
         }
     }
@@ -408,10 +405,9 @@ function contacts_get_contacts_list()
                     'title' => t('Sales department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Head of department'),
-                            'surname' => 'Пиков',
-                            'name' => 'Артём',
-                            'name2' => 'Сергеевич',
+                            'subtitle' => t('Head of department'),
+                            'title1' => 'Пиков',
+                            'title2' => 'Артём Сергеевич',
                             'phones' => array('+7 (8332) 76-15-35'),
                             'emails' => array('artem.pikov@kccc.ru', 'strada-kcc@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/pikov.png',
@@ -422,10 +418,9 @@ function contacts_get_contacts_list()
                     'title' => t('Supply department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Head of department'),
-                            'surname' => 'Сысольцев',
-                            'name' => 'Константин',
-                            'name2' => 'Викентьевич',
+                            'subtitle' => t('Head of department'),
+                            'title1' => 'Сысольцев',
+                            'title2' => 'Константин Викентьевич',
                             'phones' => array('+7 (8332) 76-15-36'),
                             'emails' => array('strada.snab@kccc.ru'),
                             'photo' => '/' . $module_path . '/images/photos/sysoltsev.png',
@@ -457,10 +452,9 @@ function contacts_get_contacts_list()
                     'title' => t('Sales department'),
                     'contacts' => array(
                         array(
-                            'office' => t('Head of sales department'),
-                            'surname' => 'Огородников',
-                            'name' => 'Роман',
-                            'name2' => 'Юрьевич',
+                            'subtitle' => t('Head of sales department'),
+                            'title1' => 'Огородников',
+                            'title2' => 'Роман Юрьевич',
                             'phones' => array('+7 (8332) 76-15-35', '8 (919) 529-86-85'),
                             'emails' => array('roman.ogorodnikov@kccc.ru'),
                             'photo' => $no_photo,
@@ -471,18 +465,66 @@ function contacts_get_contacts_list()
         ),
     );
 
-    $query = db_select('taxonomy_term_data', 't');
-    $query->condition('t.vid', taxonomy_vocabulary_machine_name_load('regions')->vid);
-    $query->fields('t', ['tid', 'name']);
-    $regions_terms =  $query->execute()->fetchAllAssoc('tid');
-    if ($regions_terms) {
-        foreach ($contacts['td']['departments']['sales']['contacts'] as &$head) {
-            foreach ($head['regions'] as $tid => &$region) {
-                $region = ['name' => $regions_terms[$tid]->name];
-            }
-        }
+  $contacts_by_office = [];
+  $users_by_office = ext_user_get_users_by_office([OFFICE_SALES_DEP_HEAD, OFFICE_SALES_DEP_HEAD_DEPUTY, OFFICE_SALES_HEAD]);
+  foreach ($users_by_office as $office_tid => $office_users) {
+    $counter = 1;
+    foreach ($office_users as $user_uid => $user_info) {
+      $weight = ext_user_get_office_weight($office_tid)*100 + $counter++;
+      $contacts_by_office[$weight] = ext_user_get_user_contact($user_info['id']);
     }
+  }
+  ksort($contacts_by_office);
+  $contacts['td']['departments']['sales']['contacts'] = array_values($contacts_by_office);
+
+  $contacts_by_office = [];
+  $users_by_office = ext_user_get_users_by_office([OFFICE_SUPPORT_MANAGER]);
+  foreach ($users_by_office as $office_tid => $office_users) {
+    $counter = 1;
+    foreach ($office_users as $user_uid => $user_info) {
+      $weight = ext_user_get_office_weight($office_tid)*100 + $counter++;
+      $contacts_by_office[$weight] = ext_user_get_user_contact($user_info['id']);
+    }
+  }
+  ksort($contacts_by_office);
+  $contacts['td']['departments']['support']['contacts'] = array_values($contacts_by_office);
+
+  $contacts_by_office = [];
+  $users_by_office = ext_user_get_users_by_office([OFFICE_SUPPLY_HEAD, OFFICE_SUPPLY_MANAGER]);
+  foreach ($users_by_office as $office_tid => $office_users) {
+    $counter = 1;
+    foreach ($office_users as $user_uid => $user_info) {
+      $weight = ext_user_get_office_weight($office_tid)*100 + $counter++;
+      $contacts_by_office[$weight] = ext_user_get_user_contact($user_info['id']);
+    }
+  }
+  ksort($contacts_by_office);
+  $contacts['td']['departments']['supply']['contacts'] = array_values($contacts_by_office);
+
+  $contacts_by_office = [];
+  $users_by_office = ext_user_get_users_by_office([OFFICE_MARKETING_HEAD, OFFICE_MARKETING_MANAGER]);
+  foreach ($users_by_office as $office_tid => $office_users) {
+    $counter = 1;
+    foreach ($office_users as $user_uid => $user_info) {
+      $weight = ext_user_get_office_weight($office_tid)*100 + $counter++;
+      $contacts_by_office[$weight] = ext_user_get_user_contact($user_info['id']);
+    }
+  }
+  ksort($contacts_by_office);
+  $contacts['td']['departments']['marketing']['contacts'] = array_values($contacts_by_office);
 
 
-    return $contacts;
+  $contacts_by_office = [];
+  $users_by_office = ext_user_get_users_by_office([OFFICE_ADMIN_HEAD_DEPUTY]);
+  foreach ($users_by_office as $office_tid => $office_users) {
+    $counter = 1;
+    foreach ($office_users as $user_uid => $user_info) {
+      $weight = ext_user_get_office_weight($office_tid)*100 + $counter++;
+      $contacts_by_office[$weight] = ext_user_get_user_contact($user_info['id']);
+    }
+  }
+  ksort($contacts_by_office);
+  $contacts['td']['departments']['personnel']['contacts'] = array_values($contacts_by_office);
+
+  return $contacts;
 }

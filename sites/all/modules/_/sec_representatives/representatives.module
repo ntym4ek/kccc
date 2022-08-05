@@ -68,12 +68,7 @@ function representatives_main_page()
   drupal_add_css($module_path . '/css/mapsvg.css');
   drupal_add_css($module_path . '/css/nanoscroller.css');
 
-  $html = '';
-
-  $representatives_form = drupal_get_form('representatives_form');
-  $html .= drupal_render($representatives_form);
-
-  return $html;
+  return drupal_render(drupal_get_form('representatives_form'));
 };
 
 function representatives_form($from, &$form_state)
@@ -185,7 +180,7 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
   foreach ($users as $office_tid => $office_users) {
     foreach ($office_users as $user_uid => $user_info) {
 
-      $seller = ext_user_get_user_contact($user_info['id'], 'staff');
+      $seller = ext_user_get_user_contact($user_info['id']);
 
       // формируем запись Продавца (из-за необходимости совместимости с приложением)
       $roles = [];
@@ -197,7 +192,6 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
       if (isset($user_info['staff']['offices'][OFFICE_SALES_EXPERT])) $roles[] = 'expert';
       if (isset($user_info['staff']['offices'][OFFICE_SALES_SPECIALIST])) $roles[] = 'specialist';
 
-      $photo_url = image_style_url('user_photo', $user_info["photo_uri"]);
 
       $seller = array_merge($seller, [
         // для мобильного приложения
@@ -206,21 +200,12 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
         'surname' => $user_info["surname"],
         'name' => $user_info["name"],
         'name2' => $user_info["name2"],
-        'photo' => $photo_url,
+//        'photo' => $user_info["photo_url"],
         // коллапс на десктопе
-        'regions' => $user_info["staff"]["regions"],
+//        'regions' => $user_info["staff"]["regions"],
       ]);
 
       if (empty($filter_region_tid) || isset($seller['regions'][$filter_region_tid])) {
-        // транслит имён
-        if ($GLOBALS['language']->language != 'ru') {
-          if (isset($seller['surname'])) $seller['surname'] = translit($seller['surname']);
-          if (isset($seller['name']))    $seller['name']    = translit($seller['name']);
-          if (isset($seller['name2']))   $seller['name2']   = translit($seller['name2']);
-          if (isset($seller['name2']))   $seller['name2']   = translit($seller['name2']);
-          if (isset($seller['phone']))   $seller['phone']   = str_replace('доб.', 'add', $seller['phone']);
-        }
-
         // заполнить инфо о регионе
         if (!empty($seller['regions'])) {
           foreach($seller['regions'] as $region_tid => &$region_arr) {
@@ -251,9 +236,9 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
   }
 
   $heads_sorted = [];
-  if (isset($heads[OFFICE_SALES_DEP_HEAD])) $heads_sorted += $heads[OFFICE_SALES_DEP_HEAD];
-  if (isset($heads[OFFICE_SALES_DEP_HEAD_DEPUTY])) $heads_sorted += $heads[OFFICE_SALES_DEP_HEAD_DEPUTY];
-  if (isset($heads[OFFICE_SALES_HEAD])) $heads_sorted += $heads[OFFICE_SALES_HEAD];
+  if (isset($heads[OFFICE_SALES_DEP_HEAD])) $heads_sorted = array_merge($heads_sorted, $heads[OFFICE_SALES_DEP_HEAD]);
+  if (isset($heads[OFFICE_SALES_DEP_HEAD_DEPUTY])) $heads_sorted = array_merge($heads_sorted, $heads[OFFICE_SALES_DEP_HEAD_DEPUTY]);
+  if (isset($heads[OFFICE_SALES_HEAD])) $heads_sorted = array_merge($heads_sorted, $heads[OFFICE_SALES_HEAD]);
 
   return [
     'director' => $director,

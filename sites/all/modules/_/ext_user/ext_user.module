@@ -18,6 +18,7 @@ define('ROLE_STAFF_SHOP',           11);
 define('ROLE_STAFF_CHIEF',           8);
 
 // должности в компании
+define('OFFICE_SALES_DEP',             73204);
 define('OFFICE_SALES_DIRECTOR',        73149);
 define('OFFICE_SALES_DEP_HEAD',        73150);
 define('OFFICE_SALES_DEP_HEAD_DEPUTY', 73151);
@@ -25,7 +26,16 @@ define('OFFICE_SALES_HEAD',            73152);
 define('OFFICE_SALES_REPRESENTATIVE',  73153);
 define('OFFICE_SALES_EXPERT',          73158);
 define('OFFICE_SALES_SPECIALIST',      73157);
-define('OFFICE_ADMIN_DEPUTY',          73156); // Заместитель административного директора
+define('OFFICE_SUPPORT_DEP',           73203);
+define('OFFICE_SUPPORT_MANAGER',       73154);
+define('OFFICE_SUPPLY_DEP',            73205);
+define('OFFICE_SUPPLY_HEAD',           73210);
+define('OFFICE_SUPPLY_MANAGER',        73209);
+define('OFFICE_MARKETING_DEP',         73206);
+define('OFFICE_MARKETING_HEAD',        73212);
+define('OFFICE_MARKETING_MANAGER',     73155);
+define('OFFICE_ADMIN_DEP',             73207);
+define('OFFICE_ADMIN_HEAD_DEPUTY',     73156); // Заместитель административного директора
 
 /**
  * Implements hook_menu_alter()
@@ -111,12 +121,9 @@ function ext_user_preprocess_page(&$vars)
     if (in_array(arg(1), ['login', 'register', 'password', 'reset']) || arg(2) == 'before_after') {
       $vars['header']['title_off'] = true;
     }
-//    $user_info = ext_user_get_user_info($GLOBALS['user']->uid);
+
     $vars['header']['image'] = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'ext_user') . '/images/header_image.jpg';
 
-    if (!arg(1) || !arg(2)) {
-//      $vars['header']['title'] = $user_info['short_name'];
-    }
 
     drupal_add_js(drupal_get_path('module', 'ext_user') . '/js/ext_user.js');
     drupal_add_css(drupal_get_path('module', 'ext_user') . '/css/ext_user.css');
@@ -151,18 +158,6 @@ function ext_user_preprocess_user_profile(&$vars)
     $user_info = ext_user_get_user_info($account->uid);
     $vars['user_profile'] = $user_info;
     $vars['user_profile']['show_contacts'] = false;
-
-    if (user_has_role(ROLE_STAFF_REPRESENTATIVE, $account)) {
-      // todo должность, регион
-
-      // todo Препараты в поле
-      // todo Отзывы
-      // todo активность на Форуме
-    }
-
-    // todo вывести ссылки на новые и все уведомления в виде local actions
-    // $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($acid);
-
 
     // фото
     $vars['user_profile']['photo'] = '/sites/default/files/default_images/no_photo.png';
@@ -199,7 +194,7 @@ function ext_user_preprocess_user_profile(&$vars)
         'amount' => $result,
         'link' => '/blogs/user/' . $account->uid,
       );
-      // отзывы
+        // отзывы
       $query = db_select('node');
       $query->addExpression('COUNT(*)');
       $query->condition('uid', $account->uid);
@@ -210,7 +205,7 @@ function ext_user_preprocess_user_profile(&$vars)
         'amount' => $result,
         'link' => '/reviews/user/' . $account->uid,
       );
-      // Препараты в поле
+        // Препараты в поле
       $query = db_select('field_data_field_f_sowing', 's');
       $query->addExpression('COUNT(*)');
       $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
@@ -909,31 +904,48 @@ function ext_user_get_user_contact($account, $profile_type = 'staff')
 {
   $account_info = ext_user_get_user_info($account);
 
-  $messengers = [];
+  $messengers = $regions = [];
   $subtitle = '';
-  $title1 = $account_info['surname'];
-  $title2 = implode(' ', array_merge([$account_info['name']], [$account_info['name2'] ? $account_info['name2'] : null]));
 
-  $photo = $account_info['photo'];
+  $surname = $account_info['surname'];
+  $name    = $account_info['name'];
+  $name2   = $account_info['name2'];
+
+  // транслит
+  if ($GLOBALS['language']->language != 'ru') {
+    $surname = translit($account_info['surname']);
+    $name    = translit($account_info['name']);
+    $name2   = translit($account_info['name2']);
+  }
+
+  $title1 = $surname;
+  $title2 = implode(' ', array_merge([$name], [$name2 ? $name2 : null]));
+
+  $photo = image_style_url('user_photo', $account_info["photo_uri"]);
   $emails = $account_info['email'] ? [$account_info['email']] : [];
   $phones = $account_info['phone'] ? [$account_info['phone']] : [];
 
 
-  // todo main
+  // main
   if ($profile_type == 'main') {
     $subtitle = $account_info['label'];
   }
 
-  // todo staff
+  // staff
   if ($profile_type == 'staff') {
     // телефоны заменить на рабочие
     $phones = [];
     foreach ($account_info['staff']['phones'] as $phone) {
-      $phones[] = ext_user_format_phone($phone);
+      $phone = ext_user_format_phone($phone);
+      if ($GLOBALS['language']->language != 'ru') {
+        $phone = str_replace('доб.', 'add', $phone);
+      }
+      $phones[] = $phone;
     }
     if (!empty($account_info['staff']['ephone'])) $messengers['whatsapp'] = $account_info['staff']['ephone'];
 
     $subtitle = $account_info['staff']['role'];
+    if (!empty($account_info['staff']['regions'])) $regions = $account_info['staff']['regions'];
   }
 
   // todo company
@@ -948,5 +960,15 @@ function ext_user_get_user_contact($account, $profile_type = 'staff')
     'phones' => $phones,
     'emails' => $emails,
     'messengers' => $messengers,
+    'regions' => $regions,
   ];
+}
+
+function ext_user_get_office_weight($office_tid)
+{
+  $query = db_select('taxonomy_term_data', 't');
+  $query->condition('t.vid', 53); // словарь Должности
+  $query->condition('t.tid', $office_tid);
+  $query->fields('t', array('weight'));
+  return $query->execute()->fetchField();
 }
