@@ -15,7 +15,7 @@ function before_after_field_callback($op = 'list', $fid = 0)
     switch ($op) {
         case 'list':
             // ссылки меню
-            $menu[] = array('data' => l(t('Add field'), "/fields/add"));
+            $menu[] = array('data' => l(t('Add field'), "/fields/add", ['attributes' => ['class' => ['btn', 'btn-sm']]]));
 
             // поля текущего пользователя (для админа вывести все поля)
             $query = db_select('node', 'n');

@@ -52,6 +52,8 @@ function gard_preprocess_node(&$vars) {
 
             $vars['image'] = image_style_url($image_style, $image_uri);
         }
+
+      $vars['place'] = empty($vars['content']['field_f_region'][0]['#markup']) ? '' : $vars['content']['field_f_region'][0]['#markup'];
     }
 
     /** ------------------------------------ Страницы --------------------------------------------------------------- */

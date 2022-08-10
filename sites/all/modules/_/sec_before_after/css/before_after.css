@@ -62,7 +62,14 @@
     font-size: 19px;
     line-height: 24px; }
 .fields .subheader-menu .navbar-nav {
-  background-color: #b16202; }
+  background-color: #b16202;
+  height: 45px;
+  align-items: center; }
+  .fields .subheader-menu .navbar-nav li {
+    margin: 0 7px; }
+  .fields .subheader-menu .navbar-nav a {
+    background-color: #7e4801;
+    padding: 5px 10px; }
 .fields .subheader-menu .navbar-nav > li:not(.disabled) > a:hover,
 .fields .subheader-menu .navbar-nav > li:not(.disabled) > a:focus {
   background-color: #985402; }

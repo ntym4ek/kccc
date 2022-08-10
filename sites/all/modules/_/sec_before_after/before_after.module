@@ -89,7 +89,7 @@ function before_after_menu() {
  */
 function before_after_account_access_callback($account)
 {
-  return ((user_has_role(ROLE_STAFF_REPRESENTATIVE, $account) && $account->uid == $GLOBALS['user']->uid) || user_has_role(ROLE_ADMIN, $account));
+  return (((user_has_role(ROLE_STAFF_SALES, $account) || user_has_role(ROLE_STAFF_EDITOR, $account)) && $account->uid == $GLOBALS['user']->uid) || user_has_role(ROLE_ADMIN, $account));
 }
 
 

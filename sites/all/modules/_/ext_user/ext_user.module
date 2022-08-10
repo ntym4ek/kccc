@@ -13,7 +13,7 @@ define('ROLE_STAFF',                 6);
 define('ROLE_STAFF_PERSONNEL',       4);
 define('ROLE_STAFF_ADMINISTRATOR',  13);
 define('ROLE_STAFF_EDITOR',          5);
-define('ROLE_STAFF_REPRESENTATIVE', 14);
+define('ROLE_STAFF_SALES',          14);
 define('ROLE_STAFF_SHOP',           11);
 define('ROLE_STAFF_CHIEF',           8);
 
@@ -59,7 +59,19 @@ function ext_user_menu_local_tasks_alter(&$data, $router_item, $root_path)
     foreach ($data['tabs'][0]['output'] as &$tab) {
       if (in_array($tab['#link']['path'], ['user/%/notifications', 'user/%/subscriptions', 'user/%/idea'])) {
         // если они ссылаются не на текущего пользователя, запретить вывод
-        if (strpos($tab['#link']['href'], 'user/' . $GLOBALS['user']->uid) !== 0) $tab["#access"] = false;
+        if (strpos($tab['#link']['href'], 'user/' . $GLOBALS['user']->uid) !== 0) {
+          $tab["#access"] = false;
+        }
+      }
+      if (in_array($tab['#link']['path'], ['user/%/blog', 'user/%/reviews'])) {
+        // если у просматриваемого аккаунта нет прав на написание блогов и отзывовб не выводить вкладки
+        $account = user_load(arg(1));
+        if ($account
+          && ($tab['#link']['path'] == 'user/%/blog' && !user_access('create blog content', $account)
+              || ($tab['#link']['path'] == 'user/%/reviews' && !user_access('create review content', $account))))
+        {
+          $tab["#access"] = false;
+        }
       }
     }
   }
@@ -137,7 +149,7 @@ function ext_user_preprocess_page(&$vars)
   }
 
   // предупреждение для неподтвержденных аккаунтов
-  if (isset($user->roles[7])) {
+  if (user_has_role(ROLE_UNCONFIRMED)) {
     drupal_set_message(t('You have to confirm your account, otherwise it wound be deleted soon. Check your e-mail.'), 'warning');
   }
 }

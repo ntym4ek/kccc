@@ -38,7 +38,16 @@
         }
     }
     .subheader-menu {
-      .navbar-nav { background-color: #b16202; }
+      .navbar-nav {
+        background-color: #b16202;
+        height: 45px;
+        align-items: center;
+        li { margin: 0 7px; }
+        a {
+          background-color: #7e4801;
+          padding: 5px 10px;
+        }
+      }
       .navbar-nav > li:not(.disabled) > a:hover,
       .navbar-nav > li:not(.disabled) > a:focus { background-color: darken(#b16202, 5%); }
       &::after {
