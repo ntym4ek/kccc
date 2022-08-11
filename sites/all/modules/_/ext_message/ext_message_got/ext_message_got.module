@@ -166,3 +166,54 @@ function ext_message_got_check_user_got_message($mid, $uid)
 
   return (bool)$count;
 }
+
+/**
+ * проверить наличие уведомления пользователю для сущности
+ *
+ * @param $eid - entity ID
+ * @param $uid - User ID
+ */
+function ext_message_got_check_entity_has_message($eid, $uid)
+{
+  if ($eid && $uid && $subscripted_notification_ids = ext_message_get_user_subscription_notification_ids($uid)) {
+    // выбираем Сообщения на которые пользователь подписан, но ещё не прочитал
+    $query = db_select('message', 'm');
+
+    // для заданной сущности
+    $query->innerJoin('field_data_field_entity_ref', 'fer', 'fer.entity_id = m.mid');
+    $query->condition('fer.entity_type', 'message');
+    $query->condition('fer.field_entity_ref_target_id', $eid);
+
+    // если пользователь на них подписан
+    $query->innerJoin('message_type', 'mt', 'mt.name = m.type');
+    $query->condition('mt.id', $subscripted_notification_ids, 'IN');
+
+    // если ещё нет просмотров
+    $query->leftJoin('message_got', 'mg', 'mg.mid = m.mid');
+    $query->condition('mg.id', NULL, 'IS NULL');
+
+    $query->addField('m', 'mid');
+    if ($result = $query->execute()) {
+      $mid = $result->fetchField();
+    }
+  }
+
+  return isset($mid) ? $mid : false;
+}
+
+
+/**
+ * Implements hook_entity_view().
+ */
+function ext_message_got_entity_view($entity, $type, $view_mode, $langcode)
+{
+  if ($view_mode == 'full') {
+    $uid = $GLOBALS['user']->uid;
+    $entity_wr = entity_metadata_wrapper($type, $entity);
+    $eid = $entity_wr->getIdentifier();
+    if ($mid = ext_message_got_check_entity_has_message($eid, $uid)) {
+      // добавить отметку о прочтении уведомления
+      ext_message_got_set_user_got_message($mid, $uid);
+    }
+  }
+}

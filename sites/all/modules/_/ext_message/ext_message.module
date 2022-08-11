@@ -93,13 +93,13 @@ function ext_message_entity_insert($entity, $type)
  */
 function ext_message_message_subscribe_get_subscribers_alter(&$uids, $values)
 {
-    if ($uids) {
-        foreach ($uids as $uid => $item) {
-            if (!in_array('subscribe_subscribes_email', array_values($item['flags']))) {
-                unset($uids[$uid]);
-            }
-        }
+  if ($uids) {
+    foreach ($uids as $uid => $item) {
+      if (!in_array('subscribe_subscribes_email', array_values($item['flags']))) {
+        unset($uids[$uid]);
+      }
     }
+  }
 }
 
 /**
