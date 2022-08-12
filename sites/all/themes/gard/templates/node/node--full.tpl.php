@@ -34,7 +34,14 @@
     <? endif; ?>
 
     <div class="node-body<? print (empty($image) ? '': ' node-body-bordered'); ?>" property="content:encoded">
-        <? print render($content); ?>
+    <? if (isset($content["field_review_intro"])):?>
+      <? print render($content['field_review_intro']); ?>
+      <blockquote>
+        <? print render($content['body']); ?>
+      </blockquote>
+      <? endif; ?>
+
+      <? print render($content); ?>
     </div>
 
 </article>

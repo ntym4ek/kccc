@@ -918,6 +918,30 @@
           border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
           padding: $grid-gutter-width 0;
       }
+      blockquote {
+        font-size: 18px; text-align: center; font-weight: 500;
+        border: 2px solid #333; border-width: 2px 0;
+        position: relative;
+        margin: 30px auto 30px; padding-top: 15px;
+        display: inline-block;
+        width: 99%;
+        &:after,
+        &:before {
+          content: '';
+          position: absolute;
+          background-repeat: no-repeat; background-size: 35px 27px; background-color: #fff;
+          width: 50px; height: 27px
+        }
+        &:after {
+          background-image: url(/sites/all/themes/gard/images/icons/quotes-left.svg); background-position: 0 100%;
+          left: 0; top: -27px;
+        }
+        &:before {
+          background-image: url(/sites/all/themes/gard/images/icons/quotes-right.svg); background-position: 100% 0;
+          right: 0; bottom: -27px;
+        }
+        .field { margin-bottom: 0; }
+      }
     }
     .node-tags {
         font-size: .8em;
