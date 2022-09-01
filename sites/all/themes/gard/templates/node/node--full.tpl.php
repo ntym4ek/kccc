@@ -34,7 +34,7 @@
     <? endif; ?>
 
     <div class="node-body<? print (empty($image) ? '': ' node-body-bordered'); ?>" property="content:encoded">
-    <? if (isset($content["field_review_intro"])):?>
+    <? if (isset($content["field_review_intro"]) && !empty($content["body"][0]["#markup"])):?>
       <? print render($content['field_review_intro']); ?>
       <blockquote>
         <? print render($content['body']); ?>
