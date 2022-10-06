@@ -253,7 +253,7 @@ function before_after_get_atfield_list($result_s)
 
           // заголовки
           $output['culture'] = [
-            'tid' => $season_wrapper->field_f_s_culture->getIdentifier(),
+            'nid' => $season_wrapper->field_f_s_culture->getIdentifier(),
             'title' => $season_wrapper->field_f_s_culture->label(),
             'notes' => $season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '',
           ];

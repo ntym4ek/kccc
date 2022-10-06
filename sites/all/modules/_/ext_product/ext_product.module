@@ -1,18 +1,6 @@
 <?php
 
-/**
- * Implements hook_menu().
- */
-function ext_product_menu()
-{
-//    $items['source/qsearch'] = array(
-//        'page callback' => 'ext_product_qsearch_callback',
-//        'page arguments' => array(2),
-//        'access arguments' => array('access content'),
-//        'type' => MENU_CALLBACK,
-//    );
-//    return $items;
-}
+
 
 /**
  * Implementation of hook_module_implements_alter().
@@ -417,60 +405,6 @@ function ext_product_node_view_alter(&$build) {
     }
 }
 
-
-/**
- * --------------------------------- Вернуть полный список препаратов для функции быстрого поиска в Приложении ---------
- */
-function ext_product_qsearch_callback($category_tid = null)
-{
-    $items = [];
-
-    $query = db_select('node', 'n');
-    $query->condition('n.type', ['product_agro', 'product_fert'], 'IN');
-    $query->condition('n.status', 1);
-    $query->addField('n', 'nid');
-    $query->leftJoin('field_data_title_field', 'tf', 'n.nid = tf.entity_id');
-    $query->condition('tf.language', $GLOBALS['language']->language);
-    $query->orderby('tf.title_field_value', 'ASC');
-
-    if ($category_tid) {
-        $query->innerJoin('field_data_field_pd_category', 'pc', 'n.nid = pc.entity_id');
-        $query->condition('pc.field_pd_category_tid', $category_tid);
-    }
-    if ($result = $query->execute()->fetchAll()) {
-        foreach($result as $prep) {
-            $prep_arr = ext_product_product_get_info($prep->nid);
-            if (in_array($prep_arr['type'], ['product_agro', 'product_fert'])) {
-                $prep_item = $prep_arr['items'][$prep_arr['nid']];
-                $item = [
-                    'nid' => $prep_item['id'],
-                    'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
-                    'description' => $prep_item['description'],
-                    'ingredients' => implode(' + ', $prep_item['ingredients']),
-                    'photo' => image_style_url('mobile_teaser_product', $prep_item['photo_uri']),
-                    'icon' => $prep_arr['icon'],
-                ];
-                foreach($prep_item['categories'] as $tid => $cat) {
-                    if (empty($items[$tid]) && (!$category_tid || $tid == $category_tid)) {
-                        $items[$tid] = [
-                            'tid' => $tid,
-                            'name' => $cat['name'],
-                            'color' => $cat['color'],
-                            'items' => []
-                        ];
-                    }
-                    // если задана категория, список только для неё
-                    if (!$category_tid || $tid == $category_tid) {
-                        $items[$tid]['items'][] = $item;
-                    }
-                }
-            }
-        }
-    }
-
-    drupal_json_output(['preparations' => $items]);
-    drupal_exit();
-}
 
 /**
  * Возвращает список product id помещенных в корзину пользователя

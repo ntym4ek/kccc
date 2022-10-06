@@ -274,60 +274,65 @@ function before_after_field_collection_item_delete($item)
 
 /**
  * callback function
- * источник данных о сезонах для мобильного приложения
+ * источник данных о сезонах для Мобильного приложения версии <= 2.4.1
  * вывод подогнан по вывод стандартного service views
  */
 function before_after_atfield_source($region, $culture)
 {
-    if ($region == 'null') $region = null;
-    if ($culture == 'null') $culture = null;
+  if ($region == 'null') $region = null;
+  if ($culture == 'null') $culture = null;
 
-    $atf_ids = before_after_get_atfield_ids($region, $culture);
-    $seasons_all = before_after_get_atfield_list($atf_ids);
+  $atf_ids = before_after_get_atfield_ids($region, $culture);
+  $seasons_all = before_after_get_atfield_list($atf_ids);
 
-    $count = count($seasons_all);
-    $limit = 10;
-    $pages = ceil($count/$limit);
-    $page = 0;
-    $seasons = [];
+  $count = count($seasons_all);
+  $limit = 10;
+  $pages = ceil($count/$limit);
+  $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 0;
+  $seasons = [];
 
-    if (isset($_GET['page']) && is_numeric($_GET['page'])) {
-        $page = $_GET['page'];
-        $i = 0;
-        foreach ($seasons_all as $season) {
-            if ($i >= $page*$limit && $i < ($page+1)*$limit) {
-                $seasons[]['season'] = $season;
-            }
-            $i++;
-        }
+  $i = 0;
+  foreach ($seasons_all as $season) {
+    if ($i >= $page*$limit && $i < ($page+1)*$limit) {
+      $seasons[]['season'] = $season;
     }
+    $i++;
+  }
 
-    $results = [
-        'seasons' => $seasons,
-        'pager' => [
-            'pages' => $pages,
-            'page' => $page,
-            'count' => $count,
-            'limit' => $limit,
-        ],
-        'view' => [
-            'name' => 'atfield',
-            'display' => 'page',
-            'root' => 'seasons',
-            'child' => 'season',
-            'pages' => $pages,
-            'page' => $page,
-            'count' => $count,
-            'limit' => $limit,
-        ],
-    ];
-    drupal_json_output($results);
-    drupal_exit();
+  foreach ($seasons as &$season) {
+    $season['season']['region'] = $season['season']['region']['name'];
+    $season['season']['culture'] = $season['season']['culture']['title'];
+    foreach ($season['season']['preps'] as &$prep) {
+      $prep = $prep['title'];
+    }
+  }
+
+  $results = [
+      'seasons' => $seasons,
+      'pager' => [
+          'pages' => $pages,
+          'page' => $page,
+          'count' => $count,
+          'limit' => $limit,
+      ],
+      'view' => [
+          'name' => 'atfield',
+          'display' => 'page',
+          'root' => 'seasons',
+          'child' => 'season',
+          'pages' => $pages,
+          'page' => $page,
+          'count' => $count,
+          'limit' => $limit,
+      ],
+  ];
+  drupal_json_output($results);
+  drupal_exit();
 }
 
 /**
  * callback function
- * списки для фильтров в ПвП
+ * списки для фильтров в ПвП для Мобильного приложения версии <= 2.4.1
  */
 function before_after_atfield_filters_source($rid, $cid, $iid = null)
 {
@@ -336,7 +341,11 @@ function before_after_atfield_filters_source($rid, $cid, $iid = null)
     if ($iid == 'null') $iid = null;
 
     $options = _before_after_filters($rid, $cid, $iid);
-    drupal_json_output($options);
+    $options_m = [
+      'regions' => $options['regions']['full'],
+      'cultures' => $options['cultures']['full'],
+    ];
+    drupal_json_output($options_m);
     drupal_exit();
 }
 
