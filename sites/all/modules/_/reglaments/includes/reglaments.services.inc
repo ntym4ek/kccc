@@ -83,16 +83,6 @@ function reglaments_services_resources()
 }
 
 
-
-
-
-
-
-
-
-
-
-
 // устаревшая версия для приложений версии <=2.0.7
 function _reglaments_resource_retrieve($pid)
 {
@@ -259,7 +249,6 @@ function _reglaments_resource_retrieve($pid)
 //    $time[] = (microtime(true) - $time[0]) * 1000;
     return $result;
 }
-
 
 /**
  * функция возвращает true, если к $regl1 присоединен $regl2

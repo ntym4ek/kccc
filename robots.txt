@@ -81,6 +81,8 @@ Disallow: /admin
 Disallow: /tags
 Disallow: /filter/tips
 Disallow: /node/add
+Disallow: /blog$
+Disallow: /blog/
 Disallow: /blogs/tag
 Disallow: /blogs/user
 Disallow: /search
@@ -97,6 +99,7 @@ Disallow: /field
 Disallow: /season
 Disallow: /shedule
 Disallow: /en
+Disallow: /info/no-job
 
 # Paths (no clean URLs)
 Disallow: /?q=content
@@ -116,3 +119,4 @@ Clean-param: cat /catalog/*
 Clean-param: cat /en/catalog/*
 Clean-param: current /user/*
 Clean-param: current /en/user/*
+

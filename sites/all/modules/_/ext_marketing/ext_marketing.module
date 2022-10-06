@@ -9,32 +9,17 @@ function ext_marketing_form_alter(&$form, &$form_state, $form_id)
   switch ($form_id) {
     case 'agrocalc_form':
       $form['actions']['calc']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_agrocalc'); return true;";
-//      $form['actions1']['submit']['#submit'][] = 'ext_marketing_agrocalc_form_submit';
 
       break;
     case 'commerce_checkout_form_checkout':
       $form['buttons']['continue']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('send_request'); return true;";
-//      $form['buttons']['continue']['#submit'][] = 'ext_marketing_commerce_checkout_form_submit';
+
       break;
     case 'contact_us_entityform_edit_form':
       $form['actions']['submit']['#attributes']['onclick'][] = "yaCounter11541151.reachGoal('submit_feedback'); return true;";
-//      $form['buttons']['continue']['#submit'][] = 'ext_marketing_commerce_checkout_form_submit';
+
       break;
   }
-}
-
-/**
- * commerce_checkout_form submit callback
- */
-function ext_marketing_agrocalc_form_submit($form, &$form_state)
-{
-}
-
-/**
- * commerce_checkout_form submit callback
- */
-function ext_marketing_commerce_checkout_form_submit($form, &$form_state)
-{
 }
 
 function ext_marketing_preprocess_page(&$vars)

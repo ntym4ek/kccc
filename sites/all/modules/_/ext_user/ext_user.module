@@ -967,6 +967,7 @@ function ext_user_get_user_contact($account, $profile_type = 'staff')
   }
 
   return [
+    'id' => $account_info['id'],
     'title1' => $title1,
     'title2' => $title2,
     'subtitle' => $subtitle,

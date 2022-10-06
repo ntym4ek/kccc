@@ -175,16 +175,17 @@ function _reglaments_get_protection_system2($parameters)
     if (!empty($parameters['phase_id']) && !is_numeric($parameters['phase_id'])) unset($parameters['phase_id']);
 
     $cultures_ids = [];
-    $program_wr = null;
+    $program_id = $program_wr = null;
     if (!empty($parameters['program_id'])) {
-        $program_wr = entity_metadata_wrapper('node', $parameters['program_id']);
+      $program_id = $parameters['program_id'];
+      $program_wr = entity_metadata_wrapper('node', $program_id);
 
-        if (isset($program_wr->field_pp_cultures)) {
-            // массив id культур, для которых берем регламенты
-            foreach ($program_wr->field_pp_cultures->raw() as $culture) {
-                $cultures_ids[] = $culture;
-            }
-        }
+      if (isset($program_wr->field_pp_cultures)) {
+          // массив id культур, для которых берем регламенты
+          foreach ($program_wr->field_pp_cultures->raw() as $culture) {
+              $cultures_ids[] = $culture;
+          }
+      }
     } else {
         if (!empty($parameters['culture_id'])) {
             $cultures_ids[] = $parameters['culture_id'];
@@ -198,7 +199,7 @@ function _reglaments_get_protection_system2($parameters)
             }
         }
     }
-
+//  watchdog('pp', '<pre>@v</pre>', array('@v' => print_r( $program_wr->value(), TRUE)), WATCHDOG_INFO);
     // составляем список регламентов для заданных культур
     if ($cultures_ids) {
         $reglaments = [];
@@ -216,10 +217,10 @@ function _reglaments_get_protection_system2($parameters)
 
         // описание программы и ссылка на pdf
         $result['header'] = array(
-            'title'     => empty($parameters['program_id']) ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
-            'description' => empty($parameters['program_id']) ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->value->value())),
+            'title'     => !$program_id ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
+            'description' => !$program_id ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->summary->value())),
             'phase'     => $phase_name,
-            'pdf'       => empty($parameters['program_id']) ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+            'pdf'       => !$program_id ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
             'area'      => empty($parameters['area']) ? '' : $parameters['area'],
             'seeding'   => empty($parameters['seeding']) ? '' : $parameters['seeding'],
         );
@@ -274,20 +275,20 @@ function _reglaments_get_protection_system2($parameters)
 
         } else $parameters['pests_arr'] = [];
         if (!empty($parameters['diseases_arr'])) {
-            $query = db_select('node', 'n');
-            $query->condition('n.nid', $parameters['diseases_arr'], 'IN');
-            $query->fields('n', array('nid', 'title'));
-            $hobjects_all[AGRO_CATEGORY_FUNGICIDES_TID] = $hobjects_all[AGRO_CATEGORY_DISINFECTANTS_TID] = $query->execute()->fetchAllKeyed();
+          $query = db_select('node', 'n');
+          $query->condition('n.nid', $parameters['diseases_arr'], 'IN');
+          $query->fields('n', array('nid', 'title'));
+          $hobjects_all[AGRO_CATEGORY_FUNGICIDES_TID] = $hobjects_all[AGRO_CATEGORY_DISINFECTANTS_TID] = $query->execute()->fetchAllKeyed();
 
-            $fung_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_FUNGICIDES_TID);
-            $result['categories'][$fung_term->weight->value()] = array(
-                'tid' => $fung_term->tid->value(),
-                'weight' => $fung_term->weight->value(),
-                'name' => $fung_term->name->value(),
-                'bkg' => $fung_term->field_image_mobile->file->url->value(),
-                'bkg_desk' => $fung_term->field_shop_category_image->file->url->value(),
-                'icon' => $fung_term->field_icon->file->url->value(),
-            );
+          $fung_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_FUNGICIDES_TID);
+          $result['categories'][$fung_term->weight->value()] = array(
+            'tid' => $fung_term->tid->value(),
+            'weight' => $fung_term->weight->value(),
+            'name' => $fung_term->name->value(),
+            'bkg' => $fung_term->field_image_mobile->file->url->value(),
+            'bkg_desk' => $fung_term->field_shop_category_image->file->url->value(),
+            'icon' => $fung_term->field_icon->file->url->value(),
+          );
         } else $parameters['diseases_arr'] = [];
 
         // массив из которого будем вычёркивать ВО для которых есть решения
@@ -296,15 +297,15 @@ function _reglaments_get_protection_system2($parameters)
         // массив id регламентов
         $reglaments_ids = [];
         foreach ($cultures_ids as $culture_id) {
-            $query = db_select('field_data_field_pd_r_cultures', 'fc');
-            $query->fields('fc', array('entity_id'));
-            $query->condition('fc.bundle', 'field_pd_reglaments');
-            $query->condition('fc.field_pd_r_cultures_target_id', $culture_id);
-            $query->leftJoin('field_data_field_pd_reglaments', 'fr', 'fr.field_pd_reglaments_value = fc.entity_id');
-            $query->fields('fr', array('entity_id'));
-            foreach($query->execute()->fetchAllKeyed() as $rid => $nid) {
-                $reglaments_ids[$rid] = $nid;
-            }
+          $query = db_select('field_data_field_pd_r_cultures', 'fc');
+          $query->fields('fc', array('entity_id'));
+          $query->condition('fc.bundle', 'field_pd_reglaments');
+          $query->condition('fc.field_pd_r_cultures_target_id', $culture_id);
+          $query->leftJoin('field_data_field_pd_reglaments', 'fr', 'fr.field_pd_reglaments_value = fc.entity_id');
+          $query->fields('fr', array('entity_id'));
+          foreach($query->execute()->fetchAllKeyed() as $rid => $nid) {
+              $reglaments_ids[$rid] = $nid;
+          }
         }
 
 //        $time[] = microtime(true);

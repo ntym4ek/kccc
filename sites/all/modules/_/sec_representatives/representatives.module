@@ -200,6 +200,7 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
         'surname' => $user_info["surname"],
         'name' => $user_info["name"],
         'name2' => $user_info["name2"],
+        'office' => $seller["subtitle"],
 //        'photo' => $user_info["photo_url"],
         // коллапс на десктопе
 //        'regions' => $user_info["staff"]["regions"],
