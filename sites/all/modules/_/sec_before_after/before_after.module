@@ -9,78 +9,86 @@ include 'includes/before_after.measurement.inc';
 /**
  * Implements hook_menu().
  */
-function before_after_menu() {
-    // страница списка
-    $items['before-after'] = array(
-        'title' => t('Before & After'),
-        'page callback' => 'before_after_list_page',
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-    );
-    $items['before-after/%'] = array(
-        'title' => t('Before & After'),
-        'page callback' => 'before_after_page',
-        'page arguments' => array(1),
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-    );
+function before_after_menu()
+{
+  // страница списка
+  $items['before-after'] = array(
+      'title' => t('Before & After'),
+      'page callback' => 'before_after_list_page',
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+  );
+  $items['before-after/%'] = array(
+      'title' => t('Before & After'),
+      'page callback' => 'before_after_page',
+      'page arguments' => array(1),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+  );
 
-    // интерфейс представителей
-        // поле
+  // интерфейс представителей
+      // поле
 
-    // закладка Препараты в поле в ЛК
-    $items['user/%user/before_after'] = array(
+  // закладка Препараты в поле в ЛК
+  $items['user/%user/before_after'] = array(
+    'title' => t('Before & After'),
+    'page callback' => 'before_after_field_callback',
+    'page arguments' => array(),
+    'access callback' => 'before_after_account_access_callback',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+  );
+
+
+  $items['fields/%'] = array(
       'title' => t('Before & After'),
       'page callback' => 'before_after_field_callback',
-      'page arguments' => array(),
-      'access callback' => 'before_after_account_access_callback',
-      'access arguments' => array(1),
-      'type' => MENU_LOCAL_TASK,
-      'weight' => 10,
-    );
+      'page arguments' => array(1, 2),
+      'access arguments' => array('access before_after edit'),
+      'type' => MENU_CALLBACK,
+  );
+      // сезон
+  $items['field/%/season/%'] = array(
+      'title' => t('Before & After'),
+      'page callback' => 'before_after_season_callback',
+      'page arguments' => array(1, 3, 4),
+      'access arguments' => array('access before_after edit'),
+      'type' => MENU_CALLBACK,
+  );
+
+      // Обработки и Замеры
+  $items['season/%/%/%'] = array(
+      'title' => t('Before & After'),
+      'page callback' => 'before_after_processing_callback',
+      'page arguments' => array(1, 2, 3, 4),
+      'access arguments' => array('access before_after edit'),
+      'type' => MENU_CALLBACK,
+  );
+
+  // источник данных для мобильного приложения <= 2.4.1
+  $items['source/atfield.json/%/%'] = array(
+      'page callback' => 'before_after_atfield_source',
+      'page arguments' => [2, 3],
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK
+  );
+  $items['source/atfield-filters.json/%/%'] = array(
+      'page callback' => 'before_after_atfield_filters_source',
+      'page arguments' => [2, 3, 4],
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK
+  );
+  // источник данных для Мобильного приложения
+  $items['source/pvp.json'] = array(
+    'page callback' => 'before_after_mobile_source',
+//    'page arguments' => [2, 3, 4, 5, 6],
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
 
 
-    $items['fields/%'] = array(
-        'title' => t('Before & After'),
-        'page callback' => 'before_after_field_callback',
-        'page arguments' => array(1, 2),
-        'access arguments' => array('access before_after edit'),
-        'type' => MENU_CALLBACK,
-    );
-        // сезон
-    $items['field/%/season/%'] = array(
-        'title' => t('Before & After'),
-        'page callback' => 'before_after_season_callback',
-        'page arguments' => array(1, 3, 4),
-        'access arguments' => array('access before_after edit'),
-        'type' => MENU_CALLBACK,
-    );
-
-        // Обработки и Замеры
-    $items['season/%/%/%'] = array(
-        'title' => t('Before & After'),
-        'page callback' => 'before_after_processing_callback',
-        'page arguments' => array(1, 2, 3, 4),
-        'access arguments' => array('access before_after edit'),
-        'type' => MENU_CALLBACK,
-    );
-
-        // источник данных для мобильного приложения
-    $items['source/atfield.json/%/%'] = array(
-        'page callback' => 'before_after_atfield_source',
-        'page arguments' => [2, 3],
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK
-    );
-
-    $items['source/atfield-filters.json/%/%'] = array(
-        'page callback' => 'before_after_atfield_filters_source',
-        'page arguments' => [2, 3, 4],
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK
-    );
-
-    return $items;
+  return $items;
 }
 
 
@@ -94,30 +102,30 @@ function before_after_account_access_callback($account)
 
 
 function before_after_permission() {
-    return array(
-        'access before_after edit' => array(
-            'title' => t('Access Before&After'),
-            'description' => t('Access Before&After add and edit'),
-        )
-    );
+  return array(
+    'access before_after edit' => array(
+        'title' => t('Access Before&After'),
+        'description' => t('Access Before&After add and edit'),
+    )
+  );
 }
 
 function before_after_theme()
 {
-    return array(
-        'before_after_user' => array(
-            'variables' => array('content' => NULL),
-            'template' => 'templates/before-after',
-        ),
-        'before_after_item' => array(
-            'variables' => array('content' => NULL),
-            'template' => 'templates/before-after-item',
-        ),
-        'before_after_page' => array(
-            'variables' => array('content' => NULL),
-            'template' => 'templates/before-after-page',
-        ),
-    );
+  return array(
+    'before_after_user' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'templates/before-after',
+    ),
+    'before_after_item' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'templates/before-after-item',
+    ),
+    'before_after_page' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'templates/before-after-page',
+    ),
+  );
 }
 
 /**
@@ -274,6 +282,55 @@ function before_after_field_collection_item_delete($item)
 
 /**
  * callback function
+ * источник данных о сезонах для Мобильного приложения
+ */
+function before_after_mobile_source()
+{
+  // все записи ПвП
+  $atf_ids = before_after_get_atfield_ids();
+  $seasons_all = before_after_get_atfield_list($atf_ids);
+
+  // наполнение для фильтров, чтобы фильтровать по месту
+  // плюс сортировка (в МП проблематично)
+  $filters = [
+    'regions' => [],
+    'cultures' => [],
+    'dv' => ['list' => [], 'sorted' => []],
+    'years' => []
+  ];
+  foreach ($seasons_all as $season) {
+    $filters['regions']['list'][$season['region']['tid']] = $season['region'];
+    $filters['regions']['sorted'][$season['region']['tid']] = $season['region']['name'];
+    $filters['cultures']['list'][$season['culture']['nid']] = $season['culture'];
+    $filters['cultures']['sorted'][$season['culture']['nid']] = $season['culture']['title'];
+    $filters['dv']['list'] = $filters['dv']['list'] + $season['dv'];
+    $filters['years'][$season['year']] = $season['year'];
+  }
+  asort($filters['regions']['sorted']);
+  $filters['regions']['sorted'] = array_keys($filters['regions']['sorted']);
+
+  asort($filters['cultures']['sorted']);
+  $filters['cultures']['sorted'] = array_keys($filters['cultures']['sorted']);
+
+  foreach ($filters['dv']['list'] as $tid => $value) {
+    $filters['dv']['sorted'][$tid] = $value['name'];
+  }
+  asort($filters['dv']['sorted']);
+  $filters['dv']['sorted'] = array_keys($filters['dv']['sorted']);
+
+  asort($filters['years']);
+
+  $result = [
+    'seasons' => $seasons_all,
+    'filters' => $filters,
+  ];
+
+  drupal_json_output(['pvp' => $result]);
+  drupal_exit();
+}
+
+/**
+ * callback function
  * источник данных о сезонах для Мобильного приложения версии <= 2.4.1
  * вывод подогнан по вывод стандартного service views
  */
@@ -308,23 +365,23 @@ function before_after_atfield_source($region, $culture)
   }
 
   $results = [
-      'seasons' => $seasons,
-      'pager' => [
-          'pages' => $pages,
-          'page' => $page,
-          'count' => $count,
-          'limit' => $limit,
-      ],
-      'view' => [
-          'name' => 'atfield',
-          'display' => 'page',
-          'root' => 'seasons',
-          'child' => 'season',
-          'pages' => $pages,
-          'page' => $page,
-          'count' => $count,
-          'limit' => $limit,
-      ],
+    'seasons' => $seasons,
+    'pager' => [
+      'pages' => $pages,
+      'page' => $page,
+      'count' => $count,
+      'limit' => $limit,
+    ],
+    'view' => [
+      'name' => 'atfield',
+      'display' => 'page',
+      'root' => 'seasons',
+      'child' => 'season',
+      'pages' => $pages,
+      'page' => $page,
+      'count' => $count,
+      'limit' => $limit,
+    ],
   ];
   drupal_json_output($results);
   drupal_exit();
@@ -354,7 +411,8 @@ function before_after_atfield_filters_source($rid, $cid, $iid = null)
  *
  * свой метатег Description для ПвП
  */
-function before_after_metatag_metatags_view_alter(&$output, $instance, $options) {
+function before_after_metatag_metatags_view_alter(&$output, $instance, $options)
+{
   if (arg(0) == 'before-after' && is_numeric(arg(1))) {
     $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = before_after_page_description(arg(1));
   }

@@ -141,7 +141,7 @@ function before_after_get_atfield_list($result_s)
   $fid = drupal_hash_base64(__FUNCTION__ . drupal_json_encode($result_s));
   $atf_array = &drupal_static($fid);
   if (!$atf_array) {
-
+    watchdog('!!!', '1');
     $atf_array = [];
     if ($result_s) {
       foreach ($result_s as $sid) {
@@ -207,14 +207,25 @@ function before_after_get_atfield_list($result_s)
 
           // составить список препаратов из обработок
           $preps = $preps_w_links = array();
+          $dv_list = [];watchdog('!!!', '2');
           foreach ($processes as $item_p) {
             if ($item_p['type'] == 'processing') {
               $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
               //
               foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
+                watchdog('!!!', '3');
                 $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
+                watchdog('!!!', '4');
                 if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
                 $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
+
+                // список ДВ
+                // используется в МП для фильтрации
+                foreach ($product_info["items"] as $product) {
+                  foreach ($product["ingredients"] as $dv) {
+                    $dv_list[$dv['tid']] = $dv;
+                  }
+                }
               }
 
               // старый вариант
@@ -222,6 +233,12 @@ function before_after_get_atfield_list($result_s)
                 $product_info = ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value());
                 if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
                 $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
+
+                foreach ($product_info["items"] as $product) {
+                  foreach ($product["ingredients"] as $dv) {
+                    $dv_list[$dv['tid']] = $dv;
+                  }
+                }
               }
             }
           }
@@ -232,6 +249,8 @@ function before_after_get_atfield_list($result_s)
             $preps_w_links = array_unique($preps_w_links);
             $output['preps_w_links'] = implode('; ', $preps_w_links);
           }
+          // список ДВ
+          $output['dv'] = $dv_list;
 
           // если задан фильтр по ДВ, отсеять сезон (уже выше сделано)
 //          if ($filter_dv && $filter_dv != 'All' && empty($preps[$filter_dv])) {
@@ -263,6 +282,8 @@ function before_after_get_atfield_list($result_s)
           $output['farm'] = $farm;
           $output['date'] = date('d.m.Y', $process['date']);
           $output['year'] = $season_wrapper->field_f_s_year->value();
+          // часть старых записей не имеет года
+          if (!$output['year']) $output['year'] = date('Y', $process['date']);
 
           $output['footer'] = '';
           $output['type'] = $process['type'];
@@ -877,43 +898,43 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   asort($options['ingredients']['full']);
 
   return [
-      'regions' => $options['regions'],
-      'cultures' => $options['cultures'],
-      'ingredients' => $options['ingredients'],
-      'years' => $options['years'],
+    'regions' => $options['regions'],
+    'cultures' => $options['cultures'],
+    'ingredients' => $options['ingredients'],
+    'years' => $options['years'],
   ];
 }
 
 function before_after_exposed_filters_form($form, &$form_state)
 {
   $form = array(
-      '#attributes' => array('class' => array('ctools-auto-submit-full-form')),
-      '#prefix' => '<div class="view-filters">',
-      '#suffix' => '</div>',
+    '#attributes' => array('class' => array('ctools-auto-submit-full-form')),
+    '#prefix' => '<div class="view-filters">',
+    '#suffix' => '</div>',
   );
 
   $form['c'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('views-exposed-form')), // <div class="views-exposed-form"><div class="views-exposed-widgets clearfix">
+    '#type' => 'container',
+    '#attributes' => array('class' => array('views-exposed-form')), // <div class="views-exposed-form"><div class="views-exposed-widgets clearfix">
   );
   $form['c']['c1'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('views-exposed-widgets', 'clearfix')), // <div class="views-exposed-form"><div class="">
+    '#type' => 'container',
+    '#attributes' => array('class' => array('views-exposed-widgets', 'clearfix')), // <div class="views-exposed-form"><div class="">
   );
 
   $culture_selected = null;
   if (isset($_POST['culture']) && $_POST['culture'] != 'All') {
-      $culture_selected = $_POST['culture'];
+    $culture_selected = $_POST['culture'];
   }
   elseif (isset($_GET['culture']) && $_GET['culture'] != 'All') {
-      $culture_selected = $_GET['culture'];
+    $culture_selected = $_GET['culture'];
   }
   $region_selected = null;
   if (isset($_POST['region']) && $_POST['region'] != 'All') {
-      $region_selected = $_POST['region'];
+    $region_selected = $_POST['region'];
   }
   elseif (isset($_GET['region']) && $_GET['region'] != 'All') {
-      $region_selected = $_GET['region'];
+    $region_selected = $_GET['region'];
   }
   $ingredient_selected = null;
   if (isset($_POST['ingredient']) && $_POST['ingredient'] != 'All') {
@@ -945,53 +966,53 @@ function before_after_exposed_filters_form($form, &$form_state)
 
     $options_region = array('All' => '- Все -') + $options['regions']['filter'];
     $form['c']['c1']['region'] = array(
-        '#type' => 'select',
-        '#title' => t('Region'),
-        '#options' => $options_region,
-        '#prefix' => '<div class="col-sm-3">',
-        '#suffix' => '</div>',
-        '#default_value' => $region_selected ? $region_selected: 'All',
+      '#type' => 'select',
+      '#title' => t('Region'),
+      '#options' => $options_region,
+      '#prefix' => '<div class="col-sm-3">',
+      '#suffix' => '</div>',
+      '#default_value' => $region_selected ? $region_selected: 'All',
     );
 
     $options_culture = array('All' => '- Все -') + $options['cultures']['filter'];
     $form['c']['c1']['culture'] = array(
-        '#type' => 'select',
-        '#title' => t('Culture'),
-        '#options' => $options_culture,
-        '#prefix' => '<div class="col-sm-3">',
-        '#suffix' => '</div>',
-        '#default_value' => $culture_selected ? $culture_selected : 'All',
+      '#type' => 'select',
+      '#title' => t('Culture'),
+      '#options' => $options_culture,
+      '#prefix' => '<div class="col-sm-3">',
+      '#suffix' => '</div>',
+      '#default_value' => $culture_selected ? $culture_selected : 'All',
     );
 
     $options_ingredient = array('All' => '- Все -') + $options['ingredients']['filter'];
     $form['c']['c1']['ingredient'] = array(
-        '#type' => 'select',
-        '#title' => 'Действующее вещество',
-        '#options' => $options_ingredient,
-        '#prefix' => '<div class="col-sm-4">',
-        '#suffix' => '</div>',
-        '#default_value' => $ingredient_selected ? $ingredient_selected : 'All',
+      '#type' => 'select',
+      '#title' => 'Действующее вещество',
+      '#options' => $options_ingredient,
+      '#prefix' => '<div class="col-sm-4">',
+      '#suffix' => '</div>',
+      '#default_value' => $ingredient_selected ? $ingredient_selected : 'All',
     );
 
     $options_year = array('All' => '- Все -') + $options['years']['filter'];
     $form['c']['c1']['year'] = array(
-        '#type' => 'select',
-        '#title' => 'Год',
-        '#options' => $options_year,
-        '#prefix' => '<div class="col-sm-2">',
-        '#suffix' => '</div>',
-        '#default_value' => $year_selected ? $year_selected : 'All',
+      '#type' => 'select',
+      '#title' => 'Год',
+      '#options' => $options_year,
+      '#prefix' => '<div class="col-sm-2">',
+      '#suffix' => '</div>',
+      '#default_value' => $year_selected ? $year_selected : 'All',
     );
 
     $form['c']['c1']['reset'] = [
       '#markup' => '<div class="col-sm-12"><div class="reset"><a href="/before-after">сбросить фильтры</a></div></div>'
     ];
     $form['c']['c1']['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Submit'),
-        '#attributes' => array('class' => array('ctools-use-ajax', 'ctools-auto-submit-click', 'js-hide')),
-        '#prefix' => '<div class="col-sm-12">',
-        '#suffix' => '</div>',
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+      '#attributes' => array('class' => array('ctools-use-ajax', 'ctools-auto-submit-click', 'js-hide')),
+      '#prefix' => '<div class="col-sm-12">',
+      '#suffix' => '</div>',
     );
 
     return $form;
@@ -999,17 +1020,17 @@ function before_after_exposed_filters_form($form, &$form_state)
 
 function before_after_exposed_filters_form_submit($form, &$form_state)
 {
-    $form_state['redirect'] = array(
-        'before-after',
-        array(
-            'query' => array(
-                'region' => empty($form_state['values']['region']) ? 'All' : $form_state['values']['region'],
-                'culture' => empty($form_state['values']['culture']) ? 'All' : $form_state['values']['culture'],
-                'ingredient' => empty($form_state['values']['ingredient']) ? 'All' : $form_state['values']['ingredient'],
-                'year' => empty($form_state['values']['year']) ? 'All' : $form_state['values']['year'],
-            ),
-        ),
-    );
+  $form_state['redirect'] = array(
+    'before-after',
+    array(
+      'query' => array(
+        'region' => empty($form_state['values']['region']) ? 'All' : $form_state['values']['region'],
+        'culture' => empty($form_state['values']['culture']) ? 'All' : $form_state['values']['culture'],
+        'ingredient' => empty($form_state['values']['ingredient']) ? 'All' : $form_state['values']['ingredient'],
+        'year' => empty($form_state['values']['year']) ? 'All' : $form_state['values']['year'],
+      ),
+    ),
+  );
 }
 
 /**
@@ -1242,10 +1263,15 @@ function before_after_get_atfield($sid)
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                 'image_full' => image_style_url('medium', $prep_info['photo_uri']),
-                'rate' => $prep_wr->field_f_s_p_p_rate->value(),
                 'unit_short' => $prep_info['unit_short'],
                 'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
+                'rate' => $prep_wr->field_f_s_p_p_rate->value(),
                 'consumption' => $prep_wr->field_f_s_p_p_consumption->value(),
+                'category' => [
+                  'tid' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->getIdentifier(),
+                  'name' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->label(),
+                  'color' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->field_color->value(),
+                ]
               ];
               $titles[] = $title;
             }
@@ -1267,7 +1293,14 @@ function before_after_get_atfield($sid)
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
                 'image_full' => image_style_url('medium', $prep_info['photo_uri']),
-                'consumption' => $processing_wr->field_f_s_p_consumption->value(),
+                'unit_short' => $prep_info['unit_short'],
+                'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
+                'rate' => intval($processing_wr->field_f_s_p_consumption->value()),
+                'category' => [
+                  'tid' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->getIdentifier(),
+                  'name' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->label(),
+                  'color' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->field_color->value(),
+                ]
               ];
               $titles[] = $title;
             }
@@ -1287,7 +1320,14 @@ function before_after_get_atfield($sid)
                 'nid' => $prep_info2['id'],
                 'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
                 'image_full' => image_style_url('medium', $prep_info2['photo_uri']),
-                'consumption' => $processing_wr->field_f_s_p_consumption2->value(),
+                'unit_short' => $prep_info2['unit_short'],
+                'unit_field' => $prep_info2['unit_field'][array_key_first($prep_info2['categories'])],
+                'rate' => intval($processing_wr->field_f_s_p_consumption2->value()),
+                'category' => [
+                  'tid' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->getIdentifier(),
+                  'name' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->label(),
+                  'color' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->field_color->value(),
+                ]
               ];
               $titles[] = $title2;
             }

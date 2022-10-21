@@ -181,23 +181,23 @@ function _reglaments_get_protection_system2($parameters)
       $program_wr = entity_metadata_wrapper('node', $program_id);
 
       if (isset($program_wr->field_pp_cultures)) {
-          // массив id культур, для которых берем регламенты
-          foreach ($program_wr->field_pp_cultures->raw() as $culture) {
-              $cultures_ids[] = $culture;
-          }
+        // массив id культур, для которых берем регламенты
+        foreach ($program_wr->field_pp_cultures->raw() as $culture) {
+          $cultures_ids[] = $culture;
+        }
       }
     } else {
-        if (!empty($parameters['culture_id'])) {
-            $cultures_ids[] = $parameters['culture_id'];
+      if (!empty($parameters['culture_id'])) {
+        $cultures_ids[] = $parameters['culture_id'];
 
-            // найти программу по культуре
-            $query = db_select('field_data_field_pp_cultures', 'fc');
-            $query->condition('fc.field_pp_cultures_target_id', $parameters['culture_id']);
-            $query->addField('fc', 'entity_id');
-            if ($program_id = $query->execute()->fetchField()) {
-                $program_wr = entity_metadata_wrapper('node', $program_id);
-            }
+        // найти программу по культуре
+        $query = db_select('field_data_field_pp_cultures', 'fc');
+        $query->condition('fc.field_pp_cultures_target_id', $parameters['culture_id']);
+        $query->addField('fc', 'entity_id');
+        if ($program_id = $query->execute()->fetchField()) {
+            $program_wr = entity_metadata_wrapper('node', $program_id);
         }
+      }
     }
 //  watchdog('pp', '<pre>@v</pre>', array('@v' => print_r( $program_wr->value(), TRUE)), WATCHDOG_INFO);
     // составляем список регламентов для заданных культур
@@ -217,12 +217,13 @@ function _reglaments_get_protection_system2($parameters)
 
         // описание программы и ссылка на pdf
         $result['header'] = array(
-            'title'     => !$program_id ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
-            'description' => !$program_id ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->summary->value())),
-            'phase'     => $phase_name,
-            'pdf'       => !$program_id ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
-            'area'      => empty($parameters['area']) ? '' : $parameters['area'],
-            'seeding'   => empty($parameters['seeding']) ? '' : $parameters['seeding'],
+          'id'          => $program_wr->getIdentifier(),
+          'title'       => !$program_id ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->name->value(),
+          'description' => !$program_id ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->summary->value())),
+          'phase'       => $phase_name,
+          'pdf'         => !$program_id ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+          'area'        => empty($parameters['area']) ? '' : $parameters['area'],
+          'seeding'     => empty($parameters['seeding']) ? '' : $parameters['seeding'],
         );
 
         // иконка
@@ -236,42 +237,42 @@ function _reglaments_get_protection_system2($parameters)
 
         // массив ВО
         $hobjects_all = [
-            AGRO_CATEGORY_HERBICIDES_TID => [],
-            AGRO_CATEGORY_INSECTICIDES_TID => [],
-            AGRO_CATEGORY_FUNGICIDES_TID => [],
-            AGRO_CATEGORY_DISINFECTANTS_TID => [],
+          AGRO_CATEGORY_HERBICIDES_TID => [],
+          AGRO_CATEGORY_INSECTICIDES_TID => [],
+          AGRO_CATEGORY_FUNGICIDES_TID => [],
+          AGRO_CATEGORY_DISINFECTANTS_TID => [],
         ];
         if (!empty($parameters['weeds_arr'])) {
-            $query = db_select('node', 'n');
-            $query->condition('n.nid', $parameters['weeds_arr'], 'IN');
-            $query->fields('n', array('nid', 'title'));
-            $hobjects_all[AGRO_CATEGORY_HERBICIDES_TID] = $query->execute()->fetchAllKeyed();
+          $query = db_select('node', 'n');
+          $query->condition('n.nid', $parameters['weeds_arr'], 'IN');
+          $query->fields('n', array('nid', 'title'));
+          $hobjects_all[AGRO_CATEGORY_HERBICIDES_TID] = $query->execute()->fetchAllKeyed();
 
-            $herb_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_HERBICIDES_TID);
-            $result['categories'][$herb_term->weight->value()] = array(
-                'tid' => $herb_term->tid->value(),
-                'weight' => $herb_term->weight->value(),
-                'name' => $herb_term->name->value(),
-                'bkg' => $herb_term->field_image_mobile->file->url->value(),
-                'bkg_desk' => $herb_term->field_shop_category_image->file->url->value(),
-                'icon' => $herb_term->field_icon->file->url->value(),
-            );
+          $herb_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_HERBICIDES_TID);
+          $result['categories'][$herb_term->weight->value()] = array(
+              'tid' => $herb_term->tid->value(),
+              'weight' => $herb_term->weight->value(),
+              'name' => $herb_term->name->value(),
+              'bkg' => $herb_term->field_image_mobile->file->url->value(),
+              'bkg_desk' => $herb_term->field_shop_category_image->file->url->value(),
+              'icon' => $herb_term->field_icon->file->url->value(),
+          );
         } else $parameters['weeds_arr'] = [];
         if (!empty($parameters['pests_arr'])) {
-            $query = db_select('node', 'n');
-            $query->condition('n.nid', $parameters['pests_arr'], 'IN');
-            $query->fields('n', array('nid', 'title'));
-            $hobjects_all[AGRO_CATEGORY_INSECTICIDES_TID] = $query->execute()->fetchAllKeyed();
+          $query = db_select('node', 'n');
+          $query->condition('n.nid', $parameters['pests_arr'], 'IN');
+          $query->fields('n', array('nid', 'title'));
+          $hobjects_all[AGRO_CATEGORY_INSECTICIDES_TID] = $query->execute()->fetchAllKeyed();
 
-            $insect_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_INSECTICIDES_TID);
-            $result['categories'][$insect_term->weight->value()] = array(
-                'tid' => $insect_term->tid->value(),
-                'weight' => $insect_term->weight->value(),
-                'name' => $insect_term->name->value(),
-                'bkg' => $insect_term->field_image_mobile->file->url->value(),
-                'bkg_desk' => $insect_term->field_shop_category_image->file->url->value(),
-                'icon' => $insect_term->field_icon->file->url->value(),
-            );
+          $insect_term = entity_metadata_wrapper('taxonomy_term', AGRO_CATEGORY_INSECTICIDES_TID);
+          $result['categories'][$insect_term->weight->value()] = array(
+              'tid' => $insect_term->tid->value(),
+              'weight' => $insect_term->weight->value(),
+              'name' => $insect_term->name->value(),
+              'bkg' => $insect_term->field_image_mobile->file->url->value(),
+              'bkg_desk' => $insect_term->field_shop_category_image->file->url->value(),
+              'icon' => $insect_term->field_icon->file->url->value(),
+          );
 
         } else $parameters['pests_arr'] = [];
         if (!empty($parameters['diseases_arr'])) {

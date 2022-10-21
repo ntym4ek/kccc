@@ -21,6 +21,11 @@ function ext_mobile_app_menu()
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
+  $items['source/programs'] = [
+    'page callback' => 'ext_mobile_programs_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
 
   return $items;
 }
@@ -37,6 +42,10 @@ function ext_mobile_app_ctools_plugin_api($owner, $api)
     ];
   }
 }
+
+/**
+ * ------------------ Каталог ------------------------------------------------------------------------------------------
+ */
 
 /**
  * Вернуть полный список препаратов для функции быстрого поиска в Приложении
@@ -96,6 +105,9 @@ function ext_mobile_app_qsearch_callback($category_tid = null)
   drupal_exit();
 }
 
+/**
+ * ------------------ Справочники --------------------------------------------------------------------------------------
+ */
 
 /**
  * callback function
@@ -138,5 +150,38 @@ function ext_mobile_dv_source()
     $term->description = strip_tags($term->description);
   }
   drupal_json_output(['dv' => $terms]);
+  drupal_exit();
+}
+
+/**
+ * ------------------ Программы защиты ---------------------------------------------------------------------------------
+ */
+
+/**
+ * callback function
+ * источник данных по Программам защиты
+ */
+function ext_mobile_programs_source()
+{
+  $programs = [];
+
+  $query = db_select('node', 'n');
+  $query->condition('n.type', 'protection_program');
+  $query->condition('n.status', 1);
+  $query->addField('n', 'nid');
+  $query->leftJoin('field_data_title_field', 'tf', 'n.nid = tf.entity_id');
+  $query->condition('tf.language', 'ru');
+  $query->orderby('tf.title_field_value', 'ASC');
+
+  if ($result = $query->execute()->fetchCol()) {
+    foreach ($result as $nid) {
+      $programs[$nid] = _reglaments_get_protection_system2(['program_id' => $nid]);
+    }
+  }
+
+  drupal_json_output([
+    'programs' => $programs,
+    'sorted' => $result,
+  ]);
   drupal_exit();
 }

@@ -196,7 +196,7 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
       $seller = array_merge($seller, [
         // для мобильного приложения
         'roles' =>  $roles,
-        'expert' => $user_info["staff"]["ephone"] ? $user_info["staff"]["ephone"] : null,
+        'expert' => $user_info["staff"]["ephone"] ? ext_user_format_phone($user_info["staff"]["ephone"]) : null,
         'surname' => $user_info["surname"],
         'name' => $user_info["name"],
         'name2' => $user_info["name2"],
@@ -241,6 +241,11 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
   if (isset($heads[OFFICE_SALES_DEP_HEAD_DEPUTY])) $heads_sorted = array_merge($heads_sorted, $heads[OFFICE_SALES_DEP_HEAD_DEPUTY]);
   if (isset($heads[OFFICE_SALES_HEAD])) $heads_sorted = array_merge($heads_sorted, $heads[OFFICE_SALES_HEAD]);
 
+  // список регионов для фильтра
+  $regions_by_name = $regions_by_tid;
+  asort($regions_by_name);
+  $regions_by_name = array_keys($regions_by_name);
+
   return [
     'director' => $director,
     'heads' => $heads_sorted,
@@ -248,6 +253,7 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
     'experts' => $exps,
     'regions_by_tid' => $regions_by_tid,
     'regions_by_iso' => $regions_by_iso,
+    'regions_by_name' => $regions_by_name,
   ];
 }
 
