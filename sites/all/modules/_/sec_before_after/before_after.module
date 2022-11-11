@@ -79,10 +79,10 @@ function before_after_menu()
       'access arguments' => array('access content'),
       'type' => MENU_CALLBACK
   );
-  // источник данных для Мобильного приложения
+
+  // источник данных для Мобильного приложения >= 3
   $items['source/pvp.json'] = array(
     'page callback' => 'before_after_mobile_source',
-//    'page arguments' => [2, 3, 4, 5, 6],
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK
   );
@@ -133,12 +133,12 @@ function before_after_theme()
  */
 function before_after_ctools_plugin_api($owner, $api)
 {
-    if ($owner == 'services' && $api == 'services') {
-        return array(
-            'version' => 3,
-            'file' => 'includes/before_after.services.inc'
-        );
-    }
+  if ($owner == 'services' && $api == 'services') {
+    return array(
+      'version' => 3,
+      'file' => 'includes/before_after.services.inc'
+    );
+  }
 }
 
 /**

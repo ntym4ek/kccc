@@ -7,7 +7,7 @@ function before_after_services_resources()
       'operations' => array(
         'retrieve' => array(
           'help' => 'Retrieve a record',
-          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'before_after.services.inc'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'before_after.services'),
           'callback' => '_before_after_resource_retrieve',
           'args' => array(
             array(

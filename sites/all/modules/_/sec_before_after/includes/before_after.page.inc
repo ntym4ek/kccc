@@ -141,7 +141,6 @@ function before_after_get_atfield_list($result_s)
   $fid = drupal_hash_base64(__FUNCTION__ . drupal_json_encode($result_s));
   $atf_array = &drupal_static($fid);
   if (!$atf_array) {
-    watchdog('!!!', '1');
     $atf_array = [];
     if ($result_s) {
       foreach ($result_s as $sid) {
@@ -207,23 +206,23 @@ function before_after_get_atfield_list($result_s)
 
           // составить список препаратов из обработок
           $preps = $preps_w_links = array();
-          $dv_list = [];watchdog('!!!', '2');
+          $dv_list = [];
           foreach ($processes as $item_p) {
             if ($item_p['type'] == 'processing') {
               $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
               //
-              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-                watchdog('!!!', '3');
-                $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
-                watchdog('!!!', '4');
-                if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
-                $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
+              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $index => $prep_wr) {
+                if ($prep_wr->field_f_s_p_p_preparation->value()) { // часть старых препаратов удалена, но id остались
+                  $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
+                  if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
+                  $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
 
-                // список ДВ
-                // используется в МП для фильтрации
-                foreach ($product_info["items"] as $product) {
-                  foreach ($product["ingredients"] as $dv) {
-                    $dv_list[$dv['tid']] = $dv;
+                  // список ДВ
+                  // используется в МП для фильтрации
+                  foreach ($product_info["items"] as $product) {
+                    foreach ($product["ingredients"] as $dv) {
+                      $dv_list[$dv['tid']] = $dv;
+                    }
                   }
                 }
               }
@@ -1244,36 +1243,44 @@ function before_after_get_atfield($sid)
             $processings[$key_p]['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
 
             // препараты
-            $preparations = [];
+            $preps = $preparations = [];
             $titles = [];
             foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-              $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
-              $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
+              if ($prep_wr->field_f_s_p_p_preparation->value()) { // часть старых препаратов удалена, но id остались
+                $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
+                $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
 
-              $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
-              $dv = [];
-              foreach ($prep_info['ingredients'] as $ingredient) {
-                $dv[] = $ingredient['full'];
+                $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
+                $dv = [];
+                foreach ($prep_info['ingredients'] as $ingredient) {
+                  $dv[] = $ingredient['full'];
+                }
+                $cat_tid = $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->getIdentifier();
+                $preps[$cat_tid][] = [
+                  'title' => $title,
+                  'ingredients' => implode(' + ', $dv),
+                  'description' => $prep_info['description'],
+                  'url' => $prep_info['url'],
+                  'nid' => $prep_info['id'],
+                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
+                  'image_full' => image_style_url('medium', $prep_info['photo_uri']),
+                  'unit_short' => $prep_info['unit_short'],
+                  'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
+                  'rate' => $prep_wr->field_f_s_p_p_rate->value(),
+                  'consumption' => $prep_wr->field_f_s_p_p_consumption->value(),
+                  'category' => [
+                    'tid' => $cat_tid,
+                    'name' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->label(),
+                    'color' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->field_color->value(),
+                  ]
+                ];
+                $titles[] = $title;
               }
-              $preparations[] = [
-                'title' => $title,
-                'ingredients' => implode(' + ', $dv),
-                'description' => $prep_info['description'],
-                'url' => $prep_info['url'],
-                'nid' => $prep_info['id'],
-                'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
-                'unit_short' => $prep_info['unit_short'],
-                'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
-                'rate' => $prep_wr->field_f_s_p_p_rate->value(),
-                'consumption' => $prep_wr->field_f_s_p_p_consumption->value(),
-                'category' => [
-                  'tid' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->getIdentifier(),
-                  'name' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->label(),
-                  'color' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->field_color->value(),
-                ]
-              ];
-              $titles[] = $title;
+            }
+            // объединить препараты в один массив
+            // (предварительное разделение нужно для группировки по категориям)
+            foreach ($preps as $value) {
+              $preparations = array_merge($preparations, $value);
             }
 
             // для обратной совместимости со старыми полями препаратов

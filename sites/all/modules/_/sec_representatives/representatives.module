@@ -9,6 +9,8 @@ function representatives_menu()
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+
+  // источник данных для мобильного приложения <= 2.4.1
   $items['source/representatives'] = array(
     'page callback' => '_representatives_source_mobile',
     'page arguments' => array(2),
@@ -17,6 +19,14 @@ function representatives_menu()
   );
   $items['source/experts'] = array(
     'page callback' => '_experts_source_mobile',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  // источник данных для мобильного приложения >= 3
+  $items['source/representatives.json'] = array(
+    'page callback' => '_representatives_source_mobile',
     'page arguments' => array(2),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK
@@ -191,7 +201,6 @@ function representatives_get_sellers_by_office($filter_region_tid = null)
       if (isset($user_info['staff']['offices'][OFFICE_SALES_REPRESENTATIVE])) $roles[] = 'representative';
       if (isset($user_info['staff']['offices'][OFFICE_SALES_EXPERT])) $roles[] = 'expert';
       if (isset($user_info['staff']['offices'][OFFICE_SALES_SPECIALIST])) $roles[] = 'specialist';
-
 
       $seller = array_merge($seller, [
         // для мобильного приложения

@@ -48,17 +48,6 @@ function chibs_menu()
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    $items['promchem/firepowders/contact'] = array(
-        'page callback' => 'chibs_dry_chemicals_ajax_contact',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['board/ad/%/message'] = array(
-        'page callback' => 'chibs_ads_ajax_contact',
-        'page arguments' => array(2),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
 //    $items['run-batch'] = array(
 //        'page callback' => 'chibs_run_batch',
 //        'access callback' => TRUE,
@@ -72,13 +61,6 @@ function chibs_menu()
         'type' => MENU_CALLBACK,
     );
 
-    $items['admin/config/administration/manager'] = array(
-        'title' => 'Настройки страниц',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('chibs_settings'),
-        'access arguments' => array('access manager settings'),
-        'file' => 'chibs.admin.inc',
-    );
 
     return $items;
 }
@@ -503,138 +485,6 @@ function ctools_modal_ajax_cmd($js, $action) {
     print ajax_render($commands);
     exit;
 }
-
-
-
-
-/**
- * ------------------------------------------ Объявления (Ads) ------------------------------------------------
- *
- * Новая модальная форма отправки сообщения по email
- */
-//function chibs_ads_ajax_contact($nid, $js = NULL) {
-//    if (!$js) {
-//        return drupal_get_form('chibs_ads_contact_form', $nid);
-//    }
-//
-//    ctools_include('modal'); ctools_include('ajax');
-//    $form_state = array(
-//        'title' => t('Send message'),
-//        'ajax' => TRUE,
-//        'build_info' => array('args' => array('nid' => $nid)),
-//    );
-//
-//
-//    $output = ctools_modal_form_wrapper('chibs_ads_contact_form', $form_state);
-//    print ajax_render($output);
-//    exit;
-//}
-
-/**
- * форма запроса контактных данных на странице описания попрошка
- */
-//function chibs_ads_contact_form($form, &$form_state, $nid) {
-//    global $user;
-//    $account = array();
-//    $form_state['adid'] = $nid;
-//
-//    // СОЗДАНИЕ ФОРМЫ
-//    $form = array(
-//        '#prefix' => '<div id="contact-frm">',
-//        '#suffix' => '</div>',
-//        '#attributes' => array('class' => array('custom-form')),
-//    );
-//
-//
-//    // при инициализвции выводим форму
-//    if (empty($form_state['complete'])) {
-//        // задаём начальные значения
-//        if (empty($form_state['submitted'])) {
-//            $account = ext_user_get_user_info($user);
-//        }
-//
-//        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Ваше сообщение<i>, для автора объявления</i>');
-//        $form['fs1']['text'] = array(
-//            '#type' => 'textarea',
-//        );
-//        $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Представьтесь и оставьте контакты<i>, для связи</i>', '#attributes' => array('class' => array('label-inline')));
-//        $form['fs2']['name'] = array(
-//            '#type' => 'textfield',
-//            '#title' => 'ФИО',
-//            '#default_value' => $account['full_name'],
-//        );
-//        $form['fs2']['phone'] = array(
-//            '#type' => 'textfield',
-//            '#title' => t('Phone'),
-//            '#default_value' => $account['phone'],
-//        );
-//        $form['fs2']['email'] = array(
-//            '#type' => 'textfield',
-//            '#title' => t('E-Mail'),
-//            '#default_value' => $account['email'],
-//        );
-//
-//        $form['fs4'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
-//        $form['fs4']['send'] = array(
-//            '#type' => 'submit',
-//            '#value' => 'Отправить',
-//        );
-//    }
-//    // при завершении генерируем информационное сообщение
-//    else {
-//        $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Сообщение отправлено');
-//        $form['fs1']['info'] = array(
-//            '#markup' => 'Письмо с вашим сообщением отправлено автору объявления.',
-//        );
-//    }
-//
-//    return $form;
-//}
-//function chibs_ads_contact_form_validate($form, &$form_state)
-//{
-//    if (!valid_email_address($form_state['values']['email'])) {
-//        form_set_error('email', 'Введите корректный E-Mail адрес.' );
-//    }
-//    if (empty($form_state['values']['email']) && empty($form_state['values']['phone'])) form_set_error('email', 'Заполните одно из полей: ' . t('E-Mail') . ' или ' . t('Phone') . '.' );
-//    if (empty($form_state['values']['text'])) form_set_error('text', 'Текст сообщения обязателен' );
-//}
-//function chibs_ads_contact_form_submit($form, &$form_state)
-//{
-//    // email автора
-//    $ad_wrapper = entity_metadata_wrapper('node', $form_state['adid']);
-////    $ad = $ad_wrapper->value();
-//    $ad_email = $ad_wrapper->author->mail->value();
-//    $ad_title = $ad_wrapper->title->value();
-//
-//    // отправка письма автору
-//    $author = '';
-//    $message = 'Добрый день!<br /><br />';
-//    $message .= 'Вам отправлено новое сообщение по объявлению "' . $ad_title . '".<br />';
-//    $message .= '<br />';
-//    $author .= empty($form_state['values']['name']) ? '' : $form_state['values']['name'] . '<br />';
-//    $author .= empty($form_state['values']['phone']) ? '' : 'Телефон: ' . $form_state['values']['phone'] . '<br />';
-//    $author .= empty($form_state['values']['email']) ? '' : 'E-Mail: ' . $form_state['values']['email'] . '<br />';
-//
-//
-//    $message .= '<b>Данные пользователя</b><br />' . $author;
-//    $message .= '<br />';
-//    $message .= '<b>Текст сообщения</b><br />';
-//    $message .= $form_state['values']['text'] . '<br />';
-//
-//    drupal_mail('system', 'mail', $ad_email, language_default(), array(
-//        'context' => array(
-//            'subject' => 'Новое сообщение по объявлению "' . $ad_title . '"',
-//            'message' => $message,
-//        ),
-//    ));
-//
-//
-//    // сообщаем форме, что можно выводить сообщение об успешном сабмите и перестроить её
-//    $form_state['complete'] = true;
-//    $form_state['rebuild'] = true;
-//}
-
-
 
 /**
  * Implements of hook_cron().

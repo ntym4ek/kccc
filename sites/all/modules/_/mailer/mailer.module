@@ -5,14 +5,15 @@
  */
 function mailer_menu()
 {
-    $items['admin/config/administration/mailer'] = array(
-        'title' => 'Ручная рассылка писем',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('mailer_manual_form'),
-        'access arguments' => array('access manager settings'),
-    );
+  $items['admin/config/system/website/mailer'] = array(
+    'title' => 'Ручная рассылка писем',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mailer_manual_form'),
+    'access arguments' => array('access manager settings'),
+    'type' => MENU_LOCAL_TASK,
+  );
 
-    return $items;
+  return $items;
 }
 
 

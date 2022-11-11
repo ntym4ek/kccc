@@ -277,14 +277,17 @@ function ext_product_product_get_info($node)
           $cons_unit = t('l');
           if (in_array($unit_wr->field_tax_short_name->value(), array('кг', 'г', 'kg', 'g'))) $cons_unit = t('kg');
           if (in_array($unit_wr->field_tax_short_name->value(), array('л', 'мл', 'l', 'ml'))) $cons_unit = t('l');
+          $text = $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit;
           $ingredients[] = [
             'tid' => $ingredient_wr->field_pd_ai_active_ingredient->getIdentifier(),
             'name' => $ingr_name,
-            'full' => $ingr_name . ', ' . $ingr_dose . ' ' . t('g') . '/' . $cons_unit
+            'full' => $text
           ];
+          $in_text[] = $text;
         }
       }
     }
+    $ingredients_text = implode(' + ', $in_text);
 
     // определить по категории ед. изм. применения препарата (га или т)
     // и занести в массив, т.к. неизвестно, какие из них будут использованы
@@ -333,6 +336,7 @@ function ext_product_product_get_info($node)
       'form_short'    => $form_short,
       'form_full'     => $form_full,
       'ingredients'   => $ingredients,
+      'ingredients_text' => $ingredients_text,
       'price'         => $prep_item_wr->field_pd_price_per_unit->amount->value()/100,
       'unit'          => $unit_wr->name->value(),
       'unit_short'    => $unit_wr->field_tax_short_name->value(),

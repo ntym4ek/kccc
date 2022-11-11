@@ -184,8 +184,7 @@
     .season .content .text.c1 {
       overflow: hidden; }
       .season .content .text.c1 .cc1 {
-        overflow: hidden;
-        min-height: 42px; }
+        overflow: hidden; }
       .season .content .text.c1 .cc2 {
         height: 0;
         overflow: hidden; }

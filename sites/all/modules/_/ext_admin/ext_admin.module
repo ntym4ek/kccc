@@ -5,43 +5,147 @@
  */
 function ext_admin_menu()
 {
-  $items['admin/config/system/site-settings'] = array(
-    'title' => 'Настройки сайта',
-    'weight' => -100,
+  $items['admin/config/system/website'] = array(
+    'title' => 'Сайт',
+    'description' => 'Настройки контента и функционал для менеджеров',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ext_admin_settings_form'),
     'access arguments' => array('access manager settings'),
+    'weight' => -100,
   );
+  $items['admin/config/system/website/settings'] = array(
+    'title' => 'Настройки сайта',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_admin_settings_form'),
+    'access arguments' => array('access manager settings'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
 
   return $items;
 }
 
 function ext_admin_settings_form($form, &$form_state)
 {
-  $form['email_otdel_kadrov'] = [
+  /** - Настройки содержимого ------------------------------------------------------------------------------------- */
+  $form['content'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Настройки содержимого',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['content']['email_otdel_kadrov'] = [
     '#title' => 'E-Mail. Отдел кадров',
     '#type' => 'textfield',
     '#default_value' => variable_get('email_otdel_kadrov', ''),
   ];
-  $form['phone_reception'] = [
+  $form['content']['phone_reception'] = [
     '#title' => 'Телефон администратора',
     '#type' => 'textfield',
     '#default_value' => variable_get('phone_reception', ''),
   ];
 
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = [
-    '#type' => 'submit',
-    '#attributes' => ['class' => ['btn-success']],
-    '#value' => 'Сохранить настройки',
-  ];
+//  $form['actions'] = array('#type' => 'actions');
+//  $form['actions']['submit'] = [
+//    '#type' => 'submit',
+//    '#attributes' => ['class' => ['btn-success']],
+//    '#value' => 'Сохранить настройки',
+//  ];
+
+  /** - Ограничение доступа к страницам --------------------------------------------------------------------------- */
+  $form['authorized_access'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Доступ к страницам',
+    '#description' => 'Запретить доступ анонимам к указанным страницам.',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['authorized_access']['aa_list'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Список ссылок',
+    '#description' => 'По одной ссылке на строку, без открывающего слеша, пример: info/contacts',
+    '#default_value' => variable_get('aa_list', ''),
+    '#required' => TRUE,
+  );
+
+  /** - Инструктаж по ТБ ------------------------------------------------------------------------------------------ */
+  $form['labor_protection'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Инструктаж по ТБ',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['labor_protection']['lp_notification_email'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Email для доставки уведомления',
+    '#default_value' => variable_get('lp_notification_email', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_step1_header'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Шаг 1. Заголовок (англ.)',
+    '#default_value' => variable_get('lp_step1_header', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_step1_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Шаг 1. Текст (англ.)',
+    '#default_value' => variable_get('lp_step1_text', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_step2_header'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Шаг 2. Заголовок (англ.)',
+    '#default_value' => variable_get('lp_step2_header', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_step2_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Шаг 2. Текст (англ.)',
+    '#default_value' => variable_get('lp_step2_text', ''),
+  );
+  $form['labor_protection']['lp_step3_header'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Шаг 3. Заголовок (англ.)',
+    '#default_value' => variable_get('lp_step3_header', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_step3_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Шаг 3. Текст (англ.)',
+    '#default_value' => variable_get('lp_step3_text', ''),
+  );
+  $form['labor_protection']['lp_success_header'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Успех. Заголовок (англ.)',
+    '#default_value' => variable_get('lp_success_header', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_success_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Успех. Текст (англ.)',
+    '#default_value' => variable_get('lp_success_text', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_fail_header'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Провал. Заголовок (англ.)',
+    '#default_value' => variable_get('lp_fail_header', ''),
+    '#required' => TRUE,
+  );
+  $form['labor_protection']['lp_fail_text'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Провал. Текст (англ.)',
+    '#default_value' => variable_get('lp_fail_text', ''),
+    '#required' => TRUE,
+  );
 
   return $form;
 }
 
-function ext_admin_settings_form_submit($form, $form_state)
-{
-  variable_set('email_otdel_kadrov', $form_state['values']['email_otdel_kadrov']);
-  variable_set('phone_reception', $form_state['values']['phone_reception']);
-  drupal_set_message('Настройки сохранены');
-}
+//function ext_admin_settings_form_submit($form, $form_state)
+//{
+//  variable_set('email_otdel_kadrov', $form_state['values']['email_otdel_kadrov']);
+//  variable_set('phone_reception', $form_state['values']['phone_reception']);
+//  drupal_set_message('Настройки сохранены');
+//}

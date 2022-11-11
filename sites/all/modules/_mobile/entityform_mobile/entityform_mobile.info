@@ -1,7 +1,0 @@
-name = Entityform Mobile
-description = Добавляет поддержку entityform в мобильное приложение
-version = 7.x-1.0
-core = 7.x
-package = Custom
-dependencies[] = services
-dependencies[] = entityform

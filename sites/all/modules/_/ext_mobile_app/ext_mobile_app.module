@@ -5,42 +5,67 @@
  */
 function ext_mobile_app_menu()
 {
+  // источник данных для мобильного приложения <= 2.4.1
   $items['source/qsearch'] = [
     'page callback' => 'ext_mobile_app_qsearch_callback',
     'page arguments' => array(2),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
-  $items['source/terms'] = [
+
+  // источник данных для мобильного приложения >= 3
+  $items['source/qsearch.json'] = [
+    'page callback' => 'ext_mobile_app_qsearch_callback',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+  $items['source/terms.json'] = [
     'page callback' => 'ext_mobile_terms_source',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
-  $items['source/dv'] = [
+  $items['source/dv.json'] = [
     'page callback' => 'ext_mobile_dv_source',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
-  $items['source/programs'] = [
+  $items['source/programs.json'] = [
     'page callback' => 'ext_mobile_programs_source',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
+  $items['source/front-news.json'] = [
+    'page callback' => 'ext_mobile_front_news_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+  $items['source/front-products.json'] = [
+    'page callback' => 'ext_mobile_front_products_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+
+  $items['admin/config/mobile'] = array(
+    'title' => 'Mobile application',
+    'description' => 'App administration tools.',
+    'position' => 'right',
+    'weight' => -99,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/config/mobile/settings'] = array(
+    'title' => 'App Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_mobile_app_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/ext_mobile_app.settings.inc',
+  );
 
   return $items;
-}
-
-/**
- * Implements hook_ctools_plugin_api().
- */
-function ext_mobile_app_ctools_plugin_api($owner, $api)
-{
-  if ($owner == 'services' && $api == 'services') {
-    return [
-      'version' => 3,
-      'file' => 'ext_mobile_app.services.inc'
-    ];
-  }
 }
 
 /**
@@ -80,8 +105,13 @@ function ext_mobile_app_qsearch_callback($category_tid = null)
           'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
           'description' => $prep_item['description'],
           'ingredients' => implode(' + ', $dv),
-          'photo' => image_style_url('mobile_teaser_product', $prep_item['photo_uri']),
-          'icon' => $prep_arr['icon'],
+          'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
+          'icon' => $prep_arr['icon'],    // поддержка приложения версии <= 2.4.1
+          'preload' => [
+            'photo_full' => $prep_item['photo_url'],
+            // todo можно добавить изображения сертификатов
+          ],
+
         ];
         foreach($prep_item['categories'] as $tid => $cat) {
           if (empty($items[$tid]) && (!$category_tid || $tid == $category_tid)) {
@@ -184,4 +214,180 @@ function ext_mobile_programs_source()
     'sorted' => $result,
   ]);
   drupal_exit();
+}
+
+/**
+ * ------------------ Слайдеры на главной ------------------------------------------------------------------------------
+ */
+
+function ext_mobile_front_news_source()
+{
+  $items = [
+    [
+      'path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_1.jpg',
+      'link' => [
+        'external' => true,
+        'url' => 'https://kccc.ru/news/interesting-facts/pamyatka-rosselhozcentra-ob-osennem-vnesenii-glifosatov'
+      ],
+    ],
+    ['path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg', 'link' => ['url' => 'catalog']],
+  ];
+
+  sleep(2);
+
+  drupal_json_output(['news' => [
+    'items' => $items
+  ]]);
+  drupal_exit();
+}
+
+function ext_mobile_front_products_source()
+{
+  $items = [];
+  foreach (variable_get('ema_ap_list', []) as $nid) {
+    $product_info = ext_product_product_get_info($nid);
+    $items[] = [
+      'nid' => $product_info['nid'],
+      'title' => $product_info['title'],
+      'description' => $product_info['items'][$product_info['nid']]['description'],
+      'ingredients' => $product_info['items'][$product_info['nid']]['ingredients_text'],
+      'img' => $product_info['items'][$product_info['nid']]['photo_medium'],
+    ];
+  }
+
+  drupal_json_output(['products' => [
+    'status' => true,
+    'title' => variable_get('ema_ap_title', ''),
+    'intro' => variable_get('ema_ap_intro', ''),
+    'items' => $items,
+  ]]);
+  drupal_exit();
+
+  return ;
+}
+
+/**
+ * Implementation of hook_module_implements_alter().
+ */
+function ext_mobile_app_module_implements_alter(&$implementations, $hook)
+{
+  // переносим нашу реализацию хука в конец очереди
+  // необходимо по причине того, что drupalgap затирает ранее полученные данные
+  if ($hook == 'services_request_postprocess_alter') {
+    $group = $implementations['ext_mobile_app'];
+    unset($implementations['ext_mobile_app']);
+    $implementations['ext_mobile_app'] = $group;
+  }
+}
+
+/**
+ * Implementation of hook_services_request_postprocess_alter().
+ */
+function ext_mobile_app_services_request_postprocess_alter($controller, $args, &$result)
+{
+  // при запуске приложения и выполнении system/connect.json
+  if ($controller['callback'] == '_system_resource_connect') {
+    // наряду с информацией о стандартных сущностях
+    // передать информацию о сущности entityform
+    $result->field_info_instances['entityform'] = field_info_instances('entityform');
+
+    // наряду с информацией о типах контента node
+    // передать инфо о типах контента entityform вместе с правами
+    if ($content_types = _ext_mobile_app_resource_entityform_types_list()) {
+      $result->content_types_list = array_merge($result->content_types_list, $content_types);
+    }
+    if ($content_types_permissions = _ext_mobile_app_resource_entityform_types_user_permissions()) {
+      $result->content_types_user_permissions = array_merge($result->content_types_user_permissions, $content_types_permissions);
+    }
+  }
+
+  // для продукции по аналогии с модулем Commerce Services
+  // упрощаем и расширяем массив отдаваемых данных
+  if ($controller['callback'] == '_node_resource_retrieve' && in_array($result->type, ['product_agro', 'product_fert'])) {
+    // добавить свойства для части данных
+    commerce_services_decorate_entity('node', $result);
+
+    // добавить информацию о вложенных сущностях и упростить массив
+    commerce_services_expand_entities('node', $result, 2, true);
+
+    // упростить массив с данными. This must be the last operation
+    // performed as it breaks the standard field data model. An entity whose
+    // fields have thus been flattened is no longer wrappable.
+    commerce_services_flatten_fields('node', $result);
+  }
+}
+
+/**
+ * Returns a collection of entityform types from the {entityform_type} table.
+ *
+ * It also bundles other available information about each entityform type
+ * with the return results.
+ */
+function _ext_mobile_app_resource_entityform_types_list($options = array())
+{
+  // Grab content types.
+  $sql = "SELECT * FROM {entityform_type} ORDER BY label ASC";
+  $content_types_result = db_query($sql);
+
+  if ($content_types_result) {
+    if ($content_types_result) {
+      if ($content_types = $content_types_result->fetchAll()) {
+        foreach($content_types as $i => $ct) {
+          $content_types[$i]->name = $ct->label;
+        }
+      }
+      return $content_types;
+    }
+  }
+}
+
+/**
+ * Returns a collection of permissions from entityform types for the current user.
+ */
+function _ext_mobile_app_resource_entityform_types_user_permissions()
+{
+  $content_types = _ext_mobile_app_resource_entityform_types_list();
+  $content_type_permissions = array();
+  foreach ($content_types as $content_type) {
+    $content_type_permissions[$content_type->type] = array(
+      'create' => true,
+      'delete any' => false,
+      'delete own' => true,
+      'edit any' => false,
+      'edit own' => true,
+    );
+  }
+  return $content_type_permissions;
+}
+
+/**
+ * Implements hook_init().
+ */
+function ext_mobile_app_init()
+{
+  // для запросов от приложения (оно должно отправлять origin: https://app.kccc.ru)
+  // разрешить CORS запросы
+  $request_headers = getallheaders();
+  if (!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru') {
+    watchdog('init', 'Массив <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
+    watchdog('init', 'Ориджин <pre>@v</pre>', array('@v' =>  $request_headers['origin']), WATCHDOG_INFO);
+    drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
+    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
+  }
+}
+
+/**
+ * If running nginx, implement getallheaders ourself.
+ *
+ * Code is taken from http://php.net/manual/en/function.getallheaders.php
+ */
+if (!function_exists('getallheaders')) {
+  function getallheaders() {
+    foreach ($_SERVER as $name => $value) {
+      if (substr($name, 0, 5) == 'HTTP_') {
+        $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+      }
+    }
+    return $headers;
+  }
 }
