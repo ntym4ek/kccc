@@ -304,6 +304,8 @@
   color: inherit; }
   .column table td a i {
     color: #b3b3b3; }
+  .column table td a.is-own i {
+    color: #36AA3D; }
 .column table .head th {
   background: #36AA3D;
   color: #fff;

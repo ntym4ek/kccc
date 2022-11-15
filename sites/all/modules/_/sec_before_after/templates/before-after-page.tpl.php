@@ -47,7 +47,7 @@ $before = array_shift($content['measurements']);
                       <td><? print $hobject['phase']; ?></td>
                       <td>
                         <? if (!empty($hobject['photo'])): ?>
-                          <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                          <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                             <i class="fa fa-camera" aria-hidden="true"></i>
                           </a>
                           <? $ho_photo_message = true; ?>
@@ -68,7 +68,7 @@ $before = array_shift($content['measurements']);
                       <td><? print $hobject['phase']; ?></td>
                       <td>
                         <? if (!empty($hobject['photo'])): ?>
-                          <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                          <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                             <i class="fa fa-camera" aria-hidden="true"></i>
                           </a>
                           <? $ho_photo_message = true; ?>
@@ -110,7 +110,7 @@ $before = array_shift($content['measurements']);
                     <td></td>
                     <td>
                       <? if (!empty($hobject['photo'])): ?>
-                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                           <i class="fa fa-camera" aria-hidden="true"></i>
                         </a>
                         <? $ho_photo_message = true; ?>
@@ -137,7 +137,7 @@ $before = array_shift($content['measurements']);
                     <td></td>
                     <td>
                       <? if ($hobject['photo']): ?>
-                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                        <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                           <i class="fa fa-camera" aria-hidden="true"></i>
                         </a>
                         <? $ho_photo_message = true; ?>
@@ -207,7 +207,7 @@ $before = array_shift($content['measurements']);
                                 <td align="center"><? print $hobject['percent']; ?></td>
                                 <td>
                                   <? if ($hobject['photo']): ?>
-                                    <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                    <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                                       <i class="fa fa-camera" aria-hidden="true"></i>
                                     </a>
                                     <? $ho_photo_message = true; ?>
@@ -228,7 +228,7 @@ $before = array_shift($content['measurements']);
                                 <td align="center"><? print $hobject['percent']; ?></td>
                                 <td>
                                   <? if ($hobject['photo']): ?>
-                                    <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                    <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                                       <i class="fa fa-camera" aria-hidden="true"></i>
                                     </a>
                                     <? $ho_photo_message = true; ?>
@@ -271,7 +271,7 @@ $before = array_shift($content['measurements']);
                               <td align="center"><? print $hobject['percent']; ?></td>
                               <td>
                                 <? if ($hobject['photo']): ?>
-                                  <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                  <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                                     <i class="fa fa-camera" aria-hidden="true"></i>
                                   </a>
                                   <? $ho_photo_message = true; ?>
@@ -298,7 +298,7 @@ $before = array_shift($content['measurements']);
                               <td align="center"><? print $hobject['percent']; ?></td>
                               <td>
                                 <? if ($hobject['photo']): ?>
-                                  <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["name"]; ?> после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания" class="fancybox">
+                                  <a href="<? print $hobject['photo']; ?>" title="<? print $hobject["photo_title"]; ?>" class="fancybox<? print $hobject["is_handbook_photo"] ? '': ' is-own'; ?>">
                                     <i class="fa fa-camera" aria-hidden="true"></i>
                                   </a>
                                   <? $ho_photo_message = true; ?>

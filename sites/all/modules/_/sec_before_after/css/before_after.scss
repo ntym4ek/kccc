@@ -286,16 +286,13 @@
   td a {
     color: inherit;
     i { color: $text-muted; }
+    &.is-own i { color: $brand-primary; }
   }
 
   .head th {
     background: $brand-primary;
     color: #fff; font-weight: 100; text-align: center;
   }
-  //.dom td  {
-    //a { color: $brand-primary; }
-  //}
-  //.title td { font-size: 14px; }
 }
 
 .after .no-content,

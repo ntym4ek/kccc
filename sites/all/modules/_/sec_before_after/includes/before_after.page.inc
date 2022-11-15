@@ -1173,7 +1173,9 @@ function before_after_get_atfield($sid)
               'dominant' => $item_ho->field_f_s_h_dominant->value() ? $item_ho->field_f_s_h_dominant->value() : 0,
               'type' => $item_ho->field_f_s_h_hobject->getBundle(),
               'percent' => '-',
-              'photo' => '',
+              'photo' => image_style_url('1200_1200', $item_ho->field_f_s_h_hobject->field_promo_image->value()['uri']),
+              'photo_title' => 'Справочное фото ' . $item_ho->field_f_s_h_hobject->label(),
+              'is_handbook_photo' => true,
             );
 
             // посчитать количество каждого вида вредителей
@@ -1223,9 +1225,11 @@ function before_after_get_atfield($sid)
                 $nid = $item_ho->field_f_s_m_c_hobject->nid->value();
                 $photo_fid = $item_ho->field_f_s_m_c_foto->value();
                 if (isset($arr_ho[$nid])) {
-                  $arr_ho[$nid]['photo'] = '';
+//                  $arr_ho[$nid]['photo'] = '';
                   if ($photo_fid && $photo = file_load($photo_fid)) {
                     $arr_ho[$nid]['photo'] = $photo ? image_style_url('1200_1200', $photo->uri) : '';
+                    $arr_ho[$nid]['photo_title'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания' : ' до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания');
+                    $arr_ho[$nid]['is_handbook_photo'] = false;
                   }
 
                   $arr_ho[$nid]['percent'] = $item_ho->field_f_s_m_c_percent->value() ? $item_ho->field_f_s_m_c_percent->value() : '-';
