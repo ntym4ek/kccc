@@ -10,7 +10,7 @@
         <img src="<? print $author['photo']; ?>" alt="<? print $author['staff']['role_full']; ?>" class="img-circle">
         <div class="author-body">
           <div class="author-title"><a href="/user/<? print $author['id']; ?>"><? print $author['full_name']; ?></a></div>
-            <div class="author-subtitle"><? print $author['staff']['role_full']; ?></div>
+            <div class="author-subtitle"><? print $author['label']; ?></div>
         </div>
     </div>
     <? endif; ?>

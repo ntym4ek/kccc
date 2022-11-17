@@ -77,6 +77,9 @@ function ext_mobile_app_menu()
  */
 function ext_mobile_app_qsearch_callback($category_tid = null)
 {
+  // является ли запрос Предзагрузкой
+  $is_preload = !empty($_GET['init']);
+
   $items = [];
 
   $query = db_select('node', 'n');
@@ -100,18 +103,27 @@ function ext_mobile_app_qsearch_callback($category_tid = null)
         foreach ($prep_item['ingredients'] as $ingredient) {
           $dv[] = $ingredient['full'];
         }
+        $photo_t_base64 = $photo_f_base64 = '';
+        if ($is_preload) {
+          $path_t = image_style_url('thumbnail', $prep_item['photo_uri']);
+          $path_f = $prep_item['photo_uri'];
+          $type = pathinfo($path_t, PATHINFO_EXTENSION);
+          $data_t = file_get_contents($path_t);
+          $data_f = file_get_contents($path_f);
+          $photo_t_base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_t);
+          $photo_f_base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_f);
+        }
         $item = [
           'nid' => $prep_item['id'],
           'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
           'description' => $prep_item['description'],
           'ingredients' => implode(' + ', $dv),
           'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
+          'photo_base64' => $photo_t_base64,
+          'photo_full' => file_create_url($prep_item['photo_uri']),
+          'photo_full_base64' => $photo_f_base64,
           'icon' => $prep_arr['icon'],    // поддержка приложения версии <= 2.4.1
-          'preload' => [
-            'photo_full' => $prep_item['photo_url'],
-            // todo можно добавить изображения сертификатов
-          ],
-
+           // todo для Предзагрузки можно добавить изображения сертификатов
         ];
         foreach($prep_item['categories'] as $tid => $cat) {
           if (empty($items[$tid]) && (!$category_tid || $tid == $category_tid)) {
@@ -308,7 +320,7 @@ function ext_mobile_app_services_request_postprocess_alter($controller, $args, &
     commerce_services_decorate_entity('node', $result);
 
     // добавить информацию о вложенных сущностях и упростить массив
-    commerce_services_expand_entities('node', $result, 2, true);
+    commerce_services_expand_entities('node', $result, 3, true);
 
     // упростить массив с данными. This must be the last operation
     // performed as it breaks the standard field data model. An entity whose
@@ -368,21 +380,25 @@ function ext_mobile_app_init()
   // для запросов от приложения (оно должно отправлять origin: https://app.kccc.ru)
   // разрешить CORS запросы
   $request_headers = getallheaders();
-  if (!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru') {
-    watchdog('init', 'Массив <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
-    watchdog('init', 'Ориджин <pre>@v</pre>', array('@v' =>  $request_headers['origin']), WATCHDOG_INFO);
+//  watchdog('init', 'Массив <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
+  if ((!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru')
+      || (!empty($request_headers['Origin']) && $request_headers['Origin'] == 'https://app.kccc.ru')) {
+//    watchdog('init', 'Ориджин <pre>@v</pre>', array('@v' =>  $request_headers['origin']), WATCHDOG_INFO);
     drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
     drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
   }
 }
+
 
 /**
  * If running nginx, implement getallheaders ourself.
  *
  * Code is taken from http://php.net/manual/en/function.getallheaders.php
  */
-if (!function_exists('getallheaders')) {
-  function getallheaders() {
+if (!function_exists('getallheaders'))
+{
+  function getallheaders()
+  {
     foreach ($_SERVER as $name => $value) {
       if (substr($name, 0, 5) == 'HTTP_') {
         $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;

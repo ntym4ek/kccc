@@ -267,7 +267,7 @@ function ext_product_product_get_info($node)
     $unit_wr = $prep_item_wr->field_pd_units->language($lang);
 
     // ДВ
-    $ingredients = [];
+    $ingredients = $in_text = [];
     if (isset($prep_item_wr->field_pd_active_ingredients) && $prep_item_wr->field_pd_active_ingredients->value()) {
       foreach ($prep_item_wr->field_pd_active_ingredients as $ingredient_wr) {
         if ($ingredient_wr->field_pd_ai_active_ingredient->value()) {

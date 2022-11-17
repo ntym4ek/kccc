@@ -1174,7 +1174,8 @@ function before_after_get_atfield($sid)
               'type' => $item_ho->field_f_s_h_hobject->getBundle(),
               'percent' => '-',
               'photo' => image_style_url('1200_1200', $item_ho->field_f_s_h_hobject->field_promo_image->value()['uri']),
-              'photo_title' => 'Справочное фото ' . $item_ho->field_f_s_h_hobject->label(),
+              'photo_title' => $item_ho->field_f_s_h_hobject->label() . ' (cправочное фото)',
+              'photo_title_mobile' => $item_ho->field_f_s_h_hobject->label() . ' (cправочное фото)',
               'is_handbook_photo' => true,
             );
 
@@ -1228,7 +1229,8 @@ function before_after_get_atfield($sid)
 //                  $arr_ho[$nid]['photo'] = '';
                   if ($photo_fid && $photo = file_load($photo_fid)) {
                     $arr_ho[$nid]['photo'] = $photo ? image_style_url('1200_1200', $photo->uri) : '';
-                    $arr_ho[$nid]['photo_title'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' после обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания' : ' до обработки препаратами ООО ТД Кирово-Чепецкая Химическая Компания');
+                    $arr_ho[$nid]['photo_title'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' после обработки' : ' до обработки');
+                    $arr_ho[$nid]['photo_title_mobile'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' (после обработки)' : ' (до обработки)');
                     $arr_ho[$nid]['is_handbook_photo'] = false;
                   }
 
@@ -1335,9 +1337,9 @@ function before_after_get_atfield($sid)
                 'unit_field' => $prep_info2['unit_field'][array_key_first($prep_info2['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption2->value()),
                 'category' => [
-                  'tid' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->getIdentifier(),
-                  'name' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->label(),
-                  'color' => $processing_wr->field_f_s_p_preparation->field_pd_category[0]->field_color->value(),
+                  'tid' => $processing_wr->field_f_s_p_preparation2->field_pd_category[0]->getIdentifier(),
+                  'name' => $processing_wr->field_f_s_p_preparation2->field_pd_category[0]->label(),
+                  'color' => $processing_wr->field_f_s_p_preparation2->field_pd_category[0]->field_color->value(),
                 ]
               ];
               $titles[] = $title2;
