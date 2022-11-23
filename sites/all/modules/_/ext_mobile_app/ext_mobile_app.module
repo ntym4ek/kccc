@@ -7,19 +7,38 @@ function ext_mobile_app_menu()
 {
   // источник данных для мобильного приложения <= 2.4.1
   $items['source/qsearch'] = [
-    'page callback' => 'ext_mobile_app_qsearch_callback',
+    'page callback' => 'ext_mobile_app_qsearch_source',
     'page arguments' => array(2),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
 
   // источник данных для мобильного приложения >= 3
+  $items['source/front-news.json'] = [
+    'page callback' => 'ext_mobile_front_news_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+  $items['source/front-products.json'] = [
+    'page callback' => 'ext_mobile_front_products_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+
   $items['source/qsearch.json'] = [
-    'page callback' => 'ext_mobile_app_qsearch_callback',
+    'page callback' => 'ext_mobile_app_qsearch_source',
     'page arguments' => array(2),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
+
+  $items['source/representatives.json'] = array(
+    'page callback' => 'ext_mobile_app_sellers_source',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
   $items['source/terms.json'] = [
     'page callback' => 'ext_mobile_terms_source',
     'access arguments' => array('access content'),
@@ -35,16 +54,12 @@ function ext_mobile_app_menu()
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   ];
-  $items['source/front-news.json'] = [
-    'page callback' => 'ext_mobile_front_news_source',
+
+  $items['source/pvp.json'] = array(
+    'page callback' => 'ext_mobile_app_pvp_mobile_source',
     'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  ];
-  $items['source/front-products.json'] = [
-    'page callback' => 'ext_mobile_front_products_source',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  ];
+    'type' => MENU_CALLBACK
+  );
 
   $items['admin/config/mobile'] = array(
     'title' => 'Mobile application',
@@ -75,7 +90,7 @@ function ext_mobile_app_menu()
 /**
  * Вернуть полный список препаратов для функции быстрого поиска в Приложении
  */
-function ext_mobile_app_qsearch_callback($category_tid = null)
+function ext_mobile_app_qsearch_source($category_tid = null)
 {
   // является ли запрос Предзагрузкой
   $is_preload = !empty($_GET['init']);
@@ -103,25 +118,15 @@ function ext_mobile_app_qsearch_callback($category_tid = null)
         foreach ($prep_item['ingredients'] as $ingredient) {
           $dv[] = $ingredient['full'];
         }
-        $photo_t_base64 = $photo_f_base64 = '';
-        if ($is_preload) {
-          $path_t = image_style_url('thumbnail', $prep_item['photo_uri']);
-          $path_f = $prep_item['photo_uri'];
-          $type = pathinfo($path_t, PATHINFO_EXTENSION);
-          $data_t = file_get_contents($path_t);
-          $data_f = file_get_contents($path_f);
-          $photo_t_base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_t);
-          $photo_f_base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_f);
-        }
         $item = [
           'nid' => $prep_item['id'],
           'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
           'description' => $prep_item['description'],
           'ingredients' => implode(' + ', $dv),
           'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
-          'photo_base64' => $photo_t_base64,
-          'photo_full' => file_create_url($prep_item['photo_uri']),
-          'photo_full_base64' => $photo_f_base64,
+          'photo_base64' => $is_preload ? chibs_image_style_base64('thumbnail', $prep_item['photo_uri']) : '',
+//          'photo_full' => file_create_url($prep_item['photo_uri']),
+//          'photo_full_base64' => $is_preload ? chibs_image_style_base64('', $prep_item['photo_uri']) : '',
           'icon' => $prep_arr['icon'],    // поддержка приложения версии <= 2.4.1
            // todo для Предзагрузки можно добавить изображения сертификатов
         ];
@@ -146,6 +151,7 @@ function ext_mobile_app_qsearch_callback($category_tid = null)
   drupal_json_output(['preparations' => $items]);
   drupal_exit();
 }
+
 
 /**
  * ------------------ Справочники --------------------------------------------------------------------------------------
@@ -218,6 +224,15 @@ function ext_mobile_programs_source()
   if ($result = $query->execute()->fetchCol()) {
     foreach ($result as $nid) {
       $programs[$nid] = _reglaments_get_protection_system2(['program_id' => $nid]);
+    }
+  }
+
+  // если запрос Предзагрузка, добавить base64 изображения
+  if (!empty($_GET['init'])) {
+    foreach($programs as &$program) {
+      if (!empty($program['header']['icon'])) {
+        $program['header']['icon_base64'] = chibs_image_style_base64('', $program['header']['icon']);
+      }
     }
   }
 
@@ -320,7 +335,7 @@ function ext_mobile_app_services_request_postprocess_alter($controller, $args, &
     commerce_services_decorate_entity('node', $result);
 
     // добавить информацию о вложенных сущностях и упростить массив
-    commerce_services_expand_entities('node', $result, 3, true);
+    ext_mobile_app_expand_some_entities('node', $result, 3, true);
 
     // упростить массив с данными. This must be the last operation
     // performed as it breaks the standard field data model. An entity whose
@@ -330,12 +345,129 @@ function ext_mobile_app_services_request_postprocess_alter($controller, $args, &
 }
 
 /**
+ * на базе commerce_services_expand_entities,
+ * для уменьшения отдаваемого трафика удалить поле body для вложенных уровней
+ *
+ * Expands entity reference field values into full entities in a corresponding
+ * property on the given entity to a specified depth of child entities.
+ *
+ * @param $entity_type
+ *   The machine-name entity type of the given entity.
+ * @param $entity
+ *   The entity whose reference field values should be expanded.
+ * @param $depth
+ *   The depth to which referenced entities should be expanded; a depth of 1
+ *   means only the reference field values on the entity passed to the function
+ *   should be expanded, 2 means those and the entities they reference, etc.
+ * @param $flatten_fields
+ *   Boolean indicating whether or not field value arrays should be flattened.
+ */
+function ext_mobile_app_expand_some_entities($entity_type, $entity, $depth, $flatten_fields)
+{
+  // Extract the bundle name.
+  list(, , $bundle) = entity_extract_ids($entity_type, $entity);
+
+  // Look for each type of Commerce reference field on the given entity.
+  foreach (array('entityreference', 'field_collection', 'commerce_product_reference', 'commerce_line_item_reference', 'commerce_customer_profile_reference', 'taxonomy_term_reference') as $field_type) {
+    // Look for reference field instances of each type on the entity.
+    foreach (field_info_instances($entity_type, $bundle) as $field_name => $instance) {
+      $entities_field_name = $field_name . '_entities';
+      $field_info = field_info_field($field_name);
+
+      if ($field_info['type'] == $field_type) {
+        // Extract the type of referenced entity from the property info.
+        $property_info = entity_get_property_info($entity_type);
+
+        if (!empty($property_info['bundles'][$bundle]['properties'][$field_name]['type'])) {
+          $referenced_entity_type = $property_info['bundles'][$bundle]['properties'][$field_name]['type'];
+          $entity_wrapper = entity_metadata_wrapper($entity_type, $entity);
+
+
+          // If the field is multi-value, extract the entity type from within
+          // the list markup and expand the whole list.
+          if (substr($referenced_entity_type, 0, 5) == 'list<') {
+            $referenced_entity_type = substr($referenced_entity_type, 5, strlen($referenced_entity_type) - 6);
+
+            foreach ($entity_wrapper->{$field_name} as $delta => $referenced_entity_wrapper) {
+              // Extract the entity from the wrapper.
+              $referenced_entity_id = $referenced_entity_wrapper->raw();
+
+              // трафикоёмкий body удаляем
+              if (isset($referenced_entity_wrapper->value()->body['ru'])) {
+                $referenced_entity_wrapper->value()->body['ru'] = [];
+              }
+              if (isset($referenced_entity_wrapper->value()->body['und'])) {
+                $referenced_entity_wrapper->value()->body['und'] = [];
+              }
+
+              if (!empty($referenced_entity_id) && $referenced_entity_wrapper->value()) {
+                $referenced_entity = clone($referenced_entity_wrapper->value());
+
+                // Decorate the entity.
+                commerce_services_decorate_entity($referenced_entity_type, $referenced_entity);
+
+                // If our entity traversal depth has not reduced to 1, then we
+                // need to recurse to expand any entity reference fields present
+                // on the referenced entity.
+                if ($depth > 1) {
+                  ext_mobile_app_expand_some_entities($referenced_entity_type, $referenced_entity, $depth - 1, $flatten_fields);
+                }
+
+                // Flatten field value arrays on the referenced entity if directed.
+                if ($flatten_fields) {
+                  commerce_services_flatten_fields($referenced_entity_type, $referenced_entity);
+                }
+
+                // And finally set the referenced entity to be the new value at
+                // the current delta in the reference field value array.
+                $entity->{$entities_field_name}[$referenced_entity_id] = $referenced_entity;
+              }
+            }
+          }
+          else {
+            // Extract the entity and its ID from the wrapper.
+            $referenced_entity_id = $entity_wrapper->{$field_name}->raw();
+
+            if (!empty($referenced_entity_id) && $entity_wrapper->{$field_name}->value()) {
+              $referenced_entity = clone($entity_wrapper->{$field_name}->value());
+
+              // трафикоёмкий body удаляем
+              $referenced_entity->body = [];
+
+              // Decorate the entity.
+              commerce_services_decorate_entity($referenced_entity_type, $referenced_entity);
+
+              // If our entity traversal depth has not reduced to 1, then we
+              // need to recurse to expand any entity reference fields present
+              // on the referenced entity.
+              if ($depth > 1) {
+                ext_mobile_app_expand_some_entities($referenced_entity_type, $referenced_entity, $depth - 1, $flatten_fields);
+              }
+
+              // Flatten field value arrays on the referenced entity if directed.
+              if ($flatten_fields) {
+                commerce_services_flatten_fields($referenced_entity_type, $referenced_entity);
+              }
+
+              // And finally set the referenced entity to be the new value at the
+              // current delta in the reference field value array.
+              $entity->{$entities_field_name}[$referenced_entity_id] = $referenced_entity;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/**
  * Returns a collection of entityform types from the {entityform_type} table.
  *
  * It also bundles other available information about each entityform type
  * with the return results.
  */
-function _ext_mobile_app_resource_entityform_types_list($options = array())
+function _ext_mobile_app_resource_entityform_types_list($options = [])
 {
   // Grab content types.
   $sql = "SELECT * FROM {entityform_type} ORDER BY label ASC";
@@ -406,4 +538,82 @@ if (!function_exists('getallheaders'))
     }
     return $headers;
   }
+}
+
+/**
+ * callback function
+ * источник данных о представителях
+ */
+function ext_mobile_app_sellers_source($region_id = null)
+{
+  $sellers = representatives_get_sellers_by_office($region_id);
+
+  // если запрос Предзагрузка, добавить base64 изображения
+  if (!empty($_GET['init'])) {
+    foreach($sellers as &$sellers_g) {
+      foreach($sellers_g as &$seller) {
+        if (!empty($seller['photo'])) {
+          $seller['photo_base64'] = chibs_image_style_base64('', $seller['photo']);
+        }
+      }
+    }
+  }
+
+  drupal_json_output(['sellers' => $sellers]);
+  drupal_exit();
+}
+
+/**
+ * callback function
+ * источник данных о сезонах для Мобильного приложения
+ */
+function ext_mobile_app_pvp_mobile_source()
+{
+  // все записи ПвП
+  $atf_ids = before_after_get_atfield_ids();
+  $seasons_all = before_after_get_atfield_list($atf_ids);
+
+  // наполнение для фильтров, чтобы фильтровать по месту
+  // плюс сортировка (в МП проблематично)
+  $filters = [
+    'regions' => [],
+    'cultures' => [],
+    'dv' => ['list' => [], 'sorted' => []],
+    'years' => []
+  ];
+  foreach ($seasons_all as &$season) {
+    $filters['regions']['list'][$season['region']['tid']] = $season['region'];
+    $filters['regions']['sorted'][$season['region']['tid']] = $season['region']['name'];
+    $filters['cultures']['list'][$season['culture']['nid']] = $season['culture'];
+    $filters['cultures']['sorted'][$season['culture']['nid']] = $season['culture']['title'];
+    $filters['dv']['list'] = $filters['dv']['list'] + $season['dv'];
+    $filters['years'][$season['year']] = $season['year'];
+
+    // если запрос Предзагрузка, добавить base64 изображения
+    if (!empty($_GET['init'])) {
+      $season['image_thumb_base64'] = empty($season['image_thumb']) ? '' : chibs_image_style_base64('', $season['image_thumb']);
+//      $season['image_full_base64'] = empty($season['image_full']) ? '' : chibs_image_style_base64('', $season['image_full']);
+    }
+  }
+  asort($filters['regions']['sorted']);
+  $filters['regions']['sorted'] = array_keys($filters['regions']['sorted']);
+
+  asort($filters['cultures']['sorted']);
+  $filters['cultures']['sorted'] = array_keys($filters['cultures']['sorted']);
+
+  foreach ($filters['dv']['list'] as $tid => $value) {
+    $filters['dv']['sorted'][$tid] = $value['name'];
+  }
+  asort($filters['dv']['sorted']);
+  $filters['dv']['sorted'] = array_keys($filters['dv']['sorted']);
+
+  asort($filters['years']);
+
+  $result = [
+    'seasons' => $seasons_all,
+    'filters' => $filters,
+  ];
+
+  drupal_json_output(['pvp' => $result]);
+  drupal_exit();
 }

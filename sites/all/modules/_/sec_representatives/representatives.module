@@ -24,14 +24,6 @@ function representatives_menu()
     'type' => MENU_CALLBACK
   );
 
-  // источник данных для мобильного приложения >= 3
-  $items['source/representatives.json'] = array(
-    'page callback' => '_representatives_source_mobile',
-    'page arguments' => array(2),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK
-  );
-
   return $items;
 }
 
