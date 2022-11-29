@@ -1459,7 +1459,7 @@ function chibs_get_representatives_address()
 function chibs_image_style_base64($style, $image_uri)
 {
   $path = $style ? image_style_url($style, $image_uri) : $image_uri;
-  $type = pathinfo($path, PATHINFO_EXTENSION);
+  $type = pathinfo(preg_replace('/^([^?]+).*$/', '$1', $path), PATHINFO_EXTENSION);
   $data = file_get_contents($path);
 
   return 'data:image/' . $type . ';base64,' . base64_encode($data);

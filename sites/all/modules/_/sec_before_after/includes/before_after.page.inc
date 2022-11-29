@@ -159,6 +159,9 @@ function before_after_get_atfield_list($result_s)
           'name' => $field_wrapper->field_f_region->label(),
         ];
 
+        // фото для предзагрузки в МП > v.3
+        $output['preload']['images'] = [];
+
         // процессы сезона
         // обработки
         $query = db_select('field_data_field_f_s_processings', 'p');
@@ -208,9 +211,8 @@ function before_after_get_atfield_list($result_s)
           $preps = $preps_w_links = array();
           $dv_list = [];
           foreach ($processes as $item_p) {
+            $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
             if ($item_p['type'] == 'processing') {
-              $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-              //
               foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $index => $prep_wr) {
                 if ($prep_wr->field_f_s_p_p_preparation->value()) { // часть старых препаратов удалена, но id остались
                   $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
@@ -238,6 +240,26 @@ function before_after_get_atfield_list($result_s)
                     $dv_list[$dv['tid']] = $dv;
                   }
                 }
+              }
+
+              // фото для мобильного приложения > v.3
+              $image_fid = $processing_wr->field_f_s_p_photo->value();
+              if ($image_fid && $image = file_load($image_fid)) {
+                $output['preload']['images'][] = image_style_url('news_teaser', $image->uri);
+                $output['preload']['images'][] = image_style_url('1200_1200', $image->uri);
+              }
+            }
+            // фото для мобильного приложения > v.3
+            if ($item_p['type'] == 'measurement') {
+              $image_f_fid = $processing_wr->field_f_s_m_foto_field->value();
+              if ($image_f_fid && $image_f = file_load($image_f_fid)) {
+                $output['preload']['images'][] = image_style_url('news_teaser', $image_f->uri);
+                $output['preload']['images'][] = image_style_url('1200_1200', $image_f->uri);
+              }
+              $image_c_fid = $processing_wr->field_f_s_m_foto_culture->value();
+              if ($image_c_fid && $image_c = file_load($image_c_fid)) {
+                $output['preload']['images'][] = image_style_url('news_teaser', $image_c->uri);
+                $output['preload']['images'][] = image_style_url('1200_1200', $image_c->uri);
               }
             }
           }
@@ -303,7 +325,7 @@ function before_after_get_atfield_list($result_s)
               $image_fid = $processing_wr->field_f_s_p_photo->value();
               if ($image_fid && $image = file_load($image_fid)) {
                 $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
-                $output['image_full'] = image_style_url('1200_1200', $image->uri);
+                $output['image_full'] = image_style_url('1024_1024', $image->uri);
               }
 
               // содержимое

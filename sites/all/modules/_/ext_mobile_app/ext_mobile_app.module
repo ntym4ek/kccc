@@ -56,7 +56,13 @@ function ext_mobile_app_menu()
   ];
 
   $items['source/pvp.json'] = array(
-    'page callback' => 'ext_mobile_app_pvp_mobile_source',
+    'page callback' => 'ext_mobile_app_pvp_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  $items['source/preloader/images'] = array(
+    'page callback' => 'ext_mobile_app_preloader_source',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK
   );
@@ -124,9 +130,7 @@ function ext_mobile_app_qsearch_source($category_tid = null)
           'description' => $prep_item['description'],
           'ingredients' => implode(' + ', $dv),
           'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
-          'photo_base64' => $is_preload ? chibs_image_style_base64('thumbnail', $prep_item['photo_uri']) : '',
-//          'photo_full' => file_create_url($prep_item['photo_uri']),
-//          'photo_full_base64' => $is_preload ? chibs_image_style_base64('', $prep_item['photo_uri']) : '',
+          'photo_full' => file_create_url($prep_item['photo_uri']),
           'icon' => $prep_arr['icon'],    // поддержка приложения версии <= 2.4.1
            // todo для Предзагрузки можно добавить изображения сертификатов
         ];
@@ -230,9 +234,9 @@ function ext_mobile_programs_source()
   // если запрос Предзагрузка, добавить base64 изображения
   if (!empty($_GET['init'])) {
     foreach($programs as &$program) {
-      if (!empty($program['header']['icon'])) {
-        $program['header']['icon_base64'] = chibs_image_style_base64('', $program['header']['icon']);
-      }
+//      if (!empty($program['header']['icon'])) {
+//        $program['header']['icon_base64'] = chibs_image_style_base64('', $program['header']['icon']);
+//      }
     }
   }
 
@@ -252,15 +256,17 @@ function ext_mobile_front_news_source()
   $items = [
     [
       'path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_1.jpg',
+//      'path_base64' => chibs_image_style_base64('', $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_1.jpg'),
       'link' => [
         'external' => true,
         'url' => 'https://kccc.ru/news/interesting-facts/pamyatka-rosselhozcentra-ob-osennem-vnesenii-glifosatov'
       ],
     ],
-    ['path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg', 'link' => ['url' => 'catalog']],
+    [
+      'path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg',
+//      'path_base64' => chibs_image_style_base64('', $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg'),
+      'link' => ['url' => 'catalog']],
   ];
-
-  sleep(2);
 
   drupal_json_output(['news' => [
     'items' => $items
@@ -279,6 +285,7 @@ function ext_mobile_front_products_source()
       'description' => $product_info['items'][$product_info['nid']]['description'],
       'ingredients' => $product_info['items'][$product_info['nid']]['ingredients_text'],
       'img' => $product_info['items'][$product_info['nid']]['photo_medium'],
+//      'img_base64' => chibs_image_style_base64('', $product_info['items'][$product_info['nid']]['photo_medium']),
     ];
   }
 
@@ -509,13 +516,22 @@ function _ext_mobile_app_resource_entityform_types_user_permissions()
  */
 function ext_mobile_app_init()
 {
+  // нужно настроить nginx на отправку Access-Control-Allow-Origin 'https://app.kccc.ru'
+  // так как nginx может отправлять изображения и некоторые json без обращения к серверу,
+  // то настраиваем удаление существующего Access-Control-Allow-Origin (отправленного отсюда для запросов переданных серверу)
+  // и добавляем снова
+  //  location / {
+  //    proxy_hide_header Access-Control-Allow-Origin;
+  //    add_header Access-Control-Allow-Origin "https://app.kccc.ru";
+  //  }
+  // для изображений добавляем отдельно
+  // ...
+
   // для запросов от приложения (оно должно отправлять origin: https://app.kccc.ru)
   // разрешить CORS запросы
   $request_headers = getallheaders();
-//  watchdog('init', 'Массив <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
   if ((!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru')
       || (!empty($request_headers['Origin']) && $request_headers['Origin'] == 'https://app.kccc.ru')) {
-//    watchdog('init', 'Ориджин <pre>@v</pre>', array('@v' =>  $request_headers['origin']), WATCHDOG_INFO);
     drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
     drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
   }
@@ -549,15 +565,15 @@ function ext_mobile_app_sellers_source($region_id = null)
   $sellers = representatives_get_sellers_by_office($region_id);
 
   // если запрос Предзагрузка, добавить base64 изображения
-  if (!empty($_GET['init'])) {
-    foreach($sellers as &$sellers_g) {
-      foreach($sellers_g as &$seller) {
-        if (!empty($seller['photo'])) {
-          $seller['photo_base64'] = chibs_image_style_base64('', $seller['photo']);
-        }
-      }
-    }
-  }
+//  if (!empty($_GET['init'])) {
+//    foreach($sellers as &$sellers_g) {
+//      foreach($sellers_g as &$seller) {
+//        if (!empty($seller['photo'])) {
+//          $seller['photo_base64'] = chibs_image_style_base64('', $seller['photo']);
+//        }
+//      }
+//    }
+//  }
 
   drupal_json_output(['sellers' => $sellers]);
   drupal_exit();
@@ -567,7 +583,7 @@ function ext_mobile_app_sellers_source($region_id = null)
  * callback function
  * источник данных о сезонах для Мобильного приложения
  */
-function ext_mobile_app_pvp_mobile_source()
+function ext_mobile_app_pvp_source()
 {
   // все записи ПвП
   $atf_ids = before_after_get_atfield_ids();
@@ -588,12 +604,6 @@ function ext_mobile_app_pvp_mobile_source()
     $filters['cultures']['sorted'][$season['culture']['nid']] = $season['culture']['title'];
     $filters['dv']['list'] = $filters['dv']['list'] + $season['dv'];
     $filters['years'][$season['year']] = $season['year'];
-
-    // если запрос Предзагрузка, добавить base64 изображения
-    if (!empty($_GET['init'])) {
-      $season['image_thumb_base64'] = empty($season['image_thumb']) ? '' : chibs_image_style_base64('', $season['image_thumb']);
-//      $season['image_full_base64'] = empty($season['image_full']) ? '' : chibs_image_style_base64('', $season['image_full']);
-    }
   }
   asort($filters['regions']['sorted']);
   $filters['regions']['sorted'] = array_keys($filters['regions']['sorted']);
@@ -615,5 +625,25 @@ function ext_mobile_app_pvp_mobile_source()
   ];
 
   drupal_json_output(['pvp' => $result]);
+  drupal_exit();
+}
+
+function ext_mobile_app_preloader_source()
+{
+  // получаем запрос
+  $query = json_decode(file_get_contents('php://input'), true);
+
+  // запрошенные изображения переводим в base64
+  $images_base64 = [];
+  foreach ($query as $section) {
+    foreach ($section['images'] as $url) {
+      $images_base64[$url] = chibs_image_style_base64('', $url);
+    }
+  }
+
+  // отправляем ответ
+  $size = strlen(drupal_json_encode($images_base64));
+  header("Content-length: $size");
+  drupal_json_output($images_base64);
   drupal_exit();
 }
