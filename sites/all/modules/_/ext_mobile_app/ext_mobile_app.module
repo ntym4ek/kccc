@@ -81,7 +81,7 @@ function ext_mobile_app_menu()
   $items['admin/config/mobile/settings'] = array(
     'title' => 'App Settings',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('ext_mobile_app_settings'),
+    'page arguments' => array('ext_mobile_app_settings_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'includes/ext_mobile_app.settings.inc',
   );
@@ -231,15 +231,6 @@ function ext_mobile_programs_source()
     }
   }
 
-  // если запрос Предзагрузка, добавить base64 изображения
-  if (!empty($_GET['init'])) {
-    foreach($programs as &$program) {
-//      if (!empty($program['header']['icon'])) {
-//        $program['header']['icon_base64'] = chibs_image_style_base64('', $program['header']['icon']);
-//      }
-    }
-  }
-
   drupal_json_output([
     'programs' => $programs,
     'sorted' => $result,
@@ -253,20 +244,19 @@ function ext_mobile_programs_source()
 
 function ext_mobile_front_news_source()
 {
-  $items = [
-    [
-      'path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_1.jpg',
-//      'path_base64' => chibs_image_style_base64('', $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_1.jpg'),
-      'link' => [
-        'external' => true,
-        'url' => 'https://kccc.ru/news/interesting-facts/pamyatka-rosselhozcentra-ob-osennem-vnesenii-glifosatov'
-      ],
-    ],
-    [
-      'path' => $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg',
-//      'path_base64' => chibs_image_style_base64('', $GLOBALS['base_url'] . '/sites/default/files/images/tmp_front/slide_2.jpg'),
-      'link' => ['url' => 'catalog']],
-  ];
+  $items = [];
+  if ($banners = variable_get('ema_front_banners', [])) {
+    foreach($banners as $fid => $banner) {
+      $file = file_load($fid);
+      $items[] = [
+        'image' => file_create_url($file->uri),
+        'link' => [
+//        'external' => true,
+          'url' => $banner['url']
+        ],
+      ];
+    }
+  }
 
   drupal_json_output(['news' => [
     'items' => $items
@@ -285,7 +275,6 @@ function ext_mobile_front_products_source()
       'description' => $product_info['items'][$product_info['nid']]['description'],
       'ingredients' => $product_info['items'][$product_info['nid']]['ingredients_text'],
       'img' => $product_info['items'][$product_info['nid']]['photo_medium'],
-//      'img_base64' => chibs_image_style_base64('', $product_info['items'][$product_info['nid']]['photo_medium']),
     ];
   }
 
@@ -564,17 +553,6 @@ function ext_mobile_app_sellers_source($region_id = null)
 {
   $sellers = representatives_get_sellers_by_office($region_id);
 
-  // если запрос Предзагрузка, добавить base64 изображения
-//  if (!empty($_GET['init'])) {
-//    foreach($sellers as &$sellers_g) {
-//      foreach($sellers_g as &$seller) {
-//        if (!empty($seller['photo'])) {
-//          $seller['photo_base64'] = chibs_image_style_base64('', $seller['photo']);
-//        }
-//      }
-//    }
-//  }
-
   drupal_json_output(['sellers' => $sellers]);
   drupal_exit();
 }
@@ -631,13 +609,14 @@ function ext_mobile_app_pvp_source()
 function ext_mobile_app_preloader_source()
 {
   // получаем запрос
-  $query = json_decode(file_get_contents('php://input'), true);
+  $image_urls = json_decode(file_get_contents('php://input'), true);
 
   // запрошенные изображения переводим в base64
   $images_base64 = [];
-  foreach ($query as $section) {
-    foreach ($section['images'] as $url) {
-      $images_base64[$url] = chibs_image_style_base64('', $url);
+  foreach ($image_urls as $url) {
+    $base64 = chibs_image_style_base64('', $url);
+    if (strlen($base64) > 100) {
+      $images_base64[] = ['u' => $url, 'b' => $base64];
     }
   }
 

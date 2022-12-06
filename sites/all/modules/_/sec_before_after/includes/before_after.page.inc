@@ -328,69 +328,6 @@ function before_after_get_atfield_list($result_s)
                 $output['image_full'] = image_style_url('1024_1024', $image->uri);
               }
 
-              // содержимое
-//              $output['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
-//              $output['time'] = $processing_wr->field_f_s_p_time->value();
-//              $output['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
-//              $output['consumption'] = $processing_wr->field_f_s_p_consumption->value();
-//              $output['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
-//              $output['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
-//              $output['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
-//              $output['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
-//              $output['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
-//              $output['humidity'] = $processing_wr->field_f_s_p_humidity->value();
-
-              // препараты
-//              $preparations = [];
-//              $titles = [];
-//              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-//                $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
-//                $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
-//
-//                $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title,
-//                  'ingredients' => implode(' + ', $prep_info['ingredients']),
-//                  'url' => $prep_info['url'],
-//                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
-//                ];
-//                $titles[] = $title;
-//              }
-//
-//              // для обратной совместимости со старыми полями препаратов
-//              // препарат
-//              if ($processing_wr->field_f_s_p_preparation->value()) {
-//                $prep_info = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value())['items']);
-//                $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title,
-//                  'ingredients' => implode(' + ', $prep_info['ingredients']),
-//                  'url' => $prep_info['url'],
-//                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
-//                ];
-//                $titles[] = $title;
-//              }
-//              // препарат2
-//              if ($processing_wr->field_f_s_p_preparation2->value()) {
-//                $prep_info2 = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation2->value())['items']);
-//                $title2 = $prep_info2['title'] . ($prep_info2['form_short'] ? ', ' . $prep_info2['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title2,
-//                  'ingredients' => implode(' + ', $prep_info2['ingredients']),
-//                  'url' => $prep_info2['url'],
-//                  'nid' => $prep_info2['id'],
-//                  'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info2['photo_uri']),
-//                ];
-//                $titles[] = $title2;
-//              }
-//
-//              $output['preparations'] = $preparations;
-//              $output['title'] = implode('<br/>', $titles);
-
-
               $output['footer'] = 'Проведена обработка ' . $category;
 
               $atf_array[$process['date'] . $sid] = $output;
@@ -658,69 +595,6 @@ function before_after_get_atfield_list_old($filter_region = null, $filter_cultur
                 $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
                 $output['image_full'] = image_style_url('1200_1200', $image->uri);
               }
-
-              // содержимое
-//              $output['date'] = date('d.m.Y', $processing_wr->field_f_s_p_date->value());
-//              $output['time'] = $processing_wr->field_f_s_p_time->value();
-//              $output['mechanism'] = $processing_wr->field_f_s_p_mechanism->value();
-//              $output['consumption'] = $processing_wr->field_f_s_p_consumption->value();
-//              $output['precipitation'] = drupal_strtolower($processing_wr->field_f_s_p_precipitation->value());
-//              $output['wind'] = $processing_wr->field_f_s_p_wind_speed->value();
-//              $output['t_day'] = $processing_wr->field_f_s_p_temp_day->value();
-//              $output['t_night'] = $processing_wr->field_f_s_p_temp_night->value();
-//              $output['acidity'] = drupal_strtolower($processing_wr->field_f_s_p_acidity->name->value());
-//              $output['humidity'] = $processing_wr->field_f_s_p_humidity->value();
-
-              // препараты
-//              $preparations = [];
-//              $titles = [];
-//              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-//                $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
-//                $prep_info = $product_info['items'][$prep_wr->field_f_s_p_p_preparation->getIdentifier()];
-//
-//                $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title,
-//                  'ingredients' => implode(' + ', $prep_info['ingredients']),
-//                  'url' => $prep_info['url'],
-//                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
-//                ];
-//                $titles[] = $title;
-//              }
-//
-//              // для обратной совместимости со старыми полями препаратов
-//              // препарат
-//              if ($processing_wr->field_f_s_p_preparation->value()) {
-//                $prep_info = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value())['items']);
-//                $title = $prep_info['title'] . ($prep_info['form_short'] ? ', ' . $prep_info['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title,
-//                  'ingredients' => implode(' + ', $prep_info['ingredients']),
-//                  'url' => $prep_info['url'],
-//                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info['photo_uri']),
-//                ];
-//                $titles[] = $title;
-//              }
-//              // препарат2
-//              if ($processing_wr->field_f_s_p_preparation2->value()) {
-//                $prep_info2 = array_shift(ext_product_product_get_info($processing_wr->field_f_s_p_preparation2->value())['items']);
-//                $title2 = $prep_info2['title'] . ($prep_info2['form_short'] ? ', ' . $prep_info2['form_short'] : '');
-//                $preparations[] = [
-//                  'title' => $title2,
-//                  'ingredients' => implode(' + ', $prep_info2['ingredients']),
-//                  'url' => $prep_info2['url'],
-//                  'nid' => $prep_info2['id'],
-//                  'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
-//                  'image_full' => image_style_url('1200_1200', $prep_info2['photo_uri']),
-//                ];
-//                $titles[] = $title2;
-//              }
-//
-//              $output['preparations'] = $preparations;
-//              $output['title'] = implode('<br/>', $titles);
-
 
               $output['footer'] = 'Проведена обработка ' . $category;
 
@@ -1120,23 +994,6 @@ function before_after_get_atfield($sid)
       $output['author'] = ext_user_get_user_info($field->uid);
       $output['author']['photo'] = image_style_url('user_photo', $output['author']["photo_uri"]);
 
-      // user
-//      $img = 'default_images/ru-default-thickbox_default.jpg';
-//
-//      if ($profile_main = profile2_load_by_user($user, 'main')) {
-//        if (isset($profile_main->field_profile_photo['und'][0]['uri'])) $img = $profile_main->field_profile_photo['und'][0]['uri'];
-//      }
-//      $output['author_img'] = image_style_url('user_photo', $img);
-//
-//       если утвержденный сотрудник вывести регалии
-//      if ($staff = profile2_load_by_user($user, 'staff')) {
-//        $staff_wrapper = entity_metadata_wrapper('profile2', $staff);
-//
-//        $output['author_company'] = 'Торговый Дом Кирово-Чепецкая Химическая Компания';
-//        $output['author_post'] = $staff_wrapper->field_profile_post->value();
-//      }
-
-
       // процессы сезона
       // обработки
       $query = db_select('field_data_field_f_s_processings', 'p');
@@ -1195,6 +1052,7 @@ function before_after_get_atfield($sid)
               'dominant' => $item_ho->field_f_s_h_dominant->value() ? $item_ho->field_f_s_h_dominant->value() : 0,
               'type' => $item_ho->field_f_s_h_hobject->getBundle(),
               'percent' => '-',
+              'photo_thumb' => image_style_url('large', $item_ho->field_f_s_h_hobject->field_promo_image->value()['uri']),
               'photo' => image_style_url('1200_1200', $item_ho->field_f_s_h_hobject->field_promo_image->value()['uri']),
               'photo_title' => $item_ho->field_f_s_h_hobject->label() . ' (cправочное фото)',
               'photo_title_mobile' => $item_ho->field_f_s_h_hobject->label() . ' (cправочное фото)',
@@ -1250,6 +1108,7 @@ function before_after_get_atfield($sid)
                 if (isset($arr_ho[$nid])) {
 //                  $arr_ho[$nid]['photo'] = '';
                   if ($photo_fid && $photo = file_load($photo_fid)) {
+                    $arr_ho[$nid]['photo_thumb'] = $photo ? image_style_url('large', $photo->uri) : '';
                     $arr_ho[$nid]['photo'] = $photo ? image_style_url('1200_1200', $photo->uri) : '';
                     $arr_ho[$nid]['photo_title'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' после обработки' : ' до обработки');
                     $arr_ho[$nid]['photo_title_mobile'] = $item_ho->field_f_s_m_c_hobject->label() . ($key_m ? ' (после обработки)' : ' (до обработки)');
@@ -1290,8 +1149,8 @@ function before_after_get_atfield($sid)
                   'description' => $prep_info['description'],
                   'url' => $prep_info['url'],
                   'nid' => $prep_info['id'],
-                  'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                  'image_full' => image_style_url('medium', $prep_info['photo_uri']),
+                  'image_thumb' => image_style_url('thumbnail', $prep_info['photo_uri']),
+//                  'image_full' => image_style_url('medium', $prep_info['photo_uri']),
                   'unit_short' => $prep_info['unit_short'],
                   'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
                   'rate' => $prep_wr->field_f_s_p_p_rate->value(),
@@ -1326,8 +1185,8 @@ function before_after_get_atfield($sid)
                 'description' => $prep_info['description'],
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
-                'image_thumb' => image_style_url('medium', $prep_info['photo_uri']),
-                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
+                'image_thumb' => image_style_url('thumbnail', $prep_info['photo_uri']),
+//                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
                 'unit_short' => $prep_info['unit_short'],
                 'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption->value()),
@@ -1353,8 +1212,8 @@ function before_after_get_atfield($sid)
                 'description' => $prep_info2['description'],
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
-                'image_thumb' => image_style_url('medium', $prep_info2['photo_uri']),
-                'image_full' => image_style_url('medium', $prep_info2['photo_uri']),
+                'image_thumb' => image_style_url('thumbnail', $prep_info2['photo_uri']),
+//                'image_full' => image_style_url('medium', $prep_info2['photo_uri']),
                 'unit_short' => $prep_info2['unit_short'],
                 'unit_field' => $prep_info2['unit_field'][array_key_first($prep_info2['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption2->value()),

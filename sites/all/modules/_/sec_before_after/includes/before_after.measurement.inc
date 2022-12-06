@@ -133,7 +133,7 @@ function before_after_measurement_form($form, &$form_state, $sid, $mid = '')
 
     // если нажата Добавить объект - добавить пустой ВО в массив
     if (!empty($options_ho_free) && !empty($form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'add-ho') {
-        $key = 'n' . rand(1, 1000);
+        $key = 'n' . rand(1, 99999);
         $form_state['hobjects'][$key] = array(
             'nid' => 0,
             'name' => '',
