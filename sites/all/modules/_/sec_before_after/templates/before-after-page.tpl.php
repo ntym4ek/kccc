@@ -369,8 +369,8 @@ $before = array_shift($content['measurements']);
                   <? foreach($processing['preparations'] as $prep) :?>
                     <div class="preparation">
                       <div class="image">
-                        <a href="<? print $prep['image_full']; ?>" class="prep fancybox" title="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания">
-                          <img typeof="foaf:Image" src="<? print $prep['image_thumb']; ?>" property="dc:image" class="img-responsive" alt="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
+                        <a href="<? print $prep['url']; ?>" target="_blank">
+                          <img typeof="foaf:Image" src="<? print $prep['image_medium']; ?>" property="dc:image" class="img-responsive" alt="<? print $prep["title"]; ?> - препарат ООО ТД Кирово-Чепецкая Химическая Компания" loading="lazy">
                         </a>
                       </div>
                       <div class="info">

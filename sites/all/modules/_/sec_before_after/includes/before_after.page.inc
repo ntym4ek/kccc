@@ -273,24 +273,6 @@ function before_after_get_atfield_list($result_s)
           // список ДВ
           $output['dv'] = $dv_list;
 
-          // если задан фильтр по ДВ, отсеять сезон (уже выше сделано)
-//          if ($filter_dv && $filter_dv != 'All' && empty($preps[$filter_dv])) {
-//            // список id препаратов с этим ДВ
-//            $query = db_select('node', 'n');
-//            $query->innerJoin('field_data_field_pd_active_ingredients', 'fis', 'fis.entity_id = n.nid');
-//            $query->innerJoin('field_data_field_pd_ai_active_ingredient', 'fi', 'fi.entity_id = fis.field_pd_active_ingredients_value');
-//            $query->condition('fi.field_pd_ai_active_ingredient_tid', $filter_dv);
-//            $query->fields('n', ['nid']);
-//            $is_in_array = false;
-//            if ($result_n = $query->execute()->fetchAll()) {
-//              foreach ($result_n as $item_n) {
-//                if (isset($preps[$item_n->nid])) $is_in_array = true;
-//              }
-//            }
-//
-//            if (!$is_in_array) continue;
-//          }
-
           // заголовки
           $output['culture'] = [
             'nid' => $season_wrapper->field_f_s_culture->getIdentifier(),
@@ -356,7 +338,6 @@ function before_after_get_atfield_list($result_s)
                 $output['condition_title'] = 'Состояние культуры: ';
                 $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
               }
-
 
               // все вредные объекты сезона
               $arr_ho_all = array();
@@ -1150,7 +1131,7 @@ function before_after_get_atfield($sid)
                   'url' => $prep_info['url'],
                   'nid' => $prep_info['id'],
                   'image_thumb' => image_style_url('thumbnail', $prep_info['photo_uri']),
-//                  'image_full' => image_style_url('medium', $prep_info['photo_uri']),
+                  'image_medium' => image_style_url('medium', $prep_info['photo_uri']),
                   'unit_short' => $prep_info['unit_short'],
                   'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
                   'rate' => $prep_wr->field_f_s_p_p_rate->value(),
@@ -1186,7 +1167,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info['url'],
                 'nid' => $prep_info['id'],
                 'image_thumb' => image_style_url('thumbnail', $prep_info['photo_uri']),
-//                'image_full' => image_style_url('medium', $prep_info['photo_uri']),
+                'image_medium' => image_style_url('medium', $prep_info['photo_uri']),
                 'unit_short' => $prep_info['unit_short'],
                 'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption->value()),
