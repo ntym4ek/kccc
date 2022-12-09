@@ -168,28 +168,28 @@ function gard_preprocess_node(&$vars) {
         }
 
         // перевести количество
-        $translate_array = [
-            '100 грамм' => '100 g',
-            '10 банок' => '10 jars',
-            '20 пакетиков х 30 гр' => '20 packets х 30 g',
-            '0.5 килограмма' => '0.5 kg',
-            '1 килограмм' => '1 kg',
-            '4 пакета' => '4 packets',
-            '10 пакетов' => '10 packets',
-            '5 литров' => '5 liters',
-            '20 литров' => '20 liters',
-            '4 канистры' => '4 canisters',
-            '32 канистры' => '32 canisters',
-            '30 коробок' => '30 boxes',
-            '40 коробок' => '40 boxes',
-            '60 коробок' => '60 boxes',
-            '100 коробок' => '100 boxes',
-        ];
-        if (isset($vars['content']['product:field_p_in_package'][0]['#markup'])
-            && $GLOBALS['language']->language == 'en'
-            && isset($translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']])) {
-            $vars['content']['product:field_p_in_package'][0]['#markup'] = $translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']];
-        }
+//        $translate_array = [
+//            '100 грамм' => '100 g',
+//            '10 банок' => '10 jars',
+//            '20 пакетиков х 30 гр' => '20 packets х 30 g',
+//            '0.5 килограмма' => '0.5 kg',
+//            '1 килограмм' => '1 kg',
+//            '4 пакета' => '4 packets',
+//            '10 пакетов' => '10 packets',
+//            '5 литров' => '5 liters',
+//            '20 литров' => '20 liters',
+//            '4 канистры' => '4 canisters',
+//            '32 канистры' => '32 canisters',
+//            '30 коробок' => '30 boxes',
+//            '40 коробок' => '40 boxes',
+//            '60 коробок' => '60 boxes',
+//            '100 коробок' => '100 boxes',
+//        ];
+//        if (isset($vars['content']['product:field_p_in_package'][0]['#markup'])
+//            && $GLOBALS['language']->language == 'en'
+//            && isset($translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']])) {
+//            $vars['content']['product:field_p_in_package'][0]['#markup'] = $translate_array[$vars['content']['product:field_p_in_package'][0]['#markup']];
+//        }
 
         $vars['titles_arr'] = $vars['ingredients_arr'] = $vars['images'] = $vars['prices_arr'] = $vars['images'] = $preparations = [];
         $price_in_tare_amount = 0;

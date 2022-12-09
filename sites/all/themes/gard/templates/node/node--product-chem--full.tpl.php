@@ -95,20 +95,20 @@
                 </div>
             <?php endif; ?>
 
-            <?php print render($content['product:field_p_in_package']); ?>
+            <?php print render($content['product:field_p_packaging']); ?>
 
             <?php print render($content['field_product']); ?>
 
-            <?php if (!empty($content['field_pd_consumption_rate'])) : ?>
-                <div class="field field-name-field-pd-consumption-rate">
-                    <div class="field-label"><?php print $content['field_pd_consumption_rate']['#title']; ?></div>
-                    <div class="field-items">
-                        <?php print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
-                            . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
-                            . ' ' . $unit; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+<!--            --><?php //if (!empty($content['field_pd_consumption_rate'])) : ?>
+<!--                <div class="field field-name-field-pd-consumption-rate">-->
+<!--                    <div class="field-label">--><?php //print $content['field_pd_consumption_rate']['#title']; ?><!--</div>-->
+<!--                    <div class="field-items">-->
+<!--                        --><?php //print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
+//                            . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
+//                            . ' ' . $unit; ?>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            --><?php //endif; ?>
 
         </div>
     </div>

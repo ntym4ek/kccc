@@ -101,16 +101,16 @@
 
             <?php print render($content['field_product']); ?>
 
-            <?php if (!empty($content['field_pd_consumption_rate'])) : ?>
-                <div class="field field-name-field-pd-consumption-rate">
-                    <div class="field-label"><?php print $content['field_pd_consumption_rate']['#title']; ?></div>
-                    <div class="field-items">
-                        <?php print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
-                            . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
-                            . ' ' . $unit; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+<!--            --><?php //if (!empty($content['field_pd_consumption_rate'])) : ?>
+<!--                <div class="field field-name-field-pd-consumption-rate">-->
+<!--                    <div class="field-label">--><?php //print $content['field_pd_consumption_rate']['#title']; ?><!--</div>-->
+<!--                    <div class="field-items">-->
+<!--                        --><?php //print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
+//                            . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
+//                            . ' ' . $unit; ?>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            --><?php //endif; ?>
 
 <!--            <div class="field field-name-field-pd-price-per-unit">-->
 <!--                <div class="field-label">--><?php //print t('Price per ') .' '. mb_strtolower($units[0]) . '. <span style="white-space: nowrap;">' . t('(with NDS)') . '</span>'; ?><!--</div>-->

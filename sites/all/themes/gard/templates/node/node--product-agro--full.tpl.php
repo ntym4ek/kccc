@@ -110,16 +110,16 @@
       <?php print render($content['field_product']); ?>
 
 
-      <?php if (!empty($content['field_pd_consumption_rate'])) : ?>
-        <div class="field field-name-field-pd-consumption-rate">
-          <div class="field-label"><?php print $content['field_pd_consumption_rate']['#title']; ?></div>
-          <div class="field-items">
-            <?php print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
-              . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
-              . ' ' . $unit; ?>
-          </div>
-        </div>
-      <?php endif; ?>
+<!--      --><?php //if (!empty($content['field_pd_consumption_rate'])) : ?>
+<!--        <div class="field field-name-field-pd-consumption-rate">-->
+<!--          <div class="field-label">--><?php //print $content['field_pd_consumption_rate']['#title']; ?><!--</div>-->
+<!--          <div class="field-items">-->
+<!--            --><?php //print (float) $content['field_pd_consumption_rate']['#items'][0]['from']
+//              . ' - ' . (float) $content['field_pd_consumption_rate']['#items'][0]['to']
+//              . ' ' . $unit; ?>
+<!--          </div>-->
+<!--        </div>-->
+<!--      --><?php //endif; ?>
 
 <!--      --><?php //if ($content['field_pd_price_per_unit']['#items'][0]['amount'] != 0 && !empty($content['field_pd_consumption_rate']['#items'][0]['from'])) : ?>
 <!--        <div class="field field-name-field-pd-price-per-unit">-->
