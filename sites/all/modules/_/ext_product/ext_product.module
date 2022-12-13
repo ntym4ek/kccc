@@ -328,6 +328,12 @@ function ext_product_product_get_info($node)
       }
     }
 
+    // свидетельства
+    $certs = [];
+    foreach ($prep_item_wr->field_pd_certificate->getIterator() as $cert_wr) {
+      $certs[] = $cert_wr->file->url->value();
+    }
+
     $preparation['items'][$id] = array(
       'id'            => $id,
       'title'         => $prep_item_wr->language($lang)->title_field->value(),
@@ -352,6 +358,7 @@ function ext_product_product_get_info($node)
       'tare'          => $tare,
       'price_in_tare_amount'  => $price_in_tare_amount,
       'price_in_tare_formatted'  => $price_in_tare_formatted,
+      'certs'         => $certs,
     );
     $titles_w_form[] = $form_short ? $prep_item_wr->title_field->value() . ', ' . $form_short : $prep_item_wr->title_field->value();
   }

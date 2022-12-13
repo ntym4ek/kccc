@@ -410,12 +410,12 @@ function _reglaments_get_protection_system2($parameters)
                       }
                         $title_arr[] = $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : '');
                         $units_arr[] = $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid];
-                        $photo_arr[] = image_style_url('thumbnail', $prep_item['photo_uri']);
+                        $photo_arr[] = image_style_url('medium', $prep_item['photo_uri']);
 
                         $preparations['items'][$index . '-' . $prep_item['id']] = array(
                             'id' => $prep_item['id'],
                             'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
-                            'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
+                            'photo' => image_style_url('medium', $prep_item['photo_uri']),
                             'photo_medium' => image_style_url('large', $prep_item['photo_uri']),
                             'units' => $prep_item['unit_short'] . '/' . $prep_item['unit_field'][$tid],
                             'unit'  => $prep_item['unit_short'],

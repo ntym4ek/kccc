@@ -129,8 +129,9 @@ function ext_mobile_app_qsearch_source($category_tid = null)
           'title' => $prep_item['title'] . ($prep_item['form_short'] ? ', ' . $prep_item['form_short'] : ''),
           'description' => $prep_item['description'],
           'ingredients' => implode(' + ', $dv),
-          'photo' => image_style_url('thumbnail', $prep_item['photo_uri']),
+          'photo' => image_style_url('medium', $prep_item['photo_uri']),
           'photo_full' => file_create_url($prep_item['photo_uri']),
+          'certs' => $prep_item['certs'],
           'icon' => $prep_arr['icon'],    // поддержка приложения версии <= 2.4.1
            // todo для Предзагрузки можно добавить изображения сертификатов
         ];
