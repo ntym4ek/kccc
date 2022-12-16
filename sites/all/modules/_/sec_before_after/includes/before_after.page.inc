@@ -68,7 +68,7 @@ function before_after_list_page()
  */
 function before_after_get_atfield_ids($filter_region = null, $filter_culture = null, $filter_dv = null, $filter_year = null)
 {
-  $fid = drupal_hash_base64(__FUNCTION__ . ($filter_region ? $filter_region : '0') . ($filter_culture ? $filter_culture : '0') . ($filter_dv ? $filter_dv : '0'));
+  $fid = drupal_hash_base64(__FUNCTION__ . ($filter_region ? $filter_region : '0') . ($filter_culture ? $filter_culture : '0') . ($filter_dv ? $filter_dv : '0') . ($filter_year ? $filter_year : '0'));
   $result_s = &drupal_static($fid);
   if (!$result_s) {
 
@@ -683,7 +683,12 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   ];
 
   // определить список ID сезонов по установленным фильтрам
-  $atf_ids = before_after_get_atfield_ids($rid, $cid, $iid, $year);
+  // оставлять в фильтрах все доступные значения
+//  $atf_ids = before_after_get_atfield_ids($rid, $cid, $iid, $year);
+  $atf_regions_ids = before_after_get_atfield_ids(null, $cid, $iid, $year);
+  $atf_cultures_ids = before_after_get_atfield_ids($rid, null, $iid, $year);
+  $atf_dv_ids = before_after_get_atfield_ids($rid, $cid, null, $year);
+  $atf_years_ids = before_after_get_atfield_ids($rid, $cid, $iid, null);
 
   // определить id - название опции из найденных сезонов
     // опция Культура
@@ -695,7 +700,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->distinct();
   $query->fields('n', array('nid', 'title'));
   $query_full = clone $query;
-  $query->condition('fc.entity_id', $atf_ids, 'IN');
+  $query->condition('fc.entity_id', $atf_cultures_ids, 'IN');
   $options['cultures']['filter'] = $query->execute()->fetchAllKeyed();
   $options['cultures']['full'] = $query_full->execute()->fetchAllKeyed();
 
@@ -712,7 +717,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('field_data_field_f_sowing', 'fs', 'fs.entity_id = n.nid');
   $query->fields('t', array('tid', 'name'));
   $query_full = clone $query;
-  $query->condition('fs.field_f_sowing_value', $atf_ids, 'IN');
+  $query->condition('fs.field_f_sowing_value', $atf_regions_ids, 'IN');
   $options['regions']['filter'] = $query->execute()->fetchAllKeyed();
   $options['regions']['full'] = $query_full->execute()->fetchAllKeyed();
 
@@ -726,7 +731,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->addField('fy', 'field_f_s_year_value', 'year');
   $query_full = clone $query;
   $options['years']['full'] = $query_full->execute()->fetchAllKeyed(0, 0);
-  $query->condition('fy.entity_id', $atf_ids, 'IN');
+  $query->condition('fy.entity_id', $atf_years_ids, 'IN');
   $options['years']['filter'] = $query->execute()->fetchAllKeyed(0, 0);
 
   arsort($options['years']['filter']);
@@ -744,7 +749,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
   $query_full = clone $query;
   $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
-  $query->condition('fp.entity_id', $atf_ids, 'IN');
+  $query->condition('fp.entity_id', $atf_dv_ids, 'IN');
   $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
 
       // устар. поля с препаратом
@@ -756,7 +761,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
   $query_full = clone $query;
   $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
-  $query->condition('fp.entity_id', $atf_ids, 'IN');
+  $query->condition('fp.entity_id', $atf_dv_ids, 'IN');
   $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
 
   $query = db_select('taxonomy_term_data', 't');
@@ -767,7 +772,7 @@ function _before_after_filters($rid = null, $cid = null, $iid = null, $year = nu
   $query->innerJoin('field_data_field_f_s_processings', 'fp', 'fp.field_f_s_processings_value = fpp.entity_id');
   $query_full = clone $query;
   $options['ingredients']['full'] += (array) $query_full->execute()->fetchAllKeyed();
-  $query->condition('fp.entity_id', $atf_ids, 'IN');
+  $query->condition('fp.entity_id', $atf_dv_ids, 'IN');
   $options['ingredients']['filter'] += (array) $query->execute()->fetchAllKeyed();
 
   asort($options['ingredients']['filter']);
@@ -828,10 +833,10 @@ function before_after_exposed_filters_form($form, &$form_state)
   }
 
   $options = _before_after_filters($region_selected, $culture_selected, $ingredient_selected, $year_selected);
-  if (!isset($culture_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['regions']['filter'] = $options['regions']['full'];
-  if (!isset($region_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['cultures']['filter'] = $options['cultures']['full'];
-  if (!isset($region_selected) && !isset($culture_selected) && !isset($year_selected)) $options['ingredients']['filter'] = $options['ingredients']['full'];
-  if (!isset($region_selected) && !isset($culture_selected) && !isset($ingredient_selected)) $options['years']['filter'] = $options['years']['full'];
+//  if (!isset($culture_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['regions']['filter'] = $options['regions']['full'];
+//  if (!isset($region_selected) && !isset($ingredient_selected) && !isset($year_selected)) $options['cultures']['filter'] = $options['cultures']['full'];
+//  if (!isset($region_selected) && !isset($culture_selected) && !isset($year_selected)) $options['ingredients']['filter'] = $options['ingredients']['full'];
+//  if (!isset($region_selected) && !isset($culture_selected) && !isset($ingredient_selected)) $options['years']['filter'] = $options['years']['full'];
 
   $form_state['options'] = [
     'region' => $region_selected,
@@ -1134,8 +1139,8 @@ function before_after_get_atfield($sid)
                   'image_medium' => image_style_url('medium', $prep_info['photo_uri']),
                   'unit_short' => $prep_info['unit_short'],
                   'unit_field' => $prep_info['unit_field'][array_key_first($prep_info['categories'])],
-                  'rate' => $prep_wr->field_f_s_p_p_rate->value(),
-                  'consumption' => $prep_wr->field_f_s_p_p_consumption->value(),
+                  'rate' => str_replace('.', ',', floatval(str_replace(',', '.', $prep_wr->field_f_s_p_p_rate->value()))),
+                  'consumption' => str_replace('.', ',', floatval(str_replace(',', '.', $prep_wr->field_f_s_p_p_consumption->value()))),
                   'category' => [
                     'tid' => $cat_tid,
                     'name' => $prep_wr->field_f_s_p_p_preparation->field_pd_category[0]->label(),
