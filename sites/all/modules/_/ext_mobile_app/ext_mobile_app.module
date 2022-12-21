@@ -249,10 +249,14 @@ function ext_mobile_front_news_source()
   if ($banners = variable_get('ema_front_banners', [])) {
     foreach($banners as $fid => $banner) {
       $file = file_load($fid);
+      $file_full = $banner['bann_full_fid'] ? file_load($banner['bann_full_fid']) : null;
+
       $items[] = [
         'image' => file_create_url($file->uri),
+        'image_full' => $file_full ? file_create_url($file_full->uri) : '',
+        'type' => $banner['type'],
         'link' => [
-//        'external' => true,
+          'external' => $banner['type'] == 'external',
           'url' => $banner['url']
         ],
       ];

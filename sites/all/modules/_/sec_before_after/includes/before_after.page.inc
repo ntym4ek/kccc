@@ -1199,7 +1199,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
                 'image_thumb' => image_style_url('thumbnail', $prep_info2['photo_uri']),
-//                'image_full' => image_style_url('medium', $prep_info2['photo_uri']),
+                'image_medium' => image_style_url('medium', $prep_info['photo_uri']),
                 'unit_short' => $prep_info2['unit_short'],
                 'unit_field' => $prep_info2['unit_field'][array_key_first($prep_info2['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption2->value()),
