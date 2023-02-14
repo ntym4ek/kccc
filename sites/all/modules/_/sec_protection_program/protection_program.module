@@ -1,1411 +1,1412 @@
 <?php
-function protection_program_menu() {
-    $items['protection-program/add'] = array(
-        'page callback' => 'pp_callback',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['protection-program/%/edit'] = array(
-        'page callback' => 'pp_edit_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['protection-program/%/del'] = array(
-        'page callback' => 'pp_del_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['protection-program/%/description'] = array(
-        'page callback' => 'pp_description_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    // фон
-    $items['protection-program/%/bg'] = array(
-        'page callback' => 'pp_bg_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    // этапы
-    $items['protection-program/%/stage/add'] = array(
-        'page callback' => 'pp_stage_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['protection-program/%/stage/%/edit'] = array(
-        'page callback' => 'pp_stage_edit_callback',
-        'page arguments' => array(1,3),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['protection-program/%/stage/%/del'] = array(
-        'page callback' => 'pp_stage_del_callback',
-        'page arguments' => array(1,3),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    return $items;
-}
-
-
-/**
- * callback функция добавления ПЗ
- */
-function pp_callback($mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        drupal_add_css(drupal_get_path('module', 'protection_program') . '/css/protection_program.css');
-
-        $form_state = array('ajax' => TRUE, 'title' => 'Программа защиты');
-        $output = ctools_modal_form_wrapper('pp_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_form');
-}
-/**
- * callback функция редактирования описания ПЗ
- */
-function pp_description_callback($ppid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-
-        $form_state = array('ajax' => TRUE, 'title' => 'Программа защиты');
-        $form_state['build_info']['args'] = array('ppid' => $ppid);
-        $output = ctools_modal_form_wrapper('pp_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_form', $ppid);
-}
-/**
- * форма добавления/редактирования ПЗ
- */
-function pp_form($form, &$form_state, $ppid = '') {
-    // если ppid задан, заполнить переменные
-    $name = $descr = '';
-    $cids = array();
-    if ($ppid) {
-        $node_wrapper = entity_metadata_wrapper('node', $ppid);
-        $name = $node_wrapper->title->value();
-        $descr = $node_wrapper->body->summary->value();
-        foreach ($node_wrapper->field_pp_cultures as $item_c)
-            $cids[] = $item_c->nid->value();
-    }
-
-    $form = array(
-        '#prefix' => '<div id="pp_frm">',
-        '#suffix' => '</div>',
-        '#attributes' => array('class' => array('custom-form'))
-    );
-
-    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Укажите название и описание');
-    $form['fs1']['title'] = array(
-        '#type' => 'textfield',
-        '#attributes' => array('placeholder' => 'Название'),
-        '#required' => true,
-        '#default_value' => $name,
-    );
-    $form['fs1']['description'] = array(
-        '#type' => 'textfield',
-        '#attributes' => array('placeholder' => 'Краткое описание'),
-        '#required' => true,
-        '#default_value' => $descr,
-    );
-
-
-    // список всех Культур
-    $query = db_select('node', 'n');
-    $query->condition('n.type', 'main_cultures');
-    $query->fields('n', array('nid', 'title'));
-    $result_cs = $query->execute()->fetchAll();
-
-    $options = $cids ? $options = array() : array('Выберите с/х культуру');
-    foreach($result_cs as $c_item) {
-        $options[$c_item->nid] = $c_item->title;
-    }
-
-    $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Выберите одну или несколько культур');
-    $form['fs2']['culture'] = array(
-        '#type' => 'select',
-        '#options' => $options,
-        '#chosen' => true,
-        '#multiple' => true,
-        '#required' => true,
-        '#default_value' => $cids,
-    );
-    if ($ppid)
-        $form['ppid'] = array(
-            '#type' => 'hidden',
-            '#value' => $ppid,
-        );
-
-    $form['fs3'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
-    $form['fs3']['pp-submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Сохранить',
-    );
-
-    return $form;
-}
-function pp_form_validate($form, &$form_state) {
-    if (empty($form_state['values']['culture'])) {
-        form_set_error('culture', 'Поле Культура обязательно для заполнения');
-    }
-}
-function pp_form_submit($form, &$form_state) {
-    if (empty($form_state['values']['ppid'])) {
-        // создать новую ПЗ
-        $node = new stdClass();
-        $node->type = 'protection_program';
-        node_object_prepare($node);
-        $node->language = LANGUAGE_NONE;
-        $node->body[LANGUAGE_NONE][0]['format'] = 'filtered_html';
-    } else {
-        $node = node_load($form_state['values']['ppid']);
-    }
-
-    $node->field_pp_cultures[LANGUAGE_NONE] = array();
-    $node->title = $form_state['values']['title'];
-    $node->body[LANGUAGE_NONE][0]['summary'] = $form_state['values']['description'];
-    foreach($form_state['values']['culture'] as $item_c)
-        $node->field_pp_cultures[LANGUAGE_NONE][]['target_id'] = $item_c;
-    node_save($node);
-
-    $url = '/protection-program/' . $node->nid . '/edit';
-    if (empty($form_state['values']['ppid'])) $message = 'Программа защиты добавлена.<br />Сейчас вы будете перенаправлены на страницу <a href="' . $url . '">редактирования</a>.';
-    else $message = 'Описание программы защиты обновлено.<br />Сейчас вы будете перенаправлены на страницу <a href="' . $url . '">редактирования</a>.';
-    $form_state['ajax_commands'][] = ajax_command_html('#modal-content', $message);
-    $form_state['ajax_commands'][] = ctools_ajax_command_redirect($url);
-    $form_state['ajax_commands'][] = ajax_command_prepend('#modal-content', theme('status_messages'));
-}
-
-/**
- * callback функция Страница редактирования ПЗ
- */
-function pp_edit_callback($ppid) {
-
-    if ($pp = get_protection_program($ppid)) {
-        $output = theme('protection_program_table', array('pp' => $pp));
-        $output = '<div class="protection-program full">' .$output . '</div>';
-    }
-    else $output = t('Page not found');
-
-    return $output;
-}
-
-/**
- * callback функция удаления периода роста
- */
-function pp_del_callback($ppid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        $form_state = array('ajax' => TRUE, 'title' => 'Удалить программу защиты');
-        $form_state['build_info']['args'] = array('ppid' => $ppid);
-        $output = ctools_modal_form_wrapper('pp_del_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_del_form', $ppid);
-
-}
-/**
- * форма удаления периода роста
- */
-function pp_del_form($form, &$form_state, $ppid) {
-    $form_state['ppid'] = $ppid;
-
-    $form = array(
-        '#prefix' => '<div id="delete_frm">',
-        '#suffix' => '</div>',
-        '#attributes' => array('class' => array('custom-form'))
-    );
-
-    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Подтвердите действие');
-    $form['fs1']['qwestion'] = array(
-        '#markup' => 'Удалить программу защиты?',
-    );
-
-    $form['fs2'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
-    $form['fs2']['del_submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Да',
-    );
-    return $form;
-}
-/**
- * submit формы
- */
-function pp_del_form_submit($form, &$form_state) {
-    // удалить период из ПЗ
-    node_delete($form_state['ppid']);
-
-    // получить и вывести обновлённую ПЗ
-    ctools_include('ajax');
-    $form_state['ajax_commands'][] = ctools_ajax_command_reload();
-}
-
-
-/**
- * callback функция добавления этапа обработки
- */
-function pp_stage_callback($ppid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        $form_state = array('ajax' => TRUE, 'title' => 'Новый этап обработки');
-        $form_state['build_info']['args'] = array('ppid' => $ppid);
-        $output = ctools_modal_form_wrapper('pp_stage_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_stage_form', $ppid);
-}
-/**
- * callback функция редактирования этапа обработки
- */
-function pp_stage_edit_callback($ppid, $sid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        $form_state = array('ajax' => TRUE, 'title' => 'Редактировать этап обработки');
-        $form_state['build_info']['args'] = array('ppid' => $ppid, 'sid' => $sid);
-        $output = ctools_modal_form_wrapper('pp_stage_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_stage_form', $ppid, $sid);
-}
-
-
-/**
- * форма ввода этапа обработки
- */
-function pp_stage_form($form, $form_state, $ppid, $sid = '') {
-    // подготовка переменных
-    $function = $p_start = $p_stop = $prep_id = $add_prep = $disable_oo = 0;
-    // если редактирование этапа - вытащить данные
-    if ($sid) {
-        $collection = entity_metadata_wrapper('field_collection_item', $sid);
-        $function   = $collection->field_pp_ps_function->tid->value();
-        $p_start    = $collection->field_pp_ps_start->tid->value();
-        $p_stop     = $collection->field_pp_ps_stop->tid->value();
-        $prep_id    = $collection->field_pp_ps_preparation->value();
-        $mandatory  = $collection->field_pp_ps_opt_mandatory->value();
-        $option_own = $collection->field_pp_ps_opt_own->value();
-        if ($collection->field_pp_ps_reglaments->count())
-            foreach($collection->field_pp_ps_reglaments->value() as $r_item) {
-                $arr_regl[] = $r_item;
-            }
-    }
-
-    $pp         = node_load($ppid);
-    $culture_wrapper = entity_metadata_wrapper('node', $pp->field_pp_cultures['und'][0]['target_id']);
-    $cultures = array();
-    foreach($pp->field_pp_cultures['und'] as $item_c) $cultures[] = $item_c['target_id'];
-    $function   = !empty($form_state['values']['function']) ? $form_state['values']['function'] : $function;
-    $p_start    = !empty($form_state['values']['p_start']) ? $form_state['values']['p_start'] : $p_start;
-    $p_stop     = !empty($form_state['values']['p_stop']) ? $form_state['values']['p_stop'] : $p_stop;
-    $prep_id    = !empty($form_state['values']['prep_id']) ? $form_state['values']['prep_id'] : $prep_id;
-    $mandatory  = !empty($form_state['values']['mandatory']) ? $form_state['values']['mandatory'] : $mandatory;
-    $option_own = !empty($form_state['values']['option_own']) ? $form_state['values']['option_own'] : $option_own;
-
-    if ($function == AGRO_CATEGORY_DESICCANTS_TID) {
-        $option_own = 'провести десикацию культуры после её созревания';
-        $disable_oo = true;
-    }
-
-    // id формы для ajax обновления
-    $form = array(
-        '#prefix' => '<div id="pp-form-wrapper">',
-        '#suffix' => '</div>',
-        '#attributes' => array('class' => array('custom-form'))
-    );
-
-    // периоды применения
-    $options_p = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
-
-    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Фазы применения препарата', '#attributes' => array('class' => array('form-items-inline')));
-    $form['fs1']['p_start'] = array(
-        '#attributes' => array('placeholder' => 'Начало'),
-        '#type' => 'select',
-        '#options' => $options_p,
-        '#chosen' => true,
-        '#default_value' => $p_start,
-        '#prefix' => '<div class="row">',
-    );
-    $form['fs1']['p_stop'] = array(
-        '#attributes' => array('placeholder' => 'Окончание'),
-        '#type' => 'select',
-        '#options' => $options_p,
-        '#chosen' => true,
-        '#default_value' => $p_stop,
-        '#suffix' => '</div>',
-    );
-
-    // массив категорий (Функций) с id и наименованиями
-    $query = db_select('taxonomy_term_data', 't');
-    $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
-    $query->join('field_data_field_color', 'fc', 'fc.entity_id = t.tid');
-    $query->fields('t', array('tid', 'name'));
-    $query->addField('fc', 'field_color_value');
-    $query->condition('h.parent', AGRO_CATEGORY_TID);
-    $query->condition('t.tid', 50, '<>');
-    $query->orderBy('t.weight');
-    $functions = $query->execute()->fetchAll();
-
-    $options_f = array('_none' => 'Функция препарата');
-    foreach($functions as $f_item) {
-        $options_f[$f_item->tid] = $f_item->name;
-    }
-    $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Выберите препарат', '#attributes' => array('class' => array('form-items-inline')));
-    $form['fs2']['function'] = array(
-        '#type' => 'select',
-        '#options' => $options_f,
-        '#chosen' => true,
-        '#required' => true,
-        '#default_value' => $function,
-        '#ajax' => array(
-            'callback' => 'pp_form_refresh',
-        ),
-        '#prefix' => '<div class="row">',
-    );
-
-    $options_p = array('_none' => '');
-    if ($function) {
-        // список препаратов в зависимости от функции
-        $query = db_select('node', 'n')->distinct();
-        $query->condition(
-            db_or()
-                ->condition('n.type', 'product_agro')
-                ->condition('n.type', 'product_mix')
-        );
-        $query->innerJoin('field_data_field_pd_reglaments', 'fr', 'n.nid = fr.entity_id');
-        $query->innerJoin('field_data_field_pd_r_function', 'ff', 'ff.entity_id = fr.field_pd_reglaments_value');
-        $query->condition('ff.field_pd_r_function_tid', $function);
-        $query->fields('n', array('nid', 'title'));
-        $query->orderBy('title');
-        $preps = $query->execute()->fetchAll();
-
-        foreach ($preps as $p_item) {
-            $options_p[$p_item->nid] = $p_item->title;
-        }
-
-        // после смены функции выбранный ранее препарат может уже не входить в новый массив
-        if (!in_array($prep_id, array_keys($options_p))) {
-            $prep_id = '_none';
-        }
-
-        if ($prep_id != '_none') {
-            $form['fs3'] = array('#type' => 'fieldset', '#title' => 'Выберите один или несколько регламентов');
-            $text_reg = 'Регламентов применения не найдено';
-            $prep_wrapper = entity_metadata_wrapper('node', $prep_id);
-
-            // единицы измерения
-            $units_arr = [];
-            foreach (ext_product_product_get_info($prep_wrapper->nid->value())['items'] as $item) {
-                $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
-            }
-
-            // найти и вывести регламенты
-            if ($reglaments = preparation_reglaments($prep_wrapper->value(), $cultures, $function)) {
-                $text_reg = '<table class="stripe">';
-                foreach($reglaments as $rg_key => $reglament) {
-                    // нормы для баковых смесей
-                    $rate = '';
-                    $rates_arr = array();
-                    if (!empty($reglament->field_pd_r_prep_rate)) {
-                        foreach($reglament->field_pd_r_prep_rate['und'] as $fk_key => $fk_value) {
-                            if ($fk_value['from'] == $fk_value['to']) $rates_arr[] = (float)$fk_value['from'] . ' ' . $units_arr[$fk_key];
-                            else $rates_arr[] = (float)$fk_value['from'] . '-' . (float)$fk_value['to'] . ' ' . $units_arr[$fk_key];
-                        }
-                    }
-                    if ($rates_arr) $rate = implode(' + ', $rates_arr);
-
-                    $proc = $reglament->field_pd_r_processing['und'][0]['value'];
-                    $comment = isset($reglament->field_pd_r_cultures_comment['und']) ? $reglament->field_pd_r_cultures_comment['und'][0]['value'] : '';
-                    $proc = $comment ? $proc . ' (' . $comment . ')' : $proc;
-                    $text_reg .= '<tr>'
-                                .'<td width="40"><input type="checkbox" id="edit-prep-reg-' . $rg_key . '" name="prep_reg_' . $rg_key . '" value="' . $rg_key . '" class="form-radio" ' . (in_array($rg_key, $arr_regl) ? ' checked="checked"' : '') . '></td>'
-                                .'<td width="120"><label for="edit-prep-reg-' . $rg_key . '">' . $rate . '</label></td>'
-                                .'<td width="300"><label for="edit-prep-reg-' . $rg_key . '">' . $proc . '</label></td>'
-                                .'</tr>';
-                }
-                $text_reg .= '</table>';
-
-            }
-            $form['fs3']['regl1'] = array(
-                '#markup' => '<div style="margin: 5px 0;">' . $text_reg . '</div>',
-            );
-            // поле ввода индивидуальной дозировки
-            if ($reglaments)
-                $form['fs3']['dosage1'] = array(
-                    '#title' => 'Индивидуальная дозировка препарата',
-                    '#type' => 'textfield',
-                    '#size' => '6',
-                    '#default_value' => '',
-                );
-
-            // опции
-            $form['fs4'] = array('#type' => 'fieldset', '#title' => 'Опции');
-            $form['fs4']['mandatory'] = array(
-                '#title' => 'Обязательно включить в программу (при совпадении Вредных объектов)',
-                '#type' => 'checkbox',
-                '#default_value' => $mandatory,
-                '#description' => 'при наличии двух сходных препаратов, будет выбран этот без дополнительных вопросов',
-            );
-            // можно задать текст опции, при выборе которой в АР этап будетй включён в ПЗ
-            $form['fs4']['option_own'] = array(
-                '#title' => 'Другая опция',
-                '#type' => 'textfield',
-                '#default_value' => $option_own,
-                '#disabled' => $disable_oo,
-                '#description' => 'если заполнить это поле, то введенные ВО выбранного регламента не учитываются, а в АгроРецепте выводится опция с данным текстом. При выборе опции препарат включается в программу защиты.',
-            );
-        }
-    }
-
-    $form['fs2']['prep_id'] = array(
-        '#type' => 'select',
-        '#options' => $options_p,
-        '#chosen' => true,
-        '#required' => true,
-        '#default_value' => $prep_id,
-        '#ajax' => array(
-            'callback' => 'pp_form_refresh',
-        ),
-        '#suffix' => '</div>',
-        '#disabled' => $function ? false : true,
-    );
-
-
-    $form['ppid'] = array('#type' => 'hidden', '#value' => $ppid);
-    $form['sid'] = array('#type' => 'hidden', '#value' => $sid);
-
-    $form['fs5'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
-    $form['fs5']['stage-submit'] = array(
-        '#type' => 'submit',
-        '#value' => empty($sid) ? 'Добавить' : 'Сохранить',
-        '#ajax' => array(
-            'callback' => 'pp_form_refresh',
-        ),
-    );
-
-    return $form;
-}
-function pp_form_refresh($form, &$form_state) {
-    ctools_include('ajax'); ctools_include('modal');
-
-    if ($form_state['executed']) {
-        $pp_array = get_protection_program($form_state['values']['ppid']);
-        $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
-        $commands[] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
-        $commands[] = ctools_modal_command_dismiss();
-    } elseif ($form_state['submitted']) {
-        $commands[] = ajax_command_remove('#messages-wrap');
-        $commands[] = ajax_command_before('#pp-form-wrapper', '<div id="messages-wrap">' . theme('status_messages') . '</div>');
-        $commands[] = ajax_command_replace('#pp-form-wrapper', drupal_render($form));
-    } else {
-        $commands[] = ajax_command_remove('#messages-wrap');
-        $commands[] = ajax_command_replace('#pp-form-wrapper', drupal_render($form));
-    }
-    return array('#type' => 'ajax', '#commands' => $commands);
-}
-/**
- * submit формы
- */
-function pp_stage_form_validate($form, &$form_state) {
-    if (empty($form_state['values']['function'])) { form_set_error('function', 'Поле Функция необходимо заполнить'); return false; }
-    if (empty($form_state['values']['prep_id']))  { form_set_error('prep_id', 'Поле Препарат необходимо заполнить'); return false; }
-
-    $flag = false;
-    foreach($form_state['input'] as $key => $value) {
-        if (strpos($key, 'prep_reg_') !== false) $flag = true;
-    }
-    if (!$flag) { form_set_error('prep_id', 'Необходимо выбрать хотя бы один из регламентов.'); return false; }
-}
-
-/**
- * submit формы
- */
-function pp_stage_form_submit($form, &$form_state) {
-    // создать или загрузить fc этапа
-    if (empty($form_state['values']['sid'])) {
-        $fc_s_item = entity_create('field_collection_item', array('field_name' => 'field_pp_processing_stages'));
-        $fc_s_item_wrapper = entity_metadata_wrapper('field_collection_item', $fc_s_item);
-        $node = node_load($form_state['values']['ppid']);
-        $fc_s_item->setHostEntity('node', $node);
-    } else {
-        $fc_s_item_wrapper = entity_metadata_wrapper('field_collection_item', $form_state['values']['sid']);
-    }
-
-    // привязать fc препаратов
-    $fc_s_item_wrapper->field_pp_ps_start = $form_state['values']['p_start'];
-    $fc_s_item_wrapper->field_pp_ps_stop = $form_state['values']['p_stop'];
-    $fc_s_item_wrapper->field_pp_ps_function = $form_state['values']['function'];
-    $fc_s_item_wrapper->field_pp_ps_preparation = $form_state['values']['prep_id'];
-    $fc_s_item_wrapper->field_pp_ps_opt_mandatory = $form_state['values']['mandatory'];
-    $fc_s_item_wrapper->field_pp_ps_opt_presowing = $form_state['values']['presowing'];
-    $fc_s_item_wrapper->field_pp_ps_opt_own = $form_state['values']['option_own'];
-
-    $fc_s_item_wrapper->field_pp_ps_reglaments = array();
-
-    foreach($form_state['input'] as $key => $value) {
-        if (strpos($key, 'prep_reg_') !== false) {
-            $rig = str_replace('prep_reg_', '', $key);
-            $fc_s_item_wrapper->field_pp_ps_reglaments[] = $rig;
-        }
-    }
-
-    $fc_s_item_wrapper->save(TRUE);
-}
-
-/**
- * callback функция удаления этапа обработки
- */
-function pp_stage_del_callback($ppid, $sid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        $form_state = array('ajax' => TRUE, 'title' => 'Новый этап обработки');
-        $form_state['build_info']['args'] = array('ppid' => $ppid, 'sid' => $sid);
-        $output = ctools_modal_form_wrapper('pp_stage_del_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_stage_del_form', $ppid);
-}
-function pp_stage_del_form($form, $form_state, $ppid, $sid) {
-    $form['fs'] = array(
-        '#type' => 'fieldset',
-    );
-    $form['fs']['qst'] = array(
-        '#markup' => 'Удалить этап обработки?',
-    );
-    $form['ppid'] = array(
-        '#type' => 'hidden',
-        '#value' => $ppid,
-    );
-    $form['sid'] = array(
-        '#type' => 'hidden',
-        '#value' => $sid,
-    );
-    $form['del-submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Да',
-    );
-
-    return $form;
-}
-function pp_stage_del_form_submit($form, &$form_state) {
-    if ($collection = entity_metadata_wrapper('field_collection_item', $form_state['values']['sid'])) $collection->delete();
-
-    // получить и вывести обновлённую ПЗ
-    $pp_array = get_protection_program($form_state['values']['ppid']);
-    $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
-    $form_state['ajax_commands'][] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
-    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
-}
-
-/**
- * callback функция изменения фона таблицы
- */
-function pp_bg_callback($ppid, $mode = NULL) {
-    if ($mode == 'ajax') {
-        ctools_include('ajax'); ctools_include('modal');
-        $form_state = array('ajax' => TRUE, 'title' => 'Установить фон таблицы');
-        $form_state['build_info']['args'] = array('ppid' => $ppid);
-        $output = ctools_modal_form_wrapper('pp_bg_form', $form_state);
-        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else return drupal_get_form('pp_bg_form', $ppid);
-}
-function pp_bg_form($form, $form_state, $ppid) {
-    $form['fs'] = array('#type' => 'fieldset');
-    $form['fs']['file'] = array(
-        '#type' => 'file',
-        '#title' => t('Choose a file'),
-        '#title_display' => 'invisible',
-        //'#size' => 22,
-        '#description' => 'для удаления фона отправьте пустое поле',
-    );
-    $form['ppid'] = array(
-        '#type' => 'hidden',
-        '#value' => $ppid,
-    );
-    $form['bg-submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Подтвердить',
-    );
-
-    return $form;
-}
-function pp_bg_form_validate($form, &$form_state) {
-    $validators = array(
-        'file_validate_is_image' => array(), // Проверка, действительно ли файл является изображением
-        'file_validate_extensions' => array('png jpg jpeg'), // Проверка на расширения
-        'file_validate_image_resolution' => array('2560x2048', '400x400'),
-    );
-    // Загружаем файл в sites/default/files/images/protection_program/ (по умолчанию)
-    if (!$_FILES['files']['name']['file']) {
-        $form_state['values']['file'] = 'delete';
-    }
-    elseif ($file = file_save_upload('file', $validators, 'public://images/protection_program/')) {
-        // передаём информацию о файле в ф-ю pp_bg_form_submit()
-        $form_state['values']['file'] = $file;
-    }
-    else form_set_error('file', 'Файл не был загружен');
-}
-function pp_bg_form_submit($form, &$form_state) {
-    // установить новый фон
-    if ($pp_wrapper = entity_metadata_wrapper('node', $form_state['values']['ppid'])) {
-        if ($form_state['values']['file'] == 'delete') {
-            $pp_wrapper->field_pp_background->set();
-        }
-        else $pp_wrapper->field_pp_background->file->set($form_state['values']['file']);
-        $pp_wrapper->save();
-    }
-
-    // получить и вывести обновлённую ПЗ
-    $pp_array = get_protection_program($form_state['values']['ppid']);
-    $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
-    $form_state['ajax_commands'][] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
-    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
-}
-
-/**
- * hook_theme
- */
-function protection_program_theme() {
-    return array(
-        'protection_program_table' => array(
-            'arguments' => array('element' => NULL),
-            'template' => 'protection-program-table',
-            'path' => drupal_get_path('module', 'protection_program') . '/templates',
-        ),
-    );
-}
-
-function protection_program_preprocess_page(&$vars) {
-    // подключить стили и js, если ПЗ выводится или редактируется
-    if ((isset($vars['node']) && $vars['node']->type == 'protection_program')
-        || (arg(0) == 'protection-program' && arg(2) == 'edit')){
-        chibs_include_modal(array('class' => 'custom-form'));
-        drupal_add_css(drupal_get_path('module', 'protection_program') . '/css/protection_program.css');
-
-        // для страницы редактирования установить заголовок и описание
-        if (arg(2) == 'edit') {
-            $vars['node'] = node_load(arg(1));
-            $description = field_get_items('node', $vars['node'], 'body');
-            $vars['title_description'] = $description[0]['summary'];
-            drupal_set_title($vars['node']->title);
-
-            ctools_include('modal');
-            ctools_modal_add_js();
-        }
-    }
-}
-
-function get_protection_program($ppid, $data = array())
-{
-    $pp = array();
-    if ($ppid) {
-        $pp_wrapper = entity_metadata_wrapper('node', $ppid);
-        $pp['id'] = $ppid;
-        $pp['measure'] = t(AGRO_FIELD_MEASURE);
-
-        $culture_image_uri = '';
-        $arr_latin = $arr_names = array();
-        foreach($pp_wrapper->field_pp_cultures as $key_c => $culture_wrapper) {
-            if ($culture_wrapper->field_promo_image->value()) {
-                $image = $culture_wrapper->field_promo_image->file->value();
-                $culture_image_uri = image_style_url('before_after', $image->uri);
-            }
-            $culture_link       =  drupal_get_path_alias('node/' . $culture_wrapper->nid->value());
-            $arr_latin[]        = $culture_wrapper->field_name_latin->value();
-            $arr_names[]        = '<a class="cblack" href="/' . $culture_link .'" target="_blank">' . $culture_wrapper->title->value() . '</a>';
-        }
-
-        $pp['culture_image_uri'] = $culture_image_uri;
-        $pp['culture_names'] = implode(', ', $arr_names);
-        $pp['culture_names_latin'] = implode(', ', $arr_latin);
-
-        if ($pp_wrapper->field_pp_background->value())
-            $image_bg = $pp_wrapper->field_pp_background->file->value();
-        $pp['culture_image_bg_uri'] = empty($image_bg->uri) ? '' : file_create_url($image_bg->uri);
-
-        // периоды роста растения
-            // если задан начальный период, список составляется начиная с него
-        $periods = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
-        if (empty($data['period'])) {
-            $keys = array_keys($periods);
-            $start_period = $keys[0];
-        } else $start_period = $data['period'];
-        $flag_p = false;
-        foreach ($periods as $tid => $name) {
-            if ($start_period == $tid) $flag_p = true;
-            if ($flag_p) $pp['periods'][$tid] = _insertToStr($name, 16, '<br />');
-        }
-
-        // список функций пестицидов
-        $query = db_select('taxonomy_term_data', 't');
-        $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
-        $query->join('field_data_field_color', 'fc', 'fc.entity_id = t.tid');
-        $query->fields('t', array('tid', 'name'));
-        $query->addField('fc', 'field_color_value');
-        $query->condition('h.parent', AGRO_CATEGORY_TID);
-        $query->condition('t.tid', 50, '<>');
-        $query->orderBy('t.weight');
-        $functions = $query->execute()->fetchAll();
-
-        foreach($functions as $function) {
-            $pp['functions'][$function->tid] = array(
-                'name' => $function->name,
-                'color' => $function->field_color_value,
-            );
-        }
-
-        $area = empty($data['area']) ? 1 : $data['area'];
-        $seeding = empty($data['seeding']) ? 100 : $data['seeding'];
-
-        // сформировать массив всех заданных в форме ВО
-        $hobjects = array();
-        if (!empty($data['hobjects']['weeds'])) {
-            foreach ($data['hobjects']['weeds'] as $weed) $hobjects[$weed] = array('type' => 'weed', 'preparations' => array());
-        }
-
-        if (!empty($data['hobjects']['fungis'])) {
-            foreach ($data['hobjects']['fungis'] as $fungi) $hobjects[$fungi] = array('type' => 'fungi', 'preparations' => array());
-        }
-        if (!empty($data['hobjects']['pests'])) {
-            foreach ($data['hobjects']['pests'] as $pest) $hobjects[$pest] = array('type' => 'pest', 'preparations' => array());
-        }
-        if (!empty($data['dessic'])) $hobjects['dessic'] = $data['dessic'];
-
-
-        $periods_tids = array_keys($pp['periods']);                                                                      // список ключей периодов для проверки вхождения регламента в ПЗ
-        $sum_min = $sum_set = $sum_max = 0;
-        // цикл по этапам, с проверкой регламентов
-        foreach ($pp_wrapper->field_pp_processing_stages as $stage) {
-            $sid = $stage->item_id->value();
-            $prep_wrapper = entity_metadata_wrapper('node', $stage->field_pp_ps_preparation->value());
-            $nid = $prep_wrapper->nid->value();
-
-            // определяем наименование препарата, ед.изм., нормы, стоимость
-            $unit = $units_arr = $pid = $price = $title = array();
-            $product_info = ext_product_product_get_info($prep_wrapper->nid->value())['items'];
-            foreach ($product_info['items'] as $item) {
-                $pid[] = $item['id'];
-                $unit[] = $item['unit_short'];
-                $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
-                $price[] = $item['price'];
-                $titles[] = $item['title'] . ', ' . $item['form_short'];
-            }
-            $title = implode('+', $titles);
-
-            $mandatory = $stage->field_pp_ps_opt_mandatory->value();
-            $option_own = $stage->field_pp_ps_opt_own->value();
-
-            // проверка на вхождение периода регламента в интервал программы защиты
-            if (in_array($stage->field_pp_ps_stop->tid->value(), $periods_tids)) {
-
-                // проверить регламенты этапа, есть ли заданные Культуры и ВО
-                $take_stage = $processing = $is_presowing = $rate = '';
-                $rate_min = $rate_max = array();
-                $processing = array();
-                foreach ($stage->field_pp_ps_reglaments as $reglament) {
-                    $regl_wrapper = entity_metadata_wrapper('field_collection_item', $reglament->value());
-                    if ($regl_wrapper->value()) {                                     // проверка добавлена из-за удаления регламентов в препарате, при этом в программе защиты регламенты остаются, вызывая ошибку
-                        $function = $regl_wrapper->field_pd_r_function->tid->value();
-
-
-                        // данные о регламенте и исключениях ВО
-                        $info = array(
-                            'pid' => $nid,
-                            'rid' => $reglament->value(),
-                            'mandatory' => $mandatory,
-                            'by_option' => $option_own ? true : false,
-                            'poll_option' => empty($data['poll_options'][$sid]) ? 0 : $data['poll_options'][$sid],
-                        );
-
-                        // исключения ВО
-                        // ВО
-                        if (isset($prep_wrapper->field_pd_low_activity) && $prep_wrapper->field_pd_low_activity->count()) {
-                            foreach ($prep_wrapper->field_pd_low_activity as $item_la) {
-                                $info['exceptions_ho'][$item_la->nid->value()] = $item_la->nid->value();
-                            }
-                        }
-                        // группы ВО
-                        if (isset($prep_wrapper->field_pd_low_activity_groups) && $prep_wrapper->field_pd_low_activity_groups->count()) {
-                            foreach ($prep_wrapper->field_pd_low_activity_groups as $item_gr) {
-                                $info['exceptions_gr'][$item_gr->tid->value()] = $item_gr->tid->value();
-                            }
-                        }
-
-                        // берем этап, если регламент соответствует заданным ВО
-                        if (check_reglament($info, $hobjects)) {
-                            // отмечаем этапы, для которых есть регламенты
-                            $take_stage = true;
-
-                            // рекомендованная норма, если регламентов несколько, определяем общий диапазон
-                            foreach ($regl_wrapper->field_pd_r_prep_rate->getIterator() as $cr_key => $cr_item) {
-                                $from_rate = (float)$cr_item->from->value();
-                                $to_rate = (float)$cr_item->to->value();
-                                if ($function == AGRO_CATEGORY_DISINFECTANTS_TID) {
-                                    $from_rate = $from_rate * $seeding / 1000;
-                                    $to_rate = $to_rate * $seeding / 1000;
-                                }
-                                $rate_min[$cr_key] = (empty($rate_min[$cr_key]) || $rate_min[$cr_key] > $from_rate) ? $from_rate : $rate_min[$cr_key];
-                                $rate_max[$cr_key] = (empty($rate_max[$cr_key]) || $rate_max[$cr_key] < $to_rate) ? $to_rate : $rate_max[$cr_key];
-
-
-                            }
-                            // из вычисленных норм формируем массив для таблицы
-                            $rates_arr = array();
-                            foreach ($pid as $p_key => $p_item) {
-                                if ($rate_min[$p_key] == $rate_max[$p_key]) $rates_arr[] = (float)$rate_min[$p_key] . ' ' . $units_arr[$p_key];
-                                else $rates_arr[] = (float)$rate_min[$p_key] . '-' . (float)$rate_max[$p_key] . ' ' . $units_arr[$p_key];
-                            }
-
-                            // описание обработки
-                            if (!in_array($regl_wrapper->field_pd_r_processing->value(), $processing)) $processing[] = $regl_wrapper->field_pd_r_processing->value();
-                        }
-                    }
-                }
-
-
-                // если регламентов несколько, описание берем из этапа
-                //if ($stage->field_pp_ps_reglaments->count() > 1) $processing = $stage->field_pp_ps_processing->value();
-
-                // заполнить массив, если регламенты подошли
-                if ($take_stage) {
-                    // если стартовый период регламента за пределами ПЗ, то установить на начальный период
-                    $p_start_tid = (in_array($stage->field_pp_ps_start->tid->value(), $periods_tids)) ?  $stage->field_pp_ps_start->tid->value() : $start_period;
-
-                    $pp['stages'][$sid]['nid'] = $nid;          // id ноды (препарат/баковая смесь)
-                    $pp['stages'][$sid]['pid'] = $pid;          // массив id препарата/препаратов
-                    $pp['stages'][$sid]['title'] = $title;
-                    $pp['stages'][$sid]['p_start_tid'] = $p_start_tid;
-                    $pp['stages'][$sid]['p_stop_tid'] = $stage->field_pp_ps_stop->tid->value();
-                    $pp['stages'][$sid]['function_tid'] = $stage->field_pp_ps_function->tid->value();
-                    $pp['stages'][$sid]['rate'] = $rates_arr;
-                    $pp['stages'][$sid]['price'] = $price;
-                    $pp['stages'][$sid]['processing'] = implode('<br />------------------------------<br />', $processing);
-                    $pp['stages'][$sid]['unit'] = $unit;
-                    $pp['stages'][$sid]['rate_min'] = $rate_min;
-                    $pp['stages'][$sid]['rate_max'] = $rate_max;
-                    $pp['stages'][$sid]['option_own'] = $option_own;
-                }
-            }
-        }
-        // передаём массив ВО с отметкой пролеченных
-        $pp['hobjects'] = $hobjects;    // передаём массив ВО с отметкой пролеченных
-
-
-        // найти пересечения по препаратам -----------------------------------------------------------------------------
-        // 1. найти все пересечения ВО по найденным для них препаратам, понизить рейтинг препарата на 1 за каждое несовпадение
-        // 2. отбросить препараты с низшим рейтингом оставив один (несколько, если одинаковый) с наивысшим
-        // 3. для всех отброшенных препаратов Вредного объекта понизить рейтинг на 1 для препарата в других ВО
-        // 4. повторить со второго пункта, пока не будут отсутствовать отброшенные
-        // 5. для ВО с несколькими препаратами вывести уточняющие вопросы
-            // сформировать рабочий массив
-        if (!empty($pp['stages']) && $hobjects) {
-            $hobjects = array();
-            foreach ($pp['hobjects'] as $key => $hobject) {
-                if (is_numeric($key) && !empty($hobject['preparations'])) $hobjects[$key] = $hobject['preparations'];
-            }
-
-            // найти для каждого ВО пересечения по препаратам
-            // чем меньше пересечений у препарата, тем ниже его рейтинг
-            foreach ($hobjects as $key_out => $hobject_out) {
-                foreach ($hobjects as $key_in => $hobject_in) {
-                    if ($key_in != $key_out) {                                                                              // не сравнивать с самим собой
-                        // получаем по ID различия в наборах препаратов
-                        $arr_diff1 = array_diff(array_keys($hobject_out), array_keys($hobject_in));
-                        $arr_diff2 = array_diff(array_keys($hobject_in), array_keys($hobject_out));
-                        $arr_diff = array_merge($arr_diff1, $arr_diff2);
-                        if ($arr_diff) {
-                            foreach ($arr_diff as $a_item) {
-                                if (isset($hobjects[$key_out][$a_item])) {
-                                    $hobjects[$key_out][$a_item]['rating']--;
-                                }
-                                if (isset($hobjects[$key_in][$a_item])) {
-                                    $hobjects[$key_in][$a_item]['rating']--;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // в каждом ВО
-            // отбросить препараты с низшим рейтингом кроме одного или нескольких с наивысшим
-            // или при наличии обязательных оставить их, отбросив остальные независимо от рейтинга
-            $arr_rest = array();
-            do {
-                // в каждом ВО оставить только обязательные препараты и препараты с наивысшим рейтингом
-                foreach ($hobjects as $key_h => $hobject) {
-                    // найти лучший рейтинг
-                    $best_rating = $have_mandatory = '';
-                    foreach ($hobject as $key_p => $p_item) {
-                        if ($best_rating === '' || $best_rating < $p_item['rating']) {
-                            // препарат с опцией не участвует
-                            if (!$p_item['option_own']) $best_rating = $p_item['rating'];
-                        }
-                        if ($p_item['mandatory']) $have_mandatory = true;
-                    }
-                    // сформировать массивы в препаратами с лучшим рейтингом и исключенными препаратами
-                    $arr_best = $arr_rest = array();
-                    foreach ($hobject as $key_p => $p_item) {
-                        // если есть обязательные, то они заменяют препараты с лучшим рейтингом, остальные в исключения
-                        if ($have_mandatory) {
-                            if ($p_item['mandatory']) $arr_best[$key_p] = $p_item;
-                            else $arr_rest[$key_p] = $p_item;
-                        }
-                        else {
-                            // препарат с опцией не может быть среди лучших
-                            if ($best_rating == $p_item['rating'] && !$p_item['option_own']) $arr_best[$key_p] = $p_item;
-                            else $arr_rest[$key_p] = $p_item;
-                        }
-                    }
-                    // переписать в основной массив
-                    $hobjects[$key_h] = $arr_best;
-                }
-                // по массиву исключенных препаратов понизить им рейтинг ВО
-                foreach ($hobjects as $key_h => $hobject) {
-                    foreach ($hobject as $key_p => $p_item) {
-                        if (isset($arr_rest[$key_p])) $hobjects[$key_h][$key_p]['rating']--;
-                    }
-                }
-            } // выполнять, пока есть исключенные
-            while ($arr_rest);
-
-            // проверить на наличие нескольких препаратов в одном ВО
-            // собрать препараты без дубликатов в один массив
-            // дубликаты собрать в 'advantages' для последующего уточнения
-            $preparations = array();
-            foreach ($hobjects as $key_h => $hobject) {
-                if (count($hobject) > 1) {
-                    // индекс для массива аналогов составляем из pid, чтобы не было повторов при запросе уточнений
-                    $arr_key = array();
-                    $index_a = '';
-                        // собираем только НЕ обязательные аналоги
-                    foreach($hobject as $key_a => $item_a) {
-                        if (!$item_a['mandatory']) $arr_key[] = $key_a;
-                    }
-                    if ($arr_key) {
-                        $index_a = implode('_', $arr_key);
-                        $pp['advantages'][$index_a] = $hobject;
-                    }
-
-                    // если опрос по ВО с дублями не проведен, включить в вывод все препараты из ВО
-                    if (empty($data['poll_advantages'][$index_a])) {
-                        foreach ($hobject as $key_p => $p_item) {
-                            $preparations[$key_p] = $key_p;
-                        }
-                    } // если проведен, то вывести выбранный препарат
-                    else {
-                        $preparations[$data['poll_advantages'][$index_a]] = $data['poll_advantages'][$index_a];
-                    }
-                } else {
-                    $item = current($hobject);
-                    $preparations[$item['pid']] = $item['pid'];
-                }
-            }
-
-            // исключить этапы для дублирующих препаратов
-                // составить массив на исключение
-            $arr_exclude = array();
-            foreach ($pp['stages'] as $key_s => $stage) {
-                $exclude = false;
-
-                if (!in_array($stage['nid'], $preparations)) $exclude = true;
-
-                // проверить этапы на наличие Опций и составить из них массив, этапы с опциями без ответа добавить в массив на исключение
-                if ($stage['option_own']) {
-                    if (empty($data['poll_options'][$key_s])) $exclude = true;
-                    else $exclude = false;
-                    $pp['options'][$key_s] = $stage['option_own'];
-                }
-
-                if ($exclude) $arr_exclude[] = $key_s;
-            }
-
-            // удалить исключаемые этапы
-            foreach ($arr_exclude as $a_item) unset($pp['stages'][$a_item]);
-
-
-            // продукция, стоимость и итоговые суммы по полю ---------------------------------------------------------------
-                // посчитать только, если не найдены аналоги или для всех аналогов есть уточнения
-            $make_accounts = true;
-            if (!empty($pp['advantages'])) {
-                foreach($pp['advantages'] as $key_a => $item_a) {
-                    if (empty($data['poll_advantages'][$key_a])) $make_accounts = false;
-                }
-            }
-            if (empty($pp['stages'])) $make_accounts = false;
-
-            $pp['products'] = array();
-            if ($make_accounts) {
-                foreach ($pp['stages'] as $s_key => $stage) {
-                    foreach ($stage['pid'] as $sp_key => $pid) {
-                        $cost_min = $stage['rate_min'][$sp_key] * $stage['price'][$sp_key];
-                        $cost_max = $stage['rate_max'][$sp_key] * $stage['price'][$sp_key];
-                        $cost_field_min = $cost_min * $area;
-                        $cost_field_max = $cost_max * $area;
-
-                        $pp['products'][$pid] = array(
-                            'pid' => $pid,
-                            'price' => $stage['price'][$sp_key],
-                            'unit' => $stage['unit'][$sp_key],
-                            'rate_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_min'] : 0) + $stage['rate_min'][$sp_key],
-                            'rate_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_max'] : 0) + $stage['rate_max'][$sp_key],
-                            'rate_field_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_field_min'] : 0) + $stage['rate_min'][$sp_key] * $area,
-                            'rate_field_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_field_max'] : 0) + $stage['rate_max'][$sp_key] * $area,
-                            'cost_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_min'] : 0) + $cost_min,
-                            'cost_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_max'] : 0) + $cost_max,
-                            'cost_field_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_min'] : 0) + $cost_field_min,
-                            'cost_field_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_max'] : 0) + $cost_field_max,
-                        );
-
-                        $sum_min += $cost_min;
-                        $sum_max += $cost_max;
-                    }
-                }
-                $pp['products']['total'] = array(
-                    'sum_min' => $sum_min,
-                    'sum_max' => $sum_max,
-                    'sum_field_min' => $sum_min * $area,
-                    'sum_field_max' => $sum_max * $area,
-                );
-            }
-        }
-    }
-
-    return $pp;
-}
-
-/**
- * @param $prep - препарат, для которого получить регламенты
- * @param $culture - nid культуры
- * @param $function - tid, функция, выполняемая препаратом (он же категория)
- * @param $hobjects - массив массивов 'entity_id' => array('type' => 'weed, fungi, pest', 'class' => 'entity, life_time, bot_class', 'cured' => 0)
- * @param $orphane - true - включить в вывод регламенты без явно заданных культур
- *
- * @return array
- * вернуть массив регламентов, отфильтрованый по заданным культурам, функции и вредным объектам
- * массив вредных объектов дополнительно проверить на вхождение в регламенты
- */
-function preparation_reglaments($prep, $cultures, $function, &$hobjects = array()) {
-    if (!$cultures && !$function) return false;
-
-    $prep_wrapper = entity_metadata_wrapper('node', $prep);
-    $regl_list = $prep_wrapper->field_pd_reglaments->value();
-
-    // цикл по регламентам
-    $reglaments = array();
-    foreach ($regl_list as $rg_item) {
-        // проверить культуру регламента
-        $flag_c = false;
-        // покультурно
-        if (!empty($rg_item->field_pd_r_cultures['und'])) {
-          foreach ($rg_item->field_pd_r_cultures['und'] as $c_item) {
-            if (in_array($c_item['target_id'], $cultures)) $flag_c = true;
-          }
-        }
-
-        if (!$flag_c) continue;
-
-        // проверить функцию регламента
-        if ($function) {
-            if ($rg_item->field_pd_r_function['und'][0]['tid'] != $function) continue;
-            if ($function == AGRO_CATEGORY_DESICCANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
-        }
-
-        // проверить ВО регламента (кроме этапа десикации)
-        if (!empty($hobjects) && $function != AGRO_CATEGORY_DESICCANTS_TID) {
-            // проверить ВО - ВО и Класс - ВО
-                // цикл по ВО регламента
-            if (!empty($rg_item->field_pd_r_pest['und']))
-                foreach ($rg_item->field_pd_r_pest['und'] as $p_key => $p_item) {
-                    // ищем id ВО в принятом массиве ВО
-                    $ho_id = $p_item['target_id'];
-                    if (isset($hobjects[$ho_id])) {
-                        $reglaments[$rg_item->item_id] = $rg_item;
-                        break;
-                    }
-
-                    // для Сорняков (проверка на функцию == гербицид) ищем Класс в принятом массиве ВО
-                    if ($rg_item->field_pd_r_function['und'][0]['tid'] == AGRO_CATEGORY_HERBICIDES_TID) {
-                        // получить классы данного ВО
-                        $query = db_select('node', 'n');
-                        $query->condition('n.type', 'harmful_objects');
-                        $query->condition('n.nid', $ho_id);
-                        $query->join('field_data_field_weed_botan_class', 'bc', 'bc.entity_id = n.nid');
-                        $query->join('field_data_field_weed_life_time', 'lt', 'lt.entity_id = n.nid');
-                        $query->fields('bc', array('field_weed_botan_class_tid'));
-                        $query->fields('lt', array('field_weed_life_time_tid'));
-                        $classes = $query->execute()->fetchAll();
-
-                        // проверить наличие Классов в полученном массиве ВО
-                        if (isset($hobjects[$classes[0]->field_weed_life_time_tid][$classes[0]->field_weed_botan_class_tid])) {
-                            $hobjects[$classes[0]->field_weed_life_time_tid][$classes[0]->field_weed_botan_class_tid] = 1;          // 1 для того класса, что присутствует в регламенте
-                            $reglaments[$rg_item->item_id] = $rg_item;
-                            break;
-                        }
-                    }
-                }
-
-            // проверить Класс - Класс
-                // цикл по классу life_time
-            if (!empty($rg_item->field_pd_r_weed_life_time['und']))
-                foreach ($rg_item->field_pd_r_weed_life_time['und'] as $lt_key => $lt_item) {
-                    $lt_id = $lt_item['tid'];
-                    if (isset($hobjects[$lt_id]) && $hobjects[$lt_id]['class'] == 'taxonomy') {
-                        // цикл по бот.классам
-                        foreach ($rg_item->field_pd_r_weed_bot_class['und'] as $bc_key => $bc_item) {
-                            $bc_id = $bc_item['tid'];
-                            if (isset($hobjects[$lt_id][$bc_id])) {
-                                $hobjects[$lt_id][$bc_id] = 1;          // 1 для того класса, что присутствует в регламенте
-                                $reglaments[$rg_item->item_id] = $rg_item;
-                                break;
-                            }
-                        }
-                    }
-                }
-        }
-        // берем регламент без проверки на ВО
-        else $reglaments[$rg_item->item_id] = $rg_item;
-    }
-    return $reglaments ? $reglaments : false;
-}
+//function protection_program_menu()
+//{
+//    $items['protection-program/add'] = array(
+//        'page callback' => 'pp_callback',
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['protection-program/%/edit'] = array(
+//        'page callback' => 'pp_edit_callback',
+//        'page arguments' => array(1),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['protection-program/%/del'] = array(
+//        'page callback' => 'pp_del_callback',
+//        'page arguments' => array(1),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['protection-program/%/description'] = array(
+//        'page callback' => 'pp_description_callback',
+//        'page arguments' => array(1),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    // фон
+//    $items['protection-program/%/bg'] = array(
+//        'page callback' => 'pp_bg_callback',
+//        'page arguments' => array(1),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    // этапы
+//    $items['protection-program/%/stage/add'] = array(
+//        'page callback' => 'pp_stage_callback',
+//        'page arguments' => array(1),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['protection-program/%/stage/%/edit'] = array(
+//        'page callback' => 'pp_stage_edit_callback',
+//        'page arguments' => array(1,3),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//    $items['protection-program/%/stage/%/del'] = array(
+//        'page callback' => 'pp_stage_del_callback',
+//        'page arguments' => array(1,3),
+//        'access callback' => TRUE,
+//        'type' => MENU_CALLBACK,
+//    );
+//
+//    return $items;
+//}
+//
+//
+///**
+// * callback функция добавления ПЗ
+// */
+//function pp_callback($mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        drupal_add_css(drupal_get_path('module', 'protection_program') . '/css/protection_program.css');
+//
+//        $form_state = array('ajax' => TRUE, 'title' => 'Программа защиты');
+//        $output = ctools_modal_form_wrapper('pp_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_form');
+//}
+///**
+// * callback функция редактирования описания ПЗ
+// */
+//function pp_description_callback($ppid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//
+//        $form_state = array('ajax' => TRUE, 'title' => 'Программа защиты');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid);
+//        $output = ctools_modal_form_wrapper('pp_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_form', $ppid);
+//}
+///**
+// * форма добавления/редактирования ПЗ
+// */
+//function pp_form($form, &$form_state, $ppid = '') {
+//    // если ppid задан, заполнить переменные
+//    $name = $descr = '';
+//    $cids = array();
+//    if ($ppid) {
+//        $node_wrapper = entity_metadata_wrapper('node', $ppid);
+//        $name = $node_wrapper->title->value();
+//        $descr = $node_wrapper->body->summary->value();
+//        foreach ($node_wrapper->field_pp_cultures as $item_c)
+//            $cids[] = $item_c->nid->value();
+//    }
+//
+//    $form = array(
+//        '#prefix' => '<div id="pp_frm">',
+//        '#suffix' => '</div>',
+//        '#attributes' => array('class' => array('custom-form'))
+//    );
+//
+//    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Укажите название и описание');
+//    $form['fs1']['title'] = array(
+//        '#type' => 'textfield',
+//        '#attributes' => array('placeholder' => 'Название'),
+//        '#required' => true,
+//        '#default_value' => $name,
+//    );
+//    $form['fs1']['description'] = array(
+//        '#type' => 'textfield',
+//        '#attributes' => array('placeholder' => 'Краткое описание'),
+//        '#required' => true,
+//        '#default_value' => $descr,
+//    );
+//
+//
+//    // список всех Культур
+//    $query = db_select('node', 'n');
+//    $query->condition('n.type', 'main_cultures');
+//    $query->fields('n', array('nid', 'title'));
+//    $result_cs = $query->execute()->fetchAll();
+//
+//    $options = $cids ? $options = array() : array('Выберите с/х культуру');
+//    foreach($result_cs as $c_item) {
+//        $options[$c_item->nid] = $c_item->title;
+//    }
+//
+//    $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Выберите одну или несколько культур');
+//    $form['fs2']['culture'] = array(
+//        '#type' => 'select',
+//        '#options' => $options,
+//        '#chosen' => true,
+//        '#multiple' => true,
+//        '#required' => true,
+//        '#default_value' => $cids,
+//    );
+//    if ($ppid)
+//        $form['ppid'] = array(
+//            '#type' => 'hidden',
+//            '#value' => $ppid,
+//        );
+//
+//    $form['fs3'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+//    $form['fs3']['pp-submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => 'Сохранить',
+//    );
+//
+//    return $form;
+//}
+//function pp_form_validate($form, &$form_state) {
+//    if (empty($form_state['values']['culture'])) {
+//        form_set_error('culture', 'Поле Культура обязательно для заполнения');
+//    }
+//}
+//function pp_form_submit($form, &$form_state) {
+//    if (empty($form_state['values']['ppid'])) {
+//        // создать новую ПЗ
+//        $node = new stdClass();
+//        $node->type = 'protection_program';
+//        node_object_prepare($node);
+//        $node->language = LANGUAGE_NONE;
+//        $node->body[LANGUAGE_NONE][0]['format'] = 'filtered_html';
+//    } else {
+//        $node = node_load($form_state['values']['ppid']);
+//    }
+//
+//    $node->field_pp_cultures[LANGUAGE_NONE] = array();
+//    $node->title = $form_state['values']['title'];
+//    $node->body[LANGUAGE_NONE][0]['summary'] = $form_state['values']['description'];
+//    foreach($form_state['values']['culture'] as $item_c)
+//        $node->field_pp_cultures[LANGUAGE_NONE][]['target_id'] = $item_c;
+//    node_save($node);
+//
+//    $url = '/protection-program/' . $node->nid . '/edit';
+//    if (empty($form_state['values']['ppid'])) $message = 'Программа защиты добавлена.<br />Сейчас вы будете перенаправлены на страницу <a href="' . $url . '">редактирования</a>.';
+//    else $message = 'Описание программы защиты обновлено.<br />Сейчас вы будете перенаправлены на страницу <a href="' . $url . '">редактирования</a>.';
+//    $form_state['ajax_commands'][] = ajax_command_html('#modal-content', $message);
+//    $form_state['ajax_commands'][] = ctools_ajax_command_redirect($url);
+//    $form_state['ajax_commands'][] = ajax_command_prepend('#modal-content', theme('status_messages'));
+//}
+//
+///**
+// * callback функция Страница редактирования ПЗ
+// */
+//function pp_edit_callback($ppid) {
+//
+//    if ($pp = get_protection_program($ppid)) {
+//        $output = theme('protection_program_table', array('pp' => $pp));
+//        $output = '<div class="protection-program full">' .$output . '</div>';
+//    }
+//    else $output = t('Page not found');
+//
+//    return $output;
+//}
+//
+///**
+// * callback функция удаления периода роста
+// */
+//function pp_del_callback($ppid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Удалить программу защиты');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid);
+//        $output = ctools_modal_form_wrapper('pp_del_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_del_form', $ppid);
+//
+//}
+///**
+// * форма удаления периода роста
+// */
+//function pp_del_form($form, &$form_state, $ppid) {
+//    $form_state['ppid'] = $ppid;
+//
+//    $form = array(
+//        '#prefix' => '<div id="delete_frm">',
+//        '#suffix' => '</div>',
+//        '#attributes' => array('class' => array('custom-form'))
+//    );
+//
+//    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Подтвердите действие');
+//    $form['fs1']['qwestion'] = array(
+//        '#markup' => 'Удалить программу защиты?',
+//    );
+//
+//    $form['fs2'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+//    $form['fs2']['del_submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => 'Да',
+//    );
+//    return $form;
+//}
+///**
+// * submit формы
+// */
+//function pp_del_form_submit($form, &$form_state) {
+//    // удалить период из ПЗ
+//    node_delete($form_state['ppid']);
+//
+//    // получить и вывести обновлённую ПЗ
+//    ctools_include('ajax');
+//    $form_state['ajax_commands'][] = ctools_ajax_command_reload();
+//}
+//
+//
+///**
+// * callback функция добавления этапа обработки
+// */
+//function pp_stage_callback($ppid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Новый этап обработки');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid);
+//        $output = ctools_modal_form_wrapper('pp_stage_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_stage_form', $ppid);
+//}
+///**
+// * callback функция редактирования этапа обработки
+// */
+//function pp_stage_edit_callback($ppid, $sid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Редактировать этап обработки');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid, 'sid' => $sid);
+//        $output = ctools_modal_form_wrapper('pp_stage_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_stage_form', $ppid, $sid);
+//}
+//
+//
+///**
+// * форма ввода этапа обработки
+// */
+//function pp_stage_form($form, $form_state, $ppid, $sid = '') {
+//    // подготовка переменных
+//    $function = $p_start = $p_stop = $prep_id = $add_prep = $disable_oo = 0;
+//    // если редактирование этапа - вытащить данные
+//    if ($sid) {
+//        $collection = entity_metadata_wrapper('field_collection_item', $sid);
+//        $function   = $collection->field_pp_ps_function->tid->value();
+//        $p_start    = $collection->field_pp_ps_start->tid->value();
+//        $p_stop     = $collection->field_pp_ps_stop->tid->value();
+//        $prep_id    = $collection->field_pp_ps_preparation->value();
+//        $mandatory  = $collection->field_pp_ps_opt_mandatory->value();
+//        $option_own = $collection->field_pp_ps_opt_own->value();
+//        if ($collection->field_pp_ps_reglaments->count())
+//            foreach($collection->field_pp_ps_reglaments->value() as $r_item) {
+//                $arr_regl[] = $r_item;
+//            }
+//    }
+//
+//    $pp         = node_load($ppid);
+//    $culture_wrapper = entity_metadata_wrapper('node', $pp->field_pp_cultures['und'][0]['target_id']);
+//    $cultures = array();
+//    foreach($pp->field_pp_cultures['und'] as $item_c) $cultures[] = $item_c['target_id'];
+//    $function   = !empty($form_state['values']['function']) ? $form_state['values']['function'] : $function;
+//    $p_start    = !empty($form_state['values']['p_start']) ? $form_state['values']['p_start'] : $p_start;
+//    $p_stop     = !empty($form_state['values']['p_stop']) ? $form_state['values']['p_stop'] : $p_stop;
+//    $prep_id    = !empty($form_state['values']['prep_id']) ? $form_state['values']['prep_id'] : $prep_id;
+//    $mandatory  = !empty($form_state['values']['mandatory']) ? $form_state['values']['mandatory'] : $mandatory;
+//    $option_own = !empty($form_state['values']['option_own']) ? $form_state['values']['option_own'] : $option_own;
+//
+//    if ($function == AGRO_CATEGORY_DESICCANTS_TID) {
+//        $option_own = 'провести десикацию культуры после её созревания';
+//        $disable_oo = true;
+//    }
+//
+//    // id формы для ajax обновления
+//    $form = array(
+//        '#prefix' => '<div id="pp-form-wrapper">',
+//        '#suffix' => '</div>',
+//        '#attributes' => array('class' => array('custom-form'))
+//    );
+//
+//    // периоды применения
+//    $options_p = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
+//
+//    $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Фазы применения препарата', '#attributes' => array('class' => array('form-items-inline')));
+//    $form['fs1']['p_start'] = array(
+//        '#attributes' => array('placeholder' => 'Начало'),
+//        '#type' => 'select',
+//        '#options' => $options_p,
+//        '#chosen' => true,
+//        '#default_value' => $p_start,
+//        '#prefix' => '<div class="row">',
+//    );
+//    $form['fs1']['p_stop'] = array(
+//        '#attributes' => array('placeholder' => 'Окончание'),
+//        '#type' => 'select',
+//        '#options' => $options_p,
+//        '#chosen' => true,
+//        '#default_value' => $p_stop,
+//        '#suffix' => '</div>',
+//    );
+//
+//    // массив категорий (Функций) с id и наименованиями
+//    $query = db_select('taxonomy_term_data', 't');
+//    $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
+//    $query->join('field_data_field_color', 'fc', 'fc.entity_id = t.tid');
+//    $query->fields('t', array('tid', 'name'));
+//    $query->addField('fc', 'field_color_value');
+//    $query->condition('h.parent', AGRO_CATEGORY_TID);
+//    $query->condition('t.tid', 50, '<>');
+//    $query->orderBy('t.weight');
+//    $functions = $query->execute()->fetchAll();
+//
+//    $options_f = array('_none' => 'Функция препарата');
+//    foreach($functions as $f_item) {
+//        $options_f[$f_item->tid] = $f_item->name;
+//    }
+//    $form['fs2'] = array('#type' => 'fieldset', '#title' => 'Выберите препарат', '#attributes' => array('class' => array('form-items-inline')));
+//    $form['fs2']['function'] = array(
+//        '#type' => 'select',
+//        '#options' => $options_f,
+//        '#chosen' => true,
+//        '#required' => true,
+//        '#default_value' => $function,
+//        '#ajax' => array(
+//            'callback' => 'pp_form_refresh',
+//        ),
+//        '#prefix' => '<div class="row">',
+//    );
+//
+//    $options_p = array('_none' => '');
+//    if ($function) {
+//        // список препаратов в зависимости от функции
+//        $query = db_select('node', 'n')->distinct();
+//        $query->condition(
+//            db_or()
+//                ->condition('n.type', 'product_agro')
+//                ->condition('n.type', 'product_mix')
+//        );
+//        $query->innerJoin('field_data_field_pd_reglaments', 'fr', 'n.nid = fr.entity_id');
+//        $query->innerJoin('field_data_field_pd_r_function', 'ff', 'ff.entity_id = fr.field_pd_reglaments_value');
+//        $query->condition('ff.field_pd_r_function_tid', $function);
+//        $query->fields('n', array('nid', 'title'));
+//        $query->orderBy('title');
+//        $preps = $query->execute()->fetchAll();
+//
+//        foreach ($preps as $p_item) {
+//            $options_p[$p_item->nid] = $p_item->title;
+//        }
+//
+//        // после смены функции выбранный ранее препарат может уже не входить в новый массив
+//        if (!in_array($prep_id, array_keys($options_p))) {
+//            $prep_id = '_none';
+//        }
+//
+//        if ($prep_id != '_none') {
+//            $form['fs3'] = array('#type' => 'fieldset', '#title' => 'Выберите один или несколько регламентов');
+//            $text_reg = 'Регламентов применения не найдено';
+//            $prep_wrapper = entity_metadata_wrapper('node', $prep_id);
+//
+//            // единицы измерения
+//            $units_arr = [];
+//            foreach (ext_product_product_get_info($prep_wrapper->nid->value())['items'] as $item) {
+//                $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
+//            }
+//
+//            // найти и вывести регламенты
+//            if ($reglaments = preparation_reglaments($prep_wrapper->value(), $cultures, $function)) {
+//                $text_reg = '<table class="stripe">';
+//                foreach($reglaments as $rg_key => $reglament) {
+//                    // нормы для баковых смесей
+//                    $rate = '';
+//                    $rates_arr = array();
+//                    if (!empty($reglament->field_pd_r_prep_rate)) {
+//                        foreach($reglament->field_pd_r_prep_rate['und'] as $fk_key => $fk_value) {
+//                            if ($fk_value['from'] == $fk_value['to']) $rates_arr[] = (float)$fk_value['from'] . ' ' . $units_arr[$fk_key];
+//                            else $rates_arr[] = (float)$fk_value['from'] . '-' . (float)$fk_value['to'] . ' ' . $units_arr[$fk_key];
+//                        }
+//                    }
+//                    if ($rates_arr) $rate = implode(' + ', $rates_arr);
+//
+//                    $proc = $reglament->field_pd_r_processing['und'][0]['value'];
+//                    $comment = isset($reglament->field_pd_r_cultures_comment['und']) ? $reglament->field_pd_r_cultures_comment['und'][0]['value'] : '';
+//                    $proc = $comment ? $proc . ' (' . $comment . ')' : $proc;
+//                    $text_reg .= '<tr>'
+//                                .'<td width="40"><input type="checkbox" id="edit-prep-reg-' . $rg_key . '" name="prep_reg_' . $rg_key . '" value="' . $rg_key . '" class="form-radio" ' . (in_array($rg_key, $arr_regl) ? ' checked="checked"' : '') . '></td>'
+//                                .'<td width="120"><label for="edit-prep-reg-' . $rg_key . '">' . $rate . '</label></td>'
+//                                .'<td width="300"><label for="edit-prep-reg-' . $rg_key . '">' . $proc . '</label></td>'
+//                                .'</tr>';
+//                }
+//                $text_reg .= '</table>';
+//
+//            }
+//            $form['fs3']['regl1'] = array(
+//                '#markup' => '<div style="margin: 5px 0;">' . $text_reg . '</div>',
+//            );
+//            // поле ввода индивидуальной дозировки
+//            if ($reglaments)
+//                $form['fs3']['dosage1'] = array(
+//                    '#title' => 'Индивидуальная дозировка препарата',
+//                    '#type' => 'textfield',
+//                    '#size' => '6',
+//                    '#default_value' => '',
+//                );
+//
+//            // опции
+//            $form['fs4'] = array('#type' => 'fieldset', '#title' => 'Опции');
+//            $form['fs4']['mandatory'] = array(
+//                '#title' => 'Обязательно включить в программу (при совпадении Вредных объектов)',
+//                '#type' => 'checkbox',
+//                '#default_value' => $mandatory,
+//                '#description' => 'при наличии двух сходных препаратов, будет выбран этот без дополнительных вопросов',
+//            );
+//            // можно задать текст опции, при выборе которой в АР этап будетй включён в ПЗ
+//            $form['fs4']['option_own'] = array(
+//                '#title' => 'Другая опция',
+//                '#type' => 'textfield',
+//                '#default_value' => $option_own,
+//                '#disabled' => $disable_oo,
+//                '#description' => 'если заполнить это поле, то введенные ВО выбранного регламента не учитываются, а в АгроРецепте выводится опция с данным текстом. При выборе опции препарат включается в программу защиты.',
+//            );
+//        }
+//    }
+//
+//    $form['fs2']['prep_id'] = array(
+//        '#type' => 'select',
+//        '#options' => $options_p,
+//        '#chosen' => true,
+//        '#required' => true,
+//        '#default_value' => $prep_id,
+//        '#ajax' => array(
+//            'callback' => 'pp_form_refresh',
+//        ),
+//        '#suffix' => '</div>',
+//        '#disabled' => $function ? false : true,
+//    );
+//
+//
+//    $form['ppid'] = array('#type' => 'hidden', '#value' => $ppid);
+//    $form['sid'] = array('#type' => 'hidden', '#value' => $sid);
+//
+//    $form['fs5'] = array('#type' => 'container', '#attributes' => array('class' => array('form-actions')));
+//    $form['fs5']['stage-submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => empty($sid) ? 'Добавить' : 'Сохранить',
+//        '#ajax' => array(
+//            'callback' => 'pp_form_refresh',
+//        ),
+//    );
+//
+//    return $form;
+//}
+//function pp_form_refresh($form, &$form_state) {
+//    ctools_include('ajax'); ctools_include('modal');
+//
+//    if ($form_state['executed']) {
+//        $pp_array = get_protection_program($form_state['values']['ppid']);
+//        $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
+//        $commands[] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
+//        $commands[] = ctools_modal_command_dismiss();
+//    } elseif ($form_state['submitted']) {
+//        $commands[] = ajax_command_remove('#messages-wrap');
+//        $commands[] = ajax_command_before('#pp-form-wrapper', '<div id="messages-wrap">' . theme('status_messages') . '</div>');
+//        $commands[] = ajax_command_replace('#pp-form-wrapper', drupal_render($form));
+//    } else {
+//        $commands[] = ajax_command_remove('#messages-wrap');
+//        $commands[] = ajax_command_replace('#pp-form-wrapper', drupal_render($form));
+//    }
+//    return array('#type' => 'ajax', '#commands' => $commands);
+//}
+///**
+// * submit формы
+// */
+//function pp_stage_form_validate($form, &$form_state) {
+//    if (empty($form_state['values']['function'])) { form_set_error('function', 'Поле Функция необходимо заполнить'); return false; }
+//    if (empty($form_state['values']['prep_id']))  { form_set_error('prep_id', 'Поле Препарат необходимо заполнить'); return false; }
+//
+//    $flag = false;
+//    foreach($form_state['input'] as $key => $value) {
+//        if (strpos($key, 'prep_reg_') !== false) $flag = true;
+//    }
+//    if (!$flag) { form_set_error('prep_id', 'Необходимо выбрать хотя бы один из регламентов.'); return false; }
+//}
+//
+///**
+// * submit формы
+// */
+//function pp_stage_form_submit($form, &$form_state) {
+//    // создать или загрузить fc этапа
+//    if (empty($form_state['values']['sid'])) {
+//        $fc_s_item = entity_create('field_collection_item', array('field_name' => 'field_pp_processing_stages'));
+//        $fc_s_item_wrapper = entity_metadata_wrapper('field_collection_item', $fc_s_item);
+//        $node = node_load($form_state['values']['ppid']);
+//        $fc_s_item->setHostEntity('node', $node);
+//    } else {
+//        $fc_s_item_wrapper = entity_metadata_wrapper('field_collection_item', $form_state['values']['sid']);
+//    }
+//
+//    // привязать fc препаратов
+//    $fc_s_item_wrapper->field_pp_ps_start = $form_state['values']['p_start'];
+//    $fc_s_item_wrapper->field_pp_ps_stop = $form_state['values']['p_stop'];
+//    $fc_s_item_wrapper->field_pp_ps_function = $form_state['values']['function'];
+//    $fc_s_item_wrapper->field_pp_ps_preparation = $form_state['values']['prep_id'];
+//    $fc_s_item_wrapper->field_pp_ps_opt_mandatory = $form_state['values']['mandatory'];
+//    $fc_s_item_wrapper->field_pp_ps_opt_presowing = $form_state['values']['presowing'];
+//    $fc_s_item_wrapper->field_pp_ps_opt_own = $form_state['values']['option_own'];
+//
+//    $fc_s_item_wrapper->field_pp_ps_reglaments = array();
+//
+//    foreach($form_state['input'] as $key => $value) {
+//        if (strpos($key, 'prep_reg_') !== false) {
+//            $rig = str_replace('prep_reg_', '', $key);
+//            $fc_s_item_wrapper->field_pp_ps_reglaments[] = $rig;
+//        }
+//    }
+//
+//    $fc_s_item_wrapper->save(TRUE);
+//}
+//
+///**
+// * callback функция удаления этапа обработки
+// */
+//function pp_stage_del_callback($ppid, $sid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Новый этап обработки');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid, 'sid' => $sid);
+//        $output = ctools_modal_form_wrapper('pp_stage_del_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_stage_del_form', $ppid);
+//}
+//function pp_stage_del_form($form, $form_state, $ppid, $sid) {
+//    $form['fs'] = array(
+//        '#type' => 'fieldset',
+//    );
+//    $form['fs']['qst'] = array(
+//        '#markup' => 'Удалить этап обработки?',
+//    );
+//    $form['ppid'] = array(
+//        '#type' => 'hidden',
+//        '#value' => $ppid,
+//    );
+//    $form['sid'] = array(
+//        '#type' => 'hidden',
+//        '#value' => $sid,
+//    );
+//    $form['del-submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => 'Да',
+//    );
+//
+//    return $form;
+//}
+//function pp_stage_del_form_submit($form, &$form_state) {
+//    if ($collection = entity_metadata_wrapper('field_collection_item', $form_state['values']['sid'])) $collection->delete();
+//
+//    // получить и вывести обновлённую ПЗ
+//    $pp_array = get_protection_program($form_state['values']['ppid']);
+//    $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
+//    $form_state['ajax_commands'][] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
+//    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+//}
+//
+///**
+// * callback функция изменения фона таблицы
+// */
+//function pp_bg_callback($ppid, $mode = NULL) {
+//    if ($mode == 'ajax') {
+//        ctools_include('ajax'); ctools_include('modal');
+//        $form_state = array('ajax' => TRUE, 'title' => 'Установить фон таблицы');
+//        $form_state['build_info']['args'] = array('ppid' => $ppid);
+//        $output = ctools_modal_form_wrapper('pp_bg_form', $form_state);
+//        if (!empty($form_state['ajax_commands'])) $output = $form_state['ajax_commands'];
+//        print ajax_render($output);
+//        drupal_exit();
+//    }
+//    else return drupal_get_form('pp_bg_form', $ppid);
+//}
+//function pp_bg_form($form, $form_state, $ppid) {
+//    $form['fs'] = array('#type' => 'fieldset');
+//    $form['fs']['file'] = array(
+//        '#type' => 'file',
+//        '#title' => t('Choose a file'),
+//        '#title_display' => 'invisible',
+//        //'#size' => 22,
+//        '#description' => 'для удаления фона отправьте пустое поле',
+//    );
+//    $form['ppid'] = array(
+//        '#type' => 'hidden',
+//        '#value' => $ppid,
+//    );
+//    $form['bg-submit'] = array(
+//        '#type' => 'submit',
+//        '#value' => 'Подтвердить',
+//    );
+//
+//    return $form;
+//}
+//function pp_bg_form_validate($form, &$form_state) {
+//    $validators = array(
+//        'file_validate_is_image' => array(), // Проверка, действительно ли файл является изображением
+//        'file_validate_extensions' => array('png jpg jpeg'), // Проверка на расширения
+//        'file_validate_image_resolution' => array('2560x2048', '400x400'),
+//    );
+//    // Загружаем файл в sites/default/files/images/protection_program/ (по умолчанию)
+//    if (!$_FILES['files']['name']['file']) {
+//        $form_state['values']['file'] = 'delete';
+//    }
+//    elseif ($file = file_save_upload('file', $validators, 'public://images/protection_program/')) {
+//        // передаём информацию о файле в ф-ю pp_bg_form_submit()
+//        $form_state['values']['file'] = $file;
+//    }
+//    else form_set_error('file', 'Файл не был загружен');
+//}
+//function pp_bg_form_submit($form, &$form_state) {
+//    // установить новый фон
+//    if ($pp_wrapper = entity_metadata_wrapper('node', $form_state['values']['ppid'])) {
+//        if ($form_state['values']['file'] == 'delete') {
+//            $pp_wrapper->field_pp_background->set();
+//        }
+//        else $pp_wrapper->field_pp_background->file->set($form_state['values']['file']);
+//        $pp_wrapper->save();
+//    }
+//
+//    // получить и вывести обновлённую ПЗ
+//    $pp_array = get_protection_program($form_state['values']['ppid']);
+//    $table = theme('protection_program_table', array('pp' => $pp_array, 'op' => 'edit'));
+//    $form_state['ajax_commands'][] = ajax_command_replace('#pp_table', '<div id="pp_table">' . $table . '</div>');
+//    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+//}
+//
+///**
+// * hook_theme
+// */
+//function protection_program_theme() {
+//    return array(
+//        'protection_program_table' => array(
+//            'arguments' => array('element' => NULL),
+//            'template' => 'protection-program-table',
+//            'path' => drupal_get_path('module', 'protection_program') . '/templates',
+//        ),
+//    );
+//}
+//
+//function protection_program_preprocess_page(&$vars) {
+//    // подключить стили и js, если ПЗ выводится или редактируется
+//    if ((isset($vars['node']) && $vars['node']->type == 'protection_program')
+//        || (arg(0) == 'protection-program' && arg(2) == 'edit')){
+//        chibs_include_modal(array('class' => 'custom-form'));
+//        drupal_add_css(drupal_get_path('module', 'protection_program') . '/css/protection_program.css');
+//
+//        // для страницы редактирования установить заголовок и описание
+//        if (arg(2) == 'edit') {
+//            $vars['node'] = node_load(arg(1));
+//            $description = field_get_items('node', $vars['node'], 'body');
+//            $vars['title_description'] = $description[0]['summary'];
+//            drupal_set_title($vars['node']->title);
+//
+//            ctools_include('modal');
+//            ctools_modal_add_js();
+//        }
+//    }
+//}
+//
+//function get_protection_program($ppid, $data = array())
+//{
+//    $pp = array();
+//    if ($ppid) {
+//        $pp_wrapper = entity_metadata_wrapper('node', $ppid);
+//        $pp['id'] = $ppid;
+//        $pp['measure'] = t(AGRO_FIELD_MEASURE);
+//
+//        $culture_image_uri = '';
+//        $arr_latin = $arr_names = array();
+//        foreach($pp_wrapper->field_pp_cultures as $key_c => $culture_wrapper) {
+//            if ($culture_wrapper->field_promo_image->value()) {
+//                $image = $culture_wrapper->field_promo_image->file->value();
+//                $culture_image_uri = image_style_url('before_after', $image->uri);
+//            }
+//            $culture_link       =  drupal_get_path_alias('node/' . $culture_wrapper->nid->value());
+//            $arr_latin[]        = $culture_wrapper->field_name_latin->value();
+//            $arr_names[]        = '<a class="cblack" href="/' . $culture_link .'" target="_blank">' . $culture_wrapper->title->value() . '</a>';
+//        }
+//
+//        $pp['culture_image_uri'] = $culture_image_uri;
+//        $pp['culture_names'] = implode(', ', $arr_names);
+//        $pp['culture_names_latin'] = implode(', ', $arr_latin);
+//
+//        if ($pp_wrapper->field_pp_background->value())
+//            $image_bg = $pp_wrapper->field_pp_background->file->value();
+//        $pp['culture_image_bg_uri'] = empty($image_bg->uri) ? '' : file_create_url($image_bg->uri);
+//
+//        // периоды роста растения
+//            // если задан начальный период, список составляется начиная с него
+//        $periods = _get_processing_periods($culture_wrapper->field_growth_stages_set->field_mc_periods->value());
+//        if (empty($data['period'])) {
+//            $keys = array_keys($periods);
+//            $start_period = $keys[0];
+//        } else $start_period = $data['period'];
+//        $flag_p = false;
+//        foreach ($periods as $tid => $name) {
+//            if ($start_period == $tid) $flag_p = true;
+//            if ($flag_p) $pp['periods'][$tid] = _insertToStr($name, 16, '<br />');
+//        }
+//
+//        // список функций пестицидов
+//        $query = db_select('taxonomy_term_data', 't');
+//        $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
+//        $query->join('field_data_field_color', 'fc', 'fc.entity_id = t.tid');
+//        $query->fields('t', array('tid', 'name'));
+//        $query->addField('fc', 'field_color_value');
+//        $query->condition('h.parent', AGRO_CATEGORY_TID);
+//        $query->condition('t.tid', 50, '<>');
+//        $query->orderBy('t.weight');
+//        $functions = $query->execute()->fetchAll();
+//
+//        foreach($functions as $function) {
+//            $pp['functions'][$function->tid] = array(
+//                'name' => $function->name,
+//                'color' => $function->field_color_value,
+//            );
+//        }
+//
+//        $area = empty($data['area']) ? 1 : $data['area'];
+//        $seeding = empty($data['seeding']) ? 100 : $data['seeding'];
+//
+//        // сформировать массив всех заданных в форме ВО
+//        $hobjects = array();
+//        if (!empty($data['hobjects']['weeds'])) {
+//            foreach ($data['hobjects']['weeds'] as $weed) $hobjects[$weed] = array('type' => 'weed', 'preparations' => array());
+//        }
+//
+//        if (!empty($data['hobjects']['fungis'])) {
+//            foreach ($data['hobjects']['fungis'] as $fungi) $hobjects[$fungi] = array('type' => 'fungi', 'preparations' => array());
+//        }
+//        if (!empty($data['hobjects']['pests'])) {
+//            foreach ($data['hobjects']['pests'] as $pest) $hobjects[$pest] = array('type' => 'pest', 'preparations' => array());
+//        }
+//        if (!empty($data['dessic'])) $hobjects['dessic'] = $data['dessic'];
+//
+//
+//        $periods_tids = array_keys($pp['periods']);                                                                      // список ключей периодов для проверки вхождения регламента в ПЗ
+//        $sum_min = $sum_set = $sum_max = 0;
+//        // цикл по этапам, с проверкой регламентов
+//        foreach ($pp_wrapper->field_pp_processing_stages as $stage) {
+//            $sid = $stage->item_id->value();
+//            $prep_wrapper = entity_metadata_wrapper('node', $stage->field_pp_ps_preparation->value());
+//            $nid = $prep_wrapper->nid->value();
+//
+//            // определяем наименование препарата, ед.изм., нормы, стоимость
+//            $unit = $units_arr = $pid = $price = $title = array();
+//            $product_info = ext_product_product_get_info($prep_wrapper->nid->value())['items'];
+//            foreach ($product_info['items'] as $item) {
+//                $pid[] = $item['id'];
+//                $unit[] = $item['unit_short'];
+//                $units_arr[] = $item['unit_short'] . '/' . array_shift($item['unit_field']);
+//                $price[] = $item['price'];
+//                $titles[] = $item['title'] . ', ' . $item['form_short'];
+//            }
+//            $title = implode('+', $titles);
+//
+//            $mandatory = $stage->field_pp_ps_opt_mandatory->value();
+//            $option_own = $stage->field_pp_ps_opt_own->value();
+//
+//            // проверка на вхождение периода регламента в интервал программы защиты
+//            if (in_array($stage->field_pp_ps_stop->tid->value(), $periods_tids)) {
+//
+//                // проверить регламенты этапа, есть ли заданные Культуры и ВО
+//                $take_stage = $processing = $is_presowing = $rate = '';
+//                $rate_min = $rate_max = array();
+//                $processing = array();
+//                foreach ($stage->field_pp_ps_reglaments as $reglament) {
+//                    $regl_wrapper = entity_metadata_wrapper('field_collection_item', $reglament->value());
+//                    if ($regl_wrapper->value()) {                                     // проверка добавлена из-за удаления регламентов в препарате, при этом в программе защиты регламенты остаются, вызывая ошибку
+//                        $function = $regl_wrapper->field_pd_r_function->tid->value();
+//
+//
+//                        // данные о регламенте и исключениях ВО
+//                        $info = array(
+//                            'pid' => $nid,
+//                            'rid' => $reglament->value(),
+//                            'mandatory' => $mandatory,
+//                            'by_option' => $option_own ? true : false,
+//                            'poll_option' => empty($data['poll_options'][$sid]) ? 0 : $data['poll_options'][$sid],
+//                        );
+//
+//                        // исключения ВО
+//                        // ВО
+//                        if (isset($prep_wrapper->field_pd_low_activity) && $prep_wrapper->field_pd_low_activity->count()) {
+//                            foreach ($prep_wrapper->field_pd_low_activity as $item_la) {
+//                                $info['exceptions_ho'][$item_la->nid->value()] = $item_la->nid->value();
+//                            }
+//                        }
+//                        // группы ВО
+//                        if (isset($prep_wrapper->field_pd_low_activity_groups) && $prep_wrapper->field_pd_low_activity_groups->count()) {
+//                            foreach ($prep_wrapper->field_pd_low_activity_groups as $item_gr) {
+//                                $info['exceptions_gr'][$item_gr->tid->value()] = $item_gr->tid->value();
+//                            }
+//                        }
+//
+//                        // берем этап, если регламент соответствует заданным ВО
+//                        if (check_reglament($info, $hobjects)) {
+//                            // отмечаем этапы, для которых есть регламенты
+//                            $take_stage = true;
+//
+//                            // рекомендованная норма, если регламентов несколько, определяем общий диапазон
+//                            foreach ($regl_wrapper->field_pd_r_prep_rate->getIterator() as $cr_key => $cr_item) {
+//                                $from_rate = (float)$cr_item->from->value();
+//                                $to_rate = (float)$cr_item->to->value();
+//                                if ($function == AGRO_CATEGORY_DISINFECTANTS_TID) {
+//                                    $from_rate = $from_rate * $seeding / 1000;
+//                                    $to_rate = $to_rate * $seeding / 1000;
+//                                }
+//                                $rate_min[$cr_key] = (empty($rate_min[$cr_key]) || $rate_min[$cr_key] > $from_rate) ? $from_rate : $rate_min[$cr_key];
+//                                $rate_max[$cr_key] = (empty($rate_max[$cr_key]) || $rate_max[$cr_key] < $to_rate) ? $to_rate : $rate_max[$cr_key];
+//
+//
+//                            }
+//                            // из вычисленных норм формируем массив для таблицы
+//                            $rates_arr = array();
+//                            foreach ($pid as $p_key => $p_item) {
+//                                if ($rate_min[$p_key] == $rate_max[$p_key]) $rates_arr[] = (float)$rate_min[$p_key] . ' ' . $units_arr[$p_key];
+//                                else $rates_arr[] = (float)$rate_min[$p_key] . '-' . (float)$rate_max[$p_key] . ' ' . $units_arr[$p_key];
+//                            }
+//
+//                            // описание обработки
+//                            if (!in_array($regl_wrapper->field_pd_r_processing->value(), $processing)) $processing[] = $regl_wrapper->field_pd_r_processing->value();
+//                        }
+//                    }
+//                }
+//
+//
+//                // если регламентов несколько, описание берем из этапа
+//                //if ($stage->field_pp_ps_reglaments->count() > 1) $processing = $stage->field_pp_ps_processing->value();
+//
+//                // заполнить массив, если регламенты подошли
+//                if ($take_stage) {
+//                    // если стартовый период регламента за пределами ПЗ, то установить на начальный период
+//                    $p_start_tid = (in_array($stage->field_pp_ps_start->tid->value(), $periods_tids)) ?  $stage->field_pp_ps_start->tid->value() : $start_period;
+//
+//                    $pp['stages'][$sid]['nid'] = $nid;          // id ноды (препарат/баковая смесь)
+//                    $pp['stages'][$sid]['pid'] = $pid;          // массив id препарата/препаратов
+//                    $pp['stages'][$sid]['title'] = $title;
+//                    $pp['stages'][$sid]['p_start_tid'] = $p_start_tid;
+//                    $pp['stages'][$sid]['p_stop_tid'] = $stage->field_pp_ps_stop->tid->value();
+//                    $pp['stages'][$sid]['function_tid'] = $stage->field_pp_ps_function->tid->value();
+//                    $pp['stages'][$sid]['rate'] = $rates_arr;
+//                    $pp['stages'][$sid]['price'] = $price;
+//                    $pp['stages'][$sid]['processing'] = implode('<br />------------------------------<br />', $processing);
+//                    $pp['stages'][$sid]['unit'] = $unit;
+//                    $pp['stages'][$sid]['rate_min'] = $rate_min;
+//                    $pp['stages'][$sid]['rate_max'] = $rate_max;
+//                    $pp['stages'][$sid]['option_own'] = $option_own;
+//                }
+//            }
+//        }
+//        // передаём массив ВО с отметкой пролеченных
+//        $pp['hobjects'] = $hobjects;    // передаём массив ВО с отметкой пролеченных
+//
+//
+//        // найти пересечения по препаратам -----------------------------------------------------------------------------
+//        // 1. найти все пересечения ВО по найденным для них препаратам, понизить рейтинг препарата на 1 за каждое несовпадение
+//        // 2. отбросить препараты с низшим рейтингом оставив один (несколько, если одинаковый) с наивысшим
+//        // 3. для всех отброшенных препаратов Вредного объекта понизить рейтинг на 1 для препарата в других ВО
+//        // 4. повторить со второго пункта, пока не будут отсутствовать отброшенные
+//        // 5. для ВО с несколькими препаратами вывести уточняющие вопросы
+//            // сформировать рабочий массив
+//        if (!empty($pp['stages']) && $hobjects) {
+//            $hobjects = array();
+//            foreach ($pp['hobjects'] as $key => $hobject) {
+//                if (is_numeric($key) && !empty($hobject['preparations'])) $hobjects[$key] = $hobject['preparations'];
+//            }
+//
+//            // найти для каждого ВО пересечения по препаратам
+//            // чем меньше пересечений у препарата, тем ниже его рейтинг
+//            foreach ($hobjects as $key_out => $hobject_out) {
+//                foreach ($hobjects as $key_in => $hobject_in) {
+//                    if ($key_in != $key_out) {                                                                              // не сравнивать с самим собой
+//                        // получаем по ID различия в наборах препаратов
+//                        $arr_diff1 = array_diff(array_keys($hobject_out), array_keys($hobject_in));
+//                        $arr_diff2 = array_diff(array_keys($hobject_in), array_keys($hobject_out));
+//                        $arr_diff = array_merge($arr_diff1, $arr_diff2);
+//                        if ($arr_diff) {
+//                            foreach ($arr_diff as $a_item) {
+//                                if (isset($hobjects[$key_out][$a_item])) {
+//                                    $hobjects[$key_out][$a_item]['rating']--;
+//                                }
+//                                if (isset($hobjects[$key_in][$a_item])) {
+//                                    $hobjects[$key_in][$a_item]['rating']--;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // в каждом ВО
+//            // отбросить препараты с низшим рейтингом кроме одного или нескольких с наивысшим
+//            // или при наличии обязательных оставить их, отбросив остальные независимо от рейтинга
+//            $arr_rest = array();
+//            do {
+//                // в каждом ВО оставить только обязательные препараты и препараты с наивысшим рейтингом
+//                foreach ($hobjects as $key_h => $hobject) {
+//                    // найти лучший рейтинг
+//                    $best_rating = $have_mandatory = '';
+//                    foreach ($hobject as $key_p => $p_item) {
+//                        if ($best_rating === '' || $best_rating < $p_item['rating']) {
+//                            // препарат с опцией не участвует
+//                            if (!$p_item['option_own']) $best_rating = $p_item['rating'];
+//                        }
+//                        if ($p_item['mandatory']) $have_mandatory = true;
+//                    }
+//                    // сформировать массивы в препаратами с лучшим рейтингом и исключенными препаратами
+//                    $arr_best = $arr_rest = array();
+//                    foreach ($hobject as $key_p => $p_item) {
+//                        // если есть обязательные, то они заменяют препараты с лучшим рейтингом, остальные в исключения
+//                        if ($have_mandatory) {
+//                            if ($p_item['mandatory']) $arr_best[$key_p] = $p_item;
+//                            else $arr_rest[$key_p] = $p_item;
+//                        }
+//                        else {
+//                            // препарат с опцией не может быть среди лучших
+//                            if ($best_rating == $p_item['rating'] && !$p_item['option_own']) $arr_best[$key_p] = $p_item;
+//                            else $arr_rest[$key_p] = $p_item;
+//                        }
+//                    }
+//                    // переписать в основной массив
+//                    $hobjects[$key_h] = $arr_best;
+//                }
+//                // по массиву исключенных препаратов понизить им рейтинг ВО
+//                foreach ($hobjects as $key_h => $hobject) {
+//                    foreach ($hobject as $key_p => $p_item) {
+//                        if (isset($arr_rest[$key_p])) $hobjects[$key_h][$key_p]['rating']--;
+//                    }
+//                }
+//            } // выполнять, пока есть исключенные
+//            while ($arr_rest);
+//
+//            // проверить на наличие нескольких препаратов в одном ВО
+//            // собрать препараты без дубликатов в один массив
+//            // дубликаты собрать в 'advantages' для последующего уточнения
+//            $preparations = array();
+//            foreach ($hobjects as $key_h => $hobject) {
+//                if (count($hobject) > 1) {
+//                    // индекс для массива аналогов составляем из pid, чтобы не было повторов при запросе уточнений
+//                    $arr_key = array();
+//                    $index_a = '';
+//                        // собираем только НЕ обязательные аналоги
+//                    foreach($hobject as $key_a => $item_a) {
+//                        if (!$item_a['mandatory']) $arr_key[] = $key_a;
+//                    }
+//                    if ($arr_key) {
+//                        $index_a = implode('_', $arr_key);
+//                        $pp['advantages'][$index_a] = $hobject;
+//                    }
+//
+//                    // если опрос по ВО с дублями не проведен, включить в вывод все препараты из ВО
+//                    if (empty($data['poll_advantages'][$index_a])) {
+//                        foreach ($hobject as $key_p => $p_item) {
+//                            $preparations[$key_p] = $key_p;
+//                        }
+//                    } // если проведен, то вывести выбранный препарат
+//                    else {
+//                        $preparations[$data['poll_advantages'][$index_a]] = $data['poll_advantages'][$index_a];
+//                    }
+//                } else {
+//                    $item = current($hobject);
+//                    $preparations[$item['pid']] = $item['pid'];
+//                }
+//            }
+//
+//            // исключить этапы для дублирующих препаратов
+//                // составить массив на исключение
+//            $arr_exclude = array();
+//            foreach ($pp['stages'] as $key_s => $stage) {
+//                $exclude = false;
+//
+//                if (!in_array($stage['nid'], $preparations)) $exclude = true;
+//
+//                // проверить этапы на наличие Опций и составить из них массив, этапы с опциями без ответа добавить в массив на исключение
+//                if ($stage['option_own']) {
+//                    if (empty($data['poll_options'][$key_s])) $exclude = true;
+//                    else $exclude = false;
+//                    $pp['options'][$key_s] = $stage['option_own'];
+//                }
+//
+//                if ($exclude) $arr_exclude[] = $key_s;
+//            }
+//
+//            // удалить исключаемые этапы
+//            foreach ($arr_exclude as $a_item) unset($pp['stages'][$a_item]);
+//
+//
+//            // продукция, стоимость и итоговые суммы по полю ---------------------------------------------------------------
+//                // посчитать только, если не найдены аналоги или для всех аналогов есть уточнения
+//            $make_accounts = true;
+//            if (!empty($pp['advantages'])) {
+//                foreach($pp['advantages'] as $key_a => $item_a) {
+//                    if (empty($data['poll_advantages'][$key_a])) $make_accounts = false;
+//                }
+//            }
+//            if (empty($pp['stages'])) $make_accounts = false;
+//
+//            $pp['products'] = array();
+//            if ($make_accounts) {
+//                foreach ($pp['stages'] as $s_key => $stage) {
+//                    foreach ($stage['pid'] as $sp_key => $pid) {
+//                        $cost_min = $stage['rate_min'][$sp_key] * $stage['price'][$sp_key];
+//                        $cost_max = $stage['rate_max'][$sp_key] * $stage['price'][$sp_key];
+//                        $cost_field_min = $cost_min * $area;
+//                        $cost_field_max = $cost_max * $area;
+//
+//                        $pp['products'][$pid] = array(
+//                            'pid' => $pid,
+//                            'price' => $stage['price'][$sp_key],
+//                            'unit' => $stage['unit'][$sp_key],
+//                            'rate_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_min'] : 0) + $stage['rate_min'][$sp_key],
+//                            'rate_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_max'] : 0) + $stage['rate_max'][$sp_key],
+//                            'rate_field_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_field_min'] : 0) + $stage['rate_min'][$sp_key] * $area,
+//                            'rate_field_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['rate_field_max'] : 0) + $stage['rate_max'][$sp_key] * $area,
+//                            'cost_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_min'] : 0) + $cost_min,
+//                            'cost_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_max'] : 0) + $cost_max,
+//                            'cost_field_min' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_min'] : 0) + $cost_field_min,
+//                            'cost_field_max' => (isset($pp['products'][$pid]) ? $pp['products'][$pid]['cost_field_max'] : 0) + $cost_field_max,
+//                        );
+//
+//                        $sum_min += $cost_min;
+//                        $sum_max += $cost_max;
+//                    }
+//                }
+//                $pp['products']['total'] = array(
+//                    'sum_min' => $sum_min,
+//                    'sum_max' => $sum_max,
+//                    'sum_field_min' => $sum_min * $area,
+//                    'sum_field_max' => $sum_max * $area,
+//                );
+//            }
+//        }
+//    }
+//
+//    return $pp;
+//}
+//
 ///**
 // * @param $prep - препарат, для которого получить регламенты
 // * @param $culture - nid культуры
 // * @param $function - tid, функция, выполняемая препаратом (он же категория)
+// * @param $hobjects - массив массивов 'entity_id' => array('type' => 'weed, fungi, pest', 'class' => 'entity, life_time, bot_class', 'cured' => 0)
+// * @param $orphane - true - включить в вывод регламенты без явно заданных культур
 // *
 // * @return array
-// * вернуть массив регламентов, отфильтрованый по заданным культурам и функции
+// * вернуть массив регламентов, отфильтрованый по заданным культурам, функции и вредным объектам
+// * массив вредных объектов дополнительно проверить на вхождение в регламенты
 // */
-//function preparation_reglaments($prep, $culture, $function, &$hobjects = array()) {
-//    if (!$culture && !$function) return false;
+//function preparation_reglaments($prep, $cultures, $function, &$hobjects = array()) {
+//    if (!$cultures && !$function) return false;
 //
-//    $node = entity_metadata_wrapper('node', $prep);
-//    $regl = $node->field_pd_reglaments2->value();
+//    $prep_wrapper = entity_metadata_wrapper('node', $prep);
+//    $regl_list = $prep_wrapper->field_pd_reglaments->value();
 //
 //    // цикл по регламентам
 //    $reglaments = array();
-//    foreach ($regl as $rg_key => $rg_item) {
+//    foreach ($regl_list as $rg_item) {
 //        // проверить культуру регламента
 //        $flag_c = false;
 //        // покультурно
-//        if (!empty($rg_item->field_pd_r_culture['und']))
-//            foreach ($rg_item->field_pd_r_culture['und'] as $c_item) {
-//                if ($c_item['target_id'] == $culture) $flag_c = true;
-//            }
+//        if (!empty($rg_item->field_pd_r_cultures['und'])) {
+//          foreach ($rg_item->field_pd_r_cultures['und'] as $c_item) {
+//            if (in_array($c_item['target_id'], $cultures)) $flag_c = true;
+//          }
+//        }
 //
-//        // по группе культур
-//        if (!empty($rg_item->field_pd_r_culture_group['und']))
-//            foreach ($rg_item->field_pd_r_culture_group['und'] as $cg_key => $cg_item) {
-//                $query = db_select('node', 'n');
-//                $query->condition('n.type', 'main_cultures');
-//                $query->innerJoin('field_data_field_culture_group', 'cg', 'n.nid = cg.entity_id');
-//                $query->condition('cg.field_culture_group_tid', $cg_item['tid']);
-//                $query->fields('n', array('nid'));
-//                $results_c = $query->execute()->fetchAll();
-//
-//                if ($results_c)
-//                    foreach ($results_c as $res_item)
-//                        if ($res_item->nid == $culture) $flag_c = true;
-//            }
 //        if (!$flag_c) continue;
 //
 //        // проверить функцию регламента
 //        if ($function) {
 //            if ($rg_item->field_pd_r_function['und'][0]['tid'] != $function) continue;
-//            if ($function == AGRO_CATEGORY_DESSICANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
+//            if ($function == AGRO_CATEGORY_DESICCANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
 //        }
 //
-//        $reglaments[$rg_item->item_id] = $rg_item;
+//        // проверить ВО регламента (кроме этапа десикации)
+//        if (!empty($hobjects) && $function != AGRO_CATEGORY_DESICCANTS_TID) {
+//            // проверить ВО - ВО и Класс - ВО
+//                // цикл по ВО регламента
+//            if (!empty($rg_item->field_pd_r_pest['und']))
+//                foreach ($rg_item->field_pd_r_pest['und'] as $p_key => $p_item) {
+//                    // ищем id ВО в принятом массиве ВО
+//                    $ho_id = $p_item['target_id'];
+//                    if (isset($hobjects[$ho_id])) {
+//                        $reglaments[$rg_item->item_id] = $rg_item;
+//                        break;
+//                    }
+//
+//                    // для Сорняков (проверка на функцию == гербицид) ищем Класс в принятом массиве ВО
+//                    if ($rg_item->field_pd_r_function['und'][0]['tid'] == AGRO_CATEGORY_HERBICIDES_TID) {
+//                        // получить классы данного ВО
+//                        $query = db_select('node', 'n');
+//                        $query->condition('n.type', 'harmful_objects');
+//                        $query->condition('n.nid', $ho_id);
+//                        $query->join('field_data_field_weed_botan_class', 'bc', 'bc.entity_id = n.nid');
+//                        $query->join('field_data_field_weed_life_time', 'lt', 'lt.entity_id = n.nid');
+//                        $query->fields('bc', array('field_weed_botan_class_tid'));
+//                        $query->fields('lt', array('field_weed_life_time_tid'));
+//                        $classes = $query->execute()->fetchAll();
+//
+//                        // проверить наличие Классов в полученном массиве ВО
+//                        if (isset($hobjects[$classes[0]->field_weed_life_time_tid][$classes[0]->field_weed_botan_class_tid])) {
+//                            $hobjects[$classes[0]->field_weed_life_time_tid][$classes[0]->field_weed_botan_class_tid] = 1;          // 1 для того класса, что присутствует в регламенте
+//                            $reglaments[$rg_item->item_id] = $rg_item;
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//            // проверить Класс - Класс
+//                // цикл по классу life_time
+//            if (!empty($rg_item->field_pd_r_weed_life_time['und']))
+//                foreach ($rg_item->field_pd_r_weed_life_time['und'] as $lt_key => $lt_item) {
+//                    $lt_id = $lt_item['tid'];
+//                    if (isset($hobjects[$lt_id]) && $hobjects[$lt_id]['class'] == 'taxonomy') {
+//                        // цикл по бот.классам
+//                        foreach ($rg_item->field_pd_r_weed_bot_class['und'] as $bc_key => $bc_item) {
+//                            $bc_id = $bc_item['tid'];
+//                            if (isset($hobjects[$lt_id][$bc_id])) {
+//                                $hobjects[$lt_id][$bc_id] = 1;          // 1 для того класса, что присутствует в регламенте
+//                                $reglaments[$rg_item->item_id] = $rg_item;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//        }
+//        // берем регламент без проверки на ВО
+//        else $reglaments[$rg_item->item_id] = $rg_item;
 //    }
 //    return $reglaments ? $reglaments : false;
 //}
-
-/**
- * @param $prep - препарат, для которого получить регламенты
- * @param $culture - nid культуры
- * @param $function - tid, функция, выполняемая препаратом (он же категория)
- * @param $hobjects - массив массивов 'entity_id' => array('type' => 'weed, fungi, pest', 'class' => 'entity, life_time, bot_class', 'cured' => 0)
- *
- * @return array
- * вернуть массив регламентов, отфильтрованый по заданным культурам, функции и вредным объектам
- * массив вредных объектов дополнительно проверить на вхождение в регламенты
- */
-function check_reglament($data, &$hobjects) {
-
-    $regl_wrapper = entity_metadata_wrapper('field_collection_item', $data['rid']);
-    $result = false;
-
-    // если ВО не заданы - регламент соответствует
-    if (empty($hobjects)) return true;
-
-    // если десикация - подходит, отсев и запрос будут дальше (обрабатывается и запрашивается как фича)
-    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_DESICCANTS_TID) return true;
-
-
-    // проверить ВО - ВО
-    if ($regl_wrapper->field_pd_r_hobjects->count()) {
-        foreach ($regl_wrapper->field_pd_r_hobjects as $r_item) {
-            // ищем id ВО в принятом массиве ВО
-            if ($r_item->value()) {
-                $ho_id = $r_item->nid->value();
-                if (isset($hobjects[$ho_id])) {
-                    if (!$data['by_option'] || $data['poll_option'])
-                        $hobjects[$ho_id]['preparations'][$data['pid']] = array(
-                            'pid' => $data['pid'],
-                            'mandatory' => $data['mandatory'],
-                            'option_own' => $data['by_option'],
-                            'rating' => 0,
-                        );
-                    $result = true;
-                }
-            }
-        }
-    }
-
-    $group_hobjects = array();
-
-    // список ВО за вычетом исключений для SQL запроса только по ним
-    $arr_nids = $ho_hobjects = array();
-    foreach($hobjects as $key => $hobject)
-        if (empty($data['exceptions_ho'][$key])) $arr_nids[] = $key;
-
-    // список групп исключений
-    $arr_exept_gr = array();
-    if (!empty($data['exceptions_gr'])) {
-        foreach ($data['exceptions_gr'] as $item_e) {
-            $parents = taxonomy_get_parents_all($item_e);
-            $level = count($parents);
-            $arr_exept_gr[$level][] = $item_e;
-        }
-    }
-
-    // для Сорняков проверяем вхождение списка ВО в заданные в регламенте группы
-    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_HERBICIDES_TID) {
-        if ($regl_wrapper->field_pd_r_hobjects_groups->count()) {
-            foreach ($regl_wrapper->field_pd_r_hobjects_groups as $rg_item) {
-                $group_wrapper = entity_metadata_wrapper('field_collection_item', $rg_item->value());
-
-                // массивы значений Продолжительности жизни и Групп
-                $arr_lt = array();
-                if ($group_wrapper->field_pd_r_hg_life_time->count()) {
-                    foreach ($group_wrapper->field_pd_r_hg_life_time as $lt_item) {
-                        $arr_lt[$lt_item->tid->value()] = $lt_item->tid->value();
-                    }
-                }
-
-                foreach ($group_wrapper->field_pd_r_hg_group as $g_item) {
-
-                    $tid_bc = $g_item->tid->value();
-                    $parents = taxonomy_get_parents_all($tid_bc);
-                    $level = count($parents);
-
-                    // получить список ВО входящщих в группы вместе с подгруппами
-                    $query = db_select('node', 'n');
-                    $query->condition('n.type', 'harmful_objects');
-                    $query->join('field_data_field_weed_life_time', 'lt', 'lt.entity_id = n.nid');
-                    if ($level == 1 || !empty($arr_exept_gr[1])) $query->join('field_data_field_weed_group', 'g', 'g.entity_id = n.nid');
-                    if ($level == 2 || !empty($arr_exept_gr[2])) $query->join('field_data_field_weed_class', 'c', 'c.entity_id = n.nid');
-                    if ($level == 3 || !empty($arr_exept_gr[3])) $query->join('field_data_field_weed_order', 'o', 'o.entity_id = n.nid');
-                    if ($level == 4 || !empty($arr_exept_gr[4])) $query->join('field_data_field_weed_family', 'f', 'f.entity_id = n.nid');
-                    if ($level == 5 || !empty($arr_exept_gr[5])) $query->join('field_data_field_weed_kind', 'k', 'k.entity_id = n.nid');
-                    $query->condition('n.nid', $arr_nids, 'IN');
-                    if ($arr_lt) $query->condition('lt.field_weed_life_time_tid', $arr_lt, 'IN');
-                    if ($level == 1) $query->condition('g.field_weed_group_tid', $tid_bc);
-                    if ($level == 2) $query->condition('c.field_weed_class_tid', $tid_bc);
-                    if ($level == 3) $query->condition('o.field_weed_order_tid', $tid_bc);
-                    if ($level == 4) $query->condition('f.field_weed_family_tid', $tid_bc);
-                    if ($level == 5) $query->condition('k.field_weed_kind_tid', $tid_bc);
-                    // группы исключения
-                    if (!empty($arr_exept_gr[1])) $query->condition('g.field_weed_group_tid', $arr_exept_gr[1], 'NOT IN');
-                    if (!empty($arr_exept_gr[2])) $query->condition('c.field_weed_class_tid', $arr_exept_gr[2], 'NOT IN');
-                    if (!empty($arr_exept_gr[3])) $query->condition('o.field_weed_order_tid', $arr_exept_gr[3], 'NOT IN');
-                    if (!empty($arr_exept_gr[4])) $query->condition('f.field_weed_family_tid', $arr_exept_gr[4], 'NOT IN');
-                    if (!empty($arr_exept_gr[5])) $query->condition('k.field_weed_kind_tid', $arr_exept_gr[5], 'NOT IN');
-
-                    $query->fields('n', array('nid'));
-                    $nids = $query->execute()->fetchAll();
-
-                    if ($nids) {
-                        foreach ($nids as $nid) $group_hobjects[$nid->nid] = $nid->nid;
-                    }
-                }
-            }
-
-            // проверка на вхождение заданных ВО в группы ВО из регламента
-            foreach($hobjects as $key => $hobject) {
-                if (isset($group_hobjects[$key])) {
-                    if (!$data['by_option'] || $data['poll_option'])
-                        $hobjects[$key]['preparations'][$data['pid']] = array(
-                            'pid' => $data['pid'],
-                            'mandatory' => $data['mandatory'],
-                            'option_own' => $data['by_option'],
-                            'rating' => 0,
-                        );
-                    $result = true;
-                }
-            }
-        }
-    }
-
-    return $result;
-}
-
-/**
- * @param $periods_list - массив объектов taxonomy_term (поле field_growth_stages_set->field_mc_periods Культуры)
- *
- * @return array
- * отсортированный по весу массив tid и name
- */
-function _get_processing_periods($periods_list) {
-    $options = array();
-    if (!empty($periods_list)) {
-        foreach ($periods_list as $p_item) {
-            $periods[$p_item->weight] = array(
-                'tid' => $p_item->tid,
-                'name' => $p_item->name,
-            );
-        }
-        ksort($periods);
-
-        foreach ($periods as $period) $options[$period['tid']] = $period['name'];
-    }
-
-    return $options;
-}
-
-function taxonomy_get_children_all($tid, $vid = 0){
-    $c = taxonomy_get_children($tid, $vid);
-    $result = array();
-    foreach ($c as $t => $d){
-        $result[$t] = $d;
-        $below = taxonomy_get_children_all($t, $vid);
-        if (!empty($below)) {
-            foreach ($below as $nt => $nd){
-                $result[$nt] = $nd;
-            }
-        }
-    }
-    return $result;
-}
+/////**
+//// * @param $prep - препарат, для которого получить регламенты
+//// * @param $culture - nid культуры
+//// * @param $function - tid, функция, выполняемая препаратом (он же категория)
+//// *
+//// * @return array
+//// * вернуть массив регламентов, отфильтрованый по заданным культурам и функции
+//// */
+////function preparation_reglaments($prep, $culture, $function, &$hobjects = array()) {
+////    if (!$culture && !$function) return false;
+////
+////    $node = entity_metadata_wrapper('node', $prep);
+////    $regl = $node->field_pd_reglaments2->value();
+////
+////    // цикл по регламентам
+////    $reglaments = array();
+////    foreach ($regl as $rg_key => $rg_item) {
+////        // проверить культуру регламента
+////        $flag_c = false;
+////        // покультурно
+////        if (!empty($rg_item->field_pd_r_culture['und']))
+////            foreach ($rg_item->field_pd_r_culture['und'] as $c_item) {
+////                if ($c_item['target_id'] == $culture) $flag_c = true;
+////            }
+////
+////        // по группе культур
+////        if (!empty($rg_item->field_pd_r_culture_group['und']))
+////            foreach ($rg_item->field_pd_r_culture_group['und'] as $cg_key => $cg_item) {
+////                $query = db_select('node', 'n');
+////                $query->condition('n.type', 'main_cultures');
+////                $query->innerJoin('field_data_field_culture_group', 'cg', 'n.nid = cg.entity_id');
+////                $query->condition('cg.field_culture_group_tid', $cg_item['tid']);
+////                $query->fields('n', array('nid'));
+////                $results_c = $query->execute()->fetchAll();
+////
+////                if ($results_c)
+////                    foreach ($results_c as $res_item)
+////                        if ($res_item->nid == $culture) $flag_c = true;
+////            }
+////        if (!$flag_c) continue;
+////
+////        // проверить функцию регламента
+////        if ($function) {
+////            if ($rg_item->field_pd_r_function['und'][0]['tid'] != $function) continue;
+////            if ($function == AGRO_CATEGORY_DESSICANTS_TID && isset($hobjects['dessic']) && !$hobjects['dessic']) continue;
+////        }
+////
+////        $reglaments[$rg_item->item_id] = $rg_item;
+////    }
+////    return $reglaments ? $reglaments : false;
+////}
+//
+///**
+// * @param $prep - препарат, для которого получить регламенты
+// * @param $culture - nid культуры
+// * @param $function - tid, функция, выполняемая препаратом (он же категория)
+// * @param $hobjects - массив массивов 'entity_id' => array('type' => 'weed, fungi, pest', 'class' => 'entity, life_time, bot_class', 'cured' => 0)
+// *
+// * @return array
+// * вернуть массив регламентов, отфильтрованый по заданным культурам, функции и вредным объектам
+// * массив вредных объектов дополнительно проверить на вхождение в регламенты
+// */
+//function check_reglament($data, &$hobjects) {
+//
+//    $regl_wrapper = entity_metadata_wrapper('field_collection_item', $data['rid']);
+//    $result = false;
+//
+//    // если ВО не заданы - регламент соответствует
+//    if (empty($hobjects)) return true;
+//
+//    // если десикация - подходит, отсев и запрос будут дальше (обрабатывается и запрашивается как фича)
+//    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_DESICCANTS_TID) return true;
+//
+//
+//    // проверить ВО - ВО
+//    if ($regl_wrapper->field_pd_r_hobjects->count()) {
+//        foreach ($regl_wrapper->field_pd_r_hobjects as $r_item) {
+//            // ищем id ВО в принятом массиве ВО
+//            if ($r_item->value()) {
+//                $ho_id = $r_item->nid->value();
+//                if (isset($hobjects[$ho_id])) {
+//                    if (!$data['by_option'] || $data['poll_option'])
+//                        $hobjects[$ho_id]['preparations'][$data['pid']] = array(
+//                            'pid' => $data['pid'],
+//                            'mandatory' => $data['mandatory'],
+//                            'option_own' => $data['by_option'],
+//                            'rating' => 0,
+//                        );
+//                    $result = true;
+//                }
+//            }
+//        }
+//    }
+//
+//    $group_hobjects = array();
+//
+//    // список ВО за вычетом исключений для SQL запроса только по ним
+//    $arr_nids = $ho_hobjects = array();
+//    foreach($hobjects as $key => $hobject)
+//        if (empty($data['exceptions_ho'][$key])) $arr_nids[] = $key;
+//
+//    // список групп исключений
+//    $arr_exept_gr = array();
+//    if (!empty($data['exceptions_gr'])) {
+//        foreach ($data['exceptions_gr'] as $item_e) {
+//            $parents = taxonomy_get_parents_all($item_e);
+//            $level = count($parents);
+//            $arr_exept_gr[$level][] = $item_e;
+//        }
+//    }
+//
+//    // для Сорняков проверяем вхождение списка ВО в заданные в регламенте группы
+//    if ($regl_wrapper->field_pd_r_function->tid->value() == AGRO_CATEGORY_HERBICIDES_TID) {
+//        if ($regl_wrapper->field_pd_r_hobjects_groups->count()) {
+//            foreach ($regl_wrapper->field_pd_r_hobjects_groups as $rg_item) {
+//                $group_wrapper = entity_metadata_wrapper('field_collection_item', $rg_item->value());
+//
+//                // массивы значений Продолжительности жизни и Групп
+//                $arr_lt = array();
+//                if ($group_wrapper->field_pd_r_hg_life_time->count()) {
+//                    foreach ($group_wrapper->field_pd_r_hg_life_time as $lt_item) {
+//                        $arr_lt[$lt_item->tid->value()] = $lt_item->tid->value();
+//                    }
+//                }
+//
+//                foreach ($group_wrapper->field_pd_r_hg_group as $g_item) {
+//
+//                    $tid_bc = $g_item->tid->value();
+//                    $parents = taxonomy_get_parents_all($tid_bc);
+//                    $level = count($parents);
+//
+//                    // получить список ВО входящщих в группы вместе с подгруппами
+//                    $query = db_select('node', 'n');
+//                    $query->condition('n.type', 'harmful_objects');
+//                    $query->join('field_data_field_weed_life_time', 'lt', 'lt.entity_id = n.nid');
+//                    if ($level == 1 || !empty($arr_exept_gr[1])) $query->join('field_data_field_weed_group', 'g', 'g.entity_id = n.nid');
+//                    if ($level == 2 || !empty($arr_exept_gr[2])) $query->join('field_data_field_weed_class', 'c', 'c.entity_id = n.nid');
+//                    if ($level == 3 || !empty($arr_exept_gr[3])) $query->join('field_data_field_weed_order', 'o', 'o.entity_id = n.nid');
+//                    if ($level == 4 || !empty($arr_exept_gr[4])) $query->join('field_data_field_weed_family', 'f', 'f.entity_id = n.nid');
+//                    if ($level == 5 || !empty($arr_exept_gr[5])) $query->join('field_data_field_weed_kind', 'k', 'k.entity_id = n.nid');
+//                    $query->condition('n.nid', $arr_nids, 'IN');
+//                    if ($arr_lt) $query->condition('lt.field_weed_life_time_tid', $arr_lt, 'IN');
+//                    if ($level == 1) $query->condition('g.field_weed_group_tid', $tid_bc);
+//                    if ($level == 2) $query->condition('c.field_weed_class_tid', $tid_bc);
+//                    if ($level == 3) $query->condition('o.field_weed_order_tid', $tid_bc);
+//                    if ($level == 4) $query->condition('f.field_weed_family_tid', $tid_bc);
+//                    if ($level == 5) $query->condition('k.field_weed_kind_tid', $tid_bc);
+//                    // группы исключения
+//                    if (!empty($arr_exept_gr[1])) $query->condition('g.field_weed_group_tid', $arr_exept_gr[1], 'NOT IN');
+//                    if (!empty($arr_exept_gr[2])) $query->condition('c.field_weed_class_tid', $arr_exept_gr[2], 'NOT IN');
+//                    if (!empty($arr_exept_gr[3])) $query->condition('o.field_weed_order_tid', $arr_exept_gr[3], 'NOT IN');
+//                    if (!empty($arr_exept_gr[4])) $query->condition('f.field_weed_family_tid', $arr_exept_gr[4], 'NOT IN');
+//                    if (!empty($arr_exept_gr[5])) $query->condition('k.field_weed_kind_tid', $arr_exept_gr[5], 'NOT IN');
+//
+//                    $query->fields('n', array('nid'));
+//                    $nids = $query->execute()->fetchAll();
+//
+//                    if ($nids) {
+//                        foreach ($nids as $nid) $group_hobjects[$nid->nid] = $nid->nid;
+//                    }
+//                }
+//            }
+//
+//            // проверка на вхождение заданных ВО в группы ВО из регламента
+//            foreach($hobjects as $key => $hobject) {
+//                if (isset($group_hobjects[$key])) {
+//                    if (!$data['by_option'] || $data['poll_option'])
+//                        $hobjects[$key]['preparations'][$data['pid']] = array(
+//                            'pid' => $data['pid'],
+//                            'mandatory' => $data['mandatory'],
+//                            'option_own' => $data['by_option'],
+//                            'rating' => 0,
+//                        );
+//                    $result = true;
+//                }
+//            }
+//        }
+//    }
+//
+//    return $result;
+//}
+//
+///**
+// * @param $periods_list - массив объектов taxonomy_term (поле field_growth_stages_set->field_mc_periods Культуры)
+// *
+// * @return array
+// * отсортированный по весу массив tid и name
+// */
+//function _get_processing_periods($periods_list) {
+//    $options = array();
+//    if (!empty($periods_list)) {
+//        foreach ($periods_list as $p_item) {
+//            $periods[$p_item->weight] = array(
+//                'tid' => $p_item->tid,
+//                'name' => $p_item->name,
+//            );
+//        }
+//        ksort($periods);
+//
+//        foreach ($periods as $period) $options[$period['tid']] = $period['name'];
+//    }
+//
+//    return $options;
+//}
+//
+//function taxonomy_get_children_all($tid, $vid = 0){
+//    $c = taxonomy_get_children($tid, $vid);
+//    $result = array();
+//    foreach ($c as $t => $d){
+//        $result[$t] = $d;
+//        $below = taxonomy_get_children_all($t, $vid);
+//        if (!empty($below)) {
+//            foreach ($below as $nt => $nd){
+//                $result[$nt] = $nd;
+//            }
+//        }
+//    }
+//    return $result;
+//}

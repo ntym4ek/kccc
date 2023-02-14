@@ -6423,9 +6423,18 @@ fieldset.panel {
 .managed-files.table td:first-child {
   width: 100%; }
 
-div.image-widget-data {
-  float: none;
-  overflow: hidden; }
+div.image-widget {
+  background: #eee;
+  padding: 15px; }
+  div.image-widget div.image-preview {
+    padding-right: 30px; }
+  div.image-widget div.image-widget-data {
+    float: none;
+    overflow: hidden; }
+    .node-form div.image-widget div.image-widget-data {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start; }
 
 table th, table td {
   font-size: 80%;
@@ -7596,6 +7605,13 @@ a.icon-after .glyphicon {
         color: #000;
         text-decoration: underline; }
 
+ul.horizontal-tabs-list > li a,
+ul.vertical-tabs-list > li a {
+  color: #333333; }
+  ul.horizontal-tabs-list > li a strong,
+  ul.vertical-tabs-list > li a strong {
+    font-weight: 400; }
+
 /* ------------------------------------------------- Контент -------------------------------------------------------- */
 .content-container {
   height: 100%; }
@@ -7627,140 +7643,6 @@ a.icon-after .glyphicon {
     @media screen and (min-width: 1460px) {
       .content-container > .content.body-slide-in {
         margin-left: 300px; } }
-
-/* ------------------------------------------------- Лендинг | Landing - */
-.landing .content {
-  padding: 0; }
-.landing .content-header {
-  display: none; }
-.landing .content-body > .col-sm-10 {
-  position: relative;
-  min-height: 1px;
-  padding-left: 0;
-  padding-right: 0; }
-  @media (min-width: 768px) {
-    .landing .content-body > .col-sm-10 {
-      float: left;
-      width: 100%; } }
-.landing .content-body > .col-md-8 {
-  position: relative;
-  min-height: 1px;
-  padding-left: 0;
-  padding-right: 0; }
-  @media (min-width: 992px) {
-    .landing .content-body > .col-md-8 {
-      float: left;
-      width: 100%; } }
-.landing .content-body > .col-sm-offset-1 {
-  margin-left: 0; }
-.landing .content-body > .col-md-offset-2 {
-  margin-left: 0; }
-.landing .finfire-body {
-  margin-left: 0;
-  margin-right: 0; }
-  .landing .finfire-body:before, .landing .finfire-body:after {
-    content: " ";
-    display: table; }
-  .landing .finfire-body:after {
-    clear: both; }
-.landing .finfire-footer {
-  background: #c1212d;
-  color: #fff;
-  font-size: 20px;
-  margin-left: 0;
-  margin-right: 0; }
-  .landing .finfire-footer a {
-    color: #fff; }
-  .landing .finfire-footer:before, .landing .finfire-footer:after {
-    content: " ";
-    display: table; }
-  .landing .finfire-footer:after {
-    clear: both; }
-  .landing .finfire-footer .phone {
-    font-size: 1.1em;
-    font-weight: 500;
-    text-align: center;
-    padding: 20px; }
-  .landing .finfire-footer .mail {
-    text-align: center;
-    padding: 20px; }
-    .landing .finfire-footer .mail a:nth-child(2) {
-      text-decoration: underline; }
-  .landing .finfire-footer .address {
-    font-size: 1em;
-    text-align: center;
-    padding: 20px; }
-    .landing .finfire-footer .address span {
-      white-space: nowrap; }
-  .landing .finfire-footer .social {
-    text-align: center;
-    padding: 20px; }
-    .landing .finfire-footer .social .row {
-      text-align: center; }
-      .landing .finfire-footer .social .row > div {
-        float: none;
-        display: inline-block; }
-        .landing .finfire-footer .social .row > div a {
-          display: inline-block;
-          padding: 10px 15px; }
-          .landing .finfire-footer .social .row > div a:hover {
-            opacity: .8; }
-  @media screen and (min-width: 768px) {
-    .landing .finfire-footer {
-      font-size: 30px; }
-      .landing .finfire-footer .phone {
-        padding: 40px 115px; }
-      .landing .finfire-footer .mail {
-        padding: 40px 40px; }
-      .landing .finfire-footer .address {
-        padding: 0 40px; }
-      .landing .finfire-footer .social {
-        padding: 40px; } }
-
-/* ------------------------------------------------- Главная | Hightlighted - */
-#bootstrap-slider {
-  border: 0;
-  padding: 0;
-  margin-bottom: 2px; }
-  #bootstrap-slider .carousel-control {
-    box-shadow: 1px 1px 15px #aaa; }
-    #bootstrap-slider .carousel-control .icon-next {
-      top: 10px;
-      right: 17px; }
-    #bootstrap-slider .carousel-control .icon-prev {
-      top: 10px;
-      left: 17px; }
-  #bootstrap-slider.carousel .carousel-caption {
-    background: #fff;
-    border-radius: 4px;
-    text-shadow: none;
-    text-align: initial;
-    position: absolute;
-    bottom: 10%;
-    right: 10%;
-    left: initial;
-    padding: 20px 30px 15px 20px;
-    width: 380px; }
-    #bootstrap-slider.carousel .carousel-caption p {
-      color: #333333;
-      text-transform: none; }
-    #bootstrap-slider.carousel .carousel-caption h2 {
-      color: #213a6e;
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: -1px;
-      margin-top: 0; }
-      #bootstrap-slider.carousel .carousel-caption h2:hover {
-        color: #CF142B; }
-      @media screen and (min-width: 992px) {
-        #bootstrap-slider.carousel .carousel-caption h2 {
-          font-size: 30px; } }
-    @media screen and (max-width: 767px) {
-      #bootstrap-slider.carousel .carousel-caption {
-        padding: 15px 32px 10px 15px;
-        width: 280px;
-        font-size: 13px;
-        line-height: 17px; } }
 
 /* ------------------------------------------------- Главная | Блоки - */
 .block-content {
@@ -8634,14 +8516,6 @@ a.icon-after .glyphicon {
     .product-description div.horizontal-tabs .group-tab-certificate .field-name-field-pd-certificate .field-item {
       flex: 1 1 350px; }
 
-/* ------------------------------------------------- Порошки, применение (Finfire) - */
-.finfire .classes img {
-  padding: 20px; }
-.finfire .application > div {
-  text-align: left;
-  height: 150px;
-  margin-bottom: 15px; }
-
 /* ------------------------------------------------- Блог(Blog) - */
 .node-blog table th, .node-blog table td {
   font-size: 70%; }
@@ -8807,7 +8681,6 @@ form.confirmation .form-actions {
       flex: 0 0 170px;
       padding-top: 3px; }
 
-/* ------------------------------------------------- Постраничные настройки ----------------------------------------- */
 /* ------------------------------------------------- Контакты - */
 .contacts .nav-tabs {
   margin-bottom: 30px;
@@ -9278,7 +9151,7 @@ form.confirmation .form-actions {
     background: #fff;
     border-radius: 8px;
     position: relative;
-    height: 100px; }
+    height: 50px; }
   .list-category-header .bkg {
     border-radius: 8px;
     display: flex;
@@ -9286,7 +9159,7 @@ form.confirmation .form-actions {
     justify-content: center;
     position: relative;
     z-index: 1;
-    max-height: 100px;
+    max-height: 50px;
     overflow: hidden;
     transition: all 300ms ease-in-out; }
     .list-category-header .bkg img {
@@ -9469,6 +9342,8 @@ form.confirmation .form-actions {
 /* ------------------------------------------------- Карточка контакта- --------------------------------------------- */
 .contact-card {
   margin-bottom: 15px; }
+  .contact-card .media-heading a {
+    color: inherit; }
   .contact-card .media-left {
     padding-right: 20px; }
     .contact-card .media-left img {
@@ -9552,18 +9427,6 @@ form.confirmation .form-actions {
       .taxonomy.teaser ul li a {
         color: #333333;
         white-space: nowrap; }
-
-/* ------------------------------------------------- Временные стили ------------------------------------------------ */
-.expo {
-  padding-bottom: 40px; }
-  .expo > img {
-    width: 100%;
-    padding: 50px 20%; }
-  .expo > div {
-    text-align: center;
-    padding-bottom: 30px; }
-    .expo > div img {
-      max-width: 100%; }
 
 /* ------------------------------------------------- Вспомогательные стили ------------------------------------------ */
 .image-valign-center {

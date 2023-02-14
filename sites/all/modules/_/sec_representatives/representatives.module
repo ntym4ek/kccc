@@ -70,7 +70,8 @@ function representatives_main_page()
   drupal_add_css($module_path . '/css/mapsvg.css');
   drupal_add_css($module_path . '/css/nanoscroller.css');
 
-  return drupal_render(drupal_get_form('representatives_form'));
+  $form = drupal_get_form('representatives_form');
+  return drupal_render($form);
 };
 
 function representatives_form($from, &$form_state)

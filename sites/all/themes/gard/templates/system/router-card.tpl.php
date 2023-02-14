@@ -17,7 +17,7 @@
 
             <a class="show-more" href="<?php print $item['url']; ?>"<?php print drupal_attributes($attributes);?>>
               <i class="fas fa-chevron-right"></i>
-              <?php print empty($item['button_text']) ? t('More') : $item['button_text']; ?>
+              <?php print (empty($item['button_text']) ? t('More') : $item['button_text']); ?>
             </a>
         </div>
 

@@ -14,6 +14,11 @@ function ext_mobile_app_menu()
   ];
 
   // источник данных для мобильного приложения >= 3
+  $items['source/ping'] = [
+    'page callback' => 'ext_mobile_ping_source',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
   $items['source/front-news.json'] = [
     'page callback' => 'ext_mobile_front_news_source',
     'access arguments' => array('access content'),
@@ -77,16 +82,30 @@ function ext_mobile_app_menu()
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
-
-  $items['admin/config/mobile/settings'] = array(
-    'title' => 'App Settings',
+  $items['admin/config/mobile/settings-news'] = array(
+    'title' => 'Новостные баннеры',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('ext_mobile_app_settings_form'),
+    'page arguments' => array('ext_mobile_app_news_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/ext_mobile_app.settings.inc',
+  );
+  $items['admin/config/mobile/settings-actual'] = array(
+    'title' => 'Баннеры препаратов',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_mobile_app_actual_settings_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'includes/ext_mobile_app.settings.inc',
   );
 
   return $items;
+}
+
+// функция ответа для проверки наличия соединения с интернет в МП >=3.0
+// (пока не используется)
+function ext_mobile_ping_source()
+{
+  echo 1;
+  drupal_exit();
 }
 
 /**
@@ -618,10 +637,12 @@ function ext_mobile_app_preloader_source()
 
   // запрошенные изображения переводим в base64
   $images_base64 = [];
-  foreach ($image_urls as $url) {
-    $base64 = chibs_image_style_base64('', $url);
-    if (strlen($base64) > 100) {
-      $images_base64[] = ['u' => $url, 'b' => $base64];
+  if (!empty($image_urls)) {
+    foreach ($image_urls as $url) {
+      $base64 = chibs_image_style_base64('', $url);
+      if (strlen($base64) > 100) {
+        $images_base64[] = ['u' => $url, 'b' => $base64];
+      }
     }
   }
 

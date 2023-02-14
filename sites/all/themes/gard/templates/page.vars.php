@@ -241,7 +241,7 @@ function gard_preprocess_page(&$vars)
             // для Программ защиты
             if ($vars['node']->type == 'protection_program') {
                 $category_title = '<a href="' . '/handbook/protection-programs' . '">' . t('Protection programs') . '</a>';
-                $wrapper_off = true;
+                if ($menu_item["path"] != 'node/%/edit') $wrapper_off = true;
             }
             // для Вакансии
             if ($vars['node']->type == 'vacancy') {

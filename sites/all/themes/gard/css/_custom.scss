@@ -418,18 +418,25 @@
   padding: 0;
   display: flex; justify-content: flex-end;
   width: 100%;
-     > li {
-      border-bottom: 1px solid #c7c7c7;
-        display: inline-block;
-        > a {
-            color: #aaa; text-decoration: none;
-            display: block;
-            padding: 7px 15px;
-            &:hover,
-            &:focus,
-            &.active { color: #000; text-decoration: underline; }
-        }
+  > li {
+    border-bottom: 1px solid #c7c7c7;
+    display: inline-block;
+    > a {
+      color: #aaa; text-decoration: none;
+      display: block;
+      padding: 7px 15px;
+      &:hover,
+      &:focus,
+      &.active { color: #000; text-decoration: underline; }
     }
+  }
+}
+ul.horizontal-tabs-list,
+ul.vertical-tabs-list {
+  > li a {
+    color: $text-color;
+    strong { font-weight: 400; }
+  }
 }
 
 
@@ -464,111 +471,6 @@
 
   }
 }
-
-
-
-
-/* ------------------------------------------------- Лендинг | Landing - */
-// убрать отступы сверху и снизу
-.landing {
-  .content { padding: 0; }
-  .content-header { display: none; }
-  .content-body {
-    & > .col-sm-10 { @include make-sm-column(12, 0); }
-    & > .col-md-8 { @include make-md-column(12, 0); }
-    & > .col-sm-offset-1 { margin-left: 0; }
-    & > .col-md-offset-2 { margin-left: 0; }
-  }
-
-  // FinFire
-  .finfire-body {
-    @include make-row(0);
-  }
-  .finfire-footer {
-    background: #c1212d;
-    color: #fff;
-    font-size: 20px;
-
-    a { color: #fff; }
-    @include make-row(0);
-    .phone {
-      font-size: 1.1em; font-weight: 500; text-align: center;
-      padding: 20px;
-    }
-    .mail {
-      a:nth-child(2) { text-decoration: underline; }
-      text-align: center;
-      padding: 20px;
-    }
-    .address {
-      font-size: 1em; text-align: center;
-      padding: 20px;
-      span { white-space: nowrap; }
-    }
-    .social {
-      text-align: center;
-      padding: 20px;
-
-      .row {
-        text-align: center;
-        > div {
-          float: none;
-          display: inline-block;
-          a {
-            display: inline-block;
-            padding: 10px 15px;
-            &:hover { opacity: .8; }
-          }
-        }
-      }
-    }
-
-    @media #{$tablet} {
-      font-size: 30px;
-      .phone { padding: 40px 115px; }
-      .mail { padding: 40px 40px; }
-      .address { padding: 0 40px; }
-      .social { padding: 40px; }
-    }
-  }
-}
-
-
-/* ------------------------------------------------- Главная | Hightlighted - */
-// slider
-#bootstrap-slider {
-  border: 0;
-  padding: 0; margin-bottom: 2px;
-
-  .carousel-control {
-    box-shadow: 1px 1px 15px #aaa;
-    .icon-next { top: 10px; right: 17px; }
-    .icon-prev { top: 10px; left: 17px; }
-  }
-  &.carousel .carousel-caption {
-    background: #fff;
-    border-radius: 4px;
-    text-shadow: none; text-align: initial;
-    position: absolute; bottom: 10%; right: 10%; left: initial;
-    padding: 20px 30px 15px 20px;
-    width: 380px;
-
-    p { color: $text-color; text-transform: none; }
-    h2 {
-      color: $brand-blue; font-size: 22px; font-weight: 500; letter-spacing: -1px;
-      margin-top: 0;
-      &:hover { color: $brand-red; }
-      @media #{$normal} { font-size: 30px; }
-    }
-    @media #{$phone} {
-      padding: 15px 32px 10px 15px;
-      width: 280px;
-      font-size: 13px; line-height: 17px;
-    }
-  }
-}
-
-
 
 /* ------------------------------------------------- Главная | Блоки - */
 
@@ -1270,17 +1172,6 @@
   }
 }
 
-/* ------------------------------------------------- Порошки, применение (Finfire) - */
-.finfire {
-  .classes img { padding: 20px; }
-  .application > div {
-    text-align: left;
-    height: 150px;
-    margin-bottom: 15px;
-  }
-}
-
-
 // кастомизация цвета страниц
 @mixin custom-page($page, $brand-color) {
   $brand-hover:    darken($brand-color, 10%);
@@ -1458,11 +1349,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 }
 
 
-/* ------------------------------------------------- Постраничные настройки ----------------------------------------- */
-
-
 /* ------------------------------------------------- Контакты - */
-
 .contacts {
   .nav-tabs {
     margin-bottom: $grid-gutter-width;
@@ -1503,16 +1390,12 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
     }
   }
   .department-title { color: $brand-blue; }
-
-
 }
 
 /* ------------------------------------------------- Entityforms - */
 .entityform {
   .pre-instructions {
     display: none;
-    //  color: #2b8aff; font-size: 16px; font-weight: 300; text-align: center;
-    //margin-bottom: 15px;
   }
 }
 
@@ -1749,7 +1632,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         background: #fff;
         border-radius: 8px;
         position: relative;
-        height: 100px;
+        height: 50px;
     }
     .bkg {
         border-radius: 8px;
@@ -1757,7 +1640,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
         align-items: center;
         justify-content: center;
         position: relative; z-index: 1;
-        max-height: 100px;
+        max-height: 50px;
         overflow: hidden;
         transition: all 300ms ease-in-out;
         img { width: 100%; }
@@ -1920,6 +1803,7 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 /* ------------------------------------------------- Карточка контакта- --------------------------------------------- */
 .contact-card {
   margin-bottom: $grid-gutter-width/2;
+  .media-heading a { color: inherit; }
   .media-left {
     padding-right: 20px;
     img { width: 80px; }
@@ -1994,21 +1878,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
   }
 }
 
-/* ------------------------------------------------- Временные стили ------------------------------------------------ */
-// страница /expo
-.expo {
-  padding-bottom: 40px;
-  > img {
-    width: 100%;
-    padding: 50px 20%;
-  }
-  > div {
-    text-align: center;
-    padding-bottom: 30px;
-    img { max-width: 100%; }
-  }
-}
-
 /* ------------------------------------------------- Вспомогательные стили ------------------------------------------ */
 // выровнять изображение по центру блока
 // применяется к блоку
@@ -2022,13 +1891,6 @@ form.confirmation .form-actions { margin-top: $grid-gutter-width; }
 .captcha { margin: 10px 0; }
 .font-small { font-size: .8em; }
 .sup { font-size: 10px; line-height: 10px; font-weight: 300; vertical-align: super; }
-
-// убрать отступы по краям
-// применяется к row
-//.no-gutters {
-//  margin-right: -15px !important;
-//  margin-left: -15px !important;
-//}
 
 /* ------------------------------------------------- MagicLine Menu ------------------------------------------------- */
 // https://css-tricks.com/jquery-magicline-navigation/

@@ -5,65 +5,65 @@
       <div class="row">
         <div class="profile-left">
           <div class="photo">
-            <img src="<? print $user_profile['photo']; ?>" alt="Фото пользователя" />
+            <img src="<?php print $user_profile['photo']; ?>" alt="Фото пользователя" />
           </div>
-          <? print $user_profile['add_photo_link'] ? '<div class="profile-add-photo">' . $user_profile['add_photo_link'] . '</div>' : ''; ?>
+          <?php print ($user_profile['add_photo_link'] ? '<div class="profile-add-photo">' . $user_profile['add_photo_link'] . '</div>' : ''); ?>
         </div>
         <div class="profile-right">
           <div class="profile-header">
             <div class="profile-role">
-              <? print $user_profile['label']; ?>
+              <?php print $user_profile['label']; ?>
             </div>
             <div class="profile-status">
-              <? if ($user_profile['is_online']): ?>
+              <?php if ($user_profile['is_online']): ?>
                 <span class="profile-online">В сети</span>
-              <? else: ?>
+              <?php else: ?>
                 <span class="profile-offline">Не в сети</span>
-              <? endif; ?>
+              <?php endif; ?>
             </div>
           </div>
 
-          <? if (!empty($user_profile['counts'])): ?>
+          <?php if (!empty($user_profile['counts'])): ?>
           <div class="profile-counts">
-            <? foreach($user_profile['counts'] as $count): ?>
-              <a href="<? print $count['link']; ?>" class="profile-count <? print isset($count['class']) ? implode(' ', $count['class']) : ''; ?>" target="_blank">
-                <div class="count-amount"><? print $count['amount']; ?></div>
-                <div class="count-title"><? print $count['title']; ?></div>
+            <?php foreach($user_profile['counts'] as $count): ?>
+              <a href="<?php print $count['link']; ?>" class="profile-count <?php print (isset($count['class']) ? implode(' ', $count['class']) : ''); ?>" target="_blank">
+                <div class="count-amount"><?php print $count['amount']; ?></div>
+                <div class="count-title"><?php print $count['title']; ?></div>
               </a>
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </div>
-          <? endif; ?>
+          <?php endif; ?>
 
-          <? if ($user_profile['show_contacts']): ?>
+          <?php if ($user_profile['show_contacts']): ?>
           <div class="profile-info">
-            <? if (!empty($user_profile['regions'])): ?>
+            <?php if (!empty($user_profile['regions'])): ?>
             <div class="profile-row">
               <div class="profile-col-left">Регион</div>
-              <div class="profile-col-right"><? print $user_profile['regions']; ?></div>
+              <div class="profile-col-right"><?php print $user_profile['regions']; ?></div>
             </div>
-            <? endif; ?>
+            <?php endif; ?>
 
-            <? if (!empty($user_profile['staff']['phones'])): ?>
+            <?php if (!empty($user_profile['staff']['phones'])): ?>
             <div class="profile-row">
               <div class="profile-col-left">Телефон</div>
               <div class="profile-col-right">
                 <?php foreach ($user_profile['staff']['phones'] as $phone): ?>
-                <div><a href="tel:<? print $phone; ?>" rel="nofollow"><? print ext_user_format_phone($phone); ?></a></div>
+                <div><a href="tel:<?php print $phone; ?>" rel="nofollow"><?php print ext_user_format_phone($phone); ?></a></div>
                 <?php endforeach; ?>
               </div>
             </div>
-            <? endif; ?>
+            <?php endif; ?>
 
-            <? if (!empty($user_profile['email'])): ?>
+            <?php if (!empty($user_profile['email'])): ?>
             <div class="profile-row">
               <div class="profile-col-left">E-Mail</div>
               <div class="profile-col-right">
-                <a href="mailto:e(<? print email_antibot_encode($user_profile['email']); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
+                <a href="mailto:e(<?php print email_antibot_encode($user_profile['email']); ?>)" class="mail eAddr-encoded eAddr-html" rel="nofollow"></a>
               </div>
             </div>
-            <? endif; ?>
+            <?php endif; ?>
           </div>
-          <? endif; ?>
+          <?php endif; ?>
         </div>
       </div>
 

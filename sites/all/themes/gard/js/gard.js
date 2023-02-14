@@ -108,7 +108,7 @@
                 });
 
                 /* ------------------------------------ Слайдер - */
-                $("#bootstrap-slider, [id^=views-bootstrap-carousel]").each(function(){
+                $("[id^=views-bootstrap-carousel]").each(function(){
                     $(this).swipe( {
                         swipeLeft:function() { $(".carousel").carousel("next"); },
                         swipeRight:function(event) {

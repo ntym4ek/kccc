@@ -30,7 +30,7 @@ $path = drupal_get_path('module', 'agrocalc');
                         <div id="category-<?php print $category['tid']; ?>" class="list-category-header col-xs-12 category-<?php print $category['tid']; ?><?php print empty($category['cnt']) ? "" : " is-active"; ?>" data-toggle="collapse" data-cnt="<?php print empty($category['cnt']) ? '0' : $category['cnt']; ?>" href="#collapse-<?php print $category['tid']; ?>" aria-expanded="true" aria-controls="collapse-<?php print $category['tid']; ?>">
                             <div class="box">
                                 <div class="bkg"><img src="<?php print $category['bkg_desk']; ?>" alt="<?php print $category['name']; ?>"></div>
-                                <img class="icon" src="<?php print $category['icon']; ?>" alt="help icon">
+
                                 <?php if ($cnt_cat == 1): ?>
                                     <img class="help4 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/<?php print $path; ?>/images/help/4.png" alt="<? print t('help'); ?>"  />
                                 <?php endif; ?>
@@ -90,7 +90,10 @@ $path = drupal_get_path('module', 'agrocalc');
                                                                     data-block="' . $block . '"
                                                                     >';
                                         } else {
-                                            $rates[$pid] = '<div>' . $preparation['rate']['from'] . ($preparation['rate']['from'] != $preparation['rate']['to'] ? '-' . $preparation['rate']['to'] : '') . ' ' . $preparation['rate']['unit'] . '</div>';
+                                          $rate_from = str_replace('.', ',', $preparation['rate']['from']);
+                                          $rate_to = str_replace('.', ',', $preparation['rate']['to']);
+//                                          $rates[$pid] = '<div>' . $rate_from . ($rate_from != $rate_to ? '-' . $rate_to : '') . ' ' . $preparation['rate']['unit'] . '</div>';
+                                          $rates[$pid] = $rate_from . ($rate_from != $rate_to ? '-' . $rate_to : '') . ' ' . $preparation['rate']['unit'];
                                         }
                                     }
                                     ?>
@@ -166,7 +169,7 @@ $path = drupal_get_path('module', 'agrocalc');
                                                 <?php endif; ?>
                                                 <div>
                                                     <?php print '<span>' . t('Consuption rate') . ', ' . implode(' + ', $rates_units) . '</span>'; ?>
-                                                    <?php print implode('', $rates); ?>
+                                                    <?php print ($area ? '<div>' . implode(' + ', $rates) . '</div>' : implode('', $rates)); ?>
                                                 </div>
                                                 <div class="calculation">
                                                     <div class="amountByItem"></div>

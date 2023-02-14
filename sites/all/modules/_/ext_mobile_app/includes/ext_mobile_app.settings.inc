@@ -12,7 +12,7 @@
  * @see update_settings_submit()
  * @ingroup forms
  */
-function ext_mobile_app_settings_form($form, $form_state)
+function ext_mobile_app_news_settings_form($form, $form_state)
 {
   $front_banners = variable_get('ema_front_banners', []);
   if (isset($form_state["triggering_element"]) && strpos($form_state["triggering_element"]["#name"], 'delete-') != -1) {
@@ -128,39 +128,9 @@ function ext_mobile_app_settings_form($form, $form_state)
     '#suffix' => '</td></tr>',
   );
 
-  // настройки Актуального препарата
-  $form['ema_actual_product'] = array(
-    '#type' => 'fieldset',
-    '#title' => 'Баннеры препаратов',
-    '#description' => 'Заголовок, вводный текст и список препаратов для размещения в слайдере на главной странице мобильного приложения',
-  );
-  $form['ema_actual_product']['ema_ap_title'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Заголовок раздела',
-    '#default_value' => variable_get('ema_ap_title', ''),
-  );
-  $form['ema_actual_product']['ema_ap_intro'] = array(
-    '#type' => 'textarea',
-    '#title' => 'Промо текст',
-    '#default_value' => variable_get('ema_ap_intro', ''),
-    '#rows' => 2,
-  );
-  $entity_items = entity_load('node', false, ['type' => ['product_agro', 'product_fert']]);
-  $entity_options = array();
-  foreach ($entity_items as $foreign_entity_item) {
-    $entity_options[$foreign_entity_item->nid] = $foreign_entity_item->title;
-  }
-  $form['ema_actual_product']['ema_ap_list'] = array(
-    '#type' => 'select',
-    '#title' => 'Список препаратов',
-    '#options' => $entity_options,
-    '#default_value' => variable_get('ema_ap_list', []),
-    '#multiple' => true,
-    '#chosen' => true,
-  );
 
   $form = system_settings_form($form);
-  $form['#validate'][] = 'ext_mobile_app_settings_form_validate';
+  $form['#validate'][] = 'ext_mobile_app_news_settings_form_validate';
 
   // We need to call our own submit callback first, not the one from
   // system_settings_form(), so that we can process and save the emails.
@@ -169,12 +139,10 @@ function ext_mobile_app_settings_form($form, $form_state)
   return $form;
 }
 
-
-
 /**
  * Form validation handler for update_settings().
  */
-function ext_mobile_app_settings_form_validate($form, &$form_state)
+function ext_mobile_app_news_settings_form_validate($form, &$form_state)
 {
   if (empty($form_state['values']['image-add'])) {
     form_set_error('image-add', 'Изображение баннера обязательно.');
@@ -191,7 +159,7 @@ function ext_mobile_app_settings_form_validate($form, &$form_state)
 /**
  * Form submission handler for update_settings().
  */
-function ext_mobile_app_settings_form_submit($form, $form_state)
+function ext_mobile_app_news_settings_form_submit($form, $form_state)
 {
   // own processing
   $banners = variable_get('ema_front_banners', []);
@@ -229,5 +197,54 @@ function ext_mobile_app_settings_form_submit($form, $form_state)
   variable_set('ema_front_banners', $banners);
 
   // default processing
+  system_settings_form_submit($form, $form_state);
+}
+
+
+
+function ext_mobile_app_actual_settings_form($form, $form_state)
+{
+  // настройки Актуального препарата
+  $form['ema_actual_product'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Баннеры препаратов',
+    '#description' => 'Заголовок, вводный текст и список препаратов для размещения в слайдере на главной странице мобильного приложения',
+  );
+  $form['ema_actual_product']['ema_ap_title'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Заголовок раздела',
+    '#default_value' => variable_get('ema_ap_title', ''),
+  );
+  $form['ema_actual_product']['ema_ap_intro'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Промо текст',
+    '#default_value' => variable_get('ema_ap_intro', ''),
+    '#rows' => 2,
+  );
+  $entity_items = entity_load('node', false, ['type' => ['product_agro', 'product_fert']]);
+  $entity_options = array();
+  foreach ($entity_items as $foreign_entity_item) {
+    $entity_options[$foreign_entity_item->nid] = $foreign_entity_item->title;
+  }
+  $form['ema_actual_product']['ema_ap_list'] = array(
+    '#type' => 'select',
+    '#title' => 'Список препаратов',
+    '#options' => $entity_options,
+    '#default_value' => variable_get('ema_ap_list', []),
+    '#multiple' => true,
+    '#chosen' => true,
+  );
+
+  $form = system_settings_form($form);
+
+  // We need to call our own submit callback first, not the one from
+  // system_settings_form(), so that we can process and save the emails.
+  unset($form['#submit']);
+
+  return $form;
+}
+
+function ext_mobile_app_actual_settings_form_submit($form, $form_state)
+{
   system_settings_form_submit($form, $form_state);
 }

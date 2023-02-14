@@ -114,6 +114,6 @@ function ext_entityform_preprocess_contact_us_entityform_edit_form(&$vars)
 function ext_entityform_preprocess_page(&$vars)
 {
   if (!empty($vars['page']['content']['system_main']['entityform_type']) && $entityform = current($vars['page']['content']['system_main']['entityform_type'])) {
-      $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
+      if (!empty($entityform['form']['intro']['#markup'])) $vars['header']['subtitle'] = $entityform['form']['intro']['#markup'];
   }
 }

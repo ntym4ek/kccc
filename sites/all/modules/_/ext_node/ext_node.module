@@ -39,8 +39,9 @@ function ext_node_remove_all_links($text)
 function ext_node_place_internal_links($text)
 {
   // список искомых фраз и их ссылок
-  foreach (_ext_node_replacement_list() as $replacement_item) {
-    $patterns = _ext_node_convert_needles_to_preg_patterns($replacement_item['needles']);
+  $replacements_list = _ext_node_replacement_list();
+  foreach ($replacements_list as $replacement_item) {
+    $patterns = _ext_node_convert_needles_to_preg_patterns($replacement_item, $replacements_list);
     $id_attr = strpos($replacement_item['url'], 'node/') === 0 ? 'data-node-id="' . str_replace('node/', '', $replacement_item['url']) . '" ' : '';
     $replace = '\\1<a href="' . url($replacement_item['url']) . '" ' . $id_attr . 'target="_blank">\\2</a>\\3';
     foreach ($patterns as $pattern) {
@@ -65,9 +66,9 @@ function ext_node_place_internal_links($text)
  */
 function _ext_node_replacement_list()
 {
-    $arr = [];
+    $result = [];
 
-    $arr[] = [
+    $result[] = [
         'needles' => [
             'ООО ТД "Кирово-Чепецкая Химическая Компания"',
             'ООО Торговый Дом "Кирово-Чепецкая Химическая Компания"',
@@ -81,26 +82,26 @@ function _ext_node_replacement_list()
         ],
         'url' => 'https://kccc.ru',
     ];
-    $arr[] = [
+    $result[] = [
         'needles' => [
             'представител',
             'купить', 'приобрести'
         ],
         'url' => 'https://kccc.ru/info/representatives',
     ];
-    $arr[] = [
+    $result[] = [
         'needles' => [
             'испытани', 'опыты',
         ],
         'url' => 'https://kccc.ru/before-after',
     ];
-    $arr[] = [
+    $result[] = [
         'needles' => [
             'специалист', 'экспертное мнение', 'эксперт'
         ],
         'url' => 'https://kccc.ru/agro-expert',
     ];
-    $arr[] = [
+    $result[] = [
         'needles' => [
             'программы защиты', 'программа защиты', 'программ защиты', 'системы защиты', 'система защиты', 'систем защиты'
         ],
@@ -120,30 +121,53 @@ function _ext_node_replacement_list()
     $query->condition('pfsn.language', 'ru');
     $query->addField('pfsn', 'field_tax_short_name_value', 'short_name');
 
-    if ($products = $query->execute()->fetchAll()) {
-        foreach($products as $product) {
-            $title = str_replace(['*', '®'], '', $product->title);
-            $title = trim($title);
-            $arr[] = [
-                'needles' => [$title . ', ' . trim($product->short_name), $title . ',' . trim($product->short_name), $title],
-                'url' => 'node/' . $product->nid,
-            ];
+    if ($products = $query->execute()->fetchAllAssoc('nid')) {
+      // определить пересекающиеся названия и задать исключения (напр. Грандсил для Грандсил Ультра)
+      foreach($products as $product_check) {
+        foreach($products as $key => $product) {
+          if (strpos($product_check->title, $product->title) === 0 && ($product->title != $product_check->title)) {
+            $products[$key]->exclude = $product_check->nid;
+            break;
+          }
         }
+      }
+
+      // подготовить список вариантов для каждого препарата
+      foreach($products as $product) {
+        $title = str_replace(['*', '®'], '', $product->title);
+        $title = trim($title);
+        $result[$product->nid] = [
+          'needles' => [$title . ', ' . trim($product->short_name), $title . ',' . trim($product->short_name), $title],
+          'url' => 'node/' . $product->nid,
+          'exclude' => isset($product->exclude) ? $product->exclude : '',
+        ];
+      }
     }
 
-    return $arr;
+    return $result;
 }
 
-function _ext_node_convert_needles_to_preg_patterns($needles)
+function _ext_node_convert_needles_to_preg_patterns($replacement, $replacements_list)
 {
-    if (empty($needles)) return false;
+  $needles = $replacement['needles'];
+  if (empty($needles)) return false;
 
-    $patterns = [];
-    foreach ($needles as $needle) {
-        // кавычки могут быть любыми
-        $needle = str_replace('"', '["\']', $needle);
-        $patterns[] = '/([>\s\"])(' . $needle . '.*?)([<\.\!\?\,\s\"\;\:])/si';
+  // <a.*?<\/a>(*SKIP)(*F) - всё, что внутри ссылок в расчёт не берём
+  // как исключать ненужное - https://stackoverflow.com/questions/23589174/regex-pattern-to-match-excluding-when-except-between
+  $patterns = [];
+  foreach ($needles as $needle) {
+    $excludes = ['<a.*?<\/a>'];
+    if (!empty($replacement['exclude'])) {
+      foreach ($replacements_list[$replacement['exclude']]['needles'] as $exclude_needle) {
+        $excludes[] = '[>\s\"]' . $exclude_needle . '.*?[<\.\!\?\,\s\"\;\:]';
+      }
     }
+    $exclude = implode('|', $excludes);
 
-    return $patterns;
+    // кавычки могут быть любыми
+    $needle = str_replace('"', '["\']', $needle);
+    $patterns[] = '/(?:' . $exclude . ')(*SKIP)(*F)|([>\s\"])(' . $needle . '.*?)([<\.\!\?\,\s\"\;\:])/si';
+  }
+
+  return $patterns;
 }

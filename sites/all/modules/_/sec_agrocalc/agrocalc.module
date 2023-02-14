@@ -20,7 +20,8 @@ function agrocalc_menu()
 /**
  * Implements hook_theme().
  */
-function agrocalc_theme() {
+function agrocalc_theme()
+{
     return array(
         'protection_program' => array(
             'variables' => array('program' => NULL),
@@ -127,7 +128,7 @@ function agrocalc_form($from, &$form_state)
 
         $culture_wr = entity_metadata_wrapper('node', $culture_id);
         if (isset($culture_wr->field_growth_stages_set) && $culture_wr->field_growth_stages_set->value()) {
-            $set_tid = $culture_wr->field_growth_stages_set->tid->value();
+            $set_tid = $culture_wr->field_growth_stages_set->getIdentifier();
             $query->innerJoin('field_data_field_mc_periods', 'fp', 'fp.field_mc_periods_tid = t.tid');
             $query->condition('fp.entity_id', $set_tid);
             $query->condition('fp.bundle', 'growth_stages_sets');

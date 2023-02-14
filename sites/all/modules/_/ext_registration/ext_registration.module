@@ -38,7 +38,8 @@ function ext_registration_tab_access()
 /**
  * Implementation of hook_module_implements_alter().
  */
-function ext_registration_module_implements_alter(&$implementations, $hook) {
+function ext_registration_module_implements_alter(&$implementations, $hook)
+{
     //  Если хук - hook_form_alter, то переносим нашу реализацию этого хука в конец очереди
     if (in_array($hook, ['form_alter', 'menu_alter'])) {
         $group = $implementations['ext_registration'];
@@ -126,7 +127,7 @@ function ext_registration_form_submit($form, &$form_state)
 /**
  * Pre-processes variables for the "node" theme hook.
  */
-function ext_registration_preprocess_node(&$vars)
-{
-
-}
+//function ext_registration_preprocess_node(&$vars)
+//{
+//
+//}
