@@ -6,37 +6,34 @@
 function before_after_field_callback($op = 'list', $fid = 0)
 {
     // возвращаемый массив
-    $output = array(
-        'title1' => 'Мои поля',
-        'title2' => '',
-    );
-    $menu = array();
+    $output = [];
 
     switch ($op) {
         case 'list':
-            // ссылки меню
-            $menu[] = array('data' => l(t('Add field'), "/fields/add", ['attributes' => ['class' => ['btn', 'btn-sm']]]));
 
-            // поля текущего пользователя (для админа вывести все поля)
-            $query = db_select('node', 'n');
-            if ($GLOBALS['user']->uid != 1) $query->condition('n.uid', $GLOBALS['user']->uid);
-            $query->condition('n.type', 'field');
-            $query->fields('n', array('nid'));
-            $query->orderBy('n.nid', 'DESC');
-            if ($nids = $query->execute()->fetchAll()) {
-                foreach ($nids as $nid) {
-                    $node_wrapper = entity_metadata_wrapper('node', $nid->nid);
-                    $output['items'][$nid->nid]['link']         = "/field/$nid->nid/season/list";
-                    $output['items'][$nid->nid]['image']        = "";
-                    $output['items'][$nid->nid]['title1']       = $node_wrapper->title->value();
-                    $output['items'][$nid->nid]['title2']       = $node_wrapper->field_f_farm->value();
-                    $output['items'][$nid->nid]['link_edit']    = "/fields/edit/$nid->nid";
-                    $output['items'][$nid->nid]['link_delete']  = "/fields/del/$nid->nid";
-                }
+          $output['items']['add'] = theme('pvp_field_teaser', ['field' => []]);
+
+          // поля текущего пользователя
+          $query = db_select('node', 'n');
+          // для админа вывести все поля
+          if (!(user_has_role(ROLE_ADMIN) || user_has_role(ROLE_STAFF_EDITOR))) {
+            $query->condition('n.uid', $GLOBALS['user']->uid);
+          }
+          $query->condition('n.type', 'field');
+          $query->fields('n', array('nid'));
+          $query->orderBy('n.nid', 'DESC');
+          if ($fields = $query->execute()->fetchAll()) {
+            foreach ($fields as $field) {
+              $field_info = before_after_get_field_info($field->nid);
+              $output['items'][$field->nid] = theme('pvp_field_teaser', ['field' => $field_info]);
             }
-            $output['menu'] = theme('item_list', array('items' => $menu, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
-            $output = theme('before_after_user', array('content' => $output));
-            break;
+          }
+
+          $output['menu'] = '';
+          $output = theme('before_after_user', array('content' => $output));
+
+          drupal_set_title('Список полей');
+          break;
         case 'edit':
             drupal_set_title('Редактировать Поле');
             $output = drupal_get_form('before_after_field_form', $fid);
@@ -68,18 +65,25 @@ function before_after_field_form($form, &$form_state, $fid = '') {
     if ($fid) {
         $form_state['fid'] = $fid;
         $field_wrapper = entity_metadata_wrapper('node', $fid);
-        $name = $field_wrapper->title->value();
+        $name = $field_wrapper->label();
         $farm = html_entity_decode($field_wrapper->field_f_farm->value());
-        $reg_id = $field_wrapper->field_f_region->tid->value();
+        $reg_id = $field_wrapper->field_f_region->getIdentifier();
     }
 
     $form = array(
+      'intro' => [
+        '#markup' => '<p>"Поле" обозначает конкретный участок земли, на котором в сезон засевается культура.<br>' .
+          'Не добавляйте в систему новое Поле, если в следующем сезоне засеваете этот же участок. Просто добавьте новый сезон в уже существующее Поле.</p>'
+      ]
     );
 
     $form['fs1'] = array('#type' => 'fieldset', '#title' => 'Название поля<i></i>');
     $form['fs1']['name'] = array(
         '#type' => 'textfield',
         '#default_value' => $name,
+        '#description' => 'Например: <b>Опытное поле №1, Поле №2, Первое поле питомника, КФХВ-003, СО 59га, Аэродром</b> и т.д.<br>' .
+          'Это название видно только вам в Личном кабинете.<br>' .
+          'НЕ используйте название культуры или хозяйства.',
     );
 
     // регионы
@@ -110,7 +114,7 @@ function before_after_field_form($form, &$form_state, $fid = '') {
         '#attributes' => array('class' => array('pull-right')),
     );
     $form['fs4']['cancel'] = array(
-        '#markup' => '<a href="/fields/list" class="btn btn-link pull-right">Отменить</a>',
+        '#markup' => '<a href="/user/' . $GLOBALS['user']->uid .'/before-after" class="btn btn-link pull-right">Отменить</a>',
         '#attributes' => array('class' => array('btn-link', 'pull-right')),
     );
 
@@ -141,5 +145,32 @@ function before_after_field_form_submit(&$form, &$form_state) {
     $node->field_f_region[LANGUAGE_NONE][0]['tid']      = $form_state['values']['region'];
     node_save($node);
 
-    $form_state['redirect'] = 'fields/list';
+    $form_state['redirect'] = '/user/' . $GLOBALS['user']->uid . '/before-after';
+}
+
+function before_after_get_field_info($field_id)
+{
+  $result = [];
+
+  $field_wr = entity_metadata_wrapper('node', $field_id);
+  if ($field_wr->value()) {
+    $seasons = [];
+    foreach($field_wr->field_f_sowing->getIterator() as $season_wr) {
+      $seasons[] = before_after_get_season_info($season_wr->getIdentifier());
+    }
+
+    $result = [
+      'id' => $field_wr->getIdentifier(),
+      'label' => $field_wr->label(),
+      'farm' => $field_wr->field_f_farm->value(),
+      'region' => [
+        'id' => $field_wr->field_f_region->getIdentifier(),
+        'label' => $field_wr->field_f_region->label(),
+      ],
+      'seasons' => $seasons,
+      'author'  => ext_user_get_user_info($field_wr->author->getIdentifier())
+    ];
+  }
+
+  return $result;
 }

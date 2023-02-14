@@ -30,7 +30,7 @@ function before_after_menu()
       // поле
 
   // закладка Препараты в поле в ЛК
-  $items['user/%user/before_after'] = array(
+  $items['user/%user/before-after'] = array(
     'title' => t('Before & After'),
     'page callback' => 'before_after_field_callback',
     'page arguments' => array(),
@@ -89,11 +89,13 @@ function before_after_menu()
  */
 function before_after_account_access_callback($account)
 {
-  return (((user_has_role(ROLE_STAFF_SALES, $account) || user_has_role(ROLE_STAFF_EDITOR, $account)) && $account->uid == $GLOBALS['user']->uid) || user_has_role(ROLE_ADMIN, $account));
+  // закладка видна только в личном аккаунте
+  return $account->uid == $GLOBALS['user']->uid;
 }
 
 
-function before_after_permission() {
+function before_after_permission()
+{
   return array(
     'access before_after edit' => array(
         'title' => t('Access Before&After'),
@@ -104,7 +106,15 @@ function before_after_permission() {
 
 function before_after_theme()
 {
-  return array(
+  return [
+    'pvp_field_teaser' => array(
+      'variables' => array('field' => NULL),
+      'template' => 'templates/pvp-field-teaser',
+    ),
+    'pvp_teaser' => array(
+      'variables' => array('item' => NULL),
+      'template' => 'templates/pvp-teaser',
+    ),
     'before_after_user' => array(
         'variables' => array('content' => NULL),
         'template' => 'templates/before-after',
@@ -117,7 +127,7 @@ function before_after_theme()
         'variables' => array('content' => NULL),
         'template' => 'templates/before-after-page',
     ),
-  );
+  ];
 }
 
 /**
@@ -163,7 +173,7 @@ function before_after_del_form($form, &$form_state, $type, $parent_id, $id)
     $form_state['type'] = $type;
     $form_state['id'] = $id;
 
-    if ($type == 'field')         $form_state['redirect_uri'] = 'fields/list';
+    if ($type == 'field')         $form_state['redirect_uri'] = '/user/' . $GLOBALS['user']->uid .'/before-after';
     if ($type == 'season')        $form_state['redirect_uri'] = 'field/' . $parent_id . '/season/list';
     if ($type == 'processing')    $form_state['redirect_uri'] = 'season/' . $parent_id . '/processing/list';
     if ($type == 'measurement')   $form_state['redirect_uri'] = 'season/' . $parent_id . '/processing/list';
@@ -218,8 +228,8 @@ function before_after_preprocess_page(&$vars)
   // отключить обёртку col- для списка
   if ($_GET['q'] == 'before-after') {
       $vars['wrapper_off'] = true;
-
   }
+
   if (arg(0) == 'before-after' && arg(1)) {
       $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
   }
@@ -227,12 +237,18 @@ function before_after_preprocess_page(&$vars)
   if (in_array(arg(0), array('field', 'fields', 'season', 'seasons'))) {
       // отключить заголовок на странице
       if (((isset($vars['page']['content']['system_main']['#type']) && $vars['page']['content']['system_main']['#type'] != 'form')
-          || !isset($vars['page']['content']['system_main']['#type']))) {
-              $vars['header']['title_off'] = true;
+          || !isset($vars['page']['content']['system_main']['#type']))
+        ) {
+          $vars['header']['title_off'] = true;
       }
+
       $vars['header']['category_title'] = '<a href="/before-after" >'. t('Preparations in use') . '</a>';
       // установить изображение
       $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
+  }
+
+  if (arg(2) == 'before-after') {
+    $vars['header']['image'] = file_create_url('public://images/header_images/before-after/header_image.jpg');
   }
 }
 

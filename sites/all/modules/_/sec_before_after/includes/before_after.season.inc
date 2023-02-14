@@ -17,8 +17,7 @@ function before_after_season_callback($fid, $op = 'list', $sid = 0)
     switch ($op) {
         case 'list':
             // ссылки меню
-            $menu[] = array('data' => l(t('Fields list'), "/fields/list"));
-            $menu[] = array('data' => l(t('Add season'), "/field/$fid/season/add"));
+            $menu[] = array('data' => l(t('Fields list'), '/user/' . $GLOBALS['user']->uid .'/before-after'));
 
             // сезоны текущего поля
             $query = db_select('field_data_field_f_sowing', 's');
@@ -28,17 +27,19 @@ function before_after_season_callback($fid, $op = 'list', $sid = 0)
 
             if ($result_sids) {
                 foreach ($result_sids as $s_item) {
-                    $sid = $s_item->field_f_sowing_value;
-                    $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-                    $season = $season_wrapper->field_f_s_season->value();
-                    $year = $season_wrapper->field_f_s_year->value();
+                  $sid = $s_item->field_f_sowing_value;
+                  $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
+                  $season = $season_wrapper->field_f_s_season->value();
+                  $year = $season_wrapper->field_f_s_year->value();
 
-                    $output['items'][$sid]['link']          = "/season/$sid/processing/list";
-                    $output['items'][$sid]['image']         = "";
-                    $output['items'][$sid]['title1']        = 'Сезон ' . $season . ' ' . $year;
-                    $output['items'][$sid]['title2']        = $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '');
-                    $output['items'][$sid]['link_edit']     = "/field/$fid/season/edit/$sid";
-                    $output['items'][$sid]['link_delete']   = "/field/$fid/season/del/$sid";
+                  $item = [
+                    'title1'        => 'Сезон ' . $season . ' ' . $year,
+                    'title2'        => $season_wrapper->field_f_s_culture->title->value() . ($season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : ''),
+                    'link'          => "/season/$sid/processing/list",
+                    'link_edit'     => "/field/$fid/season/edit/$sid",
+                    'link_del'      => "/field/$fid/season/del/$sid",
+                  ];
+                  $output['items'][$sid] = theme('pvp_teaser', ['item' => $item]);
                 }
             }
             $output['menu'] = theme('item_list', array('items' => $menu, 'attributes' => array('class' => array('nav', 'navbar-nav'))));
@@ -133,7 +134,7 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0)
         }
     }
 
-  $start_year = date('Y')-1;
+  $start_year = 2015;
   $end_year = date('Y');
 
   // если редактирование, то задать переменные из редактируемого объекта
@@ -164,8 +165,8 @@ function before_after_season_form($form, &$form_state, $fid, $sid = 0)
           }
       }
 
-    $start_year = $year;
-    $end_year = $year;
+//    $start_year = $year;
+//    $end_year = $year;
   }
 
   $options_s = array(
@@ -487,10 +488,97 @@ function before_after_season_form_submit(&$form, &$form_state)
     $form_state['redirect'] = 'field/' . $form_state['fid'] . '/season/list';
 }
 
-function before_after_season_form_ajax_handler(&$form, &$form_state) {
-    $commands[] = ajax_command_remove('#messages-wrap');
-    $commands[] = ajax_command_before('.season-form', '<div id="messages-wrap">' . theme('status_messages') . '</div>');
-    $commands[] = ajax_command_replace('.season-form', drupal_render($form));
+function before_after_season_form_ajax_handler(&$form, &$form_state)
+{
+  $commands[] = ajax_command_remove('#messages-wrap');
+  $commands[] = ajax_command_before('.season-form', '<div id="messages-wrap">' . theme('status_messages') . '</div>');
+  $commands[] = ajax_command_replace('.season-form', drupal_render($form));
 
-    return array('#type' => 'ajax', '#commands' => $commands);
+  return [
+    '#type' => 'ajax',
+    '#commands' => $commands
+  ];
+}
+
+function before_after_get_season_info($season_id)
+{
+  // todo заменить before_after_get_atfield на эту функцию
+
+  $result = [];
+
+  $season_wr = entity_metadata_wrapper('field_collection_item', $season_id);
+
+  if ($season_wr->value()) {
+    $season = $season_wr->field_f_s_season->value();
+    $year = $season_wr->field_f_s_year->value();
+
+    // можно ли публиковать
+    $records = [];
+    foreach ($season_wr->field_f_s_measurements->getIterator() as $measure_wr) {
+      $id = $measure_wr->getIdentifier();
+      $date = $measure_wr->field_f_s_m_date->value();
+      $records[$date . $id] = [
+        'id' => $id,
+        'date' => $date,
+        'type' => 'm',
+        'ho_phase' => $measure_wr->field_f_s_m_phase_mc->value() ? $measure_wr->field_f_s_m_phase_mc->name->value() : '',
+      ];
+    }
+    foreach ($season_wr->field_f_s_processings->getIterator() as $processing_wr) {
+      $id = $processing_wr->getIdentifier();
+      $date = $processing_wr->field_f_s_p_date->value();
+
+      $preps_arr = [];
+      foreach($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
+        if ($prep_wr->value() && $prep_wr->field_f_s_p_p_preparation->label()) {
+          $preps_arr[] = $prep_wr->field_f_s_p_p_preparation->label();
+        }
+      }
+      if (!$preps_arr) {
+        if ($processing_wr->field_f_s_p_preparation->value()) {
+          $preps_arr[] = $processing_wr->field_f_s_p_preparation->label();
+        }
+        if ($processing_wr->field_f_s_p_preparation2->value()) {
+          $preps_arr[] = $processing_wr->field_f_s_p_preparation2->label();
+        }
+      }
+
+      $records[$date . $id] = [
+        'id' => $id,
+        'date' => $date,
+        'type' => 'p',
+        'preparations' => $preps_arr,
+      ];
+    }
+    ksort($records);
+    $haystack = '';
+    foreach ($records as $record) {
+      $haystack .= $record['type'];
+    }
+    $reasons = [];
+    if (!preg_match('/^m/', $haystack))   $reasons[] = 'контроль до первой обработки';
+    if (!preg_match('/p+/', $haystack))   $reasons[] = 'обработка препаратами';
+    if (!preg_match('/p+m/', $haystack))  $reasons[] = 'контроль после обработки';
+
+    $result = [
+      'id' => $season_wr->getIdentifier(),
+      'field_id' => $season_wr->host_entity->getIdentifier(),
+      'label' => 'Сезон ' . $season . ' ' . $year,
+      'season' => $season,
+      'year' => $year,
+      'culture' => [
+        'id' => $season_wr->field_f_s_culture->getIdentifier(),
+        'label' => $season_wr->field_f_s_culture->label(),
+        'notes' => $season_wr->field_f_s_culture_note->value() ? ' (' . $season_wr->field_f_s_culture_note->value() . ')' : '',
+      ],
+      'records' => $records,
+      'publication' => [
+        'published' => !$reasons,
+        'reasons' => $reasons,
+      ],
+    ];
+
+  }
+
+  return $result;
 }

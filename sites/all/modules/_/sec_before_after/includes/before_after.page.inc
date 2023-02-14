@@ -1,12 +1,13 @@
 <?php
 
+define('ATF_PER_PAGE', 12);
+
 /**
  * страница списка Сезонов
  */
 function before_after_list_page()
 {
   $filters_html = '';
-  define('ATF_PER_PAGE', 12);
 
   if ($filters_form = drupal_get_form('before_after_exposed_filters_form')) {
     ctools_add_js('auto-submit');
@@ -138,257 +139,255 @@ function before_after_get_atfield_ids($filter_region = null, $filter_culture = n
 
 function before_after_get_atfield_list($result_s)
 {
-  $fid = drupal_hash_base64(__FUNCTION__ . drupal_json_encode($result_s));
-  $atf_array = &drupal_static($fid);
+  $cache_id = drupal_hash_base64(__FUNCTION__ . drupal_json_encode($result_s));
+  $atf_array = &drupal_static($cache_id);
   if (!$atf_array) {
     $atf_array = [];
     if ($result_s) {
-      foreach ($result_s as $sid) {
+      foreach ($result_s as $season_id) {
         $output = [];
 
-        $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-        $season = $season_wrapper->value();
+        $season_info = before_after_get_season_info($season_id);
+        if ($season_info['publication']['published']) {
+          $season_wr = entity_metadata_wrapper('field_collection_item', $season_id);
+          $field_info = before_after_get_field_info($season_info['field_id']);
 
-        $fid = $season->hostEntityId();
-        $field_wrapper = entity_metadata_wrapper('node', $fid);
+          $output['region'] = [
+            'tid' => $field_info['region']['id'],
+            'name' => $field_info['region']['label'],
+          ];
 
-        $farm = $field_wrapper->field_f_farm->value();
+          // фото для предзагрузки в МП > v.3
+          $output['preload']['images'] = [];
 
-        $output['region'] = [
-          'tid' => $field_wrapper->field_f_region->getIdentifier(),
-          'name' => $field_wrapper->field_f_region->label(),
-        ];
+          // процессы сезона
+          // обработки
+          $query = db_select('field_data_field_f_s_processings', 'p');
+          $query->condition('p.entity_id', $season_id);
+          $query->innerJoin('field_data_field_f_s_p_date', 'd', 'd.entity_id = p.field_f_s_processings_value');
+          $query->fields('p', array('field_f_s_processings_value'));
+          $query->fields('d', array('field_f_s_p_date_value'));
+          $result_p = $query->execute()->fetchAll();
 
-        // фото для предзагрузки в МП > v.3
-        $output['preload']['images'] = [];
+          // замеры
+          $query = db_select('field_data_field_f_s_measurements', 'm');
+          $query->condition('m.entity_id', $season_id);
+          $query->innerJoin('field_data_field_f_s_m_date', 'd', 'd.entity_id = m.field_f_s_measurements_value');
+          $query->fields('m', array('field_f_s_measurements_value'));
+          $query->fields('d', array('field_f_s_m_date_value'));
+          $result_m = $query->execute()->fetchAll();
 
-        // процессы сезона
-        // обработки
-        $query = db_select('field_data_field_f_s_processings', 'p');
-        $query->condition('p.entity_id', $sid);
-        $query->innerJoin('field_data_field_f_s_p_date', 'd', 'd.entity_id = p.field_f_s_processings_value');
-        $query->fields('p', array('field_f_s_processings_value'));
-        $query->fields('d', array('field_f_s_p_date_value'));
-        $result_p = $query->execute()->fetchAll();
-
-        // замеры
-        $query = db_select('field_data_field_f_s_measurements', 'm');
-        $query->condition('m.entity_id', $sid);
-        $query->innerJoin('field_data_field_f_s_m_date', 'd', 'd.entity_id = m.field_f_s_measurements_value');
-        $query->fields('m', array('field_f_s_measurements_value'));
-        $query->fields('d', array('field_f_s_m_date_value'));
-        $result_m = $query->execute()->fetchAll();
-
-        // собрать все процессы сезона
-        $processes = array();
-        $count_processings = 0;
-        foreach ($result_p as $key_p => $item_p) {
-          $date = $item_p->field_f_s_p_date_value;
-          $processes[$date . 'p' . $key_p]['type'] = 'processing';
-          $processes[$date . 'p' . $key_p]['id'] = $item_p->field_f_s_processings_value;
-          $processes[$date . 'p' . $key_p]['date'] = $item_p->field_f_s_p_date_value;
-          $count_processings++;
-        }
-        $count_measurements = 0;
-        foreach ($result_m as $key_m => $item_m) {
-          $date = $item_m->field_f_s_m_date_value;
-          $processes[$date . 'm' . $key_m]['type'] = 'measurement';
-          $processes[$date . 'm' . $key_m]['id'] = $item_m->field_f_s_measurements_value;
-          $processes[$date . 'm' . $key_m]['date'] = $item_m->field_f_s_m_date_value;
-          $count_measurements++;
-        }
+          // собрать все процессы сезона
+          $processes = array();
+          $count_processings = 0;
+          foreach ($result_p as $key_p => $item_p) {
+            $date = $item_p->field_f_s_p_date_value;
+            $processes[$date . 'p' . $key_p]['type'] = 'processing';
+            $processes[$date . 'p' . $key_p]['id'] = $item_p->field_f_s_processings_value;
+            $processes[$date . 'p' . $key_p]['date'] = $item_p->field_f_s_p_date_value;
+            $count_processings++;
+          }
+          $count_measurements = 0;
+          foreach ($result_m as $key_m => $item_m) {
+            $date = $item_m->field_f_s_m_date_value;
+            $processes[$date . 'm' . $key_m]['type'] = 'measurement';
+            $processes[$date . 'm' . $key_m]['id'] = $item_m->field_f_s_measurements_value;
+            $processes[$date . 'm' . $key_m]['date'] = $item_m->field_f_s_m_date_value;
+            $count_measurements++;
+          }
 
 
-        if ($processes) {
-          // отсортировать по возрастанию даты и заменить ключи на цифровые
-          ksort($processes);
-          $processes = array_values($processes);
-          $count_processes = count($processes);
+          if ($processes) {
+            // отсортировать по возрастанию даты и заменить ключи на цифровые
+            ksort($processes);
+            $processes = array_values($processes);
+            $count_processes = count($processes);
 
-          $process = $processes[$count_processes - 1];
+            $process = $processes[$count_processes - 1];
 
-          // составить список препаратов из обработок
-          $preps = $preps_w_links = array();
-          $dv_list = [];
-          foreach ($processes as $item_p) {
-            $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-            if ($item_p['type'] == 'processing') {
-              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $index => $prep_wr) {
-                if ($prep_wr->field_f_s_p_p_preparation->value()) { // часть старых препаратов удалена, но id остались
-                  $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
+            // составить список препаратов из обработок
+            $preps = $preps_w_links = array();
+            $dv_list = [];
+            foreach ($processes as $item_p) {
+              $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
+              if ($item_p['type'] == 'processing') {
+                foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $index => $prep_wr) {
+                  if ($prep_wr->field_f_s_p_p_preparation->value()) { // часть старых препаратов удалена, но id остались
+                    $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
+                    if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
+                    $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
+
+                    // список ДВ
+                    // используется в МП для фильтрации
+                    foreach ($product_info["items"] as $product) {
+                      foreach ($product["ingredients"] as $dv) {
+                        $dv_list[$dv['tid']] = $dv;
+                      }
+                    }
+                  }
+                }
+
+                // старый вариант
+                if ($processing_wr->field_f_s_p_preparation->value()) {
+                  $product_info = ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value());
                   if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
                   $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
 
-                  // список ДВ
-                  // используется в МП для фильтрации
                   foreach ($product_info["items"] as $product) {
                     foreach ($product["ingredients"] as $dv) {
                       $dv_list[$dv['tid']] = $dv;
                     }
                   }
                 }
+
+                // фото для мобильного приложения > v.3
+                $image_fid = $processing_wr->field_f_s_p_photo->value();
+                if ($image_fid && $image = file_load($image_fid)) {
+                  $output['preload']['images'][] = image_style_url('news_teaser', $image->uri);
+                  $output['preload']['images'][] = image_style_url('1200_1200', $image->uri);
+                }
               }
+              // фото для мобильного приложения > v.3
+              if ($item_p['type'] == 'measurement') {
+                $image_f_fid = $processing_wr->field_f_s_m_foto_field->value();
+                if ($image_f_fid && $image_f = file_load($image_f_fid)) {
+                  $output['preload']['images'][] = image_style_url('news_teaser', $image_f->uri);
+                  $output['preload']['images'][] = image_style_url('1200_1200', $image_f->uri);
+                }
+                $image_c_fid = $processing_wr->field_f_s_m_foto_culture->value();
+                if ($image_c_fid && $image_c = file_load($image_c_fid)) {
+                  $output['preload']['images'][] = image_style_url('news_teaser', $image_c->uri);
+                  $output['preload']['images'][] = image_style_url('1200_1200', $image_c->uri);
+                }
+              }
+            }
+            $output['preps'] = $preps;
+            $output['preps_title'] = 'Обработка препаратами: ';
+            $output['preps_w_links'] = '';
+            if ($preps_w_links) {
+              $preps_w_links = array_unique($preps_w_links);
+              $output['preps_w_links'] = implode('; ', $preps_w_links);
+            }
+            // список ДВ
+            $output['dv'] = $dv_list;
 
-              // старый вариант
-              if ($processing_wr->field_f_s_p_preparation->value()) {
-                $product_info = ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value());
-                if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
-                $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
+            // заголовки
+            $output['culture'] = [
+              'nid' => $season_info['culture']['id'],
+              'title' => $season_info['culture']['label'],
+              'notes' => $season_info['culture']['notes'],
+            ];
+            $output['link'] = "/before-after/$season_id";
+            $output['sid'] = $season_id;
+            $output['farm_title'] = 'Хозяйство: ';
+            $output['farm'] = $field_info['farm'];
+            $output['date'] = date('d.m.Y', $process['date']);
+            $output['year'] = $season_info['year'];
+            // часть старых записей не имеет года
+            if (!$output['year']) $output['year'] = date('Y', $process['date']);
 
-                foreach ($product_info["items"] as $product) {
-                  foreach ($product["ingredients"] as $dv) {
-                    $dv_list[$dv['tid']] = $dv;
+            $output['footer'] = '';
+            $output['type'] = $process['type'];
+            switch ($process['type']) {
+              // если последним процессом является ОБРАБОТКА
+              case 'processing':
+                $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
+                $category = 'препаратом';
+                if ($processing_wr->field_f_s_p_preparation->value()) {
+                  $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
+                  if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
+                  if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
+                  if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
+                }
+
+                // фото поля
+                $output['image_thumb'] = $output['image_full'] = '';
+                $image_fid = $processing_wr->field_f_s_p_photo->value();
+                if ($image_fid && $image = file_load($image_fid)) {
+                  $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
+                  $output['image_full'] = image_style_url('1024_1024', $image->uri);
+                }
+
+                $output['footer'] = 'Проведена обработка ' . $category;
+
+                $atf_array[$process['date'] . $season_id] = $output;
+
+                break;
+
+              // если последним процессом является ЗАМЕР
+              case 'measurement':
+                // является ли ЗАМЕР первым
+                $first = $count_measurements == 1 ? true : false;
+
+                $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
+    //                        $phase = $measurement_wrapper->field_f_s_m_phase_mc->name->value();
+
+                // фото поля
+                $image_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
+                $image = file_load($image_fid);
+                $output['image_alt'] = 'Контрольное фото поля - ООО ТД Кирово-Чепеццкая Химическая Компания';
+                $output['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
+                $output['image_full'] = $image ? image_style_url('1200_1200', $image->uri) : '';
+
+                // содержимое
+                $output['condition_title'] = '';
+                $output['condition'] = '';
+                if ($measurement_wrapper->field_f_s_m_condition_mc->value()) {
+                  $output['condition_title'] = 'Состояние культуры: ';
+                  $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
+                }
+
+                // все вредные объекты сезона
+                $arr_ho_all = array();
+                foreach ($season_wr->field_f_s_hobjects as $item_ho) {
+                  $name = $item_ho->field_f_s_h_hobject->value() ? $item_ho->field_f_s_h_hobject->title->value() : 'Не найден';
+                  $dom = $item_ho->field_f_s_h_dominant->value();
+                  $arr_ho_all[] = $dom ? $name . ' (доминант)' : $name;
+                }
+
+                // состояние вредных объектов
+                $arr_ho = array();
+                foreach ($measurement_wrapper->field_f_s_m_condition_ho as $item_ho) {
+                  if ($item_ho->field_f_s_m_c_hobject->value()) {
+                    $hobject = $item_ho->field_f_s_m_c_hobject->title->value();
+                    $percent = $item_ho->field_f_s_m_c_percent->value();
+                    if (!$first) $percent = $percent ? ' (-' . $percent . '%)' : '';
+                    $arr_ho[] = $hobject . $percent;
                   }
                 }
-              }
 
-              // фото для мобильного приложения > v.3
-              $image_fid = $processing_wr->field_f_s_p_photo->value();
-              if ($image_fid && $image = file_load($image_fid)) {
-                $output['preload']['images'][] = image_style_url('news_teaser', $image->uri);
-                $output['preload']['images'][] = image_style_url('1200_1200', $image->uri);
-              }
-            }
-            // фото для мобильного приложения > v.3
-            if ($item_p['type'] == 'measurement') {
-              $image_f_fid = $processing_wr->field_f_s_m_foto_field->value();
-              if ($image_f_fid && $image_f = file_load($image_f_fid)) {
-                $output['preload']['images'][] = image_style_url('news_teaser', $image_f->uri);
-                $output['preload']['images'][] = image_style_url('1200_1200', $image_f->uri);
-              }
-              $image_c_fid = $processing_wr->field_f_s_m_foto_culture->value();
-              if ($image_c_fid && $image_c = file_load($image_c_fid)) {
-                $output['preload']['images'][] = image_style_url('news_teaser', $image_c->uri);
-                $output['preload']['images'][] = image_style_url('1200_1200', $image_c->uri);
-              }
-            }
-          }
-          $output['preps'] = $preps;
-          $output['preps_title'] = 'Обработка препаратами: ';
-          $output['preps_w_links'] = '';
-          if ($preps_w_links) {
-            $preps_w_links = array_unique($preps_w_links);
-            $output['preps_w_links'] = implode('; ', $preps_w_links);
-          }
-          // список ДВ
-          $output['dv'] = $dv_list;
-
-          // заголовки
-          $output['culture'] = [
-            'nid' => $season_wrapper->field_f_s_culture->getIdentifier(),
-            'title' => $season_wrapper->field_f_s_culture->label(),
-            'notes' => $season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '',
-          ];
-          $output['link'] = "/before-after/$sid";
-          $output['sid'] = $sid;
-          $output['farm_title'] = 'Хозяйство: ';
-          $output['farm'] = $farm;
-          $output['date'] = date('d.m.Y', $process['date']);
-          $output['year'] = $season_wrapper->field_f_s_year->value();
-          // часть старых записей не имеет года
-          if (!$output['year']) $output['year'] = date('Y', $process['date']);
-
-          $output['footer'] = '';
-          $output['type'] = $process['type'];
-          switch ($process['type']) {
-            // если последним процессом является ОБРАБОТКА
-            case 'processing':
-              $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
-              $category = 'препаратом';
-              if ($processing_wr->field_f_s_p_preparation->value()) {
-                $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
-                if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
-                if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
-                if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
-              }
-
-              // фото поля
-              $output['image_thumb'] = $output['image_full'] = '';
-              $image_fid = $processing_wr->field_f_s_p_photo->value();
-              if ($image_fid && $image = file_load($image_fid)) {
-                $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
-                $output['image_full'] = image_style_url('1024_1024', $image->uri);
-              }
-
-              $output['footer'] = 'Проведена обработка ' . $category;
-
-              $atf_array[$process['date'] . $sid] = $output;
-
-              break;
-
-            // если последним процессом является ЗАМЕР
-            case 'measurement':
-              // является ли ЗАМЕР первым
-              $first = $count_measurements == 1 ? true : false;
-
-              $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
-  //                        $phase = $measurement_wrapper->field_f_s_m_phase_mc->name->value();
-
-              // фото поля
-              $image_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
-              $image = file_load($image_fid);
-              $output['image_alt'] = 'Контрольное фото поля - ООО ТД Кирово-Чепеццкая Химическая Компания';
-              $output['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
-              $output['image_full'] = $image ? image_style_url('1200_1200', $image->uri) : '';
-
-              // содержимое
-              $output['condition_title'] = '';
-              $output['condition'] = '';
-              if ($measurement_wrapper->field_f_s_m_condition_mc->value()) {
-                $output['condition_title'] = 'Состояние культуры: ';
-                $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
-              }
-
-              // все вредные объекты сезона
-              $arr_ho_all = array();
-              foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
-                $name = $item_ho->field_f_s_h_hobject->value() ? $item_ho->field_f_s_h_hobject->title->value() : 'Не найден';
-                $dom = $item_ho->field_f_s_h_dominant->value();
-                $arr_ho_all[] = $dom ? $name . ' (доминант)' : $name;
-              }
-
-              // состояние вредных объектов
-              $arr_ho = array();
-              foreach ($measurement_wrapper->field_f_s_m_condition_ho as $item_ho) {
-                if ($item_ho->field_f_s_m_c_hobject->value()) {
-                  $hobject = $item_ho->field_f_s_m_c_hobject->title->value();
-                  $percent = $item_ho->field_f_s_m_c_percent->value();
-                  if (!$first) $percent = $percent ? ' (-' . $percent . '%)' : '';
-                  $arr_ho[] = $hobject . $percent;
+                if ($first) {
+                  $output['hobjects_title'] = 'Вредные объекты: ';
+                  $output['hobjects'] = implode(', ', $arr_ho_all);
+                  if (empty($output['hobjects'])) $output['hobjects'] = 'не заданы';
+                } else {
+                  $output['hobjects_title'] = 'Состояние вредных объектов: ';
+                  $output['hobjects'] = implode(', ', $arr_ho);
+                  if (empty($output['hobjects'])) $output['hobjects'] = 'не указано';
                 }
-              }
 
-              if ($first) {
-                $output['hobjects_title'] = 'Вредные объекты: ';
-                $output['hobjects'] = implode(', ', $arr_ho_all);
-                if (empty($output['hobjects'])) $output['hobjects'] = 'не заданы';
-              } else {
-                $output['hobjects_title'] = 'Состояние вредных объектов: ';
-                $output['hobjects'] = implode(', ', $arr_ho);
-                if (empty($output['hobjects'])) $output['hobjects'] = 'не указано';
-              }
+                $output['comment_title'] = 'Комментарий представителя: ';
+                $output['comment'] = $measurement_wrapper->field_f_s_m_comment->value();
 
-              $output['comment_title'] = 'Комментарий представителя: ';
-              $output['comment'] = $measurement_wrapper->field_f_s_m_comment->value();
+                // количество дней после предыдущего процесса
+                if ($count_processes == 1) {
+                  $footer = 'Культура перед обработкой';
+                } else {
+                  $diff = _seconds2times($processes[$count_processes - 1]['date'] - $processes[$count_processes - 2]['date']);
+    //                            $footer = $diff['3'] . ' дней после';
+                  $footer = format_plural($diff['3'], '@count day', '@count days') . ' ' . t('after', [], ['context' => 'B&A']);
 
-              // количество дней после предыдущего процесса
-              if ($count_processes == 1) {
-                $footer = 'Культура перед обработкой';
-              } else {
-                $diff = _seconds2times($processes[$count_processes - 1]['date'] - $processes[$count_processes - 2]['date']);
-  //                            $footer = $diff['3'] . ' дней после';
-                $footer = format_plural($diff['3'], '@count day', '@count days') . ' ' . t('after', [], ['context' => 'B&A']);
+                  if ($processes[$count_processes - 2]['type'] == 'processing') $footer .= ' ' . t('processing', [], ['context' => 'B&A']);
+                  else                                                            $footer .= ' ' . t('last control', [], ['context' => 'B&A']);
+                }
+                $output['footer'] = $footer;
+                //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
+                //                        if ($count_processings) $output['h3'] .= '<span>' . format_plural($count_processings, '1 processing', '@count processings') . '</span>';
 
-                if ($processes[$count_processes - 2]['type'] == 'processing') $footer .= ' ' . t('processing', [], ['context' => 'B&A']);
-                else                                                            $footer .= ' ' . t('last control', [], ['context' => 'B&A']);
-              }
-              $output['footer'] = $footer;
-              //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
-              //                        if ($count_processings) $output['h3'] .= '<span>' . format_plural($count_processings, '1 processing', '@count processings') . '</span>';
+                $atf_array[$process['date'] . $season_id] = $output;
 
-              $atf_array[$process['date'] . $sid] = $output;
-
-              break;
+                break;
+            }
           }
         }
       }
@@ -398,274 +397,6 @@ function before_after_get_atfield_list($result_s)
     krsort($atf_array);
   }
   return $atf_array;
-}
-
-/**
- * возвращает список сезонов с возможностью фильтрации по культуре и региону
- *
- * выходные данные отсортированы по дате последнего внесенного замера или обработки
- * и зависят от вида последней внесенной записи
- */
-function before_after_get_atfield_list_old($filter_region = null, $filter_culture = null, $filter_dv = null, $filter_year = null)
-{
-  $atf_array = &drupal_static(__FUNCTION__);
-  if (!$atf_array) {
-    $atf_array = [];
-
-    // список всех сезонов
-    $query = db_select('field_data_field_f_sowing', 's');
-    if (!empty($filter_region) && $filter_region != 'All') {
-      $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
-      $query->innerJoin('field_data_field_f_region', 'fr', 'fr.entity_id = n.nid');
-      $query->condition('fr.field_f_region_tid', $filter_region);
-    }
-    if (!empty($filter_culture) && $filter_culture != 'All') {
-      $query->innerJoin('field_data_field_f_s_culture', 'fc', 'fc.entity_id = s.field_f_sowing_value');
-      $query->condition('fc.field_f_s_culture_target_id', $filter_culture);
-      $query->condition('fc.bundle', 'field_f_sowing');
-    }
-    if (!empty($filter_year) && $filter_year != 'All') {
-      $query->innerJoin('field_data_field_f_s_year', 'fy', 'fy.entity_id = s.field_f_sowing_value');
-      $query->condition('fy.field_f_s_year_value', $filter_year);
-      $query->condition('fy.bundle', 'field_f_sowing');
-    }
-    $query->fields('s', array('field_f_sowing_value'));
-    $query->orderBy('s.field_f_sowing_value', 'DESC');
-    $result_s = $query->execute()->fetchAll();
-
-    if ($result_s) {
-      foreach ($result_s as $item_s) {
-        $output = array();
-
-        $sid = $item_s->field_f_sowing_value;
-        $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-        $season = $season_wrapper->value();
-
-        $fid = $season->hostEntityId();
-        $field_wrapper = entity_metadata_wrapper('node', $fid);
-
-        $farm = $field_wrapper->field_f_farm->value();
-
-        $output['region'] = [
-          'tid' => $field_wrapper->field_f_region->getIdentifier(),
-          'name' => $field_wrapper->field_f_region->label(),
-        ];
-
-        // процессы сезона
-        // обработки
-        $query = db_select('field_data_field_f_s_processings', 'p');
-        $query->condition('p.entity_id', $sid);
-        $query->innerJoin('field_data_field_f_s_p_date', 'd', 'd.entity_id = p.field_f_s_processings_value');
-        $query->fields('p', array('field_f_s_processings_value'));
-        $query->fields('d', array('field_f_s_p_date_value'));
-        $result_p = $query->execute()->fetchAll();
-
-        // замеры
-        $query = db_select('field_data_field_f_s_measurements', 'm');
-        $query->condition('m.entity_id', $sid);
-        $query->innerJoin('field_data_field_f_s_m_date', 'd', 'd.entity_id = m.field_f_s_measurements_value');
-        $query->fields('m', array('field_f_s_measurements_value'));
-        $query->fields('d', array('field_f_s_m_date_value'));
-        $result_m = $query->execute()->fetchAll();
-
-        // собрать все процессы сезона
-        $processes = array();
-        $count_processings = 0;
-        foreach ($result_p as $key_p => $item_p) {
-          $date = $item_p->field_f_s_p_date_value;
-          $processes[$date . 'p' . $key_p]['type'] = 'processing';
-          $processes[$date . 'p' . $key_p]['id'] = $item_p->field_f_s_processings_value;
-          $processes[$date . 'p' . $key_p]['date'] = $item_p->field_f_s_p_date_value;
-          $count_processings++;
-        }
-        $count_measurements = 0;
-        foreach ($result_m as $key_m => $item_m) {
-          $date = $item_m->field_f_s_m_date_value;
-          $processes[$date . 'm' . $key_m]['type'] = 'measurement';
-          $processes[$date . 'm' . $key_m]['id'] = $item_m->field_f_s_measurements_value;
-          $processes[$date . 'm' . $key_m]['date'] = $item_m->field_f_s_m_date_value;
-          $count_measurements++;
-        }
-
-
-        if ($processes) {
-          // отсортировать по возрастанию даты и заменить ключи на цифровые
-          ksort($processes);
-          $processes = array_values($processes);
-          $count_processes = count($processes);
-
-          $process = $processes[$count_processes - 1];
-
-          // составить список препаратов из обработок
-          $preps = $preps_w_links = array();
-          foreach ($processes as $item_p) {
-            if ($item_p['type'] == 'processing') {
-              $processing_wr = entity_metadata_wrapper('field_collection_item', $item_p['id']);
-              //
-              foreach ($processing_wr->field_f_s_p_preparations->getIterator() as $prep_wr) {
-                $product_info = ext_product_product_get_info($prep_wr->field_f_s_p_p_preparation->value());
-                if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
-                $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
-              }
-
-              // старый вариант
-              if ($processing_wr->field_f_s_p_preparation->value()) {
-                $product_info = ext_product_product_get_info($processing_wr->field_f_s_p_preparation->value());
-                if (empty($preps[$product_info['nid']])) $preps[$product_info['nid']] = $product_info;
-                $preps_w_links[] = '<a href="' . $product_info['url'] . '">' . $product_info['title'] . '</a>';
-              }
-            }
-          }
-          $output['preps'] = $preps;
-          $output['preps_title'] = 'Обработка препаратами: ';
-          $output['preps_w_links'] = '';
-          if ($preps_w_links) {
-            $preps_w_links = array_unique($preps_w_links);
-            $output['preps_w_links'] = implode('; ', $preps_w_links);
-          }
-
-          // если задан фильтр по ДВ, отсеять сезон
-          if ($filter_dv && $filter_dv != 'All' && empty($preps[$filter_dv])) {
-            // список id препаратов с этим ДВ
-            $query = db_select('node', 'n');
-            $query->innerJoin('field_data_field_pd_active_ingredients', 'fis', 'fis.entity_id = n.nid');
-            $query->innerJoin('field_data_field_pd_ai_active_ingredient', 'fi', 'fi.entity_id = fis.field_pd_active_ingredients_value');
-            $query->condition('fi.field_pd_ai_active_ingredient_tid', $filter_dv);
-            $query->fields('n', ['nid']);
-            $is_in_array = false;
-            if ($result_n = $query->execute()->fetchAll()) {
-              foreach ($result_n as $item_n) {
-                if (isset($preps[$item_n->nid])) $is_in_array = true;
-              }
-            }
-
-            if (!$is_in_array) continue;
-          }
-
-          // заголовки
-          $output['culture'] = [
-            'tid' => $season_wrapper->field_f_s_culture->getIdentifier(),
-            'title' => $season_wrapper->field_f_s_culture->label(),
-            'notes' => $season_wrapper->field_f_s_culture_note->value() ? ' (' . $season_wrapper->field_f_s_culture_note->value() . ')' : '',
-          ];
-          $output['link'] = "/before-after/$sid";
-          $output['sid'] = $sid;
-          $output['farm_title'] = 'Хозяйство: ';
-          $output['farm'] = $farm;
-          $output['date'] = date('d.m.Y', $process['date']);
-          $output['year'] = $season_wrapper->field_f_s_year->value();
-
-          $output['footer'] = '';
-          $output['type'] = $process['type'];
-          switch ($process['type']) {
-            // если последним процессом является ОБРАБОТКА
-            case 'processing':
-              $processing_wr = entity_metadata_wrapper('field_collection_item', $process['id']);
-              $category = 'препаратом';
-              if ($processing_wr->field_f_s_p_preparation->value()) {
-                $category_tid = $processing_wr->field_f_s_p_preparation->field_pd_category[0]->tid->value();
-                if ($category_tid == AGRO_CATEGORY_HERBICIDES_TID) $category = 'гербицидом';
-                if ($category_tid == AGRO_CATEGORY_FUNGICIDES_TID) $category = 'фунгицидом';
-                if ($category_tid == AGRO_CATEGORY_INSECTICIDES_TID) $category = 'инсектицидом';
-              }
-
-              // фото поля
-              $output['image_thumb'] = $output['image_full'] = '';
-              $image_fid = $processing_wr->field_f_s_p_photo->value();
-              if ($image_fid && $image = file_load($image_fid)) {
-                $output['image_thumb'] = image_style_url('news_teaser', $image->uri);
-                $output['image_full'] = image_style_url('1200_1200', $image->uri);
-              }
-
-              $output['footer'] = 'Проведена обработка ' . $category;
-
-              $atf_array[$process['date'] . $sid] = $output;
-
-              break;
-
-            // если последним процессом является ЗАМЕР
-            case 'measurement':
-              // является ли ЗАМЕР первым
-              $first = $count_measurements == 1 ? true : false;
-
-              $measurement_wrapper = entity_metadata_wrapper('field_collection_item', $process['id']);
-  //                        $phase = $measurement_wrapper->field_f_s_m_phase_mc->name->value();
-
-              // фото поля
-              $image_fid = $measurement_wrapper->field_f_s_m_foto_field->value();
-              $image = file_load($image_fid);
-              $output['image_alt'] = 'Контрольное фото поля - ООО ТД Кирово-Чепеццкая Химическая Компания';
-              $output['image_thumb'] = $image ? image_style_url('news_teaser', $image->uri) : '';
-              $output['image_full'] = $image ? image_style_url('1200_1200', $image->uri) : '';
-
-              // содержимое
-              $output['condition_title'] = '';
-              $output['condition'] = '';
-              if ($measurement_wrapper->field_f_s_m_condition_mc->value()) {
-                $output['condition_title'] = 'Состояние культуры: ';
-                $output['condition'] = $measurement_wrapper->field_f_s_m_condition_mc->value();
-              }
-
-
-              // все вредные объекты сезона
-              $arr_ho_all = array();
-              foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
-                $name = $item_ho->field_f_s_h_hobject->value() ? $item_ho->field_f_s_h_hobject->title->value() : 'Не найден';
-                $dom = $item_ho->field_f_s_h_dominant->value();
-                $arr_ho_all[] = $dom ? $name . ' (доминант)' : $name;
-              }
-
-              // состояние вредных объектов
-              $arr_ho = array();
-              foreach ($measurement_wrapper->field_f_s_m_condition_ho as $item_ho) {
-                if ($item_ho->field_f_s_m_c_hobject->value()) {
-                  $hobject = $item_ho->field_f_s_m_c_hobject->title->value();
-                  $percent = $item_ho->field_f_s_m_c_percent->value();
-                  if (!$first) $percent = $percent ? ' (-' . $percent . '%)' : '';
-                  $arr_ho[] = $hobject . $percent;
-                }
-              }
-
-              if ($first) {
-                $output['hobjects_title'] = 'Вредные объекты: ';
-                $output['hobjects'] = implode(', ', $arr_ho_all);
-                if (empty($output['hobjects'])) $output['hobjects'] = 'не заданы';
-              } else {
-                $output['hobjects_title'] = 'Состояние вредных объектов: ';
-                $output['hobjects'] = implode(', ', $arr_ho);
-                if (empty($output['hobjects'])) $output['hobjects'] = 'не указано';
-              }
-
-              $output['comment_title'] = 'Комментарий представителя: ';
-              $output['comment'] = $measurement_wrapper->field_f_s_m_comment->value();
-
-              // количество дней после предыдущего процесса
-              if ($count_processes == 1) {
-                $footer = 'Культура перед обработкой';
-              } else {
-                $diff = _seconds2times($processes[$count_processes - 1]['date'] - $processes[$count_processes - 2]['date']);
-  //                            $footer = $diff['3'] . ' дней после';
-                $footer = format_plural($diff['3'], '@count day', '@count days') . ' ' . t('after', [], ['context' => 'B&A']);
-
-                if ($processes[$count_processes - 2]['type'] == 'processing') $footer .= ' ' . t('processing', [], ['context' => 'B&A']);
-                else                                                            $footer .= ' ' . t('last control', [], ['context' => 'B&A']);
-              }
-              $output['footer'] = $footer;
-              //                        if ($count_measurements) $output['h3'] .= '<span>' . format_plural($count_measurements, '1 measurement', '@count measurements') . '</span>';
-              //                        if ($count_processings) $output['h3'] .= '<span>' . format_plural($count_processings, '1 processing', '@count processings') . '</span>';
-
-              $atf_array[$process['date'] . $sid] = $output;
-
-              break;
-          }
-        }
-      }
-    }
-
-    // сортировка по дате процесса
-    krsort($atf_array);
-  }
-    return $atf_array;
 }
 
 // определить списки для фильтров
@@ -963,22 +694,22 @@ function before_after_get_atfield($sid)
 {
   $output = &drupal_static(__FUNCTION__);
   if (empty($output)) {
-    $season_wrapper = entity_metadata_wrapper('field_collection_item', $sid);
-    if ($season = $season_wrapper->value()) {
+    $season_wr = entity_metadata_wrapper('field_collection_item', $sid);
+    if ($season = $season_wr->value()) {
       $fid = $season->hostEntityId();
-      $field_wrapper = entity_metadata_wrapper('node', $fid);
-      $field = $field_wrapper->value();
+      $field_wr = entity_metadata_wrapper('node', $fid);
+      $field = $field_wr->value();
 
-      $output['farm'] = $field_wrapper->field_f_farm->value();
-      $output['culture'] = $season_wrapper->field_f_s_culture->label();
-      $output['culture_note'] = $season_wrapper->field_f_s_culture_note->value();
-      $output['sub_culture'] = $season_wrapper->field_f_s_sub_culture->value() ? $season_wrapper->field_f_s_sub_culture->value() : '';
-      $output['previous_culture'] = $season_wrapper->field_f_s_previous_culture->value() ? $season_wrapper->field_f_s_previous_culture->label() : '';
-      $output['season'] = $season_wrapper->field_f_s_season->value();
-      $output['year'] = $season_wrapper->field_f_s_year->value();
-      $output['region'] = $field_wrapper->field_f_region->label();
+      $output['farm'] = $field_wr->field_f_farm->value();
+      $output['culture'] = $season_wr->field_f_s_culture->label();
+      $output['culture_note'] = $season_wr->field_f_s_culture_note->value();
+      $output['sub_culture'] = $season_wr->field_f_s_sub_culture->value() ? $season_wr->field_f_s_sub_culture->value() : '';
+      $output['previous_culture'] = $season_wr->field_f_s_previous_culture->value() ? $season_wr->field_f_s_previous_culture->label() : '';
+      $output['season'] = $season_wr->field_f_s_season->value();
+      $output['year'] = $season_wr->field_f_s_year->value();
+      $output['region'] = $field_wr->field_f_region->label();
       $output['author'] = ext_user_get_user_info($field->uid);
-      $output['author']['photo'] = image_style_url('user_photo', $output['author']["photo_uri"]);
+//      $output['author']['photo'] = image_style_url('user_photo', $output['author']["photo_uri"]);
 
       // процессы сезона
       // обработки
@@ -1028,7 +759,7 @@ function before_after_get_atfield($sid)
         // список вредных объектов сезона
         $output['weeds_d'] = $output['weeds_o'] = $output['pests'] = $output['fungis'] = 0;
         $arr_hobjects = array();
-        foreach ($season_wrapper->field_f_s_hobjects as $item_ho) {
+        foreach ($season_wr->field_f_s_hobjects as $item_ho) {
           if ($item_ho->field_f_s_h_hobject->value()) {
             $nid = $item_ho->field_f_s_h_hobject->nid->value();
             $arr_hobjects[$nid] = array(
@@ -1199,7 +930,7 @@ function before_after_get_atfield($sid)
                 'url' => $prep_info2['url'],
                 'nid' => $prep_info2['id'],
                 'image_thumb' => image_style_url('thumbnail', $prep_info2['photo_uri']),
-                'image_medium' => image_style_url('medium', $prep_info['photo_uri']),
+                'image_medium' => image_style_url('medium', $prep_info2['photo_uri']),
                 'unit_short' => $prep_info2['unit_short'],
                 'unit_field' => $prep_info2['unit_field'][array_key_first($prep_info2['categories'])],
                 'rate' => intval($processing_wr->field_f_s_p_consumption2->value()),

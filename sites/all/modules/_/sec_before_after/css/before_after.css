@@ -10,33 +10,33 @@
  * You can copy existing variables directly from the following file:
  * ./THEMENAME/bootstrap/assets/stylesheets/bootstrap/_variables.scss
  */
-.fields header {
+.pvp-user-list header {
   background: url(../images/bg.jpg);
   background-size: cover;
   color: #fff;
   text-shadow: 1px 1px 10px #000;
   position: relative;
   height: 235px; }
-  .fields header .cover {
+  .pvp-user-list header .cover {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3); }
-  .fields header .prev {
+  .pvp-user-list header .prev {
     position: absolute;
     top: 20px;
     left: 140px;
     font-size: 20px;
     line-height: 34px;
     font-weight: 700; }
-    .fields header .prev a {
+    .pvp-user-list header .prev a {
       color: #999; }
-      .fields header .prev a:hover {
+      .pvp-user-list header .prev a:hover {
         color: #eee;
         text-decoration: none; }
-  .fields header .title-1 {
+  .pvp-user-list header .title-1 {
     position: absolute;
     top: 20px;
     left: 200px;
@@ -44,97 +44,128 @@
     line-height: 32px;
     font-weight: 500;
     text-transform: uppercase; }
-  .fields header .title-2 {
+  .pvp-user-list header .title-2 {
     position: absolute;
     top: 50px;
     left: 200px;
     line-height: 24px; }
-  .fields header .title-3 {
+  .pvp-user-list header .title-3 {
     position: absolute;
     top: 105px;
     left: 200px;
     font-size: 30px;
     line-height: 30px; }
-  .fields header .title-4 {
+  .pvp-user-list header .title-4 {
     position: absolute;
     top: 135px;
     left: 200px;
     font-size: 19px;
     line-height: 24px; }
-.fields .subheader-menu .navbar-nav {
+.pvp-user-list .subheader-menu .navbar-nav {
   background-color: #b16202;
   height: 45px;
   align-items: center; }
-  .fields .subheader-menu .navbar-nav li {
+  .pvp-user-list .subheader-menu .navbar-nav li {
     margin: 0 7px; }
-  .fields .subheader-menu .navbar-nav a {
+  .pvp-user-list .subheader-menu .navbar-nav a {
     background-color: #7e4801;
     padding: 5px 10px; }
-.fields .subheader-menu .navbar-nav > li:not(.disabled) > a:hover,
-.fields .subheader-menu .navbar-nav > li:not(.disabled) > a:focus {
+.pvp-user-list .subheader-menu .navbar-nav > li:not(.disabled) > a:hover,
+.pvp-user-list .subheader-menu .navbar-nav > li:not(.disabled) > a:focus {
   background-color: #985402; }
-.fields .subheader-menu::after {
+.pvp-user-list .subheader-menu::after {
   background-repeat: repeat-x;
   background-image: -webkit-linear-gradient(-90deg, #b16202, transparent);
   background-image: -o-linear-gradient(-90deg, #b16202, transparent);
   background-image: linear-gradient(-90deg, #b16202, transparent); }
-.fields .list {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-  .fields .list a {
-    color: #b3b3b3; }
-  .fields .list li {
-    background-color: #eee;
-    display: block;
-    box-shadow: 1px 1px 10px #333;
-    height: 80px;
-    margin-bottom: 20px;
-    position: relative;
-    -webkit-transition: "all 0.3s ease-in-out";
-    -o-transition: "all 0.3s ease-in-out";
-    transition: "all 0.3s ease-in-out"; }
-    .fields .list li > a {
-      display: inline-block; }
-      .fields .list li > a:first-child {
-        width: 85%; }
-      .fields .list li > a > div {
-        float: left; }
-    .fields .list li:hover {
-      background-color: #ddd; }
-  .fields .list .image {
-    background-color: #EA9700;
-    height: 80px;
-    width: 80px; }
-  .fields .list .title-1 {
+
+/* тизер списка в ЛК */
+.pvp-u-list-teaser {
+  background-color: #eee;
+  border-left: 5px solid #EA9700;
+  display: block;
+  margin-bottom: 20px;
+  position: relative;
+  min-height: 50px;
+  transition: all 0.2s ease-in-out;
+  padding: 15px; }
+  .pvp-u-list-teaser a {
     color: #333333;
-    font-size: 26px;
-    line-height: 28px;
-    padding: 8px 20px 4px 20px;
-    min-width: 51%; }
-  .fields .list .title-2 {
-    font-size: 16px;
-    line-height: 18px;
-    padding: 3px 20px;
-    min-width: 51%; }
-  .fields .list .action-edit,
-  .fields .list .action-delete {
+    display: block;
+    transition: all 0.2s ease-in-out; }
+    .pvp-u-list-teaser a:hover, .pvp-u-list-teaser a:focus {
+      color: #333333;
+      text-decoration: none; }
+  .pvp-u-list-teaser .pvp-add-field a {
+    color: #cdcdcd;
     font-size: 20px;
-    position: absolute;
-    top: 20px;
-    padding: 5px; }
-    .fields .list .action-edit i,
-    .fields .list .action-delete i {
-      -webkit-transition: all 0.3s ease-in-out;
-      -o-transition: all 0.3s ease-in-out;
-      transition: all 0.3s ease-in-out; }
-    .fields .list .action-edit:hover i,
-    .fields .list .action-delete:hover i {
-      color: #333333; }
-  .fields .list .action-edit {
-    right: 70px; }
-  .fields .list .action-delete {
-    right: 30px; }
+    font-weight: 500;
+    text-transform: uppercase;
+    width: 100%; }
+  .pvp-u-list-teaser .pvp-t-header {
+    display: flex;
+    justify-content: space-between; }
+    .pvp-u-list-teaser .pvp-t-header .pvp-t-author {
+      color: #b3b3b3;
+      font-size: .8em;
+      text-align: right;
+      position: absolute;
+      bottom: 10px;
+      right: 10px; }
+      .pvp-u-list-teaser .pvp-t-header .pvp-t-author img {
+        border-radius: 25px;
+        width: 40px; }
+    .pvp-u-list-teaser .pvp-t-header .pvp-t-title .title-1 {
+      color: #333333;
+      font-size: 19px; }
+    .pvp-u-list-teaser .pvp-t-header .pvp-t-title .title-2 {
+      color: #b3b3b3; }
+    .pvp-u-list-teaser .pvp-t-header .pvp-t-actions {
+      display: flex; }
+      .pvp-u-list-teaser .pvp-t-header .pvp-t-actions .action-edit,
+      .pvp-u-list-teaser .pvp-t-header .pvp-t-actions .action-delete {
+        color: #b3b3b3;
+        padding: 0 10px; }
+        .pvp-u-list-teaser .pvp-t-header .pvp-t-actions .action-edit:hover i,
+        .pvp-u-list-teaser .pvp-t-header .pvp-t-actions .action-delete:hover i {
+          color: #333333; }
+  .pvp-u-list-teaser .pvp-field-seasons {
+    display: flex;
+    padding-top: 15px; }
+  .pvp-u-list-teaser .pvp-field-season {
+    display: flex;
+    position: relative;
+    margin-right: 10px; }
+    .pvp-u-list-teaser .pvp-field-season > a {
+      background: #fff;
+      box-shadow: 1px 1px 10px #d0d0d0;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      line-height: 1.2;
+      text-align: center;
+      padding: 10px 15px;
+      width: 100px;
+      height: 100%; }
+      .pvp-u-list-teaser .pvp-field-season > a:hover {
+        background: #f2f2f2; }
+    .pvp-u-list-teaser .pvp-field-season .pvp-s-year {
+      margin-bottom: 5px; }
+    .pvp-u-list-teaser .pvp-field-season .pvp-s-culture {
+      flex: 100%;
+      color: #b3b3b3;
+      font-size: .8em;
+      line-height: 1; }
+    .pvp-u-list-teaser .pvp-field-season .pvp-published {
+      position: absolute;
+      top: 8px;
+      right: 7px; }
+      .pvp-u-list-teaser .pvp-field-season .pvp-published i {
+        color: #36AA3D; }
+      .pvp-u-list-teaser .pvp-field-season .pvp-published i.fa-exclamation-circle {
+        color: #CF142B; }
 
 .season-form .add-title,
 .processing-form .add-title,
@@ -156,7 +187,7 @@
     color: #fff;
     font-size: 32px;
     text-align: center;
-    padding: 15px 30px; }
+    padding: 5px 30px; }
   .season .content .column .image {
     margin-bottom: 20px; }
     .season .content .column .image .date {
