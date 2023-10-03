@@ -1,0 +1,4 @@
+name = Ext Admin
+description = Настройки контента и функционала менеджера
+core = 7.x
+package = Custom

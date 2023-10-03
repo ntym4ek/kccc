@@ -1,0 +1,83 @@
+<?php
+
+function sec_experts_menu()
+{
+  $items['eksperty'] = array(
+    'title' => 'Агрономическая служба',
+    'description' => 'Контакты агроэкспертов',
+    'page callback' => 'sec_experts_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function sec_experts_preprocess_page(&$vars)
+{
+  if (arg(0) == 'eksperty') {
+    $vars['title'] = 'Контакты';
+  }
+}
+
+// главная страница
+function sec_experts_page()
+{
+  $content = '';
+
+  // список Представителей
+  if ($contacts = sec_experts_get_experts_list()) {
+
+    $content .= '<div class="row">';
+
+    $sorted = [];
+    foreach ($contacts as $uid) {
+      $contact = ext_user_get_user_info($uid);
+      $key = ($contact['staff']['office']['weight'] ?? 1)*1000000+$uid;
+      $sorted[$key] = $contact;
+    }
+    ksort($sorted);
+
+    foreach ($sorted as $contact) {
+      $contact['active'] = true;
+      $content .= '<div class="col-xs-12 col-md-6">';
+      $content .=   theme('card_contact', $contact);
+      $content .= '</div>';
+    }
+    $content .= '</div>';
+
+  } else {
+    $content .= 'Контактов не найдено.';
+  }
+
+  return  '<div id="experts" class="experts view">' .
+            '<div class="experts-content">' .
+              $content .
+            '</div>' .
+          '</div>';
+}
+
+/**
+ * Вернуть id пользователей с должностью эксперта
+ *
+ * @return array|false
+ */
+function sec_experts_get_experts_list()
+{
+  $dbr = db_select('profile', 'p');
+  $dbr->innerJoin('field_data_field_staff_office', 'fso', 'fso.entity_id = p.pid');
+  $dbr->condition('fso.field_staff_office_tid', [OFFICE_SALES_EXPERT, OFFICE_SALES_SPECIALIST], 'IN');
+  $dbr->innerJoin('users', 'u', 'u.uid = p.uid');
+  $dbr->condition('u.status', 1);
+  $dbr->addField('p', 'uid');
+  $users = $dbr->execute()->fetchCol();
+
+  return $users ?? false;
+}
+
+
+
+

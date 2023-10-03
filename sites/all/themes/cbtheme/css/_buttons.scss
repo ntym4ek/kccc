@@ -1,0 +1,100 @@
+@import "variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+
+
+.btn {
+  display: inline-block;
+  background: transparent;
+  border: $button-border-width solid $text-color;
+  color: $text-color; text-decoration: none; text-align: center; line-height: normal;
+  padding: .45em $gutter;
+  transition: all 200ms;
+  //vertical-align: top;
+  cursor: pointer;
+  margin-bottom: 0; // For input.btn
+  min-height: $form-item-height;
+  &:not(:last-child) { margin-right: 1rem; }
+  &:hover, &:focus {
+    background: darken(#fff, 15%);
+  }
+  &.btn-default {
+    background: $gray-lighter;
+    border-color: $gray;
+    color: $text-color;
+    &:hover, &:focus {
+      background: darken($gray-lighter, 5%);
+      border-color: $gray;
+    }
+  }
+  &.btn-brand {
+    background: $brand-color;
+    border-color: $brand-color;
+    color: #fff;
+    &:hover, &:focus {
+      background: darken($brand-color, 5%);
+      border-color: darken($brand-color, 5%);
+    }
+  }
+  &.btn-danger {
+    background: $brand-red;
+    border-color: $brand-red;
+    color: #fff;
+    &:hover, &:focus {
+      background: darken($brand-red, 5%);
+      border-color: darken($brand-red, 5%);
+    }
+  }
+  &.btn-warning {
+    background: $brand-orange;
+    border-color: $brand-orange;
+    color: #fff;
+    &:hover, &:focus {
+      background: darken($brand-orange, 5%);
+      border-color: darken($brand-orange, 5%);
+    }
+  }
+  &.btn-large {
+    font-size: $font-size-h4; font-weight: 500;
+  }
+  &.btn-huge {
+    font-size: $font-size-h3; font-weight: 700;
+    //padding: $gutter*.6 $gutter*1.5;
+    //height: $form-item-height*1.2;
+  }
+  &.btn-small {
+    border-width: 1px;
+    padding: .2em $gutter;
+    //height: $form-item-height*.7;
+  }
+  &.btn-wide { padding-left: $gutter*5; padding-right: $gutter*5; }
+  &.btn-full-wide { width: 100%; }
+
+  &.btn-underline {
+    &:after {
+      content: ' ';
+      background-color: #fff;
+      display: block;
+      width: 4rem; height: 1px;
+      margin: 8px auto 0;
+      transition: width 200ms;
+    }
+    &:hover:after {
+      width: 5rem;
+    }
+  }
+
+  &.btn-file {
+    position: relative;
+    overflow: hidden;
+    input[type=file] {
+      background: white;
+      display: block;
+      position: absolute; top: 0; right: 0;
+      min-width: 100%; min-height: 100%;
+      font-size: 100px; text-align: right;
+      filter: alpha(opacity = 0);
+      opacity: 0;
+      outline: none;
+      cursor: inherit;
+    }
+  }
+}

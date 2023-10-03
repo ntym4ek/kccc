@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * Implements hook_menu_alter()
+ */
+function helper_menu_alter(&$items)
+{
+  // убрать материалы с Главной
+  $items['node']['page callback'] = 'helper_empty_front_page_callback';
+}
+function helper_empty_front_page_callback()
+{
+  return [];
+}
+
+
+/**
+ * Вернуть глубину термина в словаре с иерархией
+ * @param $tid
+ *
+ * @return int
+ */
+function helper_taxonomy_get_depth($tid)
+{
+  $depth = 0;
+
+  do {
+    $dbr = db_select('taxonomy_term_data', 't');
+    $dbr->join('taxonomy_term_hierarchy', 'h', 'h.parent = t.tid');
+    $dbr->addField('t', 'tid');
+    $dbr->condition('h.tid', $tid);
+    if ($parent = $dbr->execute()->fetchField()) {
+      $depth++;
+      $tid = $parent;
+    };
+  } while ($parent);
+
+  return $depth;
+}
+
+/**
+ * Manipulate node array before import.
+ *
+ * The purpose of this is to allow a module to check nodes in the array for
+ * two or more nodes that must retain a relationship, and to add/remove other
+ * data to the array to assist with maintaining dependencies, relationships,
+ * references, and additional data required by the nodes.
+ *
+ * @param &$nodes
+ *   The array of nodes to alter.
+ * @param $format
+ *   The format of node code being used.
+ * @param $save
+ *   Whether the nodes will be saved by node_export_import().
+ */
+function helper_node_export_import_alter(&$nodes, $format, $save)
+{
+  foreach ($nodes as $node) {
+
+    // убрать мультиязычность
+    if (isset($node->body["ru"])) {
+      $node->body['und'] = $node->body["ru"];
+      unset($node->body["ru"]);
+    }
+
+    // формат текста
+    if (isset($node->body["und"])) {
+      if ($node->body["und"][0]["format"] == 'user_html') $node->body["und"][0]["format"] = 'full_html';
+
+      // замена ссылок
+      $replaces[] = ['/info/representatives', '/predstaviteli'];
+      $replaces[] = ['/agro-expert', '/eksperty'];
+      $replaces[] = ['/handbook/protection-programs', '/programmy-zashchity'];
+      $replaces[] = ['/before-after', '/preparaty-v-pole'];
+      $replaces[] = ['/catalog/agrochemicals/mineral-fertilizers', '/katalog/udobreniya'];
+      $replaces[] = ['/catalog/agrochemicals/surfactants', '/katalog/drugie'];
+      $replaces[] = ['/catalog/agrochemicals/desiccants', '/katalog/desikanty'];
+      $replaces[] = ['/catalog/agrochemicals/fungicides', '/katalog/fungicidy'];
+      $replaces[] = ['/catalog/agrochemicals/herbicides', '/katalog/gerbicidy'];
+      $replaces[] = ['/catalog/agrochemicals/disinfectants', '/katalog/protraviteli'];
+      $replaces[] = ['/catalog/agrochemicals/insecticides', '/katalog/insekticidy'];
+      $replaces[] = ['/catalog/agrochemicals', '/katalog'];
+      $replaces[] = ['"https://kccc.ru/', '"/'];
+      $replaces[] = ['"https://kccc.ru\"', '"/\"'];
+      foreach ($replaces as $replace) {
+        $node->body['und'][0]['safe_value'] = str_replace($replace[0], $replace[1], $node->body['und'][0]['safe_value']);
+        $node->body['und'][0]['value']      = str_replace($replace[0], $replace[1], $node->body['und'][0]['value']);
+      }
+    }
+
+    // найти и поменять пользователя
+    $old_uid = $node->uid;
+    $dbr = db_select('users', 'u');
+    $dbr->innerJoin('field_data_field_text', 'ft', 'ft.entity_id = u.uid');
+    $dbr->condition('ft.entity_type', 'user');
+    $dbr->condition('ft.field_text_value', $old_uid);
+    $dbr->addField('u', 'uid');
+    $new_uid = $dbr->execute()->fetchField();
+
+    $node->uid = $new_uid ?? 0;
+    $node->name = $new_uid ? 'User ' . $new_uid : 'Anonymous';
+
+    // изображения
+    if (isset($node->field_image_gallery)) {
+      $node->field_image = $node->field_image_gallery;
+      unset($node->field_image_gallery);
+    }
+//    foreach ($node->field_image["und"] as $index => $image) {
+//      $node->field_image["und"][$index]['uri'] = str_replace('public://images/reviews/', 'public://images/blog/', $image['uri']);
+//    }
+
+    // дата публикации
+    if (isset($node->field_review_intro)) {
+      $node->field_textarea = $node->field_review_intro;
+      unset($node->field_review_intro);
+    }
+
+    // регион
+    if ($node->field_f_region) {
+      $old_name = $node->regions[$node->field_f_region['und'][0]["tid"]];
+
+      $dbr = db_select('taxonomy_term_data', 't');
+      $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('regions')->vid);
+      $dbr->condition('t.name', $old_name);
+      $dbr->addField('t', 'tid');
+      if ($new_tid = $dbr->execute()->fetchField()) {
+        $node->field_region["und"][0]['tid'] = $new_tid;
+      }
+      unset($node->field_f_region);
+    }
+
+    // препараты
+//    if ($node->field_preparations) {
+//      $preps = [];
+//      foreach ($node->field_preparations["und"] as $index => $prep) {
+//        $old_name = $node->preps[$prep["target_id"]];
+//
+//        $dbr = db_select('node', 'n');
+//        $dbr->condition('n.type', 'preparation');
+//        $dbr->condition('n.title', $old_name);
+//        $dbr->addField('n', 'nid');
+//        if ($new_nid = $dbr->execute()->fetchField()) {
+//          $preps["und"][$index]['target_id'] = $new_nid;
+//        }
+//      }
+//      if ($preps) {
+//        $node->field_preparations = $preps;
+//      }
+//    }
+
+  }
+}

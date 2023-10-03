@@ -1,0 +1,133 @@
+<?php
+
+function ext_form_subscribe_form($form, $form_state)
+{
+  $form['email'] = [
+    '#type' => 'textfield',
+    '#disabled' => true,
+    '#attributes' => ['placeholder' => 'E-mail'],
+    '#prefix' => '<div class="form-item input-group">'
+  ];
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#disabled' => true,
+    '#value' => '<i class="icon icon-083"></i>',
+    '#attributes' => ['class' => ['btn', 'btn-brand']],
+    '#theme_wrappers' => ['button_icon'],
+    '#suffix' => '</div>'
+  ];
+
+  $form['notice'] = [
+    '#markup' => '<div class="form-item-fz152-agreement">Отправляя форму, Вы даёте согласие на <a href="/privacy-policy" target="_blank" rel="nofollow">обработку своих персональных данных</a>.</div>'
+  ];
+  return $form;
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+function ext_form_form_alter(&$form, &$form_state, $form_id)
+{
+  // отключить HTML5 валидацию на всех формах
+  $form['#attributes']['novalidate'] = '';
+
+  if (strpos($form_id, 'webform_client_form') === 0) {
+    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-brand';
+    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-wide';
+    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-large';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function ext_form_form_webform_client_form_14_alter(&$form, &$form_state)
+{
+  // ajax обновление формы отправки заявки
+  $form['#prefix'] = '<div id="' . $form["#id"] . '-wrapper">';
+  $form['#suffix'] = '</div>';
+
+  $form['actions']['submit']['#ajax'] = [
+    'callback' => 'ext_form_webform_client_form_14_ajax_callback',
+    'wrapper' => $form["#id"] . '-wrapper',
+  ];
+
+  $form["#submit"][] = 'ext_form_rebuild_submit';
+}
+
+function ext_form_webform_client_form_14_ajax_callback($form, $form_state)
+{
+  if (!empty($form["#submission"])) {
+    $form['submitted']['complete'] = [
+      '#markup' => '<div class="complete"><h4>Обращение отправлено.</h4></div>',
+    ];
+  }
+  // сбросить сообщение после обновления страницы
+  unset($_SESSION["webform_confirmation"]);
+
+  return $form;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function ext_form_form_webform_client_form_21_alter(&$form, &$form_state)
+{
+  // ajax обновление формы отправки заявки
+  $form['#prefix'] = '<div id="' . $form["#id"] . '-wrapper">';
+  $form['#suffix'] = '</div>';
+
+  $form['actions']['submit']['#ajax'] = [
+    'callback' => 'ext_form_webform_client_form_21_ajax_callback',
+    'wrapper' => $form["#id"] . '-wrapper',
+  ];
+  $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-full-wide';
+
+  $form["#submit"][] = 'ext_form_rebuild_submit';
+}
+function ext_form_webform_client_form_21_ajax_callback($form, $form_state)
+{
+  if (!empty($form["#submission"])) {
+    $form['submitted']['complete'] = [
+      '#markup' => '<div class="complete"><h4>Резюме отправлено.</h4><p>Наш сотрудник изучит его и свяжется с Вами при необходимости.</p></div>',
+    ];
+  }
+  // сбросить сообщение после обновления страницы
+  unset($_SESSION["webform_confirmation"]);
+
+  return $form;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function ext_form_form_webform_client_form_23_alter(&$form, &$form_state)
+{
+  // ajax обновление формы отправки заявки
+  $form['#prefix'] = '<div id="' . $form["#id"] . '-wrapper">';
+  $form['#suffix'] = '</div>';
+
+  $form['actions']['submit']['#ajax'] = [
+    'callback' => 'ext_form_webform_client_form_23_ajax_callback',
+    'wrapper' => $form["#id"] . '-wrapper',
+  ];
+
+  $form["#submit"][] = 'ext_form_rebuild_submit';
+}
+function ext_form_webform_client_form_23_ajax_callback($form, $form_state)
+{
+  if (!empty($form["#submission"])) {
+    $form['submitted']['complete'] = [
+      '#markup' => '<div class="complete"><h4>Резюме отправлено.</h4><p>Как только у нас появится соответствующая вакансия, мы рассмотрим ваше резюме в числе первых.</p></div>',
+    ];
+  }
+  // сбросить сообщение после обновления страницы
+  unset($_SESSION["webform_confirmation"]);
+
+  return $form;
+}
+
+function ext_form_rebuild_submit($form, &$form_state)
+{
+  $form_state['rebuild'] = TRUE;
+}

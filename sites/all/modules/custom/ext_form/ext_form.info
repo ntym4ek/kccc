@@ -1,0 +1,5 @@
+name = Ext Form
+description = Модуль для внесения изменений в формы
+package = Custom
+core = 7.x
+

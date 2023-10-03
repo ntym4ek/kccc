@@ -1,0 +1,40 @@
+@import "../../../../themes/kccc/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+
+.branches {
+  margin-bottom: 2rem;
+  .map {
+    height: 450px; width: 100%;
+    margin-top: 2rem;
+  }
+  .h4 { margin: 2rem 0 1rem; }
+  a {
+    color: inherit;
+    transition: all 100ms;
+  }
+  .list {
+  }
+  .phones a {
+    color: $text-light;
+  }
+  .phones a:hover, .phones a:focus {
+    text-decoration: underline;
+  }
+  .branch {
+    margin-bottom: .5rem;
+    min-height: 40px;
+    .title {
+      font-weight: 500; line-height: 1.4;
+    }
+    .title a:hover, .title a:focus {
+      color: $brand-color;
+    }
+    .links {
+      margin-top: 1rem;
+      a { color: $brand-color; }
+    }
+  }
+
+  @media #{$laptop} {
+    margin-bottom: 4rem;
+  }
+}

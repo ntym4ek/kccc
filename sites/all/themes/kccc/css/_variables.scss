@@ -1,0 +1,40 @@
+@import "../../cbtheme/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+
+$content-well-max-width:  1190px;
+$header-height:           4rem;
+
+
+//- colors
+//
+$brand-color:             #43B02A;
+$page-bkg:                #fff;
+$footer-bkg:              #EDEDED;
+$footer-text:             $text-color;
+
+$brand-insecticide:       #00ACEA;
+$brand-seedtreater:       #AC196F;
+$brand-herbicide:         #EF2931;
+$brand-fungicide:         #664E8A;
+$brand-fertilizer:        #31A34E;
+$brand-desiccant:         #F99339;
+$brand-other:             #43B02A;
+
+$divider-clr:             #D6D6D6;
+$well-bkg-clr:            #f1f1f1;
+
+$text-color:              #000;
+
+// шрифт и размеры
+//
+$font-size-h1:            3rem;              // 48
+$font-size-h2:            2.5rem;            // 40
+$font-size-h3:            1.875rem;          // 30
+$font-size-h4:            1.25rem;           // 20
+$font-size-h5:            1rem;
+$font-size-h6:            .875rem;
+
+$font-size-large:         1.125rem;          // 18
+$font-size-base:          1rem;              // 16
+$font-size-small:         .875rem;           // 14
+
+$menu-mobile-bkg:         #1b9100;

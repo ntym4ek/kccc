@@ -1,0 +1,6 @@
+name = Ext Views
+description = Модуль для внесения изменений в функционал Views
+core = 7.x
+package = Custom
+
+files[] = views/ext_views_handler_filter_recent_filter.inc

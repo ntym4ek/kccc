@@ -1,0 +1,5 @@
+name = Раздел Филиалы
+description = Добавляет раздел "Филиалы"
+package = Custom
+core = 7.x
+

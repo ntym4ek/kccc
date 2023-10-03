@@ -1,0 +1,5 @@
+name = Ext Blocks
+description = Программно созданные блоки для разных страниц
+package = Custom
+core = 7.x
+

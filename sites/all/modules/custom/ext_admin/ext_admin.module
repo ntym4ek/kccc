@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function ext_admin_menu()
+{
+  $items['admin/config/custom'] = array(
+    'title' => 'Сайт и приложение',
+    'position' => 'right',
+    'weight' => -99,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/custom/website'] = array(
+    'title' => 'Настройки сайта',
+    'description' => 'Настройки контента и функционал для менеджеров',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_admin_settings_form'),
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+function ext_admin_settings_form($form, &$form_state)
+{
+  /** - Настройки содержимого ------------------------------------------------------------------------------------- */
+  $form['content'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Настройки содержимого',
+    '#collapsible' => TRUE,
+    '#collapsed' => false,
+  );
+  $form['content']['phone_reception'] = [
+    '#title' => 'Телефон администратора',
+    '#description' => 'Телефон для обратной связи на сайте',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('phone_reception', ''),
+  ];
+  $form['content']['email_reception'] = [
+    '#title' => 'Почта администратора',
+    '#description' => 'Почта для обратной связи на сайте',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('email_reception', ''),
+  ];
+  $form['content']['email_dep_personel'] = [
+    '#title' => 'E-Mail. Отдел кадров',
+    '#description' => 'Кому отправлять письма с ЖиП (todo: новыми резюме и кадровый резерв).',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('email_dep_personel', ''),
+  ];
+  $form['content']['email_dep_sales'] = [
+    '#title' => 'E-Mail. Отдел продаж',
+    '#description' => 'Кому отправлять письма с заказами и заявками из АгроКалькулятора',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('email_dep_sales', ''),
+  ];
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_admin_preprocess_page(&$vars)
+{
+  if ($GLOBALS['theme'] == 'kccc') {
+    // Сформировать Баннер в шапке
+    $title_bkg_uri = NULL;
+
+    if (arg(0) == 'node' && (arg(1) == 'add')) {
+      $title_bkg_uri = 'public://images/page-banners/admin.jpg';
+    }
+
+    if ($title_bkg_uri) {
+      $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);
+      $vars['is_title_as_banner'] = TRUE;
+    }
+  }
+
+}

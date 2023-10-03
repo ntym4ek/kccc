@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function page_40x_menu()
+{
+  $items['page-403'] = [
+    'page callback' => 'page_40x_403_redirect',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+    'title' => 'Access denied',
+  ];
+  $items['page-404'] = [
+    'page callback' => 'page_40x_404_redirect',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+    'title' => 'Page not found',
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function page_40x_theme()
+{
+  return [
+    'page_403' => array(
+      'variables' => array(),
+      'template' => 'templates/page-403',
+    ),
+    'page_404' => array(
+      'variables' => array(),
+      'template' => 'templates/page-404',
+    ),
+  ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function page_40x_preprocess_page(&$vars)
+{
+  $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+  if (drupal_match_path($path, 'page-40*')) {
+    drupal_add_css(drupal_get_path('module', 'page_40x') . '/css/page_40x.css');
+  }
+}
+
+
+/**
+ * MENU_CALLBACK for /r4032login
+ *
+ * Redirect anonymous users from 403 Access Denied pages to the /user/login page
+ * with a message explaining that they must log in to view the requested page
+ * and a query string parameter appended to the url to return after login.
+ */
+function page_40x_403_redirect()
+{
+  if (isset($_GET['destination'])) {
+    $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
+  }
+  // другие модули могут изменить страницу или предоставить url для редиректа
+  drupal_alter('403_redirect', $data);
+
+  if (!empty($data['output'])) return $data['output'];
+  if (!empty($data['redirect_url'])) {
+    header('Location: ' . $data['redirect_url'], TRUE, 301);
+    drupal_exit();
+  }
+
+  $breadcrumbs[] = l('', null);
+  $breadcrumbs[] = l(t('Page access is prohibited'), 'blog');
+  drupal_set_breadcrumb($breadcrumbs);
+
+  // иначе стандартное сообщение 403
+  return theme('page_403');
+}
+
+function page_40x_404_redirect()
+{
+  // другие модули могут изменить страницу или предоставить url для редиректа
+  $data['path'] = drupal_strtolower(drupal_get_path_alias($_GET['destination']));
+  drupal_alter('404_redirect', $data);
+
+  if (!empty($data['output'])) return $data['output'];
+  if (!empty($data['redirect_url'])) {
+    header('Location: ' . $data['redirect_url'], TRUE, 301);
+    drupal_exit();
+  }
+
+  $breadcrumbs[] = l('', null);
+  $breadcrumbs[] = l(t('Page not found'), 'blog');
+  drupal_set_breadcrumb($breadcrumbs);
+
+  // стандартное сообщение 404
+  return theme('page_404');
+}
+

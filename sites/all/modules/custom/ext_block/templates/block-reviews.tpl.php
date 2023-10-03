@@ -1,0 +1,12 @@
+<?php
+?>
+
+<div class="block-reviews">
+  <a href="/otzyvy">
+    <div class="img"></div>
+    <div class="c1"></div>
+    <div class="c2"></div>
+    <div class="c3"></div>
+    <div class="title h2">О нас говорят клиенты</div>
+  </a>
+</div>

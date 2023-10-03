@@ -1,0 +1,244 @@
+<?php
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function ext_node_preprocess_page(&$vars)
+{
+  if ($GLOBALS['theme'] == 'kccc') {
+    if (arg(0) == 'node' && isset($vars['node'])) {
+
+      // Сформировать Баннер в шапке
+      $title_bkg_uri = NULL;
+
+      if (in_array($vars['node']->type, ['agenda', 'article'])) { $vars['title'] = 'События'; }
+      if ($vars['node']->type == 'program')                     { $vars['title'] = 'Программы защиты'; }
+      if ($vars['node']->type == 'review')                      { $vars['title'] = 'Отзывы'; }
+      if ($vars['node']->type == 'job')                         { $vars['title'] = 'Работа у нас'; }
+      if ($vars['node']->type == 'culture')                     { $vars['title'] = 'Культурные растения'; }
+      if ($vars['node']->type == 'disease')                     { $vars['title'] = 'Болезни культур'; }
+      if ($vars['node']->type == 'pest')                        { $vars['title'] = 'Вредители культур'; }
+      if ($vars['node']->type == 'weed')                        { $vars['title'] = 'Сорные растения'; }
+      if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['title'] = 'Публикации'; }
+
+      // -- Препараты
+      if ($vars["node"]->type == 'preparation') {
+        $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
+        $category_wr = entity_metadata_wrapper('taxonomy_term', $category_tid);
+        if (!empty($category_wr->field_image_banner->value())) {
+          $title_bkg_uri = $category_wr->field_image_banner->file->value()->uri;
+        }
+        $vars['title'] = $category_wr->label();
+        $icon_num = $category_wr->field_icon->value();
+        $vars['title_prefix'] = [
+          '#markup' => '<div class="page-title-logo"><i class="icon icon-' . $icon_num . '"></i></div>'
+        ];
+      }
+
+      // -- Прочие (page, webform и тд)
+      if (!empty($vars["node"]->field_image_banner)) {
+        $title_bkg_uri = $vars["node"]->field_image_banner['und'][0]['uri'];
+
+        // Для вебформ:
+        // изменить Заголовок на баннере
+        //  - Жалобы и Предложения, Центр идей
+        if (in_array($vars["node"]->nid, [14, 15]))             { $vars['title'] = 'Обратная связь';  }
+        //  - Кадровый резерв
+        if ($vars["node"]->nid == 23)                           { $vars['title'] = 'Работа у нас';  }
+      }
+
+
+      if ($title_bkg_uri) {
+        $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);
+        $vars['is_title_as_banner'] = TRUE;
+      }
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function ext_node_preprocess_node(&$vars)
+{
+  $node = $vars['node'];
+
+  // баннер всегда скрыт
+  hide($vars['content']['field_image_banner']);
+
+  hide($vars["content"]["links"]);
+
+  // -- Изображения
+  $images = [];
+  if ($vars['view_mode'] == 'teaser' && !empty($node->field_image_teaser)) {
+    $images[] = $vars['content']['field_image_teaser'][0];
+  }
+  elseif (!empty($vars['content']['field_images']['#items'])) {
+    foreach ($vars['content']['field_images']['#items'] as $key => $file) {
+      $images[] = $vars['content']['field_images'][$key];
+    }
+  }
+  elseif (!empty($vars['content']['field_image'])) {
+    $images[] = $vars['content']['field_image'][0];
+  }
+  $vars['images'] = $images;
+
+
+  // -- Статистика
+  $vars['date'] = date('d.m.Y', $node->created);
+  $vars['stats'] = statistics_get($node->nid);
+
+  // -- Автор
+  if ($vars['display_submitted']) {
+    if ($node->uid) {
+      $author_info = ext_user_get_user_info($node->uid);
+    } else {
+      $author_info = ext_user_get_dumb_user_info();
+    }
+    $vars['author'] = theme('card_contact', $author_info);
+  }
+
+
+  // -- Тип Афиша
+  if ($node->type == 'agenda') {
+    // для Афиши вывести период
+    if ($node->type == 'agenda') {
+      $date_st = date('d.m.Y', $node->field_period['und'][0]['value']);
+      $date_fn = date('d.m.Y', $node->field_period['und'][0]['value2']);
+      $vars['date'] = $date_st == $date_fn ? $date_st : $date_st . ' - ' . $date_fn;
+    }
+  }
+
+  // -- Тип Программа защиты
+  if ($node->type == 'program') {
+    $vars['date'] = '';
+    $vars['stats'] = '';
+  }
+
+  // -- Типы справочников
+  if (in_array($node->type, ['weed', 'disease', 'pest', 'culture'])) {
+    $vars['date'] = '';
+    $vars['stats'] = '';
+  }
+
+  // -- Тип Видео
+  if ($node->type == 'video') {
+    // преобразовать ссылку https://www.youtube.com/watch?v=BiNh9OXi95g в embed (https://www.youtube.com/embed/BiNh9OXi95g)
+    $url = $vars['field_text'][0]['value'];
+    $vars['video_embed_url'] = str_replace('watch?v=', 'embed/', $url);
+  }
+
+  // -- Тип Вакансия
+  if ($node->type == 'job') {
+    $vars['date'] = '';
+    $vars['stats'] = '';
+
+    // программно вставить блок формы Отправки резюме
+    $block = block_load("webform", 'client-block-21');
+    $blocks = _block_render_blocks([$block]);
+    $vars['job_webform'] = _block_get_renderable_array($blocks);
+
+    // карточка контакта Отдела кадров
+    // todo ID контакта задавать через админку
+    $vars['job_contact'] = $vars['auth'] = theme('card_contact', ext_user_get_user_info(28));
+  }
+
+  // -- Тип Страница
+  if (in_array($node->type, ['page', 'webform'])) {
+    // не выводить заголовок и дату
+    $vars['date'] = '';
+    $vars['title'] = '';
+    $vars['stats'] = '';
+  }
+
+  // -- Тип Препарат
+  if ($vars['type'] == 'preparation') {
+    $vars['product_info'] = sec_catalog_get_product_info($vars['node']->nid);
+
+    if ($vars['view_mode'] == 'full') {
+      // категория препарата для темизации в цвет
+      $vars['classes_array'][] = 'category-' . $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
+
+      // программно вставить блок Агро Калькулятор
+      $block = block_load("ext_block", 'custom-block-agro-calculator');
+      $blocks = _block_render_blocks([$block]);
+      $vars['block_calc'] = _block_get_renderable_array($blocks);
+
+      // программно вставить блок Связаться с нами
+      $block = block_load("ext_block", 'custom-block-contact-us');
+      $blocks = _block_render_blocks([$block]);
+      $vars['block_contact_us'] = _block_get_renderable_array($blocks);
+
+      // программно вставить блок Рекомендуемые
+      $block = block_load("ext_block", 'custom-block-recommended');
+      $blocks = _block_render_blocks([$block]);
+      $vars['block_recommended'] = _block_get_renderable_array($blocks);
+
+      // программно вставить блок Приложение
+      $block = block_load("ext_block", 'custom-block-app');
+      $blocks = _block_render_blocks([$block]);
+      $vars['block_app'] = _block_get_renderable_array($blocks);
+    }
+  }
+
+}
+
+/**
+ * Implements hook_node_presave()
+ * @param $node
+ */
+function ext_node_node_presave($node)
+{
+  // запрос к типографу, причёсываем текст
+  if (in_array($node->type, ['news'])) {
+    foreach($node->body as $lang => $body) {
+      if ($text = ext_node_text_typograph_request($body[0]['value'])) {
+        $node->body[$lang][0]['value'] = $text;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function ext_node_form_alter(&$form, &$form_state, $form_id)
+{
+  if ($GLOBALS['theme'] != 'seven' && isset($form["revision_information"]["#access"])) {
+    $form["revision_information"]["#access"] = false;
+    $form["options"]["#weight"] = $form["author"]["#weight"] - 1;
+  }
+}
+
+/**
+ * Возвращает типографированный на http://mdash.ru/ текст
+ */
+function ext_node_text_typograph_request($text)
+{
+  $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+  $data = [
+    'text' => $text,
+    'OptAlign.oa_oquote'=>'off',
+  ];
+  $headers = [
+    'accept: application/json',
+    'Content-Type: application/x-www-form-urlencoded',
+  ];
+
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL,'http://mdash.ru/api.v1.php');
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+  curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  if ($response = curl_exec($ch)) {
+    $result = drupal_json_decode($response);
+    $result = isset($result['result']) ? urldecode($result['result']) : $result;
+  }
+  curl_close($ch);
+
+  return $result ?? false;
+}

@@ -1,0 +1,232 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function ext_block_block_info()
+{
+  return [
+    'custom-block-front-intro'  => [                     // по какой-то причине, если индекс содержит _ вместо - блок виден в базовой теме, но НЕ виден в подтеме.
+      'info' => t('CB | Front Banner'),
+    ],
+    'custom-block-new-products' => [
+      'info' => t('CB | New products'),
+    ],
+    'custom-block-recommended' => [
+      'info' => 'CB | Рекомендуемые продукты',
+    ],
+    'custom-block-catalog'      => [
+      'info' => t('CB | Catalog'),
+    ],
+    'custom-block-video-about'  => [
+      'info' => 'CB | Видео О компании',
+    ],
+    'custom-block-contacts'     => [
+      'info' => t('CB | Contacts'),
+    ],
+    'custom-block-agro-services' => [
+      'info' => t('CB | Agro Services'),
+    ],
+    'custom-block-information'  => [
+      'info' => t('CB | Information'),
+    ],
+    'custom-block-video-can'    => [
+      'info' => t('CB | Video Can'),
+    ],
+    'custom-block-app'          => [
+      'info' => 'CB | Приложение',
+    ],
+    'custom-block-video-manufacture' => [
+      'info' => 'CB | Видео Производство',
+    ],
+    'custom-block-counters'     => [
+      'info' => 'CB | Счётчики',
+    ],
+    'custom-block-about'        => [
+      'info' => 'CB | О компании',
+    ],
+    'custom-block-advantages'   => [
+      'info' => 'CB | Преимущества',
+    ],
+    'custom-block-trade-net'    => [
+      'info' => 'CB | Торговая сеть',
+    ],
+    'custom-block-services'     => [
+      'info' => 'CB | Сервисы',
+    ],
+    'custom-block-reviews'      => [
+      'info' => 'CB | О нас говорят',
+    ],
+    'custom-block-socials'      => [
+      'info' => 'CB | Социальные сети',
+    ],
+    'custom-block-more-info'    => [
+      'info' => 'CB | Дополнительная информация',
+    ],
+    'custom-block-history'    => [
+      'info' => 'CB | История компании',
+    ],
+    'custom-block-features'    => [
+      'info' => 'CB | Особенности производства',
+    ],
+    'custom-block-agro-calculator' => [
+      'info' => 'CB | Агро Калькулятор',
+    ],
+    'custom-block-contact-us' => [
+      'info' => 'CB | Связаться с нами',
+    ],
+    'custom-block-dumb' => [
+      'info' => 'CB | Пустая заглушка для сайдборда',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ext_block_block_view($delta = '')
+{
+  $block = [];
+
+  // блоки с динамически формируемым содержимым
+  if ($delta == 'custom-block-new-products') {
+    if ($novelties = sec_catalog_get_new_products()) {
+      $cards = [];
+      foreach ($novelties as $product) {
+        $cards[] = theme('card_product_v', $product);
+      }
+      $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'Новинки']);
+    } else $block['content'] = null;
+  }
+  elseif ($delta == 'custom-block-recommended') {
+    $cards = [];
+    foreach (sec_catalog_get_recommended_products() as $product) {
+      $cards[] = theme('card_product_v', $product);
+    }
+    $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'С этим препаратом покупают']);
+  }
+  elseif ($delta == 'custom-block-catalog') {
+    $categories = sec_catalog_get_categories();
+    unset($categories[406]);
+    $block['content'] = theme($delta, ['categories' => $categories]);
+  }
+
+  // блоки со статичной разметкой
+  elseif (strpos($delta, 'custom-block-') === 0) {
+    $block['content'] = theme($delta);
+  }
+
+  // общее для программных блоков
+  if (strpos($delta, 'custom-block-') === 0) {
+    $block['subject'] = null;
+    drupal_add_css(drupal_get_path('module', 'ext_block') . '/css/ext_block.css');
+    drupal_add_js(drupal_get_path('module', 'ext_block') . '/js/ext_block.js');
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ext_block_theme()
+{
+  return [
+    'custom-block-front-intro'    => [
+      'variables' => [],
+      'template' => 'templates/block-front-intro',
+    ],
+    'custom-block-new-products'   => [
+      'variables' => [],
+      'template' => 'templates/block-products-carousel',
+    ],
+    'custom-block-recommended'   => [
+      'variables' => [],
+      'template' => 'templates/block-products-carousel',
+    ],
+    'custom-block-catalog'        => [
+      'variables' => [],
+      'template' => 'templates/block-catalog',
+    ],
+    'custom-block-video-about'    => [
+      'variables' => [],
+      'template' => 'templates/block-video-about',
+    ],
+    'custom-block-contacts'       => [
+      'variables' => [],
+      'template' => 'templates/block-contacts',
+    ],
+    'custom-block-agro-services'   => [
+      'variables' => [],
+      'template' => 'templates/block-agro-services',
+    ],
+    'custom-block-information'    => [
+      'variables' => [],
+      'template' => 'templates/block-information',
+    ],
+    'custom-block-video-can'      => [
+      'variables' => [],
+      'template' => 'templates/block-video-can',
+    ],
+    'custom-block-app'            => [
+      'variables' => [],
+      'template' => 'templates/block-app',
+    ],
+    'custom-block-video-manufacture' => [
+      'variables' => [],
+      'template' => 'templates/block-video-manufacture',
+    ],
+    'custom-block-counters'       => [
+      'variables' => [],
+      'template' => 'templates/block-counters',
+    ],
+    'custom-block-about'          => [
+      'variables' => [],
+      'template' => 'templates/block-about',
+    ],
+    'custom-block-advantages'     => [
+      'variables' => [],
+      'template' => 'templates/block-advantages',
+    ],
+    'custom-block-trade-net'      => [
+      'variables' => [],
+      'template' => 'templates/block-trade-net',
+    ],
+    'custom-block-services'       => [
+      'variables' => [],
+      'template' => 'templates/block-services',
+    ],
+    'custom-block-reviews'        => [
+      'variables' => [],
+      'template' => 'templates/block-reviews',
+    ],
+    'custom-block-socials'        => [
+      'variables' => [],
+      'template' => 'templates/block-socials',
+    ],
+    'custom-block-more-info'      => [
+      'variables' => [],
+      'template' => 'templates/block-more-info',
+    ],
+    'custom-block-history'      => [
+      'variables' => [],
+      'template' => 'templates/block-history',
+    ],
+    'custom-block-features'      => [
+      'variables' => [],
+      'template' => 'templates/block-features',
+    ],
+    'custom-block-agro-calculator'      => [
+      'variables' => [],
+      'template' => 'templates/block-agro-calculator',
+    ],
+    'custom-block-contact-us'      => [
+      'variables' => [],
+      'template' => 'templates/block-contact-us',
+    ],
+    'custom-block-dumb'      => [
+      'variables' => [],
+      'template' => 'templates/block-dumb',
+    ],
+  ];
+}

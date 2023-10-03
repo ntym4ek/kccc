@@ -1,0 +1,25 @@
+@import "../../../../themes/kccc/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+
+.slider,
+.carousel {
+  position: relative;
+  &.outer-pagination {
+    margin-bottom: 4rem;
+    --swiper-pagination-bottom: -2.5rem;
+  }
+  &.top-pagination {
+    margin-top: 4rem; margin-bottom: 0;
+    --swiper-pagination-top: -2.5rem;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next { text-shadow: 1px 1px 8px #555; }
+  &.outer-navigation {
+    .swiper-button-prev,
+    .swiper-button-next { text-shadow: none; }
+  }
+
+  @media #{$tablet} {
+    &.outer-navigation { padding-left: 4rem; padding-right: 4rem; }
+  }
+}

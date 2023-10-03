@@ -1,0 +1,4 @@
+name = Ext Node
+description = Дополнительный функционал для модификации контента и его оформления
+core = 7.x
+package = Custom

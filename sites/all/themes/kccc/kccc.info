@@ -1,0 +1,11 @@
+name = KCCC
+description = Тема на базе Custom Base Theme
+core = 7.x
+base theme = cbtheme
+
+
+stylesheets[all][] = css/kccc.css
+stylesheets[all][] = fonts/iconfont/styles.css
+
+scripts[] = js/kccc.js
+

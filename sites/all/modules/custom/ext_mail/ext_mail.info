@@ -1,0 +1,5 @@
+name = Ext Mail
+description = Модуль для внесения изменений в функционал почты
+package = Custom
+core = 7.x
+

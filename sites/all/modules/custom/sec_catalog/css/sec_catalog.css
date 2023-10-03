@@ -1,0 +1,17 @@
+.catalog {
+  margin-bottom: 2rem; }
+  .catalog .catalog-content {
+    padding-top: 2rem; }
+  .catalog .category {
+    font-size: 1.25rem;
+    line-height: 2.2rem;
+    margin-bottom: 2rem; }
+    .catalog .category .underline {
+      height: 2px;
+      width: 4rem;
+      margin: 0; }
+  @media only screen and (min-width: 768px) {
+    .catalog {
+      margin-bottom: 4rem; } }
+
+/*# sourceMappingURL=sec_catalog.css.map */

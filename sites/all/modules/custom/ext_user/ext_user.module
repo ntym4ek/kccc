@@ -1,0 +1,764 @@
+<?php
+
+define('ADMIN_RID', 3);
+define('SALES_RID', 4);
+define('MARKETING_RID', 5);
+define('HR_RID', 6);
+
+// управления
+define('DIV_SALES',                   225);
+
+// должности в компании
+define('OFFICE_DIRECTOR',             226);
+define('OFFICE_SALES_HEAD',           227);
+define('OFFICE_SALES_DIR_HEAD',       228);
+define('OFFICE_SALES_MANAGER',        229);
+define('OFFICE_SALES_REPRESENTATIVE', 230);
+define('OFFICE_SALES_EXPERT',         231);
+define('OFFICE_SALES_SPECIALIST',     232);
+
+/**
+ * Implements hook_init().
+ */
+function ext_user_init()
+{
+  // Ограничить просмотр профилей.
+  // Оставить доступ только к профилям Сотрудников
+  if (arg(0) == 'user' && is_numeric(arg(1))) {
+    if ($account = user_load(arg(1))) {
+      if (!user_own_account() && !user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID) && !user_has_kccc_email($account)) {
+        drupal_not_found();
+      }
+    }
+  }
+}
+
+function ext_user_menu()
+{
+  // ссылка для добавления редактирования в блок меню пользователя
+  $items['user/edit'] = [
+    'title'            => 'Set password',
+    'page callback'    => 'ext_user_user_edit',
+    'access callback'  => 'ext_user_user_edit_access',
+    'type'             => MENU_LOCAL_TASK,
+  ];
+  $items['user/edit/main'] = [
+    'title'            => 'Edit Profile',
+    'page callback'    => 'ext_user_user_edit_main',
+    'access callback'  => 'ext_user_user_edit_access',
+    'type'             => MENU_LOCAL_TASK,
+  ];
+
+  return $items;
+}
+
+function ext_user_user_edit()
+{
+  drupal_goto('user/' . $GLOBALS['user']->uid . '/edit');
+}
+function ext_user_user_edit_main()
+{
+  drupal_goto('user/' . $GLOBALS['user']->uid . '/edit/main');
+}
+
+function ext_user_user_edit_access()
+{
+  return user_edit_access($GLOBALS['user']);
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ext_user_menu_alter(&$items)
+{
+  // добавить ссылку на авторизацию в Меню пользователя
+  $items['user/login']['menu_name'] = 'user-menu';
+  $items['user/login']['type'] = MENU_NORMAL_ITEM;
+
+  // Заменить стандартный автокомплит выбора пользователя.
+  $items['user/autocomplete']['page callback'] = 'ext_user_user_autocomplete';
+}
+
+/**
+ * Implements hook_module_implements_alter()
+ */
+function ext_user_module_implements_alter(&$implementations, $hook)
+{
+  // change hook execution order
+  // Name of the hook.
+  if (in_array($hook, ['form_alter'])) {
+    // хук ext_user выполнить последним
+    $module = 'ext_user';
+    if (isset($implementations[$module])) {
+      $group = $implementations[$module];
+      unset($implementations[$module]);
+      $implementations[$module] = $group;
+    }
+  }
+}
+
+function ext_user_preprocess_page(&$vars)
+{
+  if (arg(0) == 'user' && $GLOBALS['theme'] != 'seven') {
+    $vars['title'] = '';
+
+    if (is_numeric(arg(1))) {
+      $user_info = ext_user_get_user_info(arg(1));
+
+      if (!empty($user_info['staff'])) {
+        // вывод Заголовка в виде баннера
+        $vars['is_title_as_banner'] = TRUE;
+        $img_url = 'public://images/page-banners/predstaviteli.jpg';
+        $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
+        $vars['title_background'] = $img_url;
+        $vars['title'] = 'Сотрудники';
+      }
+    }
+
+    if (arg(2) == 'edit') {
+      $vars['title'] = 'Смена пароля';
+      if (arg(3) == 'main') $vars['title'] = 'Настройки профиля';
+    }
+
+    if (user_own_account()) {
+      $breadcrumbs[] = l('', NULL);
+      $breadcrumbs[] = l(t('Аккаунт пользователя'), NULL);
+      drupal_set_breadcrumb($breadcrumbs);
+    }
+
+    // убрать закладки, кроме случая, когда редактор смотрит профиль другого пользователя
+    if ((!user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID)) || user_own_account())   {
+      unset($vars['tabs']);
+    }
+  }
+}
+
+/**
+ * Подготовить переменные для user-profile.tpl.php
+ */
+function ext_user_preprocess_user_profile(&$vars)
+{
+  if ($GLOBALS['theme'] != 'seven') {
+    $account = $vars['elements']['#account'];
+    $vars['user_info'] = ext_user_get_user_info($account->uid);
+  }
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function ext_user_user_insert( &$edit, &$account, $category = NULL )
+{
+  // при регистрации нового пользователя установить уникальное имя: Пользователь #uid
+  $new_name = t('User ') . $account->uid;
+
+  db_update('users')
+    ->fields(array('name' => $new_name))
+    ->condition('uid', $account->uid)
+    ->execute();
+
+  $edit['name'] = $new_name;
+  $account->name = $new_name;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_pass_alter(&$form, &$form_state)
+{
+  if (!user_has_role(ADMIN_RID)) {
+    $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
+    $form['#prefix'] .=   '<h1>' . t('Password recovery') . '</h1>';
+    $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">Вход</a> или <a href="/user/register">Регистрация</a></div>';
+    $form['#suffix'] =  '</div>';
+    $form['name']['#title'] = t('E-Mail');
+    $form["mail"]["#markup"] = t('The recovery link will be sent to E-Mail above.');
+    $form["actions"]["submit"]['#value'] = t('Submit');
+    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-full-wide'];
+
+    array_unshift($form['#submit'], 'ext_user_user_pass_submit');
+  }
+}
+
+function ext_user_user_pass_submit($form, $form_state)
+{
+  // перевести переменную с текстом сообщения при восстановлении пароля
+  if (variable_get('user_password_reset_text')) {
+    variable_set('user_password_reset_text', t(variable_get('user_password_reset_text')));
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_login_alter(&$form, &$form_state)
+{
+  // обёртка для темизации формы
+  $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
+  $form['#prefix'] .=   '<h1>' . t('Log in') . '</h1>';
+  $form['#prefix'] .=   '<div class="user-links"><a href="/user/register">Регистрация</a> или <a href="/user/password">Восстановление пароля</a></div>';
+  $form['#suffix'] = '</div>';
+
+  // изменить вид полей
+  $form['name']['#title'] = t('E-Mail');
+  unset($form['name']['#description']);
+  $form["pass"]["#title"] = t('Password');
+  unset($form['pass']['#description']);
+
+  $form["actions"]["submit"]['#value'] = t('Submit');
+  $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-full-wide'];
+
+  // обработчики
+  $form['name']['#element_validate'][] = 'ext_user_login_name_validate';
+}
+
+/**
+ * Аутентификауия по email и имени пользователя
+ * Form element validation
+ */
+function ext_user_login_name_validate($form, &$form_state)
+{
+  $user = ext_user_user_load_by_login($form_state['values']['name']);
+  if ($user->uid) {
+    $form_state['values']['name'] = $user->name;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_register_form_alter(&$form, &$form_state)
+{
+  if ($GLOBALS['theme'] != 'seven') {
+    // убрать необязательные поля
+    $form['account']['name']['#type'] = 'hidden';
+    $form['account']['name']['#value'] = 'ext_user_' . user_password();
+
+    // изменить вид полей
+    $form['account']['mail']['#title'] = 'E-Mail';
+    unset($form['account']['mail']['#description']);
+    $form['account']['pass']['#title'] = 'Пароль';
+    $form['account']['pass']['#type'] = 'textfield';
+    unset($form['account']['pass']['#description']);
+
+    $form["profile_main"]["#type"] = 'container';
+
+    // менять название кнопки нельзя, (user.admin.inc строка 27 привязана к дефолтному названию)
+    //    $form["actions"]["submit"]['#value'] = t('Submit');
+    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-wide'];
+
+    $form["account"]["notify"]["#access"] = false;
+    $form["account"]["status"]["#access"] = false;
+    $form["admin_language"]["admin_language"]["#default_value"] = 'default';
+    $form["admin_language"]["#access"] = false;
+    $form["locale"]["#access"] = false;
+
+    $form["profile_main"]["field_user_name"]['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
+    $form["profile_main"]["field_user_name"]['#suffix'] = '</div>';
+    $form["profile_main"]["field_user_surname"]['#prefix'] = '<div class="col-xs-12 col-md-6">';
+    $form["profile_main"]["field_user_surname"]['#suffix'] = '</div></div>';
+
+
+    // если пользователя редактирует Маркетинг
+    if (user_has_role(MARKETING_RID)) {
+      $form["fz152_agreement"]["#access"] = false;
+      // поле со старым ID только для менеджера
+      $form["field_text"]["#access"] = true;
+    }
+    // пользователь сам регистрируется
+    else {
+      // обёртка для темизации формы
+      $form['#prefix'] = '<div class="user-auth-form-wrapper">';
+      $form['#prefix'] .= '<h1>' . t('Register') . '</h1>';
+      $form['#prefix'] .= '<div class="user-links"><a href="/user/login">Вход</a> или <a href="/user/password">Восстановление пароля</a></div>';
+      $form['#suffix'] = '</div>';
+
+      $form["profile_main"]["field_user_photo"]["#access"] = FALSE;
+      $form["profile_main"]["field_user_name2"]["#access"] = FALSE;
+
+      $form["fz152_agreement"]["#weight"] = 10;
+      $form["actions"]["#weight"] = 11;
+    }
+
+    // обработчики
+    $form['#validate'][] = 'ext_user_user_register_form_email_validate';
+    $form['#submit'][] = 'ext_user_user_register_form_submit';
+  }
+}
+
+/**
+ * Проверка E-mail на спам при регистрации
+ */
+function ext_user_user_register_form_email_validate($form, &$form_state)
+{
+  // отсеять нежелательные (спамерские) email
+  foreach(['!.*@.*\.us!s', '!.*@.*\.link!s', '!.*@.*\.co\.uk!s', '!.*@.*\.work!s', '!.*@.*\.website!s',
+            '!.*@.*\.app!s', '!.*@.*\.ltd!s', '!.*@.*\.net!s', '!.*@.*\.online!s', '!.*@.*\.store!s', '!.*@.*\.info!s',
+            '!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray\.com!s', '!.*@.*\.dynainbox\.com!s'
+            , '!.*@.*\.mailsmail\.ru!s', '!.*@.*\.mailyaha\.ru!s', '!.*@.*\.aolmail\.fun!s', '!.*@.*\.osakass\.!s'] as $pattern) {
+    if (preg_match($pattern, $form_state['values']['mail'])) {
+      form_set_error('mail', t('Регистрация недоступна.'));
+    }
+  }
+}
+
+function ext_user_user_register_form_submit($form, &$form_state)
+{
+  // редирект
+  if (user_has_role(MARKETING_RID)) {
+    // редактор на страницу профиля новорега
+    $form_state['redirect'] = 'user/' . $form["#user"]->uid . '/edit/staff';
+  } else {
+    // на страницу авторизации после регистрации
+    $form_state['redirect'] = 'user/login';
+  }
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_user_form_user_profile_form_alter(&$form, &$form_state)
+{
+  if ($GLOBALS['theme'] != 'seven') {
+    if ($form["#user_category"] == 'account') {
+      // убрать поля
+      $form["locale"]["#access"] = false;
+      $form["mimemail"]["#access"] = false;
+      $form["account"]["name"]["#access"] = false;
+
+      // изменить вид полей
+      $form['account']['mail']['#title'] = 'E-Mail';
+      $form['account']['mail']['#disabled'] = true;
+      unset($form['account']['mail']['#description']);
+      $form["account"]["mail"]["#weight"] = -6;
+
+      if (user_own_account()) {
+        $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
+        $form['account']['current_pass']['#suffix'] = '</div>';
+        $form['account']['current_pass']['#title'] = 'Текущий пароль';
+        $form["account"]["current_pass"]["#description"] = 'Для смены пароля необходимо ввести старый пароль.';
+        $form["account"]["current_pass"]["#type"] = 'textfield';
+        $form["account"]["current_pass"]["#weight"] = -4;
+        $form['account']['pass']['#prefix'] = '<div class="col-xs-12 col-md-6">';
+        $form['account']['pass']['#suffix'] = '</div></div>';
+        $form['account']['pass']['#title'] = 'Новый пароль';
+        $form['account']['pass']['#type'] = 'textfield';
+        unset($form["account"]["pass"]["#description"]);
+
+        // не выводить статус
+        $form["account"]["status"]["#access"] = false;
+      } else {
+        // не выводить смену пароля
+        $form["account"]["current_pass"]["#access"] = false;
+        $form["account"]["pass"]["#access"] = false;
+      }
+    }
+  }
+
+  if ($form["#user_category"] == 'main') {
+    $form["profile_main"]["field_user_photo"]["und"][0]["#description"] = '';
+  }
+
+  if ($form["#user_category"] == 'staff') {
+    if (empty($form["profile_staff"]["field_staff_office"]["und"]['#default_value'])) {
+      $form["profile_staff"]["field_staff_office"]["und"]['#default_value'][] = OFFICE_SALES_REPRESENTATIVE;
+    }
+
+    // показывать регионы только для отдела продаж
+    foreach ([OFFICE_SALES_DIR_HEAD, OFFICE_SALES_MANAGER, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT, OFFICE_SALES_REPRESENTATIVE] as $office) {
+      $form["profile_staff"]["field_regions"]["und"]['#states']['visible'][':input[name="profile_staff[field_staff_office][und]"]'][] = ['value' => $office];
+    }
+
+    // телефон эксперта только Эксперту и Специалисту
+    foreach ([OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT] as $office) {
+      $form["profile_staff"]["field_staff_phone_expert"]["und"][0]['value']['#states']['visible'][':input[name="profile_staff[field_staff_office][und]"]'][] = ['value' => $office];
+    }
+  }
+}
+
+/**
+ * Implements hook_username_alter().
+ */
+function ext_user_username_alter(&$name, $account)
+{
+  if (empty($account->uid)) {
+    // Don't alter anonymous users or objects that do not have any user ID.
+    return;
+  }
+
+  $result = &drupal_static(__FUNCTION__ . $account->uid);
+
+  if (empty($result)) {
+    // Real name was loaded/generated via hook_user_load(), so re-use it.
+    // devel в админке запрашивает имена всех пользователей, поэтому не стОит использовать ext_user_get_user_info
+    $dbr = db_select('profile', 'p');
+    $dbr->innerJoin('field_data_field_user_name', 'fun', 'fun.entity_id = p.pid');
+    $dbr->leftJoin('field_data_field_user_surname', 'fus', 'fus.entity_id = p.pid');
+    $dbr->condition('p.uid', $account->uid);
+    $dbr->addField('fun', 'field_user_name_value', 'name');
+    $dbr->addField('fus', 'field_user_surname_value', 'surname');
+    if ($fio = $dbr->execute()->fetchAll()) {
+      $fio = reset($fio);
+      $result = $fio->name . ($fio->surname ? ' ' . $fio->surname : '');
+    }
+  }
+
+  $name = $result ?? $name;
+}
+
+function ext_user_preprocess_menu_link(&$vars)
+{
+  if ($GLOBALS['theme'] != 'seven') {
+    if ($vars["element"]["#href"] == 'user' && user_is_logged_in() && $vars["element"]["#original_link"]["depth"] == 1) {
+      // сменить "Мой аккаунт" на Имя пользователя
+      $user_info = ext_user_get_user_info();
+      $vars["element"]["#title"] = $user_info['main']['name'];
+    }
+  }
+}
+
+
+/**
+ * Implements menu callback
+ *
+ * Функция, заменяющая стандартный автокомплит выбора пользователя.
+ * Позволяет искать по своим полям Имени и Фамилии
+ */
+function ext_user_user_autocomplete($string = '')
+{
+  $matches = array();
+  if ($string) {
+    $dbr = db_select('users', 'u');
+    $dbr->innerJoin('profile', 'p', 'p.uid = u.uid');
+    $dbr->innerJoin('field_data_field_user_name', 'fun', 'fun.entity_id = p.pid');
+    $dbr->leftJoin('field_data_field_user_surname', 'fus', 'fus.entity_id = p.pid');
+    $dbr->addField('u', 'name');
+    $dbr->addField('fun', 'field_user_name_value', 'p_name');
+    $dbr->addField('fus', 'field_user_surname_value', 'p_surname');
+    if ($result = $dbr->execute()->fetchAll()) {
+
+      foreach ($result as $user) {
+        if (count($matches) < 10) {
+          if (strpos(drupal_strtolower($user->p_name), drupal_strtolower($string)) !== false || strpos(drupal_strtolower($user->p_surname), drupal_strtolower($string)) !== false) {
+            $matches[$user->name] = check_plain($user->p_name . ($user->p_surname ? ' ' . $user->p_surname : ''));
+          }
+        }
+      }
+    }
+  }
+  drupal_json_output($matches);
+}
+
+/**
+ * Вернуть пользователя по указанному логину
+ */
+function ext_user_user_load_by_login($login)
+{
+  // Try loading by email.
+  if ($user = user_load_by_mail($login)) {
+    return $user;
+  }
+
+  // Try loading by username.
+  if ($user = user_load_by_name($login)) {
+    return $user;
+  }
+  return user_load(0);
+}
+
+/**
+ * Вернуть массив с информацией о Пользователе
+ */
+function ext_user_get_user_info($user = null)
+{
+  if (empty($user)) $user = $GLOBALS['user']->uid;
+  $key = $user->uid ?? $user;
+  $result = &drupal_static(__FUNCTION__ . serialize($key));
+
+  if (empty($result)) {
+    $account = is_numeric($user) ? user_load($user) : $user;
+
+    $surname = $name = $name2 = $email = $phone = '';
+    $photo_uri = 'public://images/default/no_photo.png';
+    $staff = [];
+    $label = t('User');
+
+    if (!empty($account->uid)) {
+      if ($main_pr2 = profile2_load_by_user($account, 'main')) {
+        $main_wr = entity_metadata_wrapper('profile2', $main_pr2);
+        $surname = $main_wr->field_user_surname->value();
+        $name = $main_wr->field_user_name->value();
+        $name2 = $main_wr->field_user_name2->value();
+        $name_full = $surname . ' ' . $name . ($name2 ? '&nbsp;' . $name2 : '');
+
+        $email = $account->mail;
+        $phone = $main_wr->field_user_phone->value() ? $main_wr->field_user_phone->value() : '';
+        if ($main_wr->field_user_photo->value()) {
+          $file = $main_wr->field_user_photo->file->value();
+          $photo_uri = $file->uri;
+        }
+      }
+
+      // сотрудник
+      if (user_has_kccc_email($account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
+        $staff_wr = entity_metadata_wrapper('profile2', $staff_pr2);
+
+        $office_id = $office = $department = '';
+        if ($staff_wr->field_staff_office->value()) {
+          $office_id = $staff_wr->field_staff_office->getIdentifier();
+          $office = $staff_wr->field_staff_office->label();
+          $dep_term = taxonomy_get_parents($staff_wr->field_staff_office->getIdentifier());
+          $department = reset($dep_term);
+        }
+
+        $directions = $areas = $regions = [];
+        $manage_fomatted = '';
+        // зона ответственности
+        if ($staff_wr->field_regions->value()) {
+          foreach($staff_wr->field_regions->getIterator() as $region_wr) {
+            $depth = helper_taxonomy_get_depth($region_wr->getIdentifier());
+            if ($depth == 0) $directions[$region_wr->getIdentifier()] = $region_wr->label();
+            if ($depth == 1) $areas[$region_wr->getIdentifier()] = $region_wr->label();
+            if ($depth == 2) $regions[$region_wr->getIdentifier()] = $region_wr->label();
+          }
+
+          // зона ответственности
+          $manage = [];
+          if (!empty($directions))  $manage += array_values($directions);
+          if (!empty($areas))       $manage += array_values($areas);
+          if (!empty($regions))     $manage += array_values($regions);
+          if ($manage) $manage_fomatted = implode(', ', $manage);
+        }
+
+        $phones = [];
+        if ($staff_wr->field_staff_phone->value()) {
+          foreach (explode(',', $staff_wr->field_staff_phone->value()) as $phone) {
+            $phones[] = [
+              'raw' => ext_user_normalize_phone($phone),
+              'tel' => substr(ext_user_normalize_phone($phone), 0, 12),
+              'formatted' => ext_user_format_phone($phone),
+            ];
+          }
+        }
+
+        $company = 'ООО ТД Кирово-Чепецкая Химическая Компания';
+
+        // вес должности в зависимости от весов отдела и должности
+        $weight = 1000;
+        if ($staff_wr->field_staff_office->value()) {
+          $weight = $staff_wr->field_staff_office->weight->value();
+          if ($parents = taxonomy_get_parents($staff_wr->field_staff_office->getIdentifier())) {
+            $weight += reset($parents)->weight * 10;
+          }
+        }
+
+
+        // счётчики
+        $counts = [];
+        // todo проверка на принадлежность департаменту продаж
+        if ($department->tid == DIV_SALES) {
+          // блоги
+          $query = db_select('node');
+          $query->addExpression('COUNT(*)');
+          $query->condition('uid', $account->uid);
+          $query->condition('type', 'blog');
+          $result = $query->execute()->fetchField();
+          $counts['blog'] = [
+            'title' => 'Блог',
+            'amount' => $result,
+//            'url' => $result ? '/blog/user/' . $account->uid : '',
+            'url' => '/blog',
+          ];
+          // отзывы
+          $query = db_select('node');
+          $query->addExpression('COUNT(*)');
+          $query->condition('uid', $account->uid);
+          $query->condition('type', 'review');
+          $result = $query->execute()->fetchField();
+          $counts['reviews'] = [
+            'title' => 'Отзывы',
+            'amount' => $result,
+//            'url' => $result ? '/otzyvy/user/' . $account->uid : '',
+            'url' => '/otzyvy',
+            ];
+
+          // todo Препараты в поле
+          $result = 0;
+          //    $query = db_select('field_data_field_f_sowing', 's');
+          //    $query->addExpression('COUNT(*)');
+          //    $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
+          //    $query->condition('n.uid', $account->uid);
+          //    if ($result = $query->execute()->fetchField()) {//
+          $counts['pvp'] = [
+            'title' => 'Препараты в поле',
+            'amount' => $result,
+            'url' => $result ? '/' : '',
+            ];
+          //    }
+        }
+
+
+        $staff = [
+          'office' => [
+            'id' => $office_id,
+            'department' => $department->name,
+            'title' => $office,
+            'company' => $company,
+            'weight' => $weight,
+            'full' => $office . ' ' . $company,
+          ],
+          'manage'    => [
+            'directions'  => $directions,
+            'area'        => $areas,
+            'regions'     => $regions,
+            'formatted'   => $manage_fomatted,
+          ],
+          'phones'    => $phones,
+          'phone_expert' => [
+            'raw' => ext_user_normalize_phone($staff_wr->field_staff_phone_expert->value()),
+            'tel' => substr(ext_user_normalize_phone($staff_wr->field_staff_phone_expert->value()), 0, 12),
+            'formatted' => ext_user_format_phone($staff_wr->field_staff_phone_expert->value()),
+          ],
+          'is_in_contacts' => $staff_wr->field_staff_is_in_contacts->value(),
+          'hide_contact' => $staff_wr->field_staff_hide_contact->value(),
+          'counts' => $counts,
+        ];
+
+        $label = $office;
+      }
+    }
+
+    $result = [
+      'id' => $account->uid,
+      'status' => $account->status,
+      'label' => $label,
+      'email' => $email,
+      'main' => [
+        'surname' => $surname,
+        'name' => $name,
+        'name2' => $name2,
+        'name_full' => $name_full,
+        'name_short' => $name . ' ' . $surname,
+        'phone' => ext_user_normalize_phone($phone),
+        'photo' => [
+          'uri'     => $photo_uri,
+          'url'     => file_create_url($photo_uri),
+          'teaser'  => image_style_url('medium', $photo_uri),
+        ]
+      ],
+      'staff' => $staff,
+      'url' => drupal_get_path_alias('user/' . $account->uid)
+    ];
+  }
+
+  return $result;
+}
+
+/**
+ * Вернуть массив с информацие об обезличенном региональном представителе
+ */
+function ext_user_get_dumb_user_info()
+{
+  $photo_uri = 'public://images/default/no_photo.png';
+  return [
+    'label' => 'Региональный представитель',
+    'main' => [
+      'name_full' => 'Региональный представитель',
+      'photo' => [
+        'uri'     => $photo_uri,
+        'url'     => file_create_url($photo_uri),
+        'teaser'  => image_style_url('medium', $photo_uri),
+      ]
+    ],
+    'staff' => [
+      'office' => [
+        'department' => 'ООО ТД «КЧХК»',
+//        'title' => 'Региональный представитель',
+      ],
+      'hide_contact' => 1,
+    ],
+    'url' => 'predstaviteli',
+  ];
+}
+
+/**
+ * Вернуть сгруппированный по Должностям список Пользователей
+ * @param array $offices - список id Должностей
+ */
+function ext_user_get_users_by_office(array $offices)
+{
+  $users = [];
+  $query = db_select('users', 'u');
+  $query->innerJoin('users_roles', 'ur', 'ur.uid = u.uid');
+  $query->condition('u.status', 1);
+  $query->innerJoin('profile', 'p', 'p.uid = u.uid');
+  $query->innerJoin('field_data_field_staff_office', 'fpo', 'fpo.entity_id = p.pid');
+  $query->condition('fpo.field_staff_office_tid', $offices, 'IN');
+  $query->addField('u', 'uid');
+  $query->addField('fpo', 'field_staff_office_tid', 'oid');
+  if ($result = $query->execute()->fetchAll()) {
+    foreach ($result as $staff) {
+      $user_info = ext_user_get_user_info($staff->uid);
+      $users[$staff->oid][$staff->uid] = $user_info;
+    }
+  }
+
+  return $users;
+}
+
+/**
+ * Привести номер телефона к стандартному виду: 7xxxxxxxxxx
+ * @param $phone
+ *
+ * @return string
+ */
+function ext_user_normalize_phone($phone)
+{
+  // убираем всё лишнее кроме цифр
+  $phone = preg_replace('/[^\d]/', '', trim($phone));
+  // заменить первую 8 на 7
+  $phone = preg_replace('/^8(\d+)/', '7$1', $phone);
+
+  return $phone;
+}
+
+/**
+ * Привести номер телефона к виду для вывода на сайте
+ * @param $phone
+ *
+ * @return string
+ */
+function ext_user_format_phone($phone)
+{
+  // приведение к стандарту
+  $phone = ext_user_normalize_phone($phone);
+  // возможен телефон с добавочным кодом и 8332
+  $phone = preg_replace('/^(\d)(8332)(\d\d)(\d\d)(\d\d)([\d]+)/', '+$1 ($2) $3-$4-$5 доб. $6', trim($phone));
+  $phone = preg_replace('/^(\d)(8332)(\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', trim($phone));
+
+  // остальные форматируем - +7 xxx xxx-xx-xx
+  $phone = preg_replace('/^(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)/', '+$1 $2 $3-$4-$5', trim($phone));
+
+  return $phone;
+}
+
+/**
+ * Проверить, просматривает ли Пользователь свой аккаунт
+ */
+function user_own_account()
+{
+  return !empty($GLOBALS['user']->uid) && $GLOBALS['user']->uid == arg(1);
+}
+
+/**
+ * Проверить, корпоративный ли email у пользователя
+ */
+function user_has_kccc_email($account)
+{
+  return drupal_substr($account->mail, -8) == '@kccc.ru';
+}
+

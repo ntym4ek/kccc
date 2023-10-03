@@ -1,0 +1,302 @@
+<?php
+
+define('YANDEX_API_KEY', 'c1e4b070-a5e4-4a15-bc6e-ce64711bdf52');
+
+/**
+ * Implements hook_menu().
+ */
+function sec_branches_menu()
+{
+  $items['filialy'] = [
+    'title' => 'Филиалы',
+    'page callback' => 'sec_branches_page',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+  ];
+
+  return $items;
+}
+
+function sec_branches_preprocess_page(&$vars)
+{
+  if (arg(0) == 'filialy') {
+    $vars['title'] = 'Контакты';
+
+    drupal_add_js('https://api-maps.yandex.ru/2.1/?apikey=' . YANDEX_API_KEY . '&lang=ru_RU');
+    drupal_add_js(drupal_get_path('module', 'sec_branches') . '/js/sec_branches.js');
+    drupal_add_css(drupal_get_path('module', 'sec_branches') . '/css/sec_branches.css');
+  }
+}
+
+function sec_branches_page()
+{
+  $content = '';
+
+  // контакт в зависимости от гео
+  $iso_code = 'RU-KIR';
+  $contacts = sec_branches_get_branches();
+  if (module_exists('dadata_api')) {
+    $user_ip = strpos($_SERVER['HTTP_HOST'], '.local') === false  ? $_SERVER['REMOTE_ADDR'] : '77.72.142.170';
+    if ($suggestion = sec_branches_get_location_by_ip($user_ip)) {
+      if (isset($contacts[$suggestion['location']['data']['region_iso_code']])) {
+        $iso_code = $suggestion['location']['data']['region_iso_code'];
+      }
+    }
+  }
+
+  drupal_add_js(['sec_branches' => ['regions' => $contacts, 'iso_start' => $iso_code]], 'setting');
+
+  $branches_html = '';
+  foreach ($contacts as $iso => $contact) {
+    if ($iso != $iso_code) {
+      foreach ($contact as $index => $item) {
+        $branches_html .= '<div class="branch"><div class="title"><a href="#" id="' . $iso . $index . '">' . $item['address'] . '</a></div>';
+        $phones_arr = [];
+        foreach ($item['phones'] as $phone) {
+          $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
+        }
+        if ($phones_arr) {
+          $branches_html .= '<div class="phones">' . implode($phones_arr, ', ') . '</div>';
+        }
+        $branches_html .= '</div>';
+      }
+    }
+  }
+
+  return  '<div id="branches" class="branches">' .
+            '<div class="h4">ООО Торговый Дом «Кирово-Чепецкая Химическая компания»</div>' .
+            '<div class="branch">' .
+              '<div class="title"><a href="#" id="RU-KIR0">613048, Кировская обл., г. Кирово-Чепецк, ул.Производственная, 6</a></div>' .
+              '<div class="phones"><a href="tel:+' . ext_user_normalize_phone(variable_get('phone_reception', '')) . '">' . ext_user_format_phone(variable_get('phone_reception', '')) . '</a>, <a href="mailto:' . variable_get('email_reception', '') . '">' . variable_get('email_reception', '') . '</a></div>' .
+              '<div class=""><p>ОГРН 1084312000750&nbsp;&nbsp;ИНН 4312138026</p></div>' .
+              '<div class="links"><a href="/sites/default/files/attached/card_td_kchk.pdf" download>Скачать реквизиты</a></div>' .
+            '</div>' .
+            '<div id="map" class="map"></div>' .
+            '<div class="h4">Филиалы в других регионах</div>' .
+            '<div id="list" class="list">' . $branches_html . '</div>' .
+          '</div>';
+}
+
+function sec_branches_get_branches()
+{
+  return [
+    'RU-ALT' => [[
+      'target' => 'Филиал',
+      'address' => '656922, г. Барнаул, ул. Власихинская, 151',
+      'phones' => [
+        ['raw' => '+79229277060', 'txt' => '+7 (922) 927-70-60'],
+        ['raw' => '+79229276880', 'txt' => '+7 (922) 927-68-80'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 53.339113, 'y' => 83.639073],
+    ]],
+    'RU-BEL' => [[
+      'target' => 'Филиал',
+      'address' => '308015, Белгородская обл., Белгородский р-н, п. Разумное, ул. Сосновая, 19',
+      'phones' => [
+        ['raw' => '+79229084144', 'txt' => '+7 (929) 00-08-31'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 50.506193, 'y' => 36.689244],
+    ]],
+    'RU-VOR' => [[
+      'target' => 'Филиал',
+      'address' => '396313, Воронежская обл.,  Новоусманский р-н, с. Бабяково, ул. Индустриальная, 46',
+      'phones' => [
+        ['raw' => '+79292096040', 'txt' => '+7 (929) 209-60-40'],
+        ['raw' => '+79292099221', 'txt' => '+7 (929) 209-92-21'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 51.708595, 'y' => 39.465569],
+    ]],
+    'RU-IRK' => [[
+      'target' => 'Филиал',
+      'address' => '664040, г. Иркутск, Розы Люксембург ул, 180, пом. 12А',
+      'phones' => [
+        ['raw' => '+79229000152', 'txt' => '+7 (922) 900-01-52'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 52.353502, 'y' => 104.168497],
+
+    ]],
+    'RU-KIR' => [[
+      'target' => 'Главный офис',
+      'address' => '613048, Кировская обл., г. Кирово-Чепецк, ул.Производственная, 6',
+      'phones' => [
+        ['raw' => str_replace(['(', ')', '-', ' '], '', variable_get('phone_reception', '8 (8332) 76-15-30')), 'txt' => variable_get('phone_reception', '8 (8332) 76-15-30')],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 58.540577, 'y' => 49.976613],
+    ]],
+    'RU-KDA' => [[
+      'target' => 'Филиал',
+      'address' => '353040, Краснодарский край, с. Белая Глина, ул. Привокзальная, 21',
+      'phones' => [
+        ['raw' => '+79229000573', 'txt' => '+7 (922) 900-05-73'],
+        ['raw' => '+79229571119', 'txt' => '+7 (922) 957-11-19'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 46.092999, 'y' => 40.840126],
+    ]],
+    'RU-KYA' => [[
+      'target' => 'Филиал',
+      'address' => '660020, г. Красноярск, Северное ш, 17',
+      'phones' => [
+        ['raw' => '+79229694705', 'txt' => '+7 (922) 969-47-05'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 56.076333, 'y' => 92.930231],
+    ]],
+    'RU-KRS' => [[
+      'target' => 'Филиал',
+      'address' => '305007, г. Курск, ул. Московская 11А, пом. 3',
+      'phones' => [
+        ['raw' => '+79229227622', 'txt' => '+7 (922) 922-76-22'],
+        ['raw' => '+79229227610', 'txt' => '+7 (922) 922-76-10'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 51.710504, 'y' => 36.153543],
+    ]],
+    'RU-LIP' => [[
+      'target' => 'Филиал',
+      'address' => '398902, г. Липецк, пос. Сырский Рудник, ул. Ново-Весовая, 24',
+      'phones' => [
+        ['raw' => '+79229084144', 'txt' => '+7 (922) 908-41-44'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 52.569615, 'y' => 39.481864],
+    ]],
+    'RU-NVS' => [[
+      'target' => 'Филиал',
+      'address' => '630052, г. Новосибирск, Толмачевская ул, 43/4',
+      'phones' => [
+        ['raw' => '+79229666434', 'txt' => '+7 (922) 966-64-34'],
+        ['raw' => '+79229258884', 'txt' => '+7 (922) 925-88-84'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 54.969114, 'y' => 82.801061],
+    ]],
+    'RU-OMS' => [[
+      'target' => 'Филиал',
+      'address' => '644117, г. Омск, 3-я Молодежная ул, 6',
+      'phones' => [
+        ['raw' => '+79229007473', 'txt' => '+7 (922) 900-74-73'],
+        ['raw' => '+79229000201', 'txt' => '+7 (922) 900-02-01'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 54.951860, 'y' => 73.480636],
+    ]],
+    'RU-ORE' => [[
+      'target' => 'Филиал',
+      'address' => '460019, г. Оренбург, Шарлыкское шоссе, 4',
+      'phones' => [
+        ['raw' => '+79229666500', 'txt' => '+7 (922) 966-65-00'],
+        ['raw' => '+79229706055', 'txt' => '+7 (922) 970-60-55'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 51.854567, 'y' => 55.126447],
+    ]],
+    'RU-PNZ' => [[
+      'target' => 'Филиал',
+      'address' => '440015, г. Пенза, ул. Байдукова, 94',
+      'phones' => [
+        ['raw' => '+79229000122', 'txt' => '+7 (922) 900-01-22'],
+        ['raw' => '+79292090080', 'txt' => '+7 (929) 209-00-80'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 53.236572, 'y' => 45.005524],
+    ]],
+    'RU-BA'  => [[
+      'target' => 'Филиал',
+      'address' => '450591, Республика Башкортостан, Уфимский р-н, с. Чесноковка, ул. Школьная, 6А',
+      'phones' => [
+        ['raw' => '+79229007477', 'txt' => '+7 (922) 900-74-77'],
+        ['raw' => '+79226650015', 'txt' => '+7 (922) 665-00-15'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 54.613697, 'y' => 55.933233],
+    ]],
+    'RU-ROS' => [[
+      'target' => 'Филиал',
+      'address' => '346703, Ростовская обл, Аксайский р-н, сп Ленинское, х. Ленина, ул. Тенистая, 2',
+      'phones' => [
+        ['raw' => '+79229571020', 'txt' => '+7 (922) 957-10-20'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 47.096016, 'y' => 39.835387],
+    ]],
+    'RU-STA' => [
+      [
+        'target' => 'Филиал',
+        'address' => '356241, Ставропольский край, г. Михайловск, ул. Никонова, 605',
+        'phones' => [['raw' => '', 'txt' => '']],
+        'schedule' => 'Пн-Пт  8:00-17:00',
+        'coords' => ['x' => 45.136604, 'y' => 42.064197],
+      ],
+      [
+        'target' => 'Филиал',
+        'address' => '356001, Ставропольский край, г. Новоалександровск, ул. Толстого, 15',
+        'phones' => [
+          ['raw' => '', 'txt' => ''],
+        ],
+        'schedule' => 'Пн-Пт  8:00-17:00',
+        'coords' => ['x' => 45.485696, 'y' => 41.238052],
+      ],
+    ],
+    'RU-TAM' => [
+      [
+        'target' => 'Филиал',
+        'address' => '393520, Тамбовская обл., р.п Ржакса, ул. Свердлова, 1Б',
+        'phones' => [
+          ['raw' => '', 'txt' => ''],
+        ],
+        'schedule' => 'Пн-Пт  8:00-17:00',
+        'coords' => ['x' => 52.128001, 'y' => 42.013864],
+      ],
+      [
+        'target' => 'Филиал',
+        'address' => '392515, Тамбовская обл., р.п Новая Ляда, ул. Совхозная, 2Ж',
+        'phones' => [
+          ['raw' => '', 'txt' => ''],
+        ],
+        'schedule' => 'Пн-Пт  8:00-17:00',
+        'coords' => ['x' => 52.713086,'y' =>  41.639510],
+      ]
+    ],
+    'RU-TYU' => [[
+      'target' => 'Филиал',
+      'address' => '625048, г. Тюмень, ул. 50 лет Октября, 200А',
+      'phones' => [
+        ['raw' => '+79229666004', 'txt' => '+7 (922) 966-60-04'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 57.121076, 'y' => 65.620503],
+    ]],
+    'RU-CHE' => [[
+      'target' => 'Филиал',
+      'address' => '456530, Челябинская обл, Сосновский район, п. Есаульский, ул. Российская 17',
+      'phones' => [
+        ['raw' => '+79227472641', 'txt' => '+7 (922) 747-26-41'],
+        ['raw' => '+79227472640', 'txt' => '+7 (922) 747-26-40'],
+        ['raw' => '+79229058984', 'txt' => '+7 (922) 905-89-84'],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 55.308392, 'y' => 61.206820],
+    ]],
+  ];
+}
+
+/**
+ * Вернуть геолокацию по IP адресу
+ */
+function sec_branches_get_location_by_ip($ip)
+{
+  $suggestion = &drupal_static(__FUNCTION__, NULL);
+  if (!isset($suggestion)) {
+    $dadata = new DaDataApiSuggestions;
+    if ($suggestion = $dadata->ipLocate($ip)) {
+      return $suggestion;
+    }
+  }
+  return $suggestion;
+}
