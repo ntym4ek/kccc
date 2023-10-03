@@ -111,7 +111,7 @@
     <?php hide($content['field_image']); ?>
     <?php hide($content['field_images']); ?>
     <?php if (count($images) > 1): ?>
-    <div id="slider-images" class="slider slider-products outer-pagination" data-slidesperview-xs="1">
+    <div id="slider-images" class="slider slider-products outer-pagination" data-slidesperview-xs="1" data-autoheight="true">
       <div class="swiper">
         <div class="swiper-wrapper">
           <?php foreach ($images as $key => $image) {

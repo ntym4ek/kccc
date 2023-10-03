@@ -27,6 +27,11 @@
             },
           };
 
+          var autoHeight = $(this).data("autoheight");
+          if (autoHeight) {
+            options.autoHeight = true;
+          }
+
 
           // Кастомный пагинатор.
           // Требуется передать:
@@ -72,6 +77,11 @@
             clickable: true,
           },
         };
+
+        var autoHeight = $(this).data("autoheight");
+        if (autoHeight) {
+          options.autoHeight = true;
+        }
 
         var autoplay = $(this).data("autoplay");
         if (autoplay) {
