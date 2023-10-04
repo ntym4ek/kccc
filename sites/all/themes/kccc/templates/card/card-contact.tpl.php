@@ -47,6 +47,6 @@
 
 </div>
 <?php if ($active): ?>
-  <a href="/<?php print $url; ?>">
+  </a>
 <?php endif; ?>
 
