@@ -84,7 +84,7 @@
 
   <div class="info">
     <div class="date"><?php print $date; ?></div>
-    <?php if (!empty($stats['totalcount'])): ?>
+    <?php if (isset($stats['totalcount'])): ?>
     <div class="stats">
       <div class="media"><i class="icon icon-099"></i></div>
       <div class="text"><?php print $stats['totalcount']; ?></div>

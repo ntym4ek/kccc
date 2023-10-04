@@ -87,7 +87,8 @@ function ext_node_preprocess_node(&$vars)
 
   // -- Статистика
   $vars['date'] = date('d.m.Y', $node->created);
-  $vars['stats'] = statistics_get($node->nid);
+  $stats = statistics_get($node->nid);
+  $vars['stats'] = $stats ?: ['totalcount' => 0];
 
   // -- Автор
   if ($vars['display_submitted']) {
