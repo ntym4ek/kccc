@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Implements hook_cron_queue_info().
+ */
+function ext_admin_cron_queue_info()
+{
+  $queues['processing_queue'] = array(
+    'worker callback' => 'ext_admin_process_item',
+  );
+
+  return $queues;
+}
+
+/**
  * Implements hook_menu().
  */
 function ext_admin_menu()
@@ -20,6 +32,15 @@ function ext_admin_menu()
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ext_admin_settings_form'),
     'access arguments' => array('administer site configuration'),
+  );
+
+  $items['admin/config/custom/executer'] = array(
+    'title' => 'Выполнить код',
+    'description' => 'Запуск кода функции ext_admin_processing',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_admin_execute_form'),
+    'access arguments' => array('access manager settings'),
+    'weight' => 5,
   );
 
   return $items;
@@ -79,6 +100,250 @@ function ext_admin_preprocess_page(&$vars)
       $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);
       $vars['is_title_as_banner'] = TRUE;
     }
+  }
+
+}
+
+
+
+function ext_admin_execute_form($form, $form_state)
+{
+  $function = '';
+  $function = 'ext_admin_processing';
+
+  $form['message'] = array(
+    '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
+  );
+  $form['control'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'контрольная галка',
+    '#description' => 'установить перед запуском',
+    '#default_value' => false,
+  );
+  $form['function'] = array(
+    '#type' => 'hidden',
+    '#value' => $function,
+  );
+
+  $form['file'] = array(
+    '#type' => 'file',
+    '#title' => 'Файл',
+    '#description' => 'Выберите файл',
+  );
+
+  $form['run'] = [
+    '#type' => 'submit',
+    '#value' => 'Пуск!',
+  ];
+
+  return $form;
+}
+function ext_admin_execute_form_validate($form, $form_state)
+{
+  if (!$form_state['values']['function']) {
+    form_set_error('','Нужно задать функцию, которая будет запущена');
+    return false;
+  }
+  if (!function_exists($form_state['values']['function'])) {
+    form_set_error('', 'Заданная функция ' . $form_state['values']['function'] . ' не существует');
+    return false;
+  }
+  if (!$form_state['values']['control']) {
+    form_set_error('control', 'Нужно установить контроль');
+    return false;
+  }
+
+  if (isset($_FILES["files"])) {
+    // Загружаем файл в sites/default/files (по умолчанию)
+    if ($file = file_save_upload('file', [], 'public://')) {
+      $form_state['values']['file'] = $file;
+    }
+    else {
+      form_set_error('file', 'Файл не был загружен');
+    }
+  }
+}
+function ext_admin_execute_form_submit($form, $form_state)
+{
+  $function = $form_state['values']['function'];
+  if ($function()) {
+    drupal_set_message('Запуск выполнен успешно');
+  } else {
+    drupal_set_message('Неуспешный пуск', 'warning');
+  }
+}
+function ext_admin_processing()
+{
+  $filename = 'public://file.txt';
+
+    $content = file_get_contents($filename);
+
+    if ($arr = drupal_json_decode($content)) {
+      $queue = DrupalQueue::get('processing_queue');
+      foreach ($arr as $prep_item) {
+        $queue->createItem($prep_item);
+      }
+      drupal_set_message('Добавлено ' . count($arr) . ' препаратов для импорта');
+    }
+
+  return true;
+}
+function ext_admin_process_item($prep_item)
+{
+  // найти препарат
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', 'preparation');
+  $dbr->condition('n.title', $prep_item['title']);
+  $dbr->addField('n', 'nid');
+  if ($p_nid = $dbr->execute()->fetchField()) {
+    $prep = node_load($p_nid);
+
+    foreach ($prep_item['regs'] as $reg_item) {
+      $reglament = entity_create('field_collection_item', ['field_name' => 'field_prep_reglaments']);
+      $reglament->setHostEntity('node', $prep);
+
+      $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament);
+
+      if (!empty($reg_item['cultures'])) {
+        foreach ($reg_item['cultures'] as $c_title) {
+          $dbr = db_select('node', 'n');
+          $dbr->condition('n.type', 'culture');
+          $dbr->condition('n.title', $c_title);
+          $dbr->addField('n', 'nid');
+          if ($c_nid = $dbr->execute()->fetchField()) {
+            $reglament_wr->field_cultures[] = $c_nid;
+          }
+          else {
+            watchdog('processing', 'Не найдена культура ' . $c_title . ' в регламент препарата ' . $reg_item['title'], NULL, WATCHDOG_ERROR);
+          }
+        }
+      }
+      if ($reg_item['cultures_note']) {
+        $reglament_wr->field_cultures_note->set($reg_item['cultures_note']);
+      }
+
+      if (!empty($reg_item['weed_groups'])) {
+        foreach ($reg_item['weed_groups'] as $w_group) {
+          if ($w_group) {
+            $weed_group = entity_create('field_collection_item', ['field_name' => 'field_reg_weed_groups']);
+            $weed_group->setHostEntity('field_collection_item', $reglament);
+            $weed_group_wr = entity_metadata_wrapper('field_collection_item', $weed_group);
+
+            if (!empty($w_group['time'])) {
+              foreach ($w_group['time'] as $time) {
+                $index = array_search($time, [
+                    'Однолетние',
+                    'Двулетние',
+                    'Многолетние'
+                  ]) + 1;
+                $weed_group_wr->field_reg_weed_lifes[] = $index;
+              }
+            }
+
+            if (!empty($w_group['class'])) {
+              foreach ($w_group['class'] as $w_class) {
+                // найти по имени термин с учётом иерархии
+                $dbr = db_select('taxonomy_term_data', 't');
+                $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('flora_classification')->vid);
+                $dbr->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
+                $dbr->addField('t', 'tid');
+                $dbr->condition('t.name', $w_class['class']);
+                $dbr->join('taxonomy_term_data', 't2', 't2.tid = h.parent');
+                $dbr->condition('t2.name', $w_class['parent']);
+                if ($w_tid = $dbr->execute()->fetchField()) {
+                  $weed_group_wr->field_reg_weed_classes[] = $w_tid;
+                } else {
+                  watchdog('processing', 'Не найден класс сорняка ' . $w_class['parent'] . '->' . $w_class['class'] . ' в регламент препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
+                }
+              }
+            } else {
+              watchdog('processing', 'Не найден класс сорняка для культуры ' . $c_title . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_ERROR);
+            }
+            $weed_group_wr->save();
+          }
+        }
+      }
+
+      if (!empty($reg_item['pest_classes'])) {
+        foreach ($reg_item['pest_classes'] as $p_class) {
+            // найти по имени термин с учётом иерархии
+            $dbr = db_select('taxonomy_term_data', 't');
+            $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('fauna_classification')->vid);
+            $dbr->addField('t', 'tid');
+            $dbr->condition('t.name', $p_class);
+            if ($p_tid = $dbr->execute()->fetchField()) {
+              $reglament_wr->field_reg_pest_classes[] = $p_tid;
+            }
+            else {
+              watchdog('processing', 'Не найден класс ' . $p_class . ' вредителя ' . $p_class['parent'] . '->' . $p_class['class'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+            }
+        }
+      }
+
+      if (!empty($reg_item['hobjects'])) {
+        foreach ($reg_item['hobjects'] as $hobject) {
+          $dbr = db_select('node', 'n');
+          $dbr->condition('n.type', $hobject['type']);
+          $dbr->condition('n.title', $hobject['name']);
+          $dbr->addField('n', 'nid');
+          if ($h_nid = $dbr->execute()->fetchField()) {
+            $reglament_wr->field_hobjects[] = $h_nid;
+          }
+          else {
+            watchdog('processing', 'Не найдена ВО ' . $hobject['name'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+          }
+        }
+      }
+      if ($reg_item['hobjects_note']) {
+        $reglament_wr->field_hobjects_note->set($reg_item['hobjects_note']);
+      }
+
+      foreach ($reg_item['prep_spends'] as $p_spend) {
+        $reglament_wr->field_reg_prep_spends[] = [
+          'from' => $p_spend['from'],
+          'to' => $p_spend['to']
+        ];
+      }
+
+      // этапы роста
+      if ($reg_item['period']['start']) {
+        $dbr = db_select('taxonomy_term_data', 't');
+        $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
+        $dbr->addField('t', 'tid');
+        $dbr->condition('t.name', $reg_item['period']['start']);
+        if ($ps_tid = $dbr->execute()->fetchField()) {
+          $reglament_wr->field_reg_treat_start = $ps_tid;
+        } else {
+          watchdog('processing', 'Не найден стартовый этап роста  ' . $reg_item['period']['start'] . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
+        }
+      }
+      if ($reg_item['period']['end']) {
+        $dbr = db_select('taxonomy_term_data', 't');
+        $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
+        $dbr->addField('t', 'tid');
+        $dbr->condition('t.name', $reg_item['period']['end']);
+        if ($pe_tid = $dbr->execute()->fetchField()) {
+          $reglament_wr->field_reg_treat_end = $pe_tid;
+        } else {
+          watchdog('processing', 'Не найден заключительный этап роста  ' . $reg_item['period']['end'] . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
+        }
+      }
+
+
+      $reglament_wr->field_reg_mix_spend = $reg_item['mix_spend'];
+
+      $reglament_wr->field_reg_description = $reg_item['description'];
+
+      $reglament_wr->field_reg_wait = $reg_item['wait'];
+
+      $reglament_wr->field_reg_ratio = $reg_item['ratio'];
+
+      $reglament_wr->save();
+    }
+    watchdog('processing', 'Импортирован препарат ' . $prep_item['title']);
+  }
+  else {
+    watchdog('processing', 'Не найден препарат ' . $prep_item['title'], null, WATCHDOG_ERROR);
   }
 
 }
