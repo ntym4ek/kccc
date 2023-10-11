@@ -91,7 +91,7 @@
   <?php if (!empty($date) || !empty($stats)): ?>
   <div class="info">
     <div class="date"><?php print $date; ?></div>
-    <?php if (!empty($stats['totalcount'])): ?>
+    <?php if (isset($stats['totalcount'])): ?>
     <div class="stats">
       <div class="media"><i class="icon icon-099"></i></div>
       <div class="text"><?php print $stats['totalcount']; ?></div>
@@ -111,7 +111,7 @@
     <?php hide($content['field_image']); ?>
     <?php hide($content['field_images']); ?>
     <?php if (count($images) > 1): ?>
-    <div id="slider-images" class="slider slider-products outer-pagination" data-slidesperview-xs="1">
+    <div id="slider-images" class="slider slider-products outer-pagination" data-slidesperview-xs="1" data-autoheight="true">
       <div class="swiper">
         <div class="swiper-wrapper">
           <?php foreach ($images as $key => $image) {
