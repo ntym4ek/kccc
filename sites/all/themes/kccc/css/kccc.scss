@@ -32,16 +32,128 @@ i.icon {
 
 a { color: $brand-color; }
 
+.branding {
+  display: flex; align-items: center;
+  padding: 1rem 0;
+  .logo {
+    flex: 0 0 auto;
+    height: 100%;
+    img {
+      display: block;
+      max-width: 100%; max-height: 100%;
+    }
+  }
+  .brand {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 1em;
+    .ru {
+      font-size: 1.3em; font-weight: 700;
+      margin: 0 0 .3em;
+    }
+    .en { font-size: .85em; }
+  }
+}
 
 // --- Разметка страницы --------------------------------------------------------------
-.header {
+// -- висящий двойной header с лого и меню
+.page > .header {
+  background: none;
+  box-shadow: none;
+  position: absolute; top: 45px; left: 0; right: 0; z-index: 10;
+  padding: 0;
+  .container { padding: 0 1rem; }
+  .header-wr {
+    display: flex;
+    width: 100%; height: 100%;
+    &:before {
+      background-color: $brand-color;
+      content: "";
+      display: block;
+      flex: 1;
+    }
+    &:after {
+      background: rgba(27, 30, 40, 0.4);
+      content: "";
+      display: block;
+      flex: 1;
+    }
+  }
+  .col-1 {
+    flex: 1 0 auto;
+    padding-right: 30px;
+  }
+  .col-2 { flex: 0 0 $header-height; }
+  .branding {
+    background-color: $brand-color;
+    color: #fff; font-size: .8rem; text-align: center;
+    height: 100%; width: 100%;
+    padding: 15px;
+    a { color: inherit; }
+    .brand {
+      padding-left: 0;
+      max-width: 14rem;
+    }
+  }
+  .menu-bkg {
+    display:grid;
+    background: rgba(27, 30, 40, 0.4);
+    height: 100%;
+    position: relative;
+  }
+  .menu-wr {
+    display: flex; align-items: center;
+    height: 100%;
+    .global {
+      flex: 0 0 auto;
+      padding: 0 2rem;
+      a { color: #fff; }
+    }
+    .primary-menu { flex: 1 0 auto; }
+    .secondary-menu { flex: 0 0 auto; }
+    .icon-user { width: 1rem; }
+  }
   .menu {
     font-size: $font-size-large;
     &.level-1 > li {
       margin: 0 1rem;
-      > a { padding: .5rem 1rem .5rem 0; }
+      > a {
+        color: #fff; font-weight: 500;
+        padding: .8rem 1rem .8rem 0;
+      }
     }
-    .sub-menu { border-left: 5px solid $brand-color; }
+  }
+
+  //.nav-mobile-label { justify-self: end; }
+
+  @media #{$tablet} {
+  }
+  @media #{$laptop} {
+    height: 90px;
+    .col-1 { flex: 0 0 auto; }
+    .col-2 { flex: 1 0 auto; }
+    .branding {
+      font-size: 1rem;
+      padding: 15px 30px 15px 1rem;
+      width: 360px;                     // определяет ширину брендовой части меню
+      .brand { max-width: none; }
+    }
+    .menu {
+      font-size: 18px;
+      .sub-menu {
+        border-left: 5px solid $brand-color;
+        min-width: 230px;
+      }
+    }
+  }
+}
+
+.page-margin {
+  min-height: 120px;
+  @media #{$tablet} {
+    min-height: 135px;
+  }
+  @media #{$laptop} {
+    min-height: 162px;
   }
 }
 
@@ -110,66 +222,16 @@ a { color: $brand-color; }
   }
 }
 
-.branding {
-  display: flex;
-  margin-right: -1rem; padding: 1rem 0;
-  .logo {
-    flex: 0 0 4.5em;
-    img {
-      display: block;
-      max-width: 100%; max-height: 100%;
-    }
-  }
-  .name {
-    display: flex; flex-direction: column; justify-content: center;
-    padding-left: 1em;
-    .ru {
-      font-size: 1.3em; font-weight: 700;
-      margin: 0 0 .3em;
-    }
-    .en { font-size: .85em; }
-  }
-  .global {
-    display: flex; align-items: center;
-    opacity: .2;
-    transition: opacity 200ms;
-    &:hover { opacity: .5; }
-    i.icon { font-size: 2rem; color: $text-color; }
-  }
-  .local {
-    flex: 0 0 30px;
-    margin-right: 1rem;
-  }
-  .front & .local { display: none; }
-
-  .page > .header & {
-    justify-content: flex-end;
-    padding: 0;
-    .local {
-      flex: 0 0 30px;
-    }
-    @media #{$tablet} {
-      .local { flex: 0 0 46px; }
-    }
-    @media #{$laptop} {
-      justify-content: start;
-      margin-right: 0;
-      .local { flex: 0 0 48px; }
-      .front & .local { display: block; }
-    }
-  }
-
-}
-
 .page-title h1 {
   font-size: $font-size-h3;
   margin-top: 0;
 }
 
 .page-highlighted {
-  .page-banner .container { align-items: center; }
+  .page-banner .screen-width { height: 16rem; }
   .page-title {
     display: flex; align-items: center;
+    margin-bottom: 2rem;
     .page-title-logo {
       margin-right: 1rem;
       i.icon { font-size: 4rem; }
@@ -182,7 +244,7 @@ a { color: $brand-color; }
   .page-context-menu .screen-width { background-color: #383838; }
 
   @media #{$tablet} {
-    .page-banner .screen-width { height: 220px; }
+    .page-banner .screen-width { height: 20rem; }
     .page-title {
       .page-title-logo i.icon { font-size: 6rem; }
       h1 {
@@ -192,7 +254,7 @@ a { color: $brand-color; }
     }
   }
   @media #{$laptop} {
-    .page-banner .screen-width { height: 18rem; }
+    .page-banner .screen-width { height: 24rem; }
     .page-title h1 { max-width: 40rem; }
   }
 }
@@ -204,7 +266,11 @@ a { color: $brand-color; }
     display:flex; flex-direction: column;
     height: 100%;
   }
-
+  .branding {
+    height: 90px;
+    margin-right: -1rem;
+    .name { padding-right: 0; }
+  }
   .legal-name {
     padding: 1rem 0;
     span {
@@ -241,11 +307,11 @@ a { color: $brand-color; }
   }
 
   @media #{$tablet} {
-    .branding { font-size: .65rem; }
+    .branding { font-size: .7rem; }
     .legal-name { font-size: $font-size-small; }
   }
   @media #{$laptop} {
-    .branding { font-size: .8rem; }
+    .branding { font-size: .85rem; }
   }
 }
 

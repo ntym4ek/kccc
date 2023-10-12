@@ -14,35 +14,42 @@
   <div class="page">
     <?php if (empty($is_header_off)): ?>
     <header class="header">
-      <div class="container">
-        <div class="row middle-xs end-xs start-lg">
-          <div class="col show-xs hide-lg">
-            <div class="nav-mobile-label"><div class="label"><div class="icon"></div></div></div>
-          </div>
-
-          <div class="col">
-            <div class="branding">
-              <div class="local">
-                <a href="<?php print $front_page ?>">
-                  <img src="<?php print $logo ?>" />
-                </a>
-              </div>
-              <div class="global">
-                <a href="https://kccc.group" target="_blank" title="KCCC GROUP">
-                  <i class="icon icon-119"></i>
-                </a>
+      <div class="header-wr">
+        <div class="container">
+          <div class="row middle-xs full-height no-wrap">
+            <div class="col col-1 full-height col-no-gutter">
+              <div class="branding">
+                <div class="brand">
+                  <div class="ru"><a href="/">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
+                  <div class="en"><a href="/">Kirovo-Chepetsk Chemical Company</a></div>
+                </div>
+                <div class="logo"><a href="/"><img src="/sites/default/files/images/logo/logo_t.png" alt="Кирово-Чепецкая Химическая&nbsp;Компания" /></a></div>
               </div>
             </div>
-          </div>
-
-          <div class="col fill hide-xs show-lg">
-            <div class="menu-wr">
-              <?php if ($primary_nav): print $primary_nav; endif; ?>
-              <?php if ($secondary_nav): print $secondary_nav; endif; ?>
+            <div class="col col-2 full-height col-no-gutter">
+              <div class="menu-bkg">
+                <div class="nav-mobile-label hide-lg"><div class="label"><div class="icon"></div></div></div>
+                <div class="hide-xs show-lg">
+                  <div class="menu-wr">
+                    <div class="global">
+                      <a href="https://kccc.group" target="_blank" title="KCCC GROUP">
+                        <i class="icon icon-119"></i>
+                      </a>
+                    </div>
+                    <div class="primary-menu">
+                      <?php if ($primary_nav): print $primary_nav; endif; ?>
+                    </div>
+                    <div class="secondary-menu">
+                      <?php if ($secondary_nav): print $secondary_nav; endif; ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
     </header>
     <?php endif; ?>
 
@@ -80,6 +87,8 @@
           <?php endif; ?>
           <?php endif; ?>
         </div>
+        <?php else: ?>
+        <div class="page-margin"></div>
         <?php endif; ?>
 
         <?php print $breadcrumb; ?>
@@ -149,7 +158,7 @@
             <div class="b">
               <div class="branding">
                 <div class="logo"><a href="/"><img src="<?php print $logo; ?>" alt="" /></a></div>
-                <div class="name">
+                <div class="brand">
                   <div class="ru"><a href="/">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
                   <div class="en"><a href="/">Kirovo-Chepetsk Chemical Company</a></div>
                 </div>

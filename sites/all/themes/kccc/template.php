@@ -40,6 +40,10 @@ function kccc_theme()
       'variables' => [],
       'template' => 'templates/card/card-contact',
     ],
+    'card_reglament' => [
+      'variables' => [],
+      'template' => 'templates/card/card-reglament',
+    ],
   ];
 }
 

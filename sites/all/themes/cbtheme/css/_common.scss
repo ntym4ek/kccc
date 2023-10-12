@@ -69,7 +69,7 @@ h6, .h6 { font-size: $font-size-h6; font-weight: 500; margin: 1rem 0; }
   }
 }
 
-$header-padding: 0.8rem;
+//$header-padding: 0.8rem;
 .page {
   display: flex; flex-direction: column;                    // прижать подвал
   min-height: 100vh;                                        // при открытом меню подвал не прижимается к низу страницы
@@ -79,25 +79,19 @@ $header-padding: 0.8rem;
     display: flex; align-items: center;
     background: $header-bkg;
     box-shadow: 0 4px 20px 0 rgba(0,0,0,.1);
-    padding: $header-padding 0;
+    //padding: $header-padding 0;
     height: $header-height;
     .container { display: flex; }
     .branding {
       display: flex; justify-content: center;
       text-align: center; line-height: 1;
-      height: calc(#{$header-height} - 2*#{$header-padding});
       img { display: block; max-height: 100%; }
     }
     .menu {
       display: flex; justify-content: space-between;
     }
+
     @media #{$tablet} {
-      height: calc(#{$header-height} + 1rem);
-      .branding {
-        height: calc(#{$header-height}  + 1rem - 2*#{$header-padding});
-        justify-content: start;
-        text-align: left;
-      }
     }
   }
 

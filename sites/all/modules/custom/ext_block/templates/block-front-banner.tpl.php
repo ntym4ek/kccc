@@ -1,0 +1,27 @@
+<?php
+?>
+<div class="block-front-banner">
+  <div class="screen-width">
+
+    <div id="slider-front-banner" class="slider slider-front-banner">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <?php foreach ($slides as $slide): ?>
+            <div class="swiper-slide">
+              <div class="img" style="background-image: url(<?php print $slide['img']; ?>);"></div>
+              <div class="container">
+                <div class="text-wr">
+                  <h2><?php print $slide['title']; ?></h2>
+                  <a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a>
+                </div>
+              </div>
+              <div class="gradient-y"></div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -6,7 +6,7 @@
 function ext_block_block_info()
 {
   return [
-    'custom-block-front-intro'  => [                     // по какой-то причине, если индекс содержит _ вместо - блок виден в базовой теме, но НЕ виден в подтеме.
+    'custom-block-front-banner'  => [                     // по какой-то причине, если индекс содержит _ вместо - блок виден в базовой теме, но НЕ виден в подтеме.
       'info' => t('CB | Front Banner'),
     ],
     'custom-block-new-products' => [
@@ -89,7 +89,11 @@ function ext_block_block_view($delta = '')
   $block = [];
 
   // блоки с динамически формируемым содержимым
-  if ($delta == 'custom-block-new-products') {
+  if ($delta == 'custom-block-front-banner') {
+    $block['content'] = theme($delta, ['slides' => ext_block_get_front_banner_slides()]);
+  }
+
+  elseif ($delta == 'custom-block-new-products') {
     if ($novelties = sec_catalog_get_new_products()) {
       $cards = [];
       foreach ($novelties as $product) {
@@ -98,6 +102,7 @@ function ext_block_block_view($delta = '')
       $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'Новинки']);
     } else $block['content'] = null;
   }
+
   elseif ($delta == 'custom-block-recommended') {
     $cards = [];
     foreach (sec_catalog_get_recommended_products() as $product) {
@@ -105,6 +110,7 @@ function ext_block_block_view($delta = '')
     }
     $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'С этим препаратом покупают']);
   }
+
   elseif ($delta == 'custom-block-catalog') {
     $categories = sec_catalog_get_categories();
     unset($categories[406]);
@@ -132,9 +138,9 @@ function ext_block_block_view($delta = '')
 function ext_block_theme()
 {
   return [
-    'custom-block-front-intro'    => [
+    'custom-block-front-banner'    => [
       'variables' => [],
-      'template' => 'templates/block-front-intro',
+      'template' => 'templates/block-front-banner',
     ],
     'custom-block-new-products'   => [
       'variables' => [],
@@ -229,4 +235,23 @@ function ext_block_theme()
       'template' => 'templates/block-dumb',
     ],
   ];
+}
+
+function ext_block_get_front_banner_slides()
+{
+  $banners = [];
+  if ($terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('slider_front_banners')->vid, 0, null, true)) {
+    foreach($terms as $term) {
+      if (module_exists('i18n_taxonomy')) {
+        $term = i18n_taxonomy_localize_terms($term);
+      }
+      $banners[] = [
+        'title' => $term->name,
+        'img' => file_create_url($term->field_image["und"][0]["uri"]),
+        'path' => $term->field_text["und"][0]["value"],
+      ];
+    }
+  }
+
+  return $banners;
 }

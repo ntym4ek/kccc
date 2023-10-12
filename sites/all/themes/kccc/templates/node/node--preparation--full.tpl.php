@@ -168,6 +168,27 @@
     </div>
   </div>
 
+  <div class="product-reglaments">
+    <div class="section-title">
+      <div>Регламенты применения</div>
+      <div class="underline"></div>
+    </div>
+
+    <div id="carousel-info" class="carousel carousel-info outer-pagination" data-slidesperview-xs="1" data-slidesperview-md="1.6" data-slidesperview-lg="2.4">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+
+          <?php foreach($product_info['reglaments_cards'] as $card): ?>
+          <div class="swiper-slide">
+            <?php print $card?>
+          </div>
+          <?php endforeach; ?>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
     <!-- блок Калькулятор -->
   <?php print drupal_render($block_calc); ?>
 
