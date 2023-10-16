@@ -161,6 +161,14 @@ function ext_node_preprocess_node(&$vars)
       // категория препарата для темизации в цвет
       $vars['classes_array'][] = 'category-' . $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
 
+      // подготовить карточки Регламентов
+      $vars['product_info']['reglaments_cards'] = [];
+      if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
+        foreach ($product_regs as $reg) {
+          $vars['product_info']['reglaments_cards'][] = theme('card_reglament', ['card' => $reg]);
+        }
+      }
+
       // программно вставить блок Агро Калькулятор
       $block = block_load("ext_block", 'custom-block-agro-calculator');
       $blocks = _block_render_blocks([$block]);

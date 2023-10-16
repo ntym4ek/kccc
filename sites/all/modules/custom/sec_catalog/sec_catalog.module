@@ -399,6 +399,8 @@ function sec_catalog_get_product_info($node)
     }
   }
 
+  $regs = sec_catalog_get_product_reglaments_info($product['id']);
+
   return $product;
 }
 
@@ -494,4 +496,81 @@ function sec_catalog_taxonomy_term_uri($term)
 
   // default taxonomy term uri
   return taxonomy_term_uri($term);
+}
+
+/**
+ * Вернуть массив данных Регламентов препарата
+ */
+function sec_catalog_get_product_reglaments_info($product_id)
+{
+  $regs = [];
+
+  $product_wr = entity_metadata_wrapper('node', $product_id);
+
+  // данные
+  foreach ($product_wr->field_prep_reglaments->getIterator() as $regl_wr) {
+    $cultures = [];
+    foreach ($regl_wr->field_cultures->getIterator() as $culture_wr) {
+      $cultures[$culture_wr->getIdentifier()] = $culture_wr->label();
+    }
+    $cultures_note = $regl_wr->field_cultures_note->value();
+
+    $weed_groups = [];
+    foreach ($regl_wr->field_reg_weed_groups->getIterator() as $weed_group_wr) {
+      $lifes = [];
+      foreach ($weed_group_wr->field_reg_weed_lifes->getIterator() as $weed_life_wr) $lifes[$weed_life_wr->value()] = $weed_life_wr->label();
+      $classes = [];
+      foreach ($weed_group_wr->field_reg_weed_classes->getIterator() as $weed_class_wr) $lifes[$weed_class_wr->getIdentifier()] = $weed_class_wr->label();
+
+      $weed_groups[] = [
+        'lifes' => $lifes,
+        'classes' => $classes,
+      ];
+    }
+
+    $pest_classes = [];
+    foreach ($regl_wr->field_reg_pest_classes->getIterator() as $pest_class_wr) $pest_classes[$pest_class_wr->getIdentifier()] = $pest_class_wr->label();
+
+    $hobjects = [];
+    foreach ($regl_wr->field_hobjects->getIterator() as $hobject_wr) {
+      $hobjects[$hobject_wr->getIdentifier()] = [
+        'type' => $hobject_wr->type->value(),
+        'name' => $hobject_wr->label(),
+      ];
+    }
+
+    $prep_spends = [];
+    foreach ($regl_wr->field_reg_prep_spends->getIterator() as $prep_spend_wr) {
+      $prep_spends[] = $prep_spend_wr->value();
+    }
+
+    // форматирование
+    if ($cultures) {
+      $cultures_f = implode(', ', array_values($cultures));
+      if ($cultures_note) $cultures_f .= ' (' . $cultures_note . ')';
+    } else {
+      $cultures_f = $cultures_note;
+    }
+
+    $regs[$regl_wr->getIdentifier()] = [
+      'cultures' => [
+        'list' => $cultures,
+        'note' => $cultures_note,
+        'formatted' => $cultures_f,
+      ],
+      'hobjects' => [
+        'weed_groups' => $weed_groups,
+        'pest_classes' => $pest_classes,
+        'list' => $hobjects,
+        'note' => $regl_wr->field_hobjects_note->value(),
+      ],
+      'prep_spends' => $prep_spends,
+      'mix_spend' => $regl_wr->field_reg_mix_spend->value(),
+      'description' => $regl_wr->field_reg_description->value(),
+      'wait' => $regl_wr->field_reg_wait->value(),
+      'ratio' => $regl_wr->field_reg_ratio->value(),
+    ];
+  }
+
+  return $regs;
 }
