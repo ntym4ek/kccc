@@ -1639,10 +1639,6 @@ ul.menu {
   font-size: 75px;
   width: 75px;
   height: 75px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
   transition: all 200ms ease-in;
   overflow: hidden; }
   .nav-mobile-label .label {
@@ -1810,32 +1806,35 @@ a {
       background-color: #43B02A;
       content: "";
       display: block;
-      flex: 1; }
+      flex: 1;
+      margin-right: -1px; }
     .page > .header .header-wr:after {
       background: rgba(27, 30, 40, 0.4);
       content: "";
       display: block;
       flex: 1; }
   .page > .header .col-1 {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     padding-right: 30px; }
   .page > .header .col-2 {
-    flex: 0 0 75px; }
+    flex: 1 0 auto; }
   .page > .header .branding {
     background-color: #43B02A;
     color: #fff;
     font-size: .8rem;
     text-align: center;
     height: 100%;
-    width: 100%;
+    width: 270px;
     padding: 15px; }
     .page > .header .branding a {
       color: inherit; }
     .page > .header .branding .brand {
-      padding-left: 0;
-      max-width: 14rem; }
+      padding-left: 0; }
+    .page > .header .branding .logo {
+      flex: 0 0 41px; }
   .page > .header .menu-bkg {
     display: grid;
+    justify-content: flex-end;
     background: rgba(27, 30, 40, 0.4);
     height: 100%;
     position: relative; }
@@ -1862,24 +1861,26 @@ a {
         color: #fff;
         font-weight: 500;
         padding: .8rem 1rem .8rem 0; }
+  @media only screen and (min-width: 768px) {
+    .page > .header .branding {
+      width: 300px;
+      padding: 15px 30px; } }
   @media only screen and (min-width: 1280px) {
     .page > .header {
       height: 90px; }
-      .page > .header .col-1 {
-        flex: 0 0 auto; }
-      .page > .header .col-2 {
-        flex: 1 0 auto; }
       .page > .header .branding {
         font-size: 1rem;
         padding: 15px 30px 15px 1rem;
         width: 360px; }
-        .page > .header .branding .brand {
-          max-width: none; }
+        .page > .header .branding .logo {
+          flex: 0 0 55px; }
       .page > .header .menu {
         font-size: 18px; }
         .page > .header .menu .sub-menu {
           border-left: 5px solid #43B02A;
-          min-width: 230px; } }
+          min-width: 230px; }
+      .page > .header .menu-bkg {
+        justify-content: normal; } }
 
 .page-margin {
   min-height: 120px; }

@@ -98,7 +98,7 @@ ul.menu {
   display: block;
   color: $header-text; font-size: $header-height;
   width: $header-height; height: $header-height;
-  position: absolute; top: 0; left: 0; z-index: 10;
+  //position: absolute; top: 0; left: 0; z-index: 10;
   transition: all 200ms ease-in;
   overflow: hidden;
   .label {
