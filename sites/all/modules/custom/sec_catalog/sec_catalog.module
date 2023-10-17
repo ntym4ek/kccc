@@ -503,6 +503,31 @@ function sec_catalog_taxonomy_term_uri($term)
 }
 
 /**
+ * Вернуть иконку класса для заданной культуры.
+ *
+ * Проверяет всю иерархию классов снизу вверх и возвращает первую
+ *
+ *
+ */
+function sec_catalog_get_culture_class_icon($culture_id)
+{
+  $icon_num = '';
+  $culture_wr = entity_metadata_wrapper('node', $culture_id);
+  if ($culture_wr->field_classificator_flora->value()) {
+    if ($parents = taxonomy_get_parents_all($culture_wr->field_classificator_flora->getIdentifier())) {
+      foreach ($parents as $parent) {
+        if (!empty($parent->field_icon["und"][0]["value"])) {
+          $icon_num = $parent->field_icon["und"][0]["value"];
+          break;
+        }
+      }
+    }
+  }
+
+  return $icon_num;
+}
+
+/**
  * Вернуть массив данных Регламентов препарата
  */
 function sec_catalog_get_product_reglaments_info($product_id)
@@ -514,11 +539,16 @@ function sec_catalog_get_product_reglaments_info($product_id)
 
   // данные
   foreach ($product_wr->field_prep_reglaments->getIterator() as $regl_wr) {
+    $icon_num = '';
     $cultures = [];
     foreach ($regl_wr->field_cultures->getIterator() as $culture_wr) {
       $cultures[$culture_wr->getIdentifier()] = $culture_wr->label();
+      // определить иконку регламента из класса культуры
+      if (!$icon_num) $icon_num = sec_catalog_get_culture_class_icon($culture_wr->getIdentifier());
     }
     $cultures_note = $regl_wr->field_cultures_note->value();
+
+
 
     $weed_groups = [];
     foreach ($regl_wr->field_reg_weed_groups->getIterator() as $weed_group_wr) {
@@ -600,6 +630,7 @@ function sec_catalog_get_product_reglaments_info($product_id)
     $mix_spend_f = $mix_spend['from'] == $mix_spend['to'] ? $mix_spend['to'] : ($mix_spend['from'] . '-' . $mix_spend['to']);
 
     $regs[$regl_wr->getIdentifier()] = [
+      'icon_num' => $icon_num,
       'cultures' => [
         'list' => $cultures,
         'note' => $cultures_note,

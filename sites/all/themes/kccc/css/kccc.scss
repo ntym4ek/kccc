@@ -682,10 +682,12 @@ ul.action-links {
     border-bottom-left-radius: 25px;
   }
   .decor-circle {
+    display: flex; justify-content: center; align-items: center;
     position: absolute; top: -30px; left: -50px; z-index: 10;
-    background: $gray-lighter;
+    background: #E3FFD6;
     border: 2px solid $brand-color; border-radius: 60px;
     width: 80px; height: 80px;
+    i { color: $brand-color; font-size: 5rem; }
   }
   .cultures {
     text-align: center;

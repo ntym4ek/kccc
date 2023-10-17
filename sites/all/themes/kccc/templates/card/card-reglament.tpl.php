@@ -4,7 +4,11 @@
 <div class="card card-reglament">
   <div class="content">
     <div class="decor-line"></div>
-    <div class="decor-circle"></div>
+    <div class="decor-circle">
+      <?php if ($card['icon_num']): ?>
+      <i class="icon icon-<?php print $card['icon_num']; ?>"></i>
+      <?php endif; ?>
+    </div>
 
     <div class="cultures h4">
       <?php print $card['cultures']['formatted']; ?>

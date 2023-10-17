@@ -32,7 +32,7 @@ function helper_taxonomy_get_depth($tid)
     if ($parent = $dbr->execute()->fetchField()) {
       $depth++;
       $tid = $parent;
-    };
+    }
   } while ($parent);
 
   return $depth;
