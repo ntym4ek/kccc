@@ -588,10 +588,13 @@ function sec_catalog_get_product_reglaments_info($product_id)
 
     $prep_spends_f = '';
     foreach ($prep_spends as $ps) {
-      $psj = $ps['from'] == $ps['to'] ? number_format($ps['to'], 2, ',', '') : (number_format($ps['from'], 2, ',', '') . '-' . number_format($ps['to'], 2, ',', ''));
+      $ps['from'] = number_format($ps['from'], 2, ',', '');
+      $ps['to']   = number_format($ps['to'], 2, ',', '');
+      $ps['from'] = rtrim(str_replace(',00', '', $ps['from']), '0');
+      $ps['to']   = rtrim(str_replace(',00', '', $ps['to']), '0');
+      $psj = $ps['from'] == $ps['to'] ? $ps['to'] : $ps['from'] . '-' . $ps['to'];
       $prep_spends_f .= $prep_spends_f ? ', ' . $psj : $psj;
     }
-    $prep_spends_f = str_replace(',00', '', $prep_spends_f);
     $prep_spends_f .= ' ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'];
 
     $mix_spend_f = $mix_spend['from'] == $mix_spend['to'] ? $mix_spend['to'] : ($mix_spend['from'] . '-' . $mix_spend['to']);
