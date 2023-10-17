@@ -174,7 +174,7 @@
       <div class="underline"></div>
     </div>
 
-    <div id="carousel-info" class="carousel carousel-info outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2">
+    <div id="carousel-reglaments" class="carousel carousel-reglaments outer-pagination outer-navigation" data-autoheight="true" data-slidesperview-xs="1" data-slidesperview-md="1.5" data-slidesperview-lg="2">
       <div class="swiper">
         <div class="swiper-wrapper">
 

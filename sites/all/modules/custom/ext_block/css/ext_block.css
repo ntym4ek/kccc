@@ -138,8 +138,6 @@
 
 .block-new-products .carousel {
   padding-top: 1rem; }
-  .block-new-products .carousel.outer-navigation {
-    padding: 0; }
 .block-new-products .swiper {
   padding: 1rem; }
 .block-new-products .card-product-v .text {
@@ -581,7 +579,8 @@
 .block-more-info .info {
   display: flex;
   flex-direction: column;
-  height: 100%; }
+  height: 100%;
+  padding: 0 2rem; }
 .block-more-info .img {
   flex: 0 0 auto; }
   .block-more-info .img img {
@@ -595,9 +594,13 @@
   margin-bottom: 1rem; }
 .block-more-info .swiper-slide {
   height: initial; }
+@media only screen and (min-width: 768px) {
+  .block-more-info .info {
+    padding-right: 0; } }
 @media only screen and (min-width: 1280px) {
   .block-more-info .info {
-    flex-direction: row; }
+    flex-direction: row;
+    padding-left: 0; }
   .block-more-info .text {
     padding: 2rem 3rem; } }
 
@@ -607,7 +610,8 @@
 .block-history .info {
   display: flex;
   flex-direction: column;
-  height: 100%; }
+  height: 100%;
+  padding: 0 2rem; }
 .block-history .img {
   flex: 0 0 auto; }
   .block-history .img img {
@@ -667,7 +671,8 @@
       border-left-color: #43B02A; }
 @media only screen and (min-width: 768px) {
   .block-history .swiper-pagination {
-    --swiper-pagination-top: -4rem; }
+    --swiper-pagination-top: -4rem;
+    --swiper-pagination-bottom: none; }
     .block-history .swiper-pagination .milestone:first-child:before {
       border-color: transparent; }
     .block-history .swiper-pagination .swiper-pagination-bullet b {
@@ -692,6 +697,8 @@
   .block-history .milestone {
     width: 140px; }
   .block-history .info {
+    padding-left: 0;
+    padding-right: 0;
     width: 968px; } }
 
 .block-features .section-title {

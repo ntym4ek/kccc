@@ -123,10 +123,7 @@
 }
 
 .block-new-products {
-  .carousel {
-    padding-top: 1rem;
-    &.outer-navigation { padding: 0; }
-  }
+  .carousel { padding-top: 1rem; }
   .swiper { padding: 1rem; } // чтобы тени карточек не попадали под границы
   .card-product-v .text { padding: 1rem 0; }
 
@@ -554,6 +551,7 @@
   .info {
     display: flex; flex-direction: column;
     height: 100%;
+    padding: 0 2rem;
   }
   .img {
     flex: 0 0 auto;
@@ -571,8 +569,15 @@
     margin-bottom: 1rem;
   }
   .swiper-slide { height: initial; }
+
+  @media #{$tablet} {
+    .info { padding-right: 0; }
+  }
   @media #{$laptop} {
-    .info { flex-direction: row; }
+    .info {
+      flex-direction: row;
+      padding-left: 0;
+    }
     .text { padding: 2rem 3rem; }
   }
 }
@@ -585,6 +590,7 @@
   .info {
     display: flex; flex-direction: column;
     height: 100%;
+    padding: 0 2rem;
   }
   .img {
     flex: 0 0 auto;
@@ -645,6 +651,7 @@
   @media #{$tablet} {
     .swiper-pagination {
       --swiper-pagination-top: -4rem;
+      --swiper-pagination-bottom: none;
       .milestone:first-child:before { border-color: transparent; }
       .swiper-pagination-bullet {
         b { font-weight: 400; }
@@ -670,7 +677,10 @@
       }
     }
     .milestone { width: 140px; }
-    .info { width: 968px; }
+    .info {
+      padding-left: 0; padding-right: 0;
+      width: 968px;
+    }
   }
 }
 

@@ -33,8 +33,13 @@ $breakpoint-ups: ($breakpoint-sm-up, $breakpoint-md-up, $breakpoint-lg-up, $brea
 $breakpoint-all-prefixes: ("xs", "xs-only", "sm", "sm-only", "md", "md-only", "lg", "lg-only", "xl");
 $breakpoint-up-prefixes: ("xs", "sm", "md", "lg", "xl");
 
-$phone:       $breakpoint-xs-only;
 $smartphone:  $breakpoint-sm-up;
 $tablet:      $breakpoint-md-up;
 $laptop:      $breakpoint-lg-up;
 $desktop:     $breakpoint-xl-up;
+
+$phone-only:         $breakpoint-xs-only;
+$smartphone-only:    $breakpoint-sm-only;
+$tablet-only:        $breakpoint-md-only;
+$laptop-only:        $breakpoint-lg-only;
+

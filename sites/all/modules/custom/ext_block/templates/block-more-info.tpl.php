@@ -86,8 +86,8 @@
       </div>
     </div>
     <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev hide show-md"></div>
-    <div class="swiper-button-next hide show-md"></div>
+    <div class="swiper-button-prev hide show-lg"></div>
+    <div class="swiper-button-next hide show-lg"></div>
   </div>
 
 </div>
