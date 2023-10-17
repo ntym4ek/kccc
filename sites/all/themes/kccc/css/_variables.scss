@@ -1,8 +1,7 @@
 @import "../../cbtheme/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
 
-$content-well-max-width:  1190px;
-$header-height:           4rem;
-
+$content-well-max-width:  1320px;
+$header-height:           75px;
 
 //- colors
 //
@@ -21,6 +20,9 @@ $brand-other:             #43B02A;
 
 $divider-clr:             #D6D6D6;
 $well-bkg-clr:            #f1f1f1;
+
+$header-bkg:              none;
+$header-text:             #fff;
 
 $text-color:              #000;
 
