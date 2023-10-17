@@ -168,6 +168,7 @@
     </div>
   </div>
 
+  <?php if ($product_info['reglaments_cards']): ?>
   <div class="product-reglaments">
     <div class="section-title">
       <div>Регламенты применения</div>
@@ -192,6 +193,7 @@
 
     </div>
   </div>
+  <?php endif; ?>
 
     <!-- блок Калькулятор -->
   <?php print drupal_render($block_calc); ?>
