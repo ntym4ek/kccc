@@ -735,6 +735,8 @@
 }
 
 .block-agro-calculator {
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   .content {
     background-image: url(../images/calc.jpg); background-size: cover; background-position: center center;
     display: flex; flex-direction: column; align-items: center;
@@ -756,6 +758,10 @@
   .text {
     color: #fff; font-size: $font-size-h4;
     padding: 1.5rem 0 2rem;
+  }
+
+  @media #{$laptop} {
+    margin: 0;
   }
 }
 

@@ -760,35 +760,41 @@
   .block-features .b2 {
     min-height: 500px; } }
 
-.block-agro-calculator .content {
-  background-image: url(../images/calc.jpg);
-  background-size: cover;
-  background-position: center center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 2rem; }
-.block-agro-calculator .media {
-  border-radius: 50px;
-  background-color: #43B02A;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 6rem;
-  width: 6rem;
-  padding: 1.3rem; }
-.block-agro-calculator i.icon {
-  color: #fff;
-  font-size: 4rem; }
-.block-agro-calculator .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  padding-bottom: .5rem; }
-.block-agro-calculator .text {
-  color: #fff;
-  font-size: 1.25rem;
-  padding: 1.5rem 0 2rem; }
+.block-agro-calculator {
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%); }
+  .block-agro-calculator .content {
+    background-image: url(../images/calc.jpg);
+    background-size: cover;
+    background-position: center center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem; }
+  .block-agro-calculator .media {
+    border-radius: 50px;
+    background-color: #43B02A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 6rem;
+    width: 6rem;
+    padding: 1.3rem; }
+  .block-agro-calculator i.icon {
+    color: #fff;
+    font-size: 4rem; }
+  .block-agro-calculator .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    padding-bottom: .5rem; }
+  .block-agro-calculator .text {
+    color: #fff;
+    font-size: 1.25rem;
+    padding: 1.5rem 0 2rem; }
+  @media only screen and (min-width: 1280px) {
+    .block-agro-calculator {
+      margin: 0; } }
 
 .block-contact-us .content {
   background-image: url(../images/ask.jpg);
