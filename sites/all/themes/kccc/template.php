@@ -40,6 +40,10 @@ function kccc_theme()
       'variables' => [],
       'template' => 'templates/card/card-contact',
     ],
+    'card_reglament' => [
+      'variables' => [],
+      'template' => 'templates/card/card-reglament',
+    ],
   ];
 }
 
@@ -51,7 +55,7 @@ function kccc_file_link($vars)
   $file = $vars['file'];
 
   $file_extension = drupal_strtoupper(pathinfo($file->filename, PATHINFO_EXTENSION));
-  $file_description = !empty($file->description) ? $file->description : str_replace('.' .$file_extension, '', $file->filename);
+//  $file_description = !empty($file->description) ? $file->description : str_replace('.' .$file_extension, '', $file->filename);
   $icon_directory = $vars['icon_directory'];
 
   $url = file_create_url($file->uri);

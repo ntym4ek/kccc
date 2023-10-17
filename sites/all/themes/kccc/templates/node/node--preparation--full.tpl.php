@@ -174,7 +174,7 @@
       <div class="underline"></div>
     </div>
 
-    <div id="carousel-info" class="carousel carousel-info outer-pagination" data-slidesperview-xs="1" data-slidesperview-md="1.6" data-slidesperview-lg="2.4">
+    <div id="carousel-info" class="carousel carousel-info outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2">
       <div class="swiper">
         <div class="swiper-wrapper">
 
@@ -186,6 +186,10 @@
 
         </div>
       </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev hide show-lg"></div>
+      <div class="swiper-button-next hide show-lg"></div>
+
     </div>
   </div>
 

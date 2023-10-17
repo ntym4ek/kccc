@@ -596,6 +596,49 @@ ul.action-links {
   }
 }
 
+.card-reglament {
+  background: $well-bkg-clr;
+  border-radius: 20px;
+  margin: 40px 0 0 80px; padding: 1rem;
+  min-height: 350px;
+  position: relative;
+
+  .decor-line {
+    position: absolute; top: 0; left: -40px;
+    width: 40px; height: 280px;
+    background: $brand-color;
+    border-bottom-left-radius: 25px;
+  }
+  .decor-circle {
+    position: absolute; top: -40px; left: -80px; z-index: 10;
+    background: $gray-lighter;
+    border: 2px solid $brand-color; border-radius: 60px;
+    width: 120px; height: 120px;
+  }
+
+  .cultures {
+    text-align: center;
+    padding: 0 2rem; margin-bottom: 1rem;
+  }
+  .hobjects {
+    font-size: $font-size-small; text-align: center;
+    padding: 0 2rem; margin-bottom: 1rem;
+    min-height: 50px;
+    a { color: inherit;
+      &:hover { text-decoration: underline; }
+    }
+  }
+  .b {
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+  .title {
+    font-size: $font-size-small;
+    margin-bottom: 5px;
+  }
+  .text { font-size: $font-size-large; font-weight: 500; }
+}
+
 // --- Ноды ----------------------------------------------------------------------------
 .node {
   > .info {
@@ -924,20 +967,14 @@ ul.action-links {
   }
 }
 
-.category-1 .category-clr,
-.category-clr-1 { color: $brand-herbicide!important; }
-.category-2 .category-clr,
-.category-clr-2 { color: $brand-fungicide!important; }
-.category-3 .category-clr,
-.category-clr-3 { color: $brand-insecticide!important; }
-.category-4 .category-clr,
-.category-clr-4 { color: $brand-seedtreater!important; }
-.category-5 .category-clr,
-.category-clr-5 { color: $brand-desiccant!important; }
-.category-6 .category-clr,
-.category-clr-6 { color: $brand-fertilizer!important; }
-.category-406 .category-clr,
-.category-clr-406 { color: $brand-other!important; }
+.category-1 .category-clr,    .category-clr-1 { color: $brand-herbicide!important; }
+.category-2 .category-clr,    .category-clr-2 { color: $brand-fungicide!important; }
+.category-3 .category-clr,    .category-clr-3 { color: $brand-insecticide!important; }
+.category-4 .category-clr,    .category-clr-4 { color: $brand-seedtreater!important; }
+.category-5 .category-clr,    .category-clr-5 { color: $brand-desiccant!important; }
+.category-6 .category-clr,    .category-clr-6 { color: $brand-fertilizer!important; }
+.category-406 .category-clr,  .category-clr-406 { color: $brand-other!important; }
+
 .category-1 .category-bkg { background-color: $brand-herbicide!important; }
 .category-2 .category-bkg { background-color: $brand-fungicide!important; }
 .category-3 .category-bkg { background-color: $brand-insecticide!important; }
@@ -945,6 +982,15 @@ ul.action-links {
 .category-5 .category-bkg { background-color: $brand-desiccant!important; }
 .category-6 .category-bkg { background-color: $brand-fertilizer!important; }
 .category-406 .category-bkg { background-color: $brand-other!important; }
+
+.category-1 .category-brd { border-color: $brand-herbicide!important; }
+.category-2 .category-brd { border-color: $brand-fungicide!important; }
+.category-3 .category-brd { border-color: $brand-insecticide!important; }
+.category-4 .category-brd { border-color: $brand-seedtreater!important; }
+.category-5 .category-brd { border-color: $brand-desiccant!important; }
+.category-6 .category-brd { border-color: $brand-fertilizer!important; }
+.category-406 .category-brd { border-color: $brand-other!important; }
+
 
 
 // --- Формы ----------------------------------------------------------------------------
