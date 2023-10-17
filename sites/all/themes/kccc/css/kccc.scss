@@ -710,6 +710,7 @@ ul.action-links {
   .text { font-size: $font-size-large; font-weight: 500; }
 
   @media #{$tablet} {
+    padding-right: 0;
     .content {
       margin: 40px 0 0 80px;
       padding: 1rem 2rem;
@@ -722,9 +723,6 @@ ul.action-links {
       left: -80px;
       width: 120px; height: 120px;
     }
-  }
-  @media #{$laptop} {
-    padding: 0;
   }
 }
 
