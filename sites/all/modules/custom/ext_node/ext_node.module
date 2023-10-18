@@ -161,13 +161,30 @@ function ext_node_preprocess_node(&$vars)
       // категория препарата для темизации в цвет
       $vars['classes_array'][] = 'category-' . $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
 
-      // подготовить карточки Регламентов
-      $vars['product_info']['reglaments_cards'] = [];
+      // подготовить карточки Регламентов и два пункта Характеристик
+      $reglaments_cards = [];
+      $cultures = $hobjects = [];
       if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
         foreach ($product_regs as $reg) {
-          $vars['product_info']['reglaments_cards'][] = theme('card_reglament', ['card' => $reg]);
+          $reglaments_cards[] = theme('card_reglament', ['card' => $reg]);
+          $cultures = array_merge($cultures, array_values($reg['cultures']['list']));
+
+          foreach ($reg['hobjects']['weed_groups'] as $wg) {
+            $hobjects[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
+          }
+          $hobjects = array_merge($hobjects, $reg['hobjects']['pest_classes']);
+          $hobjects = array_merge($hobjects, array_column($reg['hobjects']['list'], 'name'));
         }
       }
+      $vars['product_info']['reglaments_cards'] = $reglaments_cards;
+      $vars['product_info']['specs'][] = [
+        'icon_num' => '042',
+        'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($cultures)))),
+      ];
+      $vars['product_info']['specs'][] = [
+        'icon_num' => '031',
+        'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($hobjects)))),
+      ];
 
       // программно вставить блок Агро Калькулятор
       $block = block_load("ext_block", 'custom-block-agro-calculator');

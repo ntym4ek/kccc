@@ -2640,7 +2640,9 @@ ul.action-links {
   .node-preparation .product-specs .spec {
     display: flex;
     align-items: center;
-    padding-top: 2rem; }
+    padding-top: 2rem;
+    page-break-inside: avoid;
+    break-inside: avoid; }
     .node-preparation .product-specs .spec .media {
       flex: 0 0 4rem;
       height: 4rem;

@@ -926,6 +926,7 @@ ul.action-links {
     .spec {
       display: flex; align-items: center;
       padding-top: 2rem;
+      page-break-inside: avoid; break-inside: avoid;
       .media {
         flex: 0 0 4rem; height: 4rem;
         display: flex; justify-content: center; align-items: center;
