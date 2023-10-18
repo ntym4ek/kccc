@@ -2744,6 +2744,9 @@ ul.action-links {
       padding-right: 2rem; }
     .node-preparation .product-instructions .instruction .title {
       font-size: 1.25rem; } }
+@media only screen and (min-width: 768px) {
+  .node-preparation .block {
+    margin-bottom: 4rem; } }
 
 .node-page .files {
   margin-bottom: 2rem; }

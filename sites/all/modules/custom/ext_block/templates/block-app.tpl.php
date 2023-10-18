@@ -42,10 +42,10 @@
           <div class="download">
             <div class="row center-xs">
               <div class="col-xs-6 col-md-4">
-                <a href="#"><div class="img"><img src="/sites/all/modules/custom/ext_block/images/google_play.png" alt="Приложение ООО ТД «КЧХК» в Google Play"></div></a>
+                <a href="https://play.google.com/store/apps/details?id=com.kccc.agroshop"><div class="img"><img src="/sites/all/modules/custom/ext_block/images/google_play.png" alt="Приложение ООО ТД «КЧХК» в Google Play"></div></a>
               </div>
               <div class="col-xs-6 col-md-4">
-                <a href="#"><div class="img"><img src="/sites/all/modules/custom/ext_block/images/app_store.png" alt="Приложение ООО ТД «КЧХК» в App Store"></div></a>
+                <a href="https://apps.apple.com/ru/app/id1059364721"><div class="img"><img src="/sites/all/modules/custom/ext_block/images/app_store.png" alt="Приложение ООО ТД «КЧХК» в App Store"></div></a>
               </div>
             </div>
           </div>

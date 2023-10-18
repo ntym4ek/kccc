@@ -1034,7 +1034,8 @@ ul.action-links {
     }
   }
 
-  .product-reglaments {
+  @media #{$tablet} {
+    .block { margin-bottom: 4rem; }
   }
 }
 
