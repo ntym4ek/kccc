@@ -71,7 +71,7 @@ ul.menu {
 
 .menu-mobile-wr {
   ul.menu {
-    overflow: hidden;
+    //overflow: hidden;       в раскрытом боковом меню не видны нижние пункты
     li, li.leaf {
       display: list-item;
       padding: 0 1rem;
@@ -135,6 +135,7 @@ ul.menu {
   padding: 0 0 4em 0;
   transition: all 200ms ease-in;
   display: flex; flex-direction: column; flex-wrap: nowrap;
+  overflow-y: scroll;
   .logo {
     display:flex; flex-direction: column; align-items: center;
     color: #fff; font-size: 1.5rem;

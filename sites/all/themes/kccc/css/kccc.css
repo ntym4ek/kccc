@@ -1611,25 +1611,23 @@ ul.menu {
   .menu-wr .secondary-menu .sub-menu {
     right: 0; }
 
-.menu-mobile-wr ul.menu {
-  overflow: hidden; }
-  .menu-mobile-wr ul.menu li, .menu-mobile-wr ul.menu li.leaf {
-    display: list-item;
-    padding: 0 1rem; }
-    .menu-mobile-wr ul.menu li > a, .menu-mobile-wr ul.menu li.leaf > a {
-      color: #fff;
-      font-size: 14px;
-      text-decoration: none;
-      text-transform: uppercase;
-      word-spacing: 1.5px;
-      display: block;
-      padding: 1rem; }
-    .menu-mobile-wr ul.menu li:not(:last-child) a, .menu-mobile-wr ul.menu li.leaf:not(:last-child) a {
-      border-bottom: 1px solid #bbb; }
-  .menu-mobile-wr ul.menu li.leaf > a:hover, .menu-mobile-wr ul.menu li.leaf > a.active {
-    background: #24c400; }
-  .menu-mobile-wr ul.menu .sub-menu {
-    padding-left: 1rem; }
+.menu-mobile-wr ul.menu li, .menu-mobile-wr ul.menu li.leaf {
+  display: list-item;
+  padding: 0 1rem; }
+  .menu-mobile-wr ul.menu li > a, .menu-mobile-wr ul.menu li.leaf > a {
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    text-transform: uppercase;
+    word-spacing: 1.5px;
+    display: block;
+    padding: 1rem; }
+  .menu-mobile-wr ul.menu li:not(:last-child) a, .menu-mobile-wr ul.menu li.leaf:not(:last-child) a {
+    border-bottom: 1px solid #bbb; }
+.menu-mobile-wr ul.menu li.leaf > a:hover, .menu-mobile-wr ul.menu li.leaf > a.active {
+  background: #24c400; }
+.menu-mobile-wr ul.menu .sub-menu {
+  padding-left: 1rem; }
 
 .nav-mobile-label {
   background: none;
@@ -1681,7 +1679,8 @@ ul.menu {
   transition: all 200ms ease-in;
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap; }
+  flex-wrap: nowrap;
+  overflow-y: scroll; }
   .nav-mobile .logo {
     display: flex;
     flex-direction: column;
