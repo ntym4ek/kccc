@@ -443,7 +443,6 @@ function sec_catalog_get_product_reglaments_info($product_id)
       $icon_num = $product_info['category']['icon_num'];
     }
 
-
     $weed_groups = [];
     foreach ($regl_wr->field_reg_weed_groups->getIterator() as $weed_group_wr) {
       $lifes = [];
@@ -468,6 +467,11 @@ function sec_catalog_get_product_reglaments_info($product_id)
       ];
     }
     $hobjects_note = $regl_wr->field_hobjects_note->value();
+
+    // иначе вывести "Десикация"
+    if (!$weed_groups && !$pest_classes && !$hobjects && $product_info['category']['id'] == CAT_DESIC_TID) {
+      $pest_classes[] = 'Десикация';
+    }
 
     $prep_spends = [];
     foreach ($regl_wr->field_reg_prep_spends->getIterator() as $prep_spend_wr) {
