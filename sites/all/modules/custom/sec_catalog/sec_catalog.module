@@ -323,8 +323,10 @@ function sec_catalog_get_product_info($node)
       ];
 
       // единицы измерения
-      $unit_short = 'л';
-      if ($node_wr->field_prep_unit->value()) $unit_short = $node_wr->field_prep_unit->value();
+      $unit_short = '';
+      if ($node_wr->field_prep_tare->value()) {
+        $unit_short = $node_wr->field_prep_tare->field_prep_unit->value();
+      }
       $unit_apply = $product['category'] == 4 ? 'т' : 'га';
       $product['units'] = [
         'short' => $unit_short,
