@@ -2604,7 +2604,7 @@ ul.action-links {
     color: #7D7C7C;
     text-align: center;
     padding: 1rem 1.5rem;
-    margin-bottom: 2rem; }
+    margin-top: 1rem; }
     .node-preparation .product-advantages .advantage i.icon {
       color: #43B02A;
       font-size: 8rem; }
@@ -2625,7 +2625,7 @@ ul.action-links {
   @media only screen and (min-width: 1280px) {
     .node-preparation .product-advantages .advantage {
       padding: 2rem;
-      margin: 0 1rem; }
+      margin: 1rem 1rem 0; }
       .node-preparation .product-advantages .advantage i.icon {
         font-size: 8rem; }
       .node-preparation .product-advantages .advantage .text {

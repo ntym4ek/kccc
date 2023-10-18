@@ -886,7 +886,7 @@ ul.action-links {
     .advantage {
       box-shadow: 1px 1px 10px #ccc;
       color: $text-light; text-align: center;
-      padding: 1rem 1.5rem; margin-bottom: 2rem;
+      padding: 1rem 1.5rem; margin-top: 1rem;
       i.icon {
         color: $brand-color; font-size: 8rem;
       }
@@ -909,7 +909,7 @@ ul.action-links {
     }
     @media #{$laptop} {
       .advantage {
-        padding: 2rem; margin: 0 1rem;
+        padding: 2rem; margin: 1rem 1rem 0;
         i.icon { font-size: 8rem; }
         .text { font-size: $font-size-h4; font-weight: 700; }
       }
