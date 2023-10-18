@@ -2308,6 +2308,8 @@ ul.action-links {
     font-weight: 500;
     margin-bottom: 0; } }
 @media only screen and (min-width: 1280px) {
+  .card-product-h .product-info {
+    padding-right: 1rem; }
   .card-product-h .title {
     font-size: 1.875rem;
     margin: .5rem 0 1rem; }

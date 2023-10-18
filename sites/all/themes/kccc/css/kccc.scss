@@ -574,6 +574,7 @@ ul.action-links {
     margin-bottom: 1rem;
   }
   .nowrap { white-space: normal; } // у Глифора не входит в горизонтальную карточку
+
   @media #{$tablet} {
     &.card { margin-bottom: 1rem; }
     .title {
@@ -587,6 +588,7 @@ ul.action-links {
     }
   }
   @media #{$laptop} {
+    .product-info { padding-right: 1rem; }
     .title {
       font-size: $font-size-h3;
       margin: .5rem 0 1rem;

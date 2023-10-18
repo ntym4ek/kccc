@@ -547,7 +547,15 @@ function sec_catalog_get_product_reglaments_info($product_id)
       if (!$icon_num) $icon_num = sec_catalog_get_culture_class_icon($culture_wr->getIdentifier());
     }
     $cultures_note = $regl_wr->field_cultures_note->value();
-
+    if (!$icon_num) {
+      if (strpos(drupal_strtolower($cultures_note), 'пары') !== false
+        || strpos(drupal_strtolower($cultures_note), 'поля') !== false
+        || strpos(drupal_strtolower($cultures_note), 'земл') !== false
+        || strpos(drupal_strtolower($cultures_note), 'газон') !== false)
+      {
+        $icon_num = '016';
+      }
+    }
 
 
     $weed_groups = [];
