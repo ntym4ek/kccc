@@ -850,17 +850,17 @@ ul.action-links {
       }
     }
     .components { margin-bottom: 1rem; }
-    .actions { margin-top: 2rem; }
+    .actions {
+      text-align: center;
+      margin-top: 2rem;
+    }
 
     @media #{$tablet} {
       .top { text-align: left; }
-      .title {
-        font-size: $font-size-h3; font-weight: 300;
-      }
+      .title { font-size: $font-size-h3; font-weight: 300; }
       .summary { font-weight: 500; }
-      .specification {
-        font-size: $font-size-base;
-      }
+      .specification { font-size: $font-size-base; }
+      .actions { text-align: left; }
     }
     @media #{$laptop} {
       margin-bottom: 4rem;
@@ -874,9 +874,7 @@ ul.action-links {
         i.icon { font-size: 3em; }
       }
       .components .icon,
-      .formulation .icon {
-        flex: 0 0 40px;
-      }
+      .formulation .icon { flex: 0 0 40px; }
       .bottom { margin-bottom: 3rem; }
     }
   }

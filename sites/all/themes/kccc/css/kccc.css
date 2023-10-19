@@ -2567,6 +2567,7 @@ ul.action-links {
   .node-preparation .product-intro .components {
     margin-bottom: 1rem; }
   .node-preparation .product-intro .actions {
+    text-align: center;
     margin-top: 2rem; }
   @media only screen and (min-width: 768px) {
     .node-preparation .product-intro .top {
@@ -2577,7 +2578,9 @@ ul.action-links {
     .node-preparation .product-intro .summary {
       font-weight: 500; }
     .node-preparation .product-intro .specification {
-      font-size: 1rem; } }
+      font-size: 1rem; }
+    .node-preparation .product-intro .actions {
+      text-align: left; } }
   @media only screen and (min-width: 1280px) {
     .node-preparation .product-intro {
       margin-bottom: 4rem; }
