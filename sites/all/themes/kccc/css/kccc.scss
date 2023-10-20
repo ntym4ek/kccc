@@ -197,8 +197,11 @@ a { color: $brand-color; }
   }
 }
 
-// аккордеон в меню (+js)
+
 .nav-mobile {
+  .search { padding: 0 1rem; }
+
+  // аккордеон в меню (+js)
   .main-menu {
     .expanded > a {
       display: flex; align-items: center;
@@ -259,6 +262,10 @@ a { color: $brand-color; }
   @media #{$laptop} {
     .page-banner .screen-width { height: 24rem; }
     .page-title h1 { max-width: 40rem; }
+    .search {
+      position: absolute; top: 150px; right: 0;
+      max-width: 250px;
+    }
   }
 }
 

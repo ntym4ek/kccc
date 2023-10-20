@@ -1016,7 +1016,8 @@ h6, .h6 {
   height: 160px; }
 .page-highlighted .page-banner .container {
   display: flex;
-  align-items: flex-end; }
+  align-items: flex-end;
+  position: relative; }
 .page-highlighted .page-title {
   color: #fff;
   text-shadow: 1px 1px 10px #666; }
@@ -1524,7 +1525,8 @@ form .ajax-progress,
   .input-group .form-text:not(:last-child) {
     border-right: none; }
   .input-group .btn {
-    display: block; }
+    display: block;
+    padding: 0 0.5rem; }
 
 .user-auth-form-wrapper {
   max-width: 450px;
@@ -1928,6 +1930,8 @@ a {
     color: #000;
     transition: color 100ms ease-out; }
 
+.nav-mobile .search {
+  padding: 0 1rem; }
 .nav-mobile .main-menu .expanded > a {
   display: flex;
   align-items: center;
@@ -1980,7 +1984,12 @@ a {
   .page-highlighted .page-banner .screen-width {
     height: 24rem; }
   .page-highlighted .page-title h1 {
-    max-width: 40rem; } }
+    max-width: 40rem; }
+  .page-highlighted .search {
+    position: absolute;
+    top: 150px;
+    right: 0;
+    max-width: 250px; } }
 
 .footer {
   color: #000; }

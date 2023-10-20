@@ -23,6 +23,28 @@ function ext_form_subscribe_form($form, $form_state)
   return $form;
 }
 
+function ext_form_search_form($form, $form_state)
+{
+  $form['k'] = [
+    '#type' => 'textfield',
+    '#attributes' => ['placeholder' => 'поиск'],
+    '#prefix' => '<div class="form-item input-group">'
+  ];
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#value' => '<i class="icon icon-095"></i>',
+    '#attributes' => ['class' => ['btn', 'btn-brand']],
+    '#theme_wrappers' => ['button_icon'],
+    '#suffix' => '</div>'
+  ];
+
+  return $form;
+}
+function ext_form_search_form_submit($form, $form_state)
+{
+  drupal_goto('poisk', ['query' => ['k' => $form_state['values']['k']]]);
+}
+
 /**
  * Implements hook_form_alter()
  */

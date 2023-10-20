@@ -23,7 +23,9 @@ function ext_views_preprocess_page(&$vars)
   }
 }
 
-
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function ext_views_preprocess_views_view_unformatted(&$vars)
 {
   if ($vars['view']->name == 'search') {
@@ -47,3 +49,34 @@ function ext_views_preprocess_views_view_unformatted(&$vars)
     }
   }
 }
+
+/**
+ * Вернуть exposed form заданного view
+ *
+ * https://pro-cosmos.blogspot.com/2011/08/exposed.html
+ */
+function ext_views_get_view_exposed_form($view_name, $display_id = 'page')
+{
+  if ($view = views_get_view($view_name)) {
+    if ($view->access($display_id)) {
+      $view->set_display($display_id);
+      if (isset($view->display_handler)) {
+        $view->init_handlers();
+        if ($view->display_handler->uses_exposed()) {
+          $exposed_form = $view->display_handler->get_plugin('exposed_form');
+          $rendered_form = $exposed_form->render_exposed_form();
+          $view->destroy();
+          return $rendered_form;
+        }
+
+      }
+
+    }
+    $view->destroy();
+  }
+
+  drupal_set_message('Something gone wrong', 'error');
+  return '';
+}
+
+

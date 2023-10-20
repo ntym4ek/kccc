@@ -126,7 +126,10 @@ h6, .h6 { font-size: $font-size-h6; font-weight: 500; margin: 1rem 0; }
       background-size: cover; background-position: center;
       height: 160px;
     }
-    .container { display: flex; align-items: flex-end; }
+    .container {
+      display: flex; align-items: flex-end;
+      position: relative;
+    }
   }
   .page-title {
     color: #fff; text-shadow: 1px 1px 10px #666;

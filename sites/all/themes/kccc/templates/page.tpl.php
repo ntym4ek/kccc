@@ -5,6 +5,11 @@
       <img src="<?php print $logo; ?>" />
       <span><?php print $site_name; ?></span>
     </div>
+    <?php if (isset($search_form) && $is_mobile): ?>
+      <div class="search hide-lg">
+        <?php print render($search_form); ?>
+      </div>
+    <?php endif; ?>
     <div class="menu-mobile-wr">
       <?php if ($primary_nav): print $primary_nav; endif; ?>
       <?php if ($secondary_nav): print $secondary_nav; endif; ?>
@@ -72,6 +77,11 @@
                   <?php if ($title): ?><h1 class="title"><?php print $title; ?></h1><?php endif; ?>
                   <?php print render($title_suffix); ?>
                 </div>
+                <?php if (isset($search_form) && !$is_mobile): ?>
+                <div class="search hide show-lg">
+                  <?php print drupal_render($search_form); ?>
+                </div>
+                <?php endif; ?>
               </div>
             </div>
           </div>

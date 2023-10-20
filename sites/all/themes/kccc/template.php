@@ -17,6 +17,12 @@ function kccc_preprocess_page(&$vars)
     ], 'description');
   }
 
+  // -- Форма поиска в шапке
+  if ($_GET['q'] != 'poisk') {
+//    $vars['search_form'] = ext_views_get_view_exposed_form('search');
+    $vars['search_form'] = drupal_get_form('ext_form_search_form');
+  }
+
   // -- Форма подписки в футере
   $vars['subscribe_form'] = drupal_get_form('ext_form_subscribe_form');
 }

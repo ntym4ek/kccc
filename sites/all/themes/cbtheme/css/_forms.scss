@@ -111,7 +111,10 @@ form,
   .form-text:not(:last-child) {
     border-right: none;
   }
-  .btn { display: block; }
+  .btn {
+    display: block;
+    padding: 0 0.5rem;
+  }
 }
 
 //.field-type-field-collection {
