@@ -15,6 +15,6 @@ function ext_views_views_data()
           'handler' => 'ext_views_handler_filter_recent_filter',
         ),
       )
-    )
-  );
+    ),
+);
 }

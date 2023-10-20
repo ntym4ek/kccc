@@ -92,23 +92,23 @@ function ext_node_preprocess_node(&$vars)
 
   // -- Автор
   if ($vars['display_submitted']) {
-    if ($node->uid) {
-      $author_info = ext_user_get_user_info($node->uid);
-    } else {
-      $author_info = ext_user_get_dumb_user_info();
+    if ($vars['view_mode'] == 'full') {
+      if ($node->uid) {
+        $author_info = ext_user_get_user_info($node->uid);
+      } else {
+        $author_info = ext_user_get_dumb_user_info();
+      }
+      $vars['author'] = theme('card_contact', $author_info);
     }
-    $vars['author'] = theme('card_contact', $author_info);
   }
 
 
   // -- Тип Афиша
   if ($node->type == 'agenda') {
     // для Афиши вывести период
-    if ($node->type == 'agenda') {
-      $date_st = date('d.m.Y', $node->field_period['und'][0]['value']);
-      $date_fn = date('d.m.Y', $node->field_period['und'][0]['value2']);
-      $vars['date'] = $date_st == $date_fn ? $date_st : $date_st . ' - ' . $date_fn;
-    }
+    $date_st = date('d.m.Y', $node->field_period['und'][0]['value']);
+    $date_fn = date('d.m.Y', $node->field_period['und'][0]['value2']);
+    $vars['date'] = $date_st == $date_fn ? $date_st : $date_st . ' - ' . $date_fn;
   }
 
   // -- Тип Программа защиты
@@ -267,4 +267,30 @@ function ext_node_text_typograph_request($text)
   curl_close($ch);
 
   return $result ?? false;
+}
+
+
+/**
+ * Implements hook_entity_property_info_alter.
+ */
+function ext_node_entity_property_info_alter(&$info)
+{
+  // добавить всем типам материалов поле веса в поисковом индексе
+  $info['node']['properties']['search_sort_order'] = array(
+    'type' => 'integer',
+    'label' => t('Search sort order'),
+    'getter callback' => 'ext_node_search_sort_order_getter_callback',
+  );
+}
+function ext_node_search_sort_order_getter_callback($item)
+{
+  // определить вес по типу контента
+  $weight = 999;
+
+  // todo добавить Препараты в поле
+  $arr = ['preparation', 'review', 'blog', 'article', 'culture', 'weed', 'pest', 'disease'];
+
+  $index = array_search($item->type, $arr);
+
+  return $index !== false ? $index : $weight;
 }

@@ -4,3 +4,4 @@ core = 7.x
 package = Custom
 
 files[] = views/ext_views_handler_filter_recent_filter.inc
+files[] = views/ext_views_handler_sort_search_content_type.inc

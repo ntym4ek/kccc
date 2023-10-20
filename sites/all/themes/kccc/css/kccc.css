@@ -2201,37 +2201,8 @@ ul.action-links {
   padding: 0 1rem; }
 .page-content .view .views-row,
 .page-right .view .views-row {
-  flex-basis: 100%;
-  max-width: 100%;
-  padding: 0 1rem;
   margin-bottom: 1rem; }
 
-@media only screen and (min-width: 768px) {
-  .page-content .view .views-row {
-    flex-basis: 50%;
-    max-width: 50%;
-    padding: 0 1rem; } }
-@media only screen and (min-width: 768px) {
-  .page-content .view-programs .views-row {
-    flex-basis: 33.3333333333%;
-    max-width: 33.3333333333%;
-    padding: 0 1rem; } }
-@media only screen and (min-width: 768px) {
-  .page-content .view-cultures .views-row,
-  .page-content .view-diseases .views-row,
-  .page-content .view-weeds .views-row,
-  .page-content .view-pests .views-row {
-    flex-basis: 33.3333333333%;
-    max-width: 33.3333333333%;
-    padding: 0 1rem; } }
-@media only screen and (min-width: 1280px) {
-  .page-content .view-cultures .views-row,
-  .page-content .view-diseases .views-row,
-  .page-content .view-weeds .views-row,
-  .page-content .view-pests .views-row {
-    flex-basis: 25%;
-    max-width: 25%;
-    padding: 0 1rem; } }
 @media only screen and (min-width: 1280px) {
   .page-content .view .views-row {
     margin-bottom: 2rem; } }

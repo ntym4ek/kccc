@@ -494,22 +494,22 @@ ul.action-links {
     }
 
     .views-row {
-      @include col('xs', 12);
+      //@include col('xs', 12);   // проставлено в Представлениях
       margin-bottom: 1rem;
     }
   }
 }
 
 .page-content {
-  .view           .views-row { @include col('md', 6); }
-  .view-programs  .views-row { @include col('md', 4); }
-  .view-cultures  .views-row,
-  .view-diseases  .views-row,
-  .view-weeds  .views-row,
-  .view-pests  .views-row {
-    @include col('md', 4);
-    @include col('lg', 3);
-  }
+  //.view           .views-row { @include col('md', 6); }  // проставлено в Представлениях
+  //.view-programs  .views-row { @include col('md', 4); }
+  //.view-cultures  .views-row,
+  //.view-diseases  .views-row,
+  //.view-weeds  .views-row,
+  //.view-pests  .views-row {
+  //  @include col('md', 4);
+  //  @include col('lg', 3);
+  //}
 
   @media #{$laptop} {
     .view {
@@ -897,6 +897,7 @@ ul.action-links {
         padding-top: 1rem;
       }
     }
+
     @media #{$tablet} {
       margin-bottom: 4rem;
       .advantage {

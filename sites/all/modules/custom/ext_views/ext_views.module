@@ -22,3 +22,28 @@ function ext_views_preprocess_page(&$vars)
     if (in_array(arg(0), ['novosti', 'afisha']))     { $vars['title'] = 'События'; }
   }
 }
+
+
+function ext_views_preprocess_views_view_unformatted(&$vars)
+{
+  if ($vars['view']->name == 'search') {
+    // скорректировать заголовок группы
+    $arr = ['Отзыв' => 'Отзывы', 'Блог' => 'Блоги', 'Справочник | Сорное растение' => 'Справочник сорных растений', 'Препарат' => 'Препараты',
+      'Программа защиты' => 'Программы защиты', 'Вакансия' => 'Вакансии', 'Справочник | Культура' => 'Справочник культур',
+      'Справочник | Болезнь культуры' => 'Справочник болезней культур', 'Справочник | Вредитель культуры' => 'Справочник вредителей культур', 'Новость' => 'Новости',
+      '' => ''];
+    $vars['title'] = $arr[$vars['title']] ?? $vars['title'];
+
+    // размер карточек в зависимости от типа материала
+    foreach ($vars['rows'] as $id => $result) {
+      $class = 'col-xs-12 col-md-6';
+      if (in_array($vars['view']->result[$id]->_entity_properties["type"], ['culture', 'weed', 'pest', 'disease', 'vacancy'])) {
+        $class = 'col-xs-12 col-md-4 col-lg-3';
+      }
+      if (in_array($vars['view']->result[$id]->_entity_properties["type"], ['blog', 'review', 'article', 'agenda'])) {
+        $class = 'col-xs-12 col-md-4 col-lg-4';
+      }
+      $vars["classes_array"][$id] = $vars["classes_array"][$id] ? $vars["classes_array"][$id] . ' ' . $class : $class;
+    }
+  }
+}
