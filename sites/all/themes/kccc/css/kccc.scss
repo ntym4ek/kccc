@@ -234,6 +234,7 @@ a { color: $brand-color; }
 }
 
 .page-highlighted {
+  position: relative;
   .page-banner .screen-width { height: 16rem; }
   .page-title {
     display: flex; align-items: center;
@@ -263,7 +264,7 @@ a { color: $brand-color; }
     .page-banner .screen-width { height: 24rem; }
     .page-title h1 { max-width: 40rem; }
     .search {
-      position: absolute; top: 150px; right: 0;
+      position: absolute; top: 160px; right: 0; z-index: 9;
       max-width: 250px;
     }
   }
@@ -580,13 +581,17 @@ ul.action-links {
     color: $text-light; font-weight: 700;
     margin-bottom: 1rem;
   }
-  .nowrap { white-space: normal; } // у Глифора не входит в горизонтальную карточку
+  .nowrap { white-space: normal; } // но у Глифора не входит в горизонтальную карточку
 
   @media #{$tablet} {
     &.card { margin-bottom: 1rem; }
     .title {
       font-size: $font-size-h4;
       margin: .5rem 0;
+    }
+    .product-info {
+      margin-left: -1rem;
+      padding-right: 1rem;
     }
     .image { text-align: left; }
     .components {
@@ -595,7 +600,6 @@ ul.action-links {
     }
   }
   @media #{$laptop} {
-    .product-info { padding-right: 1rem; }
     .title {
       font-size: $font-size-h3;
       margin: .5rem 0 1rem;

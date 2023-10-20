@@ -1590,7 +1590,7 @@ ul.menu {
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    z-index: 1;
+    z-index: 10;
     background-color: #f1f1f1;
     min-width: 225px;
     padding: 0.5rem 0;
@@ -1956,40 +1956,43 @@ a {
   font-size: 1.875rem;
   margin-top: 0; }
 
-.page-highlighted .page-banner .screen-width {
-  height: 16rem; }
-.page-highlighted .page-title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem; }
-  .page-highlighted .page-title .page-title-logo {
-    margin-right: 1rem; }
+.page-highlighted {
+  position: relative; }
+  .page-highlighted .page-banner .screen-width {
+    height: 16rem; }
+  .page-highlighted .page-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem; }
+    .page-highlighted .page-title .page-title-logo {
+      margin-right: 1rem; }
+      .page-highlighted .page-title .page-title-logo i.icon {
+        font-size: 4rem; }
+    .page-highlighted .page-title h1 {
+      font-size: 1.875rem;
+      text-transform: uppercase;
+      margin-bottom: 0; }
+  .page-highlighted .page-context-menu .screen-width {
+    background-color: #383838; }
+  @media only screen and (min-width: 768px) {
+    .page-highlighted .page-banner .screen-width {
+      height: 20rem; }
     .page-highlighted .page-title .page-title-logo i.icon {
-      font-size: 4rem; }
-  .page-highlighted .page-title h1 {
-    font-size: 1.875rem;
-    text-transform: uppercase;
-    margin-bottom: 0; }
-.page-highlighted .page-context-menu .screen-width {
-  background-color: #383838; }
-@media only screen and (min-width: 768px) {
-  .page-highlighted .page-banner .screen-width {
-    height: 20rem; }
-  .page-highlighted .page-title .page-title-logo i.icon {
-    font-size: 6rem; }
-  .page-highlighted .page-title h1 {
-    font-size: 2.5rem;
-    max-width: 31rem; } }
-@media only screen and (min-width: 1280px) {
-  .page-highlighted .page-banner .screen-width {
-    height: 24rem; }
-  .page-highlighted .page-title h1 {
-    max-width: 40rem; }
-  .page-highlighted .search {
-    position: absolute;
-    top: 150px;
-    right: 0;
-    max-width: 250px; } }
+      font-size: 6rem; }
+    .page-highlighted .page-title h1 {
+      font-size: 2.5rem;
+      max-width: 31rem; } }
+  @media only screen and (min-width: 1280px) {
+    .page-highlighted .page-banner .screen-width {
+      height: 24rem; }
+    .page-highlighted .page-title h1 {
+      max-width: 40rem; }
+    .page-highlighted .search {
+      position: absolute;
+      top: 160px;
+      right: 0;
+      z-index: 9;
+      max-width: 250px; } }
 
 .footer {
   color: #000; }
@@ -2280,6 +2283,9 @@ ul.action-links {
   .card-product-h .title {
     font-size: 1.25rem;
     margin: .5rem 0; }
+  .card-product-h .product-info {
+    margin-left: -1rem;
+    padding-right: 1rem; }
   .card-product-h .image {
     text-align: left; }
   .card-product-h .components {
@@ -2287,8 +2293,6 @@ ul.action-links {
     font-weight: 500;
     margin-bottom: 0; } }
 @media only screen and (min-width: 1280px) {
-  .card-product-h .product-info {
-    padding-right: 1rem; }
   .card-product-h .title {
     font-size: 1.875rem;
     margin: .5rem 0 1rem; }

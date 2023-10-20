@@ -47,7 +47,7 @@ ul.menu {
   .sub-menu {
     box-shadow: 0 8px 16px 5px rgba(0, 0, 0, 0.2);
     visibility: hidden; opacity: 0;
-    position: absolute; z-index: 1;
+    position: absolute; z-index: 10;
     background-color: #f1f1f1;
     min-width: 225px;
     padding: $gutter/2 0;

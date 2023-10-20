@@ -64,6 +64,12 @@
         <?php if ($page['highlighted'] || $is_title_as_banner): ?>
         <div class="page-highlighted">
 
+          <?php if (isset($search_form) && !$is_mobile): ?>
+            <div class="search hide show-lg">
+              <?php print drupal_render($search_form); ?>
+            </div>
+          <?php endif; ?>
+
           <?php if ($page['highlighted']): ?>
             <?php print render($page['highlighted']); ?>
           <?php endif; ?>
@@ -77,11 +83,6 @@
                   <?php if ($title): ?><h1 class="title"><?php print $title; ?></h1><?php endif; ?>
                   <?php print render($title_suffix); ?>
                 </div>
-                <?php if (isset($search_form) && !$is_mobile): ?>
-                <div class="search hide show-lg">
-                  <?php print drupal_render($search_form); ?>
-                </div>
-                <?php endif; ?>
               </div>
             </div>
           </div>
