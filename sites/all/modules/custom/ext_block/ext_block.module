@@ -9,6 +9,9 @@ function ext_block_block_info()
     'custom-block-front-banner'  => [                     // по какой-то причине, если индекс содержит _ вместо - блок виден в базовой теме, но НЕ виден в подтеме.
       'info' => t('CB | Front Banner'),
     ],
+    'custom-block-front-counters' => [
+      'info' => t('CB | Счётчики на главной'),
+    ],
     'custom-block-new-products' => [
       'info' => t('CB | New products'),
     ],
@@ -141,6 +144,10 @@ function ext_block_theme()
     'custom-block-front-banner'    => [
       'variables' => [],
       'template' => 'templates/block-front-banner',
+    ],
+    'custom-block-front-counters'    => [
+      'variables' => [],
+      'template' => 'templates/block-front-counters',
     ],
     'custom-block-new-products'   => [
       'variables' => [],

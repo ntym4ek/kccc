@@ -158,6 +158,9 @@
   .block-new-products .carousel.outer-navigation {
     padding: 0 3rem; } }
 
+#block-ext-block-custom-block-catalog {
+  margin-bottom: 0; }
+
 .block-catalog .screen-width {
   background: #f1f1f1;
   min-height: 230px; }
@@ -171,7 +174,8 @@
   align-items: center;
   border-bottom: 1px solid #7D7C7C;
   font-size: 1.875rem;
-  margin-bottom: 3rem;
+  margin: 1rem 0;
+  padding: 7px 0;
   width: 20rem; }
   .block-catalog .text .index {
     color: #7D7C7C; }
@@ -179,8 +183,11 @@
     flex: auto;
     color: #43B02A;
     font-weight: 500;
-    text-align: center; }
+    padding-left: 3rem; }
 @media only screen and (min-width: 768px) {
+  .block-catalog .b1 {
+    padding: 3rem 0; } }
+@media only screen and (min-width: 1280px) {
   .block-catalog .b1 {
     padding: 5rem 0; } }
 
@@ -389,6 +396,38 @@
 @media only screen and (min-width: 1280px) {
   .block-counters .counter span {
     font-size: 6rem; } }
+
+.block-front-counters .screen-width {
+  background: #43B02A; }
+.block-front-counters .counters {
+  padding: 2rem 0;
+  text-align: center; }
+.block-front-counters .counter {
+  color: #fff;
+  margin-bottom: 1rem; }
+.block-front-counters span {
+  font-size: 5rem;
+  font-weight: 700; }
+.block-front-counters p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  width: 215px;
+  margin: 1rem auto; }
+@media only screen and (min-width: 768px) {
+  .block-front-counters .counters {
+    padding: 3rem 0; }
+  .block-front-counters .counter {
+    margin-bottom: 0; }
+  .block-front-counters span {
+    font-size: 3rem; }
+  .block-front-counters p {
+    font-size: 0.875rem;
+    width: initial; } }
+@media only screen and (min-width: 1280px) {
+  .block-front-counters span {
+    font-size: 4rem; }
+  .block-front-counters p {
+    font-size: 1.25rem; } }
 
 .block-about {
   font-size: 1.125rem; }

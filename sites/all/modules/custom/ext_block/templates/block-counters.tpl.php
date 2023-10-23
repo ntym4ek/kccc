@@ -14,7 +14,7 @@
             <div class="col-xs-12 col-md-3">
               <div class="counter">
                 <span>35</span>
-                <p>млн.&nbsp;л готовой продукции ежегодно</p>
+                <p>млн&nbsp;л готовой продукции ежегодно</p>
               </div>
             </div>
             <div class="col-xs-12 col-md-3">
