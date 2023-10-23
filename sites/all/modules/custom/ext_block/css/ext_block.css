@@ -159,60 +159,30 @@
     padding: 0 3rem; } }
 
 .block-catalog .screen-width {
-  background-image: url(../images/banner_catalog_m.jpg);
-  background-size: cover;
-  background-position: center center;
+  background: #f1f1f1;
   min-height: 230px; }
 .block-catalog .b1 {
-  padding: 3rem 1rem 0; }
+  padding: 2rem 0; }
 .block-catalog .category {
-  text-align: center;
-  margin-bottom: 3rem; }
-  .block-catalog .category i.icon-rounded {
-    border-width: 3px;
-    font-size: 4rem; }
-  .block-catalog .category .title {
-    color: #fff;
+  display: flex;
+  justify-content: center; }
+.block-catalog .text {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #7D7C7C;
+  font-size: 1.875rem;
+  margin-bottom: 3rem;
+  width: 20rem; }
+  .block-catalog .text .index {
+    color: #7D7C7C; }
+  .block-catalog .text .title {
+    flex: auto;
+    color: #43B02A;
     font-weight: 500;
-    margin-top: 1rem; }
-  .block-catalog .category img {
-    width: 60%;
-    height: 60%; }
-  .block-catalog .category.category-1 i.icon {
-    border-color: #EF2931;
-    color: #EF2931;
-    background-color: #fcdddf; }
-  .block-catalog .category.category-2 i.icon {
-    border-color: #664E8A;
-    color: #664E8A;
-    background-color: #d0c6df; }
-  .block-catalog .category.category-3 i.icon {
-    border-color: #00ACEA;
-    color: #00ACEA;
-    background-color: #d1f3ff; }
-  .block-catalog .category.category-4 i.icon {
-    border-color: #AC196F;
-    color: #AC196F;
-    background-color: #f8cce6; }
-  .block-catalog .category.category-5 i.icon {
-    border-color: #F99339;
-    color: #F99339;
-    background-color: #feefe1; }
-  .block-catalog .category.category-6 i.icon {
-    border-color: #31A34E;
-    color: #31A34E;
-    background-color: #b7e9c4; }
+    text-align: center; }
 @media only screen and (min-width: 768px) {
-  .block-catalog .screen-width {
-    background-image: url(../images/banner_catalog.jpg); }
   .block-catalog .b1 {
-    padding: 3rem 5rem 0; } }
-@media only screen and (min-width: 1280px) {
-  .block-catalog .b1 {
-    padding: 3rem 10rem 0; }
-  .block-catalog .category i.icon-rounded {
-    border-width: 6px;
-    font-size: 6rem; } }
+    padding: 5rem 0; } }
 
 .block-video-about .b2 {
   font-size: 1.25rem;
