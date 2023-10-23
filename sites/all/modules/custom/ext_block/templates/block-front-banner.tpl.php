@@ -9,13 +9,16 @@
           <?php foreach ($slides as $slide): ?>
             <div class="swiper-slide">
               <div class="img" style="background-image: url(<?php print $slide['img']; ?>);"></div>
-              <div class="container">
-                <div class="text-wr">
-                  <h2><?php print $slide['title']; ?></h2>
-                  <a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a>
+              <div class="text-wr">
+                <div class="container">
+                  <div class="row">
+                    <div class="text">
+                      <h2><?php print $slide['title']; ?></h2>
+                      <a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="gradient-y"></div>
             </div>
           <?php endforeach; ?>
         </div>

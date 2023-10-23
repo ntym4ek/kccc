@@ -91,14 +91,6 @@
     z-index: 1;
     background-size: cover;
     background-position: center; }
-  .block-front-banner .swiper-slide .gradient-y {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    background: linear-gradient(180deg, rgba(15, 52, 68, 0) -8.49%, rgba(21, 53, 66, 0.306) 57.14%, rgba(2, 27, 38, 0.585) 99.44%); }
 .block-front-banner .swiper-pagination-bullet {
   background: #fff;
   border-radius: 0;
@@ -107,34 +99,47 @@
   opacity: .7; }
 .block-front-banner .swiper-pagination-bullet-active {
   background: #43B02A; }
+.block-front-banner .container {
+  position: relative; }
 .block-front-banner .text-wr {
+  display: flex;
   position: absolute;
   z-index: 3;
-  color: #fff;
   margin-top: 15rem;
-  padding-left: 1rem;
-  max-width: 310px; }
-  .block-front-banner .text-wr h2 {
+  width: 100%; }
+  .block-front-banner .text-wr:before {
+    background: rgba(27, 30, 40, 0.5);
+    content: "";
+    display: block;
+    flex: 1; }
+  .block-front-banner .text-wr:after {
+    flex: 1;
+    content: "";
+    display: block; }
+.block-front-banner .text {
+  background: rgba(27, 30, 40, 0.5);
+  color: #fff;
+  padding: 2rem 1rem; }
+  .block-front-banner .text h2 {
     font-size: 1.7rem;
     font-weight: 700;
     text-shadow: 1px 1px 10px #666;
     display: inline-block;
     margin-bottom: 2rem; }
 @media only screen and (min-width: 768px) {
-  .block-front-banner .text-wr {
-    max-width: 450px; }
-    .block-front-banner .text-wr h2 {
-      font-size: 2.5rem; } }
+  .block-front-banner .text-wr h2 {
+    font-size: 2.5rem; } }
 @media only screen and (min-width: 1280px) {
   .block-front-banner .swiper-slide {
     height: 750px; }
   .block-front-banner .text-wr {
-    margin-top: 210px;
-    padding-left: 0;
-    max-width: 500px; }
+    margin-top: 220px; }
     .block-front-banner .text-wr h2 {
       font-size: 60px;
-      margin: 30px 0; } }
+      margin: 30px 0; }
+  .block-front-banner .text {
+    margin-right: 1rem;
+    padding: 2rem 24rem 4rem 1rem; } }
 
 .block-new-products .carousel {
   padding-top: 1rem; }
