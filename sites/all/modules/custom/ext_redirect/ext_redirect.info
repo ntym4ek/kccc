@@ -1,0 +1,4 @@
+name = Ext Redirect
+description = Редирект отсутствующих разделов с нового на старый сайт
+core = 7.x
+package = Custom

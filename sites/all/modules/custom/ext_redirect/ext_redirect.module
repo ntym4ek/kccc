@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function ext_redirect_init()
+{
+  // todo Разделы с изменившимися адресами
+  //  301 Moved Permanently
+  //  Препараты, Новости, Блоги, Афиша, Представители, Контакты и тд.
+  if (false) {
+    header('Location: ' . 'https://kccc.ru/info/contacts', true, 301);
+    drupal_exit();
+  }
+
+  // todo Отсутствующие разделы
+  //  302 Moved Temporarily
+  //  kccc.ru -> old.kccc.ru
+  //  ссылки на Препараты в поле, Калькулятор
+  if ($_GET['q'] == 'test') {
+    header('Location: ' . 'https://kccc.ru/info/contacts', true, 302);
+    drupal_exit();
+  }
+}
