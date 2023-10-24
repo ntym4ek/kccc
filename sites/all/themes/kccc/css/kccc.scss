@@ -795,7 +795,11 @@ ul.action-links {
     }
   }
   .summary { margin-bottom: 1rem; }
-  .images { margin-bottom: 1rem; }
+  .images {
+    margin-bottom: 1rem;
+    .image { display: flex; align-items: center; justify-content: center; }
+    img { max-height: 100%; }
+  }
 
   blockquote {
     font-weight: 500;
@@ -820,9 +824,16 @@ ul.action-links {
     .field { margin-bottom: 0; }
   }
 
+  @media #{$tablet} {
+    .images .image {
+      min-height: 250px; height: 500px;
+    }
+  }
   @media #{$laptop} {
     margin-bottom: 4rem;
-    .images .image { min-height: 250px; }
+    .images .image {
+      height: 700px;
+    }
     .summary,
     .images { margin-bottom: 2rem; }
   }

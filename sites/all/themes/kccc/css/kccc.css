@@ -2478,6 +2478,12 @@ ul.action-links {
     margin-bottom: 1rem; }
   .node-full .images {
     margin-bottom: 1rem; }
+    .node-full .images .image {
+      display: flex;
+      align-items: center;
+      justify-content: center; }
+    .node-full .images img {
+      max-height: 100%; }
   .node-full blockquote {
     font-weight: 500;
     border: 1px solid #000;
@@ -2505,11 +2511,15 @@ ul.action-links {
       bottom: -27px; }
     .node-full blockquote .field {
       margin-bottom: 0; }
+  @media only screen and (min-width: 768px) {
+    .node-full .images .image {
+      min-height: 250px;
+      height: 500px; } }
   @media only screen and (min-width: 1280px) {
     .node-full {
       margin-bottom: 4rem; }
       .node-full .images .image {
-        min-height: 250px; }
+        height: 700px; }
       .node-full .summary,
       .node-full .images {
         margin-bottom: 2rem; } }
