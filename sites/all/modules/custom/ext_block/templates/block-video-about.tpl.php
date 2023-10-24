@@ -3,11 +3,6 @@
 
 <div class="block-video-about">
 
-  <div class="section-title">
-    <div>О компании</div>
-    <div class="underline"></div>
-  </div>
-
   <div class="row">
     <div class="col-xs-12">
       <div class="b1">

@@ -330,7 +330,23 @@
   .block-counters .counter span {
     font-size: 6rem; } }
 
-.block-front-counters .screen-width {
+.block-front-counters .screen-width.row-1 {
+  background: #606060;
+  color: #fff; }
+.block-front-counters .section-title {
+  color: #fff; }
+  .block-front-counters .section-title .underline {
+    background: #fff; }
+.block-front-counters .description {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  padding-bottom: 3rem; }
+  .block-front-counters .description a {
+    color: inherit; }
+    .block-front-counters .description a:hover {
+      text-decoration: underline; }
+.block-front-counters .screen-width.row-2 {
   background: #43B02A; }
 .block-front-counters .counters {
   padding: 2rem 0;
@@ -357,6 +373,8 @@
     font-size: 0.875rem;
     width: initial; } }
 @media only screen and (min-width: 1280px) {
+  .block-front-counters .description {
+    font-weight: 700; }
   .block-front-counters span {
     font-size: 4rem; }
   .block-front-counters p {
