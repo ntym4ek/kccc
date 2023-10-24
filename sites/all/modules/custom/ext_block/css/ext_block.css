@@ -235,6 +235,8 @@
   background: #f1f1f1;
   padding: 2rem 0;
   overflow: initial; }
+.block-video-can video {
+  display: block; }
 .block-video-can .b1 {
   display: flex;
   flex-wrap: wrap;
