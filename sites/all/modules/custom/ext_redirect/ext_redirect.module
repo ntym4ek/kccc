@@ -5,20 +5,91 @@
  */
 function ext_redirect_init()
 {
-  // todo Разделы с изменившимися адресами
+  // todo переадресация Разделов с изменившимися адресами
   //  301 Moved Permanently
   //  Препараты, Новости, Блоги, Афиша, Представители, Контакты и тд.
-  if (false) {
-    header('Location: ' . 'https://kccc.ru/info/contacts', true, 301);
+  $old_path = $_GET['q'];
+  if (drupal_valid_path($old_path) || drupal_lookup_path('source', $old_path)) return;
+
+  $new_path = '';
+  switch($old_path) {
+    case 'info/contacts'                              : $new_path = 'kontakty'; break;
+    case 'info/representatives'                       : $new_path = 'predstaviteli'; break;
+    case 'info/contact-us'                            : $new_path = 'filialy'; break;
+    case 'news/events'                                : $new_path = 'novosti'; break;
+    case 'agenda'                                     : $new_path = 'afisha'; break;
+    case 'handbook/protection-programs'               : $new_path = 'programmy-zashchity'; break;
+    case 'handbook/protection-programs/programma-zashchity-soi'             : $new_path = 'programmy-zashchity/soya'; break;
+    case 'handbook/protection-programs/programma-zashchity-svyokly'         : $new_path = 'programmy-zashchity/svyokla'; break;
+    case 'handbook/protection-programs/programma-zashchity-rapsa'           : $new_path = 'programmy-zashchity/raps'; break;
+    case 'handbook/protection-programs/programma-zashchity-podsolnechnika'  : $new_path = 'programmy-zashchity/podsolnechnik'; break;
+    case 'handbook/protection-programs/programma-zashchity-lna'             : $new_path = 'programmy-zashchity/lyon'; break;
+    case 'handbook/protection-programs/programma-zashchity-kukuruzy'        : $new_path = 'programmy-zashchity/kukuruza'; break;
+    case 'handbook/protection-programs/programma-zashchity-goroha'          : $new_path = 'programmy-zashchity/goroh'; break;
+    case 'handbook/protection-programs/programma-zashchity-kartofelya'      : $new_path = 'programmy-zashchity/kartofel'; break;
+    case 'handbook/protection-programs/programma-zashchity-zernovyh'        : $new_path = 'programmy-zashchity/zernovye'; break;
+    case 'handbook'                                   : $new_path = 'spravochniki'; break;
+    case 'handbook/cultures'                          : $new_path = 'spravochniki/kultury'; break;
+    case 'handbook/weeds'                             : $new_path = 'spravochniki/sornye-rasteniya'; break;
+    case 'handbook/diseases'                          : $new_path = 'spravochniki/bolezni'; break;
+    case 'handbook/pests'                             : $new_path = 'spravochniki/vrediteli'; break;
+    case 'agro-expert/online'                         : $new_path = 'eksperty'; break;
+    case 'info/about'                                 : $new_path = 'o-kompanii'; break;
+    case 'reviews'                                    : $new_path = 'otzyvy'; break;
+    case 'complaints'                                 : $new_path = 'predlozheniya'; break;
+    case 'idea'                                       : $new_path = 'ideya'; break;
+    case 'info/job'                                   : $new_path = 'vakansii'; break;
+    case 'catalog/agrochemicals/disinfectants'        : $new_path = 'katalog/protraviteli'; break;
+    case 'catalog/agrochemicals/herbicides'           : $new_path = 'katalog/gerbicidy'; break;
+    case 'catalog/agrochemicals/fungicides'           : $new_path = 'katalog/fungicidy'; break;
+    case 'catalog/agrochemicals/insecticides'         : $new_path = 'katalog/insekticidy'; break;
+    case 'catalog/agrochemicals/desiccants'           : $new_path = 'katalog/desikanty'; break;
+    case 'catalog/agrochemicals/mineral-fertilizers'  : $new_path = 'katalog/udobreniya'; break;
+    case 'catalog/agrochemicals/surfactants'          : $new_path = 'katalog/drugie'; break;
+  }
+  // wildcard
+  if (!$new_path) {
+    $path = str_replace(
+      [
+        'news/events',
+        'blogs',
+        'catalog/agrochemicals/disinfectants',
+        'catalog/agrochemicals/herbicides',
+        'catalog/agrochemicals/fungicides',
+        'catalog/agrochemicals/insecticides',
+        'catalog/agrochemicals/desiccants',
+        'catalog/agrochemicals/mineral-fertilizers',
+        'catalog/agrochemicals/surfactants',
+      ],
+      [
+        'novosti',
+        'blog',
+        'katalog/protraviteli',
+        'katalog/gerbicidy',
+        'katalog/fungicidy',
+        'katalog/insekticidy',
+        'katalog/desikanty',
+        'katalog/udobreniya',
+        'katalog/drugie',
+      ], $old_path);
+    if (drupal_valid_path($path) || drupal_lookup_path('source', $path)) {
+      $new_path = $path;
+    }
+  }
+  if ($new_path) {
+    header('Location: ' . 'https://kccc.ru/' .$new_path, true, 301);
     drupal_exit();
   }
 
-  // todo Отсутствующие разделы
-  //  302 Moved Temporarily
-  //  kccc.ru -> old.kccc.ru
-  //  ссылки на Препараты в поле, Калькулятор
-  if ($_GET['q'] == 'test') {
-    header('Location: ' . 'https://kccc.ru/info/contacts', true, 302);
-    drupal_exit();
+//   если путь на сайте не существует, переадресовать на старый сайт
+//   302 Moved Temporarily
+//   todo kccc.ru -> old.kccc.ru
+//   todo не забыть про запросы от Приложения и Расписания
+//   todo в теории,всё подряд переадресовать нельзя
+  if (!drupal_valid_path($old_path)) { // Not a system URL.
+    if (!drupal_lookup_path('source', $old_path))  { // Not a path alias.
+      header('Location: ' . 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"], true, 302);
+      drupal_exit();
+    }
   }
 }

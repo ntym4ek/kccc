@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="17d1e1ff-47bc-4c58-812c-9e04651d822d" name="kccc" url="http://ftp.kccc.nichost.ru">
-        <fileTransfer rootFolder="/new.kccc.ru/docs" host="ftp.kccc.nichost.ru" port="21">
+        <fileTransfer rootFolder="/kccc.ru/docs" host="ftp.kccc.nichost.ru" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="60000" connections="4" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
