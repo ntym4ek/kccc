@@ -2937,7 +2937,7 @@ ul.action-links {
   font-size: 1.875rem;
   font-weight: 700;
   text-align: center;
-  padding: 1rem 0; }
+  padding: 1rem 0 2rem; }
   .section-title .underline {
     width: 4em;
     height: 3px;
@@ -2948,6 +2948,9 @@ ul.action-links {
     padding: 1rem 2rem; }
     .section-title.invert .underline {
       background: #fff; }
+  @media only screen and (min-width: 768px) {
+    .section-title:not(.invert) {
+      padding-bottom: 3rem; } }
   @media only screen and (min-width: 1280px) {
     .section-title {
       font-size: 1.875rem; } }

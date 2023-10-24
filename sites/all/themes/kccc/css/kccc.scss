@@ -1196,7 +1196,7 @@ ul.action-links {
 
 .section-title {
   color: $brand-color; font-size: $font-size-h3; font-weight: 700; text-align: center;
-  padding: 1rem 0;
+  padding: 1rem 0 2rem;
   .underline {
     width: 4em; height: 3px;
     margin: 0.5rem auto;
@@ -1209,9 +1209,9 @@ ul.action-links {
     .underline { background: #fff; }
   }
 
-  //@media #{$tablet} {
-  //  font-size: $font-size-h4;
-  //}
+  @media #{$tablet} {
+    &:not(.invert) { padding-bottom: 3rem; }
+  }
   @media #{$laptop} {
     font-size: $font-size-h3;
   }

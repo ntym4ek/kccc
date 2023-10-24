@@ -254,6 +254,7 @@ function ext_block_get_front_banner_slides()
       }
       $banners[] = [
         'title' => $term->name,
+        'description' => $term->description,
         'img' => file_create_url($term->field_image["und"][0]["uri"]),
         'path' => $term->field_text["und"][0]["value"],
       ];

@@ -14,7 +14,8 @@
                   <div class="row">
                     <div class="text">
                       <h2><?php print $slide['title']; ?></h2>
-                      <a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a>
+                      <?php if ($slide['description']): ?><div class="summary"><?php print $slide['description']; ?></div><?php endif; ?>
+                      <div class="more"><a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a></div>
                     </div>
                   </div>
                 </div>

@@ -1,73 +1,5 @@
 @import "../../../../themes/kccc/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
 
-.block-front-intro {
-  .screen-width {
-    background-image: url(../images/banner_1_m.jpg); background-size: cover; background-position: center;
-  }
-  .content { margin-top: 2rem; }
-  .b1 { color: #fff; }
-  h2 {
-    display: inline-block;
-    font-size: $font-size-h3*.8; font-weight: 700;
-    margin-top: 2rem;
-  }
-  .b3 {
-    background: rgba(255, 255, 255, .6);
-    margin: 2rem 0 6rem 2rem; padding: 3rem 3rem 2rem 2rem;
-    position: relative;
-    min-height: 12rem;
-    .text { font-weight: 500; }
-    .frame {
-      border: 2px solid #fff;
-      position: absolute; top: 2rem; left: -2rem; right: 2rem; bottom: 2rem;
-    }
-    a.btn {
-      position: absolute; left: 0; bottom: -4rem;
-    }
-  }
-
-  @media #{$tablet} {
-    .screen-width {
-      background-image: url(../images/banner_1.jpg);
-      height: 23rem;
-    }
-    .content { margin-top: 3rem; }
-    .b1 { padding-left: 2rem; }
-    .branding {
-      font-size: 1.2rem;
-      .name { width: 350px; }
-    }
-    h2 {
-      font-size: $font-size-h3;
-      margin-top: 3rem;
-      width: 450px;
-    }
-    .b3 {
-      margin-left: 1rem; padding-top: 2rem;
-      min-height: 11rem;
-      .frame { top: 1rem; bottom: 1rem; }
-    }
-  }
-  @media #{$laptop} {
-    .screen-width { height: 40rem; }
-    .content { margin-top: 5rem; }
-    .b1 { padding-left: 0; }
-    .branding {
-      font-size: 1.5rem;
-      .name { width: 420px; }
-    }
-    h2 { font-size: 36px; }
-    .b3 {
-      margin: 0; padding: 3rem;
-      width: 75%;
-      min-height: 18rem;
-      .frame { top: 2rem; bottom: 4rem; }
-      .text { font-size: $font-size-h4; }
-      a.btn { left: 2rem; bottom: -1rem; }
-    }
-  }
-}
-
 .block-front-banner {
   .swiper-slide {
     height: 635px;
@@ -77,7 +9,7 @@
     }
   }
   .swiper-pagination-bullet {
-    background: #fff;
+    background: #fff; box-shadow: 1px 1px 10px #333333;
     border-radius: 0;
     width: 1rem; height: 1rem;
     opacity: .7;
@@ -108,9 +40,13 @@
     padding: 2rem 1rem;
     h2 {
       font-size: 1.7rem; font-weight: 700; text-shadow: 1px 1px 10px #666;
-      display: inline-block;
+      display: block;
       margin-bottom: 2rem;
     }
+    .summary {
+      font-size: $font-size-h3; font-weight: 500;
+    }
+    .more { margin-top: 4rem; }
   }
 
   @media #{$tablet} {
@@ -124,7 +60,7 @@
       margin-top: 220px;
       h2 {
         font-size: 60px;
-        margin: 30px 0;
+        margin: 3rem 0;
       }
     }
     .text {
@@ -218,32 +154,42 @@
 }
 
 .block-agro-services {
+  .content {
+    display: flex; flex-wrap: wrap; justify-content: space-between;
+  }
   .service {
+    flex: 0 0 100%;
     text-align: center;
     margin-bottom: 2rem;
   }
   .title {
     display: flex; align-items: center; justify-content: center;
     background: $brand-color;
-    color: #fff; font-size: $font-size-h4; font-weight: 500;
+    color: #fff; font-size: $font-size-h4; font-weight: 700;
     padding: 0.8rem 2rem;
   }
   .well {
     display: flex; justify-content: center; align-items: center;
     background: $well-bkg-clr;
-    min-height: 13rem;
+    min-height: 15rem;
     i.icon {
-      color: $brand-color; font-size: 5rem;
+      color: $brand-color; font-size: 5.5rem;
       border-color: $brand-color;
     }
   }
   a { color: inherit; }
 
   @media #{$tablet} {
-    .title { min-height: 70px; }
+    .service { flex: 0 0 31%; }
+    .title { min-height: 70px; font-weight: 500; }
+    .well { min-height: 13rem; }
+    i.icon { font-size: 3.5rem; }
   }
   @media #{$laptop} {
-    .title { min-height: initial; }
+    .service { flex: 0 0 29%; }
+    .title { min-height: initial; font-weight: 700; }
+    .well { min-height: 15rem; }
+    i.icon { font-size: 5.5rem; }
   }
 }
 
