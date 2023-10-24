@@ -9,6 +9,9 @@ function ext_block_block_info()
     'custom-block-front-banner'  => [                     // по какой-то причине, если индекс содержит _ вместо - блок виден в базовой теме, но НЕ виден в подтеме.
       'info' => t('CB | Front Banner'),
     ],
+    'custom-block-front-counters' => [
+      'info' => t('CB | Счётчики на главной'),
+    ],
     'custom-block-new-products' => [
       'info' => t('CB | New products'),
     ],
@@ -25,7 +28,7 @@ function ext_block_block_info()
       'info' => t('CB | Contacts'),
     ],
     'custom-block-agro-services' => [
-      'info' => t('CB | Agro Services'),
+      'info' => 'CB | Агросервисы',
     ],
     'custom-block-information'  => [
       'info' => t('CB | Information'),
@@ -78,6 +81,9 @@ function ext_block_block_info()
     'custom-block-dumb' => [
       'info' => 'CB | Пустая заглушка для сайдборда',
     ],
+    'custom-block-news' => [
+      'info' => 'CB | Новости',
+    ],
   ];
 }
 
@@ -117,6 +123,10 @@ function ext_block_block_view($delta = '')
     $block['content'] = theme($delta, ['categories' => $categories]);
   }
 
+  elseif ($delta == 'custom-block-news') {
+    $block['content'] = theme($delta, ['cards' => ext_block_get_front_news()]);
+  }
+
   // блоки со статичной разметкой
   elseif (strpos($delta, 'custom-block-') === 0) {
     $block['content'] = theme($delta);
@@ -141,6 +151,10 @@ function ext_block_theme()
     'custom-block-front-banner'    => [
       'variables' => [],
       'template' => 'templates/block-front-banner',
+    ],
+    'custom-block-front-counters'    => [
+      'variables' => [],
+      'template' => 'templates/block-front-counters',
     ],
     'custom-block-new-products'   => [
       'variables' => [],
@@ -234,6 +248,10 @@ function ext_block_theme()
       'variables' => [],
       'template' => 'templates/block-dumb',
     ],
+    'custom-block-news' => [
+      'variables' => [],
+      'template' => 'templates/block-news',
+    ],
   ];
 }
 
@@ -247,6 +265,7 @@ function ext_block_get_front_banner_slides()
       }
       $banners[] = [
         'title' => $term->name,
+        'description' => $term->description,
         'img' => file_create_url($term->field_image["und"][0]["uri"]),
         'path' => $term->field_text["und"][0]["value"],
       ];
@@ -254,4 +273,30 @@ function ext_block_get_front_banner_slides()
   }
 
   return $banners;
+}
+
+function ext_block_get_front_news()
+{
+  $news = [];
+
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', 'article');
+  $dbr->addField('n', 'nid');
+  $dbr->orderBy('n.created', 'DESC');
+  $dbr->range(0, 8);
+  if ($nodes = $dbr->execute()->fetchCol()) {
+
+    foreach($nodes as $nid) {
+      $node_wr = entity_metadata_wrapper('node', $nid);
+      $text = $node_wr->body->summary->value() ?: text_summary($node_wr->body->value->value(), '', 180);
+      $news[] = [
+        'title' => $node_wr->label(),
+        'text' => $text,
+        'img' => image_style_url('teaser', $node_wr->field_images[0]->value()['uri']),
+        'path' => drupal_get_path_alias('node/' . $node_wr->getIdentifier()),
+      ];
+    }
+  }
+
+  return $news;
 }

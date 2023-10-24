@@ -1,9 +1,10 @@
+<?php ?>
+
 <div class="page-wrapper">
 
   <div class="nav-mobile">
     <div class="logo">
       <img src="<?php print $logo; ?>" />
-      <span><?php print $site_name; ?></span>
     </div>
     <?php if (isset($search_form) && $is_mobile): ?>
       <div class="search hide-lg">

@@ -8,7 +8,6 @@
     <div class="underline"></div>
   </div>
 
-
   <div class="row center-xs">
     <div class="col-xs-12 col-md-6 col-lg-4">
       <div class="advantage">

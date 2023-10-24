@@ -9,21 +9,25 @@
 
     <div class="container">
       <div class="b1">
-      <div class="row">
+        <div class="row">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
+            <div class="row">
 
-        <?php foreach ($categories as $category): ?>
-        <div class="col-xs-6 col-md-4">
-          <div class="category category-<?php print $category['id']; ?>">
-            <a href="<?php print $category['path']; ?>">
-<!--              <div class="icon"><img src="--><?php //print $category['image']; ?><!--" alt="--><?php //print $category['label']; ?><!--"></div>-->
-              <div class="media hover-zoom"><i class="icon icon-rounded icon-<?php print $category['icon_num']; ?>"></i></div>
-              <div class="title h4"><?php print $category['label']; ?></div>
-            </a>
+              <?php $index = 1; ?>
+              <?php foreach ($categories as $category): ?>
+              <div class="col-xs-12 col-md-6">
+                <div class="category">
+                  <div class="text">
+                    <div class="index"><?php print $index++; ?></div>
+                    <div class="title"><a href="<?php print $category['path']; ?>"><?php print $category['label']; ?></a></div>
+                  </div>
+                </div>
+              </div>
+              <?php endforeach; ?>
+
+            </div>
           </div>
         </div>
-        <?php endforeach; ?>
-
-      </div>
       </div>
     </div>
 

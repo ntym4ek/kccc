@@ -2478,6 +2478,12 @@ ul.action-links {
     margin-bottom: 1rem; }
   .node-full .images {
     margin-bottom: 1rem; }
+    .node-full .images .image {
+      display: flex;
+      align-items: center;
+      justify-content: center; }
+    .node-full .images img {
+      max-height: 100%; }
   .node-full blockquote {
     font-weight: 500;
     border: 1px solid #000;
@@ -2505,11 +2511,15 @@ ul.action-links {
       bottom: -27px; }
     .node-full blockquote .field {
       margin-bottom: 0; }
+  @media only screen and (min-width: 768px) {
+    .node-full .images .image {
+      min-height: 250px;
+      height: 500px; } }
   @media only screen and (min-width: 1280px) {
     .node-full {
       margin-bottom: 4rem; }
       .node-full .images .image {
-        min-height: 250px; }
+        height: 700px; }
       .node-full .summary,
       .node-full .images {
         margin-bottom: 2rem; } }
@@ -2604,14 +2614,12 @@ ul.action-links {
     .node-preparation .product-advantages {
       margin-bottom: 4rem; }
       .node-preparation .product-advantages .advantage {
-        height: 100%;
-        margin-bottom: 0; }
+        height: 100%; }
         .node-preparation .product-advantages .advantage i.icon {
           font-size: 5rem; } }
   @media only screen and (min-width: 1280px) {
     .node-preparation .product-advantages .advantage {
-      padding: 2rem;
-      margin: 1rem 1rem 0; }
+      padding: 2rem; }
       .node-preparation .product-advantages .advantage i.icon {
         font-size: 8rem; }
       .node-preparation .product-advantages .advantage .text {
@@ -2937,7 +2945,7 @@ ul.action-links {
   font-size: 1.875rem;
   font-weight: 700;
   text-align: center;
-  padding: 1rem 0; }
+  padding: 1rem 0 2rem; }
   .section-title .underline {
     width: 4em;
     height: 3px;
@@ -2948,6 +2956,9 @@ ul.action-links {
     padding: 1rem 2rem; }
     .section-title.invert .underline {
       background: #fff; }
+  @media only screen and (min-width: 768px) {
+    .section-title:not(.invert) {
+      padding-bottom: 3rem; } }
   @media only screen and (min-width: 1280px) {
     .section-title {
       font-size: 1.875rem; } }
