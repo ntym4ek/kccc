@@ -924,13 +924,12 @@ ul.action-links {
       margin-bottom: 4rem;
       .advantage {
         height: 100%;
-        margin-bottom: 0;
         i.icon { font-size: 5rem; }
       }
     }
     @media #{$laptop} {
       .advantage {
-        padding: 2rem; margin: 1rem 1rem 0;
+        padding: 2rem;
         i.icon { font-size: 8rem; }
         .text { font-size: $font-size-h4; font-weight: 700; }
       }

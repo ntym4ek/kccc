@@ -2614,14 +2614,12 @@ ul.action-links {
     .node-preparation .product-advantages {
       margin-bottom: 4rem; }
       .node-preparation .product-advantages .advantage {
-        height: 100%;
-        margin-bottom: 0; }
+        height: 100%; }
         .node-preparation .product-advantages .advantage i.icon {
           font-size: 5rem; } }
   @media only screen and (min-width: 1280px) {
     .node-preparation .product-advantages .advantage {
-      padding: 2rem;
-      margin: 1rem 1rem 0; }
+      padding: 2rem; }
       .node-preparation .product-advantages .advantage i.icon {
         font-size: 8rem; }
       .node-preparation .product-advantages .advantage .text {
