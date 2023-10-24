@@ -9,29 +9,29 @@
 
       <div class="col-xs-12 col-md-7">
         <div class="infos">
-          <a href="#">
+          <a href="/blog">
             <div class="info">
               <div class="media"><i class="icon icon-111"></i></div>
               <div class="text">
-                <div class="title h3"><a href="/blog">Блоги</a></div>
+                <div class="title h3">Блоги</div>
                 <div class="description">Публикации наших сотрудников и представителей</div>
               </div>
             </div>
           </a>
-          <a href="#">
+          <a href="/novosti">
             <div class="info">
               <div class="media"><i class="icon icon-112"></i></div>
               <div class="text">
-                <div class="title h3"><a href="/novosti">События</a></div>
+                <div class="title h3">События</div>
                 <div class="description">Встречи, выставки и другие мероприятия с участием Торгового Дома</div>
               </div>
             </div>
           </a>
-          <a href="#">
+          <a href="/spravochniki">
             <div class="info">
               <div class="media"><i class="icon icon-113"></i></div>
               <div class="text">
-                <div class="title h3"><a href="/spravochniki">Справочники</a></div>
+                <div class="title h3">Справочники</div>
                 <div class="description">Кладезь полезной информации для агронома</div>
               </div>
             </div>
@@ -39,9 +39,7 @@
         </div>
       </div>
       <div class="col-xs-12 col-md-5">
-        <div class="b1">
-          <div class="frame"></div>
-        </div>
+        <div class="b1"></div>
       </div>
 
     </div>

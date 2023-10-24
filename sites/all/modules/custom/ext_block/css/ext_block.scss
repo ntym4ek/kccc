@@ -197,9 +197,10 @@
   a { color: inherit; }
   .content {
     background: $well-bkg-clr;
-    padding: 3rem 2rem 2rem;
+    padding: 2rem;
     position: relative;
   }
+  .infos { padding-left: 1rem; }
   .info {
     display: flex;
     margin-bottom: 2rem;
@@ -211,22 +212,15 @@
     background-image: url(../images/plants.jpg); background-size: cover; background-position: right center;
     position: relative;
     height: 100%;
-    margin-right: 2rem;
     min-height: 15rem;
-  }
-  .frame {
-    border: 3px solid $divider-clr;
-    position: absolute; top: 2rem; left: 3rem; right: -1rem; bottom: 4rem;
   }
 
   @media #{$tablet} {
-    .content { padding-right: 0; }
+    .infos { padding-left: 2rem; }
+    .media i.icon { font-size: 5rem; }
   }
   @media #{$laptop} {
-    .content { padding: 3rem 6rem 2rem 4rem; }
-    .b1 { margin: 0; }
-    .frame { right: -3rem; }
-    .media i.icon { font-size: 5rem; }
+    .infos { padding-left: 4rem; }
   }
 }
 
@@ -250,7 +244,7 @@
       padding: 0;
     }
     .b1 { padding: 1rem 8rem 1rem 1rem; }
-    .b2 { margin: -3rem 0; }
+    //.b2 { margin: -3rem 0; }
   }
 }
 

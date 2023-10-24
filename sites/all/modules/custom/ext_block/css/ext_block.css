@@ -201,8 +201,10 @@
   color: inherit; }
 .block-information .content {
   background: #f1f1f1;
-  padding: 3rem 2rem 2rem;
+  padding: 2rem;
   position: relative; }
+.block-information .infos {
+  padding-left: 1rem; }
 .block-information .info {
   display: flex;
   margin-bottom: 2rem; }
@@ -219,27 +221,15 @@
   background-position: right center;
   position: relative;
   height: 100%;
-  margin-right: 2rem;
   min-height: 15rem; }
-.block-information .frame {
-  border: 3px solid #D6D6D6;
-  position: absolute;
-  top: 2rem;
-  left: 3rem;
-  right: -1rem;
-  bottom: 4rem; }
 @media only screen and (min-width: 768px) {
-  .block-information .content {
-    padding-right: 0; } }
-@media only screen and (min-width: 1280px) {
-  .block-information .content {
-    padding: 3rem 6rem 2rem 4rem; }
-  .block-information .b1 {
-    margin: 0; }
-  .block-information .frame {
-    right: -3rem; }
+  .block-information .infos {
+    padding-left: 2rem; }
   .block-information .media i.icon {
     font-size: 5rem; } }
+@media only screen and (min-width: 1280px) {
+  .block-information .infos {
+    padding-left: 4rem; } }
 
 .block-video-can .screen-width {
   background: #f1f1f1;
@@ -260,9 +250,7 @@
     margin-bottom: 2rem;
     padding: 0; }
   .block-video-can .b1 {
-    padding: 1rem 8rem 1rem 1rem; }
-  .block-video-can .b2 {
-    margin: -3rem 0; } }
+    padding: 1rem 8rem 1rem 1rem; } }
 
 .block-app .title {
   color: #43B02A;
