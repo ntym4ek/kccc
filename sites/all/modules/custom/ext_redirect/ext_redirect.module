@@ -85,10 +85,18 @@ function ext_redirect_init()
 //   302 Moved Temporarily
 //   todo kccc.ru -> old.kccc.ru
 //   todo не забыть про запросы от Приложения и Расписания
-//   todo в теории,всё подряд переадресовать нельзя
+//   todo в теории,всё подряд переадресовать нельзя (что-то 404, но оно и на старом 404)
   if (!drupal_valid_path($old_path)) { // Not a system URL.
     if (!drupal_lookup_path('source', $old_path))  { // Not a path alias.
-      header('Location: ' . 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"], true, 302);
+
+      // переадресация ещё нереализованного функционала на старый сайт
+      // например: Препараты в поле
+      switch($old_path) {
+        case 'preparaty-v-pole' : $new_path = 'before-after'; break;
+        default:                  $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
+      }
+
+      header('Location: ' . $new_path, true, 302);
       drupal_exit();
     }
   }
