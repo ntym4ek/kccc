@@ -2513,13 +2513,10 @@ ul.action-links {
       margin-bottom: 0; }
   @media only screen and (min-width: 768px) {
     .node-full .images .image {
-      min-height: 250px;
-      height: 500px; } }
+      min-height: 250px; } }
   @media only screen and (min-width: 1280px) {
     .node-full {
       margin-bottom: 4rem; }
-      .node-full .images .image {
-        height: 700px; }
       .node-full .summary,
       .node-full .images {
         margin-bottom: 2rem; } }

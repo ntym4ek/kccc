@@ -826,14 +826,11 @@ ul.action-links {
 
   @media #{$tablet} {
     .images .image {
-      min-height: 250px; height: 500px;
+      min-height: 250px;
     }
   }
   @media #{$laptop} {
     margin-bottom: 4rem;
-    .images .image {
-      height: 700px;
-    }
     .summary,
     .images { margin-bottom: 2rem; }
   }
