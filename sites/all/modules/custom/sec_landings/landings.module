@@ -1,0 +1,59 @@
+<?php
+
+const LANDINGS_URL_WEBINAR = 'webinar';
+const LANDINGS_URL_WEBINAR2 = 'webinar2';
+
+/**
+ *  Implementation of hook_menu()
+ */
+function landings_menu()
+{
+  $items['landing/' . LANDINGS_URL_WEBINAR] = array(
+    'page callback' => 'landings_webinar_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['landing/' . LANDINGS_URL_WEBINAR2] = array(
+    'page callback' => 'landings_webinar2_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/webinar2.landings.inc',
+  );
+
+  return $items;
+}
+
+function landings_theme()
+{
+  return [
+    'landing_webinar' => array(
+      'template' => 'templates/landing--webinar',
+    ),
+  ];
+}
+
+function landings_webinar_page()
+{
+  $output = theme('landing_webinar');
+
+  return $output;
+}
+
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function landings_preprocess_page(&$vars)
+{
+  // подключить индивидуальный стиль страницы
+  if (strpos($_GET['q'], 'landing/') === 0) {
+    $landing_page = check_plain(str_replace('landing/', '', $_GET['q']));
+    $path = drupal_get_path('module', 'landings') . '/css/landing-' . $landing_page . '.css';
+    if (file_exists(DRUPAL_ROOT . '/' . $path)) {
+      drupal_add_css($path);
+    }
+
+    $vars['theme_hook_suggestions'][] = 'page__empty';
+  }
+}
+
