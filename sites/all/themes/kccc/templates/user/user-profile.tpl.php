@@ -42,10 +42,10 @@
 
             <?php if (empty($user_info['staff']['hide_contact'])): ?>
             <div class="profile-info">
-              <?php if (!empty($user_info['staff']['manage']['formatted'])): ?>
+              <?php if (!empty($user_info['staff']['regions']['formatted'])): ?>
               <div class="row">
                 <div class="col-xs-12 col-md-3"><div class="label">Регион</div></div>
-                <div class="col-xs-12 col-md-9"><div class="field"><?php print $user_info['staff']['manage']['formatted']; ?></div></div>
+                <div class="col-xs-12 col-md-9"><div class="field"><?php print $user_info['staff']['regions']['formatted']; ?></div></div>
               </div>
               <?php endif; ?>
 

@@ -1318,13 +1318,16 @@ ul.action-links {
     font-size: $font-size-h3; font-weight: 700; line-height: 2.2rem;
     margin-bottom: 2rem;
   }
-  .profile-role {  font-size: $font-size-h4; font-weight: 500; }
+  .profile-role {
+    font-size: $font-size-h4; font-weight: 500;
+    margin-bottom: 1rem;
+  }
   .profile-info .field {
     font-size: $font-size-large;
   }
   .profile-counts {
     display: flex;
-    margin: 1rem 0;
+    margin-bottom: 1rem;
     .profile-count {
       flex: 0 0 auto;
       border-radius: 4px;
@@ -1345,8 +1348,9 @@ ul.action-links {
   @media #{$tablet} {
     margin-bottom: 4rem;
     .underline { margin: .5rem 0; }
+    .profile-role { margin-bottom: 2rem; }
     .profile-counts {
-      margin: 2rem 0;
+      margin-bottom: 2rem;
       .profile-count { margin-right: 2rem;  }
     }
   }

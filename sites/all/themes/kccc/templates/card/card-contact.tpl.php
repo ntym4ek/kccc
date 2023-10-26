@@ -17,7 +17,7 @@
       <?php endif; ?>
     </div>
     <div class="contact-info">
-      <div class="department"><?php print empty($staff['manage']['regions']) ? $staff['office']['department'] : reset($staff['manage']['regions']); ?></div>
+      <div class="department"><?php print $staff['manage']; ?></div>
       <div class="name">
         <?php if ($active): ?>
           <?php if (!empty($main['name_full'])) : ?><?php print $main['name_full']; ?><?php endif; ?>

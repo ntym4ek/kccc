@@ -507,17 +507,20 @@ function ext_user_get_user_info($user = null)
       if (user_has_kccc_email($account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
         $staff_wr = entity_metadata_wrapper('profile2', $staff_pr2);
 
+        $manage = '';
+
         $office_id = $office = $department = '';
         if ($staff_wr->field_staff_office->value()) {
           $office_id = $staff_wr->field_staff_office->getIdentifier();
           $office = $staff_wr->field_staff_office->label();
           $dep_term = taxonomy_get_parents($staff_wr->field_staff_office->getIdentifier());
           $department = reset($dep_term);
+          $manage = $department->name;
         }
 
         $directions = $areas = $regions = [];
-        $manage_fomatted = '';
-        // зона ответственности
+        $regions_formatted = '';
+        // регионы
         if ($staff_wr->field_regions->value()) {
           foreach($staff_wr->field_regions->getIterator() as $region_wr) {
             $depth = helper_taxonomy_get_depth($region_wr->getIdentifier());
@@ -526,12 +529,20 @@ function ext_user_get_user_info($user = null)
             if ($depth == 2) $regions[$region_wr->getIdentifier()] = $region_wr->label();
           }
 
-          // зона ответственности
-          $manage = [];
-          if (!empty($directions))  $manage += array_values($directions);
-          if (!empty($areas))       $manage += array_values($areas);
-          if (!empty($regions))     $manage += array_values($regions);
-          if ($manage) $manage_fomatted = implode(', ', $manage);
+          $format = [];
+          if (!empty($directions))  {
+            $format += array_values($directions);
+            $manage = format_plural(count($directions), reset($directions), '@count directions');
+          }
+          if (!empty($areas))       {
+            $format += array_values($areas);
+            $manage = format_plural(count($areas), reset($areas), '@count areas');
+          }
+          if (!empty($regions))     {
+            $format += array_values($regions);
+            $manage = format_plural(count($regions), reset($regions), '@count regions');
+          }
+          if ($format) $regions_formatted = implode(', ', $format);
         }
 
         $phones = [];
@@ -611,11 +622,12 @@ function ext_user_get_user_info($user = null)
             'weight' => $weight,
             'full' => $office . ' ' . $company,
           ],
-          'manage'    => [
+          'manage' => $manage,
+          'regions'    => [
             'directions'  => $directions,
             'area'        => $areas,
-            'regions'     => $regions,
-            'formatted'   => $manage_fomatted,
+            'list'        => $regions,
+            'formatted'   => $regions_formatted,
           ],
           'phones'    => $phones,
           'phone_expert' => [
