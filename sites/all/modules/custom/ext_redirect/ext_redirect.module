@@ -7,43 +7,62 @@ function ext_redirect_init()
 {
   $old_path = $_GET['q'];
 
+  // обработка запросов Приложения
+  $request_headers = getallheaders();
+  if (
+    // для запросов из нового приложения, где прописан Host: https://app.kccc.ru/
+       !empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru'
+    || !empty($request_headers['referer']) && $request_headers['referer'] == 'https://app.kccc.ru/'
+    // и из старого приложения, в тч apple
+    || strpos($old_path, 'services/session/token') !== false
+    || strpos($old_path, 'drupalgap/') !== false
+    || strpos($old_path, '.json') !== false
+    || strpos($old_path, 'source/') !== false
+  ) {
+    $headers = $response_headers = [];
 
-//  $request_headers = getallheaders();
-//  if ((!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru')
-//    || (!empty($request_headers['Origin']) && $request_headers['Origin'] == 'https://app.kccc.ru')) {
-//    drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
-//    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
-//  }
-  watchdog('debug', 'Запрос: <pre>@v</pre>', array('@v' => print_r( $_SERVER, TRUE)), WATCHDOG_INFO);
-
-  if (strpos($old_path, 'services/session/token') !== false || strpos($old_path, 'drupalgap/system/connect.json') !== false) {
-    $headers = [];
-    $request_headers = getallheaders();
+    // собрать заголовки запроса
     foreach ($request_headers as $t => $v) {
       if (!in_array($t, ['Host'])) {
         $headers[] = $t . ': ' . $v;
       }
     }
 
-    watchdog('debug', '$request_headers: <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
-
+    // сделать запрос на старый сайт
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,'https://old.kccc.ru' . $_SERVER["REQUEST_URI"]);
     if ($_SERVER["REQUEST_METHOD"] == 'POST')  {
       curl_setopt($ch, CURLOPT_POST, 1);
       $data = $_REQUEST;
-      watchdog('debug', '$data: <pre>@v</pre>', array('@v' => print_r( $headers, TRUE)), WATCHDOG_INFO);
       unset($data['q']);
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     }
+    // функция для получения заголовков из ответа
+    curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+      function($curl, $header) use (&$response_headers)
+      {
+        $len = strlen($header);
+        $header = explode(':', $header, 2);
+        if (count($header) < 2) // ignore invalid headers
+          return $len;
+
+        $response_headers[strtolower(trim($header[0]))] = trim($header[1]);
+
+        return $len;
+      }
+    );
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $response = curl_exec($ch);
     curl_close($ch);
-    watchdog('debug', '$response: "<pre>@v</pre>"', array('@v' => print_r( $response, TRUE)), WATCHDOG_INFO);
 
-    drupal_add_http_header('Access-Control-Allow-Origin', $request_headers['Origin'], true);
+    // вернуть ответ приложению
+    drupal_add_http_header('Content-Type', $response_headers['content-type'], true);
+    if (isset($response_headers['content-length'])) drupal_add_http_header('Content-Length', $response_headers['content-length'], true);
+    if (isset($response_headers['accept-ranges'])) drupal_add_http_header('Accept-Ranges', $response_headers['accept-ranges'], true);
+    if (isset($response_headers['content-encoding'])) drupal_add_http_header('Content-Encoding', $response_headers['content-encoding'], true);
+    drupal_add_http_header('Access-Control-Allow-Origin', $response_headers['access-control-allow-origin'], true);
     drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
     print $response;
     drupal_exit();
