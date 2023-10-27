@@ -334,7 +334,7 @@ function sec_catalog_get_product_info($node)
       if ($node_wr->field_prep_tare->value()) {
         $unit_short = $node_wr->field_prep_tare->field_measure_unit->value();
       }
-      $unit_apply = $product['category'] == CAT_SEED_TID ? 'т' : 'га';
+      $unit_apply = $product['category']['id'] == CAT_SEED_TID ? 'т' : 'га';
       $product['units'] = [
         'short' => $unit_short,
         'apply' => $unit_apply,
