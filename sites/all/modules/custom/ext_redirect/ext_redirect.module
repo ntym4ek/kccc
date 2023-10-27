@@ -5,10 +5,54 @@
  */
 function ext_redirect_init()
 {
+  $old_path = $_GET['q'];
+
+
+//  $request_headers = getallheaders();
+//  if ((!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru')
+//    || (!empty($request_headers['Origin']) && $request_headers['Origin'] == 'https://app.kccc.ru')) {
+//    drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
+//    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
+//  }
+  watchdog('debug', 'Запрос: <pre>@v</pre>', array('@v' => print_r( $_SERVER, TRUE)), WATCHDOG_INFO);
+
+  if (strpos($old_path, 'services/session/token') !== false || strpos($old_path, 'drupalgap/system/connect.json') !== false) {
+    $headers = [];
+    $request_headers = getallheaders();
+    foreach ($request_headers as $t => $v) {
+      if (!in_array($t, ['Host'])) {
+        $headers[] = $t . ': ' . $v;
+      }
+    }
+
+    watchdog('debug', '$request_headers: <pre>@v</pre>', array('@v' => print_r( $request_headers, TRUE)), WATCHDOG_INFO);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,'https://old.kccc.ru' . $_SERVER["REQUEST_URI"]);
+    if ($_SERVER["REQUEST_METHOD"] == 'POST')  {
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $data = $_REQUEST;
+      watchdog('debug', '$data: <pre>@v</pre>', array('@v' => print_r( $headers, TRUE)), WATCHDOG_INFO);
+      unset($data['q']);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    }
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    watchdog('debug', '$response: "<pre>@v</pre>"', array('@v' => print_r( $response, TRUE)), WATCHDOG_INFO);
+
+    drupal_add_http_header('Access-Control-Allow-Origin', $request_headers['Origin'], true);
+    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
+    print $response;
+    drupal_exit();
+  }
+
+
   // todo переадресация Разделов с изменившимися адресами
   //  301 Moved Permanently
   //  Препараты, Новости, Блоги, Афиша, Представители, Контакты и тд.
-  $old_path = $_GET['q'];
   if (drupal_valid_path($old_path) || drupal_lookup_path('source', $old_path)) return;
 
   $new_path = '';

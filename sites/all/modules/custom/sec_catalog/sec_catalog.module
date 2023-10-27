@@ -220,6 +220,8 @@ function sec_catalog_get_products_by_category()
 
   $dbr = db_select('node', 'n');
   $dbr->condition('n.type', 'preparation');
+  $dbr->orderBy('n.title');
+  $dbr->condition('n.status', '1');
   if ($filters_set['categories']['current_id']) {
     $dbr->innerJoin('field_data_field_prep_category', 'fpc', 'fpc.entity_id = n.nid');
     $dbr->condition('fpc.field_prep_category_tid', $filters_set['categories']['current_id']);
