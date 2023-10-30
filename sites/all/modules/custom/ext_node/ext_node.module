@@ -1,6 +1,29 @@
 <?php
 
 /**
+ * Implements hook_menu_alter()
+ */
+function ext_node_menu_alter(&$items)
+{
+  // убрать материалы с Главной
+  $items['node']['page callback'] = 'ext_node_empty_front_page_callback';
+
+  // "Удалить" в локальные задачи материала
+  // http://xandeadx.ru/blog/drupal/339
+  $items['node/%node/delete']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
+}
+
+/**
+ * menu callback
+ * убрать материалы с главной
+ */
+function ext_node_empty_front_page_callback()
+{
+  drupal_set_title('');
+  return array();
+}
+
+/**
  * Implements hook_preprocess_page().
  */
 function ext_node_preprocess_page(&$vars)
