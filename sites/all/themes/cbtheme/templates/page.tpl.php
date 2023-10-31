@@ -90,7 +90,7 @@
     <div class="footer">
       <div class="container">
         <div class="row middle-xs">
-          <div class="col-xs-4 branding"><img class="logo" src="<?php print $logo; ?>" /></div>
+          <div class="col-xs-4 branding"><a href="/"><img class="logo" src="<?php print $logo; ?>" /></a></div>
           <div class="col-xs-8 rights">© <?php print date('Y', time()); ?> KCCC GROUP</div>
         </div>
       </div>
