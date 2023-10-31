@@ -110,6 +110,16 @@ function ext_redirect_init()
     case 'catalog/agrochemicals/mineral-fertilizers'  : $new_path = 'katalog/udobreniya'; break;
     case 'catalog/agrochemicals/surfactants'          : $new_path = 'katalog/drugie'; break;
   }
+  if ($new_path) {
+    $new_path = 'https://kccc.ru/' . $new_path;
+  }
+  else {
+    // переадресация Расписания на отдельный сайт
+    switch(arg(0, $old_path)) {
+      case 'shedule':           $new_path = 'https://shedule.kccc.ru' . $_SERVER["REQUEST_URI"]; break;
+    }
+  }
+
   // wildcard
   if (!$new_path) {
     $path = str_replace(
@@ -136,11 +146,12 @@ function ext_redirect_init()
         'katalog/drugie',
       ], $old_path);
     if (drupal_valid_path($path) || drupal_lookup_path('source', $path)) {
-      $new_path = $path;
+      $new_path = 'https://kccc.ru/' . $path;
     }
   }
+
   if ($new_path) {
-    header('Location: ' . 'https://kccc.ru/' .$new_path, true, 301);
+    header('Location: ' . $new_path, true, 301);
     drupal_exit();
   }
 
@@ -156,8 +167,9 @@ function ext_redirect_init()
       // например: Препараты в поле
       switch($old_path) {
         case 'preparaty-v-pole' : $new_path = 'before-after'; break;
-        default:                  $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
       }
+
+      if (!$new_path) $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
 
       header('Location: ' . $new_path, true, 302);
       drupal_exit();
