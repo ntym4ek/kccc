@@ -21,6 +21,7 @@ function kccc_preprocess_page(&$vars)
   if ($_GET['q'] != 'poisk') {
 //    $vars['search_form'] = ext_views_get_view_exposed_form('search');
     $vars['search_form'] = drupal_get_form('ext_form_search_form');
+    $vars['search_form_mobile'] = drupal_get_form('ext_form_search_form');
   }
 
   // -- Форма подписки в футере

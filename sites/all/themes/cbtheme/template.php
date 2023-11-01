@@ -34,6 +34,7 @@ function cbtheme_preprocess_html(&$vars)
  */
 function cbtheme_preprocess_page(&$vars)
 {
+  // todo плохое решение, планшет Смирнова не определяет
   $vars['is_mobile'] = (stripos($_SERVER["HTTP_USER_AGENT"], "mobile")!== false);
 
   // можно отключить шапку

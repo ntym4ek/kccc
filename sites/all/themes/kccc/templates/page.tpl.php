@@ -6,9 +6,9 @@
     <div class="logo">
       <img src="<?php print $logo; ?>" />
     </div>
-    <?php if (isset($search_form) && $is_mobile): ?>
+    <?php if (isset($search_form_mobile)): ?>
       <div class="search hide-lg">
-        <?php print render($search_form); ?>
+        <?php print render($search_form_mobile); ?>
       </div>
     <?php endif; ?>
     <div class="menu-mobile-wr">
@@ -65,7 +65,7 @@
         <?php if ($page['highlighted'] || $is_title_as_banner): ?>
         <div class="page-highlighted">
 
-          <?php if (isset($search_form) && !$is_mobile): ?>
+          <?php if (isset($search_form)): ?>
             <div class="search hide show-lg">
               <?php print drupal_render($search_form); ?>
             </div>
