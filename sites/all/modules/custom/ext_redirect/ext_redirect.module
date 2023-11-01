@@ -116,7 +116,7 @@ function ext_redirect_init()
   else {
     // переадресация Расписания на отдельный сайт
     switch(arg(0, $old_path)) {
-      case 'shedule':           $new_path = 'https://shedule.kccc.ru' . $_SERVER["REQUEST_URI"]; break;
+      case 'shedule':           $new_path = 'https://schedule.kccc.ru' . str_replace('shedule', 'schedule', $_SERVER["REQUEST_URI"]); break;
     }
   }
 

@@ -12,7 +12,7 @@
     <div class="container">
       <div class="description">
         Торговый Дом “Кирово-Чепецкая Химическая Компания” входит в структуру производственного холдинга <a href="https://kccc.group" target="_blank">KCCC GROUP</a>, созданного в 1997 году и основанного на принципах качества и инноваций по международным стандартам.
-        <br><br><br>
+        <br><br>
         <a href="https://kccc.group" target="_blank">KCCC GROUP</a> это:
       </div>
     </div>
