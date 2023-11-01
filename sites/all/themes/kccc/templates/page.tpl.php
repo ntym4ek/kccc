@@ -3,8 +3,13 @@
 <div class="page-wrapper">
 
   <div class="nav-mobile">
-    <div class="logo">
-      <img src="<?php print $logo; ?>" />
+    <div class="branding">
+      <div class="logo"><a href="/"><img src="<?php print $logo; ?>" /></a></div>
+      <div class="global">
+        <a href="https://kccc.group" target="_blank" title="KCCC GROUP">
+          <i class="icon icon-119"></i>
+        </a>
+      </div>
     </div>
     <?php if (isset($search_form_mobile)): ?>
       <div class="search hide-lg">

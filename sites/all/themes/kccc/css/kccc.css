@@ -1683,22 +1683,23 @@ ul.menu {
   flex-direction: column;
   flex-wrap: nowrap;
   overflow-y: scroll; }
-  .nav-mobile .logo {
+  .nav-mobile .branding {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
     color: #fff;
     font-size: 1.5rem;
     padding: 3rem 0; }
-    .nav-mobile .logo img {
-      max-width: 50%;
-      max-height: 100px;
-      padding-bottom: 1.5rem; }
-    .nav-mobile .logo span {
-      display: inline-block;
-      text-align: center;
-      line-height: 1.1;
-      max-width: 80%; }
+    .nav-mobile .branding .logo {
+      height: 80px;
+      margin: 0 1rem 0 0;
+      text-align: center; }
+      .nav-mobile .branding .logo img {
+        max-height: 100%; }
+    .nav-mobile .branding a {
+      color: inherit; }
+    .nav-mobile .branding .global {
+      opacity: .6; }
   .nav-mobile .menu-mobile-wr {
     display: flex;
     flex-direction: column;
@@ -1765,29 +1766,6 @@ i.icon {
 a {
   color: #43B02A; }
 
-.branding {
-  display: flex;
-  align-items: center;
-  padding: 1rem 0; }
-  .branding .logo {
-    flex: 0 0 auto;
-    height: 100%; }
-    .branding .logo img {
-      display: block;
-      max-width: 100%;
-      max-height: 100%; }
-  .branding .brand {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 1em; }
-    .branding .brand .ru {
-      font-size: 1.3em;
-      font-weight: 700;
-      margin: 0 0 .3em; }
-    .branding .brand .en {
-      font-size: .85em; }
-
 .page > .header {
   background: none;
   box-shadow: none;
@@ -1824,6 +1802,8 @@ a {
     color: #fff;
     font-size: .8rem;
     text-align: center;
+    display: flex;
+    align-items: center;
     height: 100%;
     width: 270px;
     padding: 15px; }
@@ -1832,7 +1812,23 @@ a {
     .page > .header .branding .brand {
       padding-left: 0; }
     .page > .header .branding .logo {
-      flex: 0 0 41px; }
+      flex: 0 0 41px;
+      height: 100%; }
+      .page > .header .branding .logo img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%; }
+    .page > .header .branding .brand {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 1em; }
+      .page > .header .branding .brand .ru {
+        font-size: 1.3em;
+        font-weight: 700;
+        margin: 0 0 .3em; }
+      .page > .header .branding .brand .en {
+        font-size: .85em; }
   .page > .header .menu-bkg {
     display: grid;
     justify-content: flex-end;
@@ -2003,10 +1999,29 @@ a {
     flex-direction: column;
     height: 100%; }
   .footer .branding {
+    display: flex;
+    align-items: center;
     height: 90px;
+    padding: 1rem 0;
     margin-right: -1rem; }
-    .footer .branding .name {
-      padding-right: 0; }
+    .footer .branding .logo {
+      flex: 0 0 auto;
+      height: 100%; }
+      .footer .branding .logo img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%; }
+    .footer .branding .brand {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 1em; }
+      .footer .branding .brand .ru {
+        font-size: 1.3em;
+        font-weight: 700;
+        margin: 0 0 .3em; }
+      .footer .branding .brand .en {
+        font-size: .85em; }
   .footer .legal-name {
     padding: 1rem 0; }
     .footer .legal-name span {

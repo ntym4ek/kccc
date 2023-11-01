@@ -136,19 +136,18 @@ ul.menu {
   transition: all 200ms ease-in;
   display: flex; flex-direction: column; flex-wrap: nowrap;
   overflow-y: scroll;
-  .logo {
-    display:flex; flex-direction: column; align-items: center;
+  .branding {
+    display:flex; align-items: center; justify-content: center;
     color: #fff; font-size: 1.5rem;
     padding: 3rem 0;
-    img {
-      max-width: 50%; max-height: 100px;
-      padding-bottom: $gutter*1.5;
+    .logo {
+      height: 80px;
+      margin: 0 1rem 0 0;
+      text-align: center;
+      img { max-height: 100%; }
     }
-    span {
-      display: inline-block;
-      text-align: center; line-height: 1.1;
-      max-width: 80%;
-    }
+    a { color: inherit; }
+    .global { opacity: .6; }
   }
   .menu-mobile-wr {
     display: flex; flex-direction: column; justify-content: space-between;
