@@ -687,10 +687,7 @@ function ext_user_get_dumb_user_info()
       ]
     ],
     'staff' => [
-      'office' => [
-        'department' => 'ООО ТД «КЧХК»',
-//        'title' => 'Региональный представитель',
-      ],
+      'manage' => 'ООО ТД «КЧХК»',
       'hide_contact' => 1,
     ],
     'url' => 'predstaviteli',
