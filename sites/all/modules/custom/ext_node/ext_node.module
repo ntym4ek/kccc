@@ -35,7 +35,7 @@ function ext_node_preprocess_page(&$vars)
       $title_bkg_uri = NULL;
 
       if (in_array($vars['node']->type, ['agenda', 'article'])) { $vars['title'] = 'События'; }
-      if ($vars['node']->type == 'program')                     { $vars['title'] = 'Программы защиты'; }
+      if ($vars['node']->type == 'program')                     { $vars['title'] = 'Портфель продуктов для&nbsp;защиты культур'; }
       if ($vars['node']->type == 'review')                      { $vars['title'] = 'Отзывы'; }
       if ($vars['node']->type == 'job')                         { $vars['title'] = 'Работа у нас'; }
       if ($vars['node']->type == 'culture')                     { $vars['title'] = 'Культурные растения'; }
@@ -46,19 +46,18 @@ function ext_node_preprocess_page(&$vars)
 
       // -- Препараты
       if ($vars["node"]->type == 'preparation') {
-        $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
-        $category_wr = entity_metadata_wrapper('taxonomy_term', $category_tid);
-        if (!empty($category_wr->field_image_banner->value())) {
-          $title_bkg_uri = $category_wr->field_image_banner->file->value()->uri;
+        if ($cat_info = sec_catalog_get_category_info($vars["node"]->field_prep_category["und"][0]["tid"])) {
+          $vars['title'] = $cat_info['title'];
+          if ($cat_info['icon_num']) {
+            $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
+          }
+          if ($cat_info['banner']) {
+            $title_bkg_uri = $cat_info['banner']['uri'];
+          }
         }
-        $vars['title'] = $category_wr->label();
-        $icon_num = $category_wr->field_icon->value();
-        $vars['title_prefix'] = [
-          '#markup' => '<div class="page-title-logo"><i class="icon icon-' . $icon_num . '"></i></div>'
-        ];
       }
 
-      // -- Прочие (page, webform и тд)
+      // -- Прочие страницы (page, webform и тд)
       if (!empty($vars["node"]->field_image_banner)) {
         $title_bkg_uri = $vars["node"]->field_image_banner['und'][0]['uri'];
 
@@ -69,7 +68,6 @@ function ext_node_preprocess_page(&$vars)
         //  - Кадровый резерв
         if ($vars["node"]->nid == 23)                           { $vars['title'] = 'Работа у нас';  }
       }
-
 
       if ($title_bkg_uri) {
         $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);

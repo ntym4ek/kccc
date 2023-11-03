@@ -257,7 +257,7 @@ a { color: $brand-color; }
   }
   @media #{$laptop} {
     .page-banner .screen-width { height: 24rem; }
-    .page-title h1 { max-width: 40rem; }
+    .page-title h1 { max-width: 43rem; }
     .search {
       position: absolute; top: 160px; right: 0; z-index: 9;
       max-width: 250px;

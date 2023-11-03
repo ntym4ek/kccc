@@ -6,6 +6,7 @@ define('CAT_INSECT_TID',  3);
 define('CAT_DESIC_TID',   5);
 define('CAT_SEED_TID',    4);
 define('CAT_FERT_TID',    6);
+define('CAT_OTHER_TID',  406);
 
 /**
  * Implements hook_menu().
@@ -29,22 +30,26 @@ function sec_catalog_preprocess_page(&$vars)
     // вывод Заголовка в виде баннера
     $vars['is_title_as_banner'] = true;
     $img_url = 'public://images/page-banners/katalog.jpg';
-    $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
-    $vars['title_background'] = $img_url;
 
     // Заголовок
     $title = 'Каталог продукции';
     if (arg(1)) {
       if ($category_id = sec_catalog_get_category_id_by_name(arg(1))) {
-        $category_wr = entity_metadata_wrapper('taxonomy_term', $category_id);
-        $title = $category_wr->label();
-        $icon_num = $category_wr->field_icon->value();
-        $vars['title_prefix'] = [
-          '#markup' => '<div class="page-title-logo"><i class="icon icon-' . $icon_num . '"></i></div>'
-        ];
+        if ($cat_info = sec_catalog_get_category_info($category_id)) {
+          $title = $cat_info['title'];
+          if ($cat_info['icon_num']) {
+            $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
+          }
+          if ($cat_info['banner']) {
+            $img_url = $cat_info['banner']['uri'];
+          }
+        }
       }
     }
     $vars['title'] = $title;
+
+    $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
+    $vars['title_background'] = $img_url;
 
     drupal_add_js(drupal_get_path('module', 'sec_catalog') . '/js/sec_catalog.js');
     drupal_add_css(drupal_get_path('module', 'sec_catalog') . '/css/sec_catalog.css');
@@ -136,6 +141,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
 {
   $title = 'Каталог препаратов';
   $title_logo = '';
+  $img_url = 'public://images/page-banners/katalog.jpg';
 
   // отправить новое содержимое страницы
   $commands[] = ajax_command_replace('#catalog', sec_catalog_page());
@@ -145,12 +151,16 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   $url = '/katalog';
   $query = [];
   if (is_numeric($form_state['values']['category'])) {
-    $category_wr = entity_metadata_wrapper('taxonomy_term', $form_state['values']['category']);
-    $title = $category_wr->label();
-    if ($icon_num = $category_wr->field_icon->value()) {
-      $title_logo = '<div class="page-title-logo"><i class="icon icon-' . $icon_num . '"></i></div>';
+    if ($cat_info = sec_catalog_get_category_info($form_state['values']['category'])) {
+      $title = $cat_info['title'];
+      $url .= '/' . strtolower(transliteration_get($title));
+      if ($cat_info['icon_num']) {
+        $title_logo = '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>';
+      }
+      if ($cat_info['banner']) {
+        $img_url = $cat_info['banner']['uri'];
+      }
     }
-    $url .= '/' . strtolower(transliteration_get($title));
   }
   if (is_numeric($form_state['values']['component'])) {
     $query['component'] = $form_state['values']['component'];
@@ -163,7 +173,26 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   // изменить Заголовок страницы
   $commands[] = ajax_command_invoke('#page-title', 'html', [$title_logo . '<h1 class="title">' . $title . '</h1>']);
 
+  // заменить баннер
+  $commands[] = ajax_command_invoke('.page-banner .screen-width', 'attr', ['style', 'background-image: url(' . file_create_url($img_url) . ');']);
+
   return ['#type' => 'ajax', '#commands' => $commands];
+}
+
+/**
+ * Вернуть массив с иконкой и названием категории
+ */
+function sec_catalog_get_category_info($cat_id)
+{
+  $arr = [];
+  $category_wr = entity_metadata_wrapper('taxonomy_term', $cat_id);
+  if ($category_wr->value()) {
+    $arr['title'] = $category_wr->getIdentifier() == CAT_OTHER_TID ? 'Адъюванты и&nbsp;препараты специального назначения' : $category_wr->label();
+    $arr['icon_num'] = $category_wr->field_icon->value();
+    $arr['banner']['uri'] = $category_wr->field_image_banner->value() ? $category_wr->field_image_banner->file->value()->uri : '';
+  }
+
+  return $arr;
 }
 
 /**
