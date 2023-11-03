@@ -225,6 +225,8 @@
 @media only screen and (min-width: 768px) {
   .block-information .infos {
     padding-left: 2rem; }
+  .block-information .info {
+    margin: 2rem 0; }
   .block-information .media i.icon {
     font-size: 5rem; } }
 @media only screen and (min-width: 1280px) {
