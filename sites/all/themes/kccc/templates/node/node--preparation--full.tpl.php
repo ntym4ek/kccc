@@ -90,7 +90,7 @@
           <div class="summary"><?php print $product_info['summary']; ?></div>
         </div>
         <div class="image">
-          <img src="<?php print $product_info['image']['full']; ?>" alt="<?php print $product_info['title']; ?>">
+          <a href="<?php print $product_info['image']['full']; ?>" class="fancybox"><img src="<?php print $product_info['image']['full']; ?>" alt="<?php print $product_info['title']; ?>"></a>
         </div>
       </div>
       <div class="col-xs-12 col-md-8 col-lg-6">
