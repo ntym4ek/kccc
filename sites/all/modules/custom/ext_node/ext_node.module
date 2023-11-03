@@ -51,7 +51,7 @@ function ext_node_preprocess_page(&$vars)
           if ($cat_info['icon_num']) {
             $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
           }
-          if ($cat_info['banner']) {
+          if ($cat_info['banner']['uri']) {
             $title_bkg_uri = $cat_info['banner']['uri'];
           }
         }
@@ -198,14 +198,18 @@ function ext_node_preprocess_node(&$vars)
         }
       }
       $vars['product_info']['reglaments_cards'] = $reglaments_cards;
-      $vars['product_info']['specs'][] = [
-        'icon_num' => '042',
-        'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($cultures)))),
-      ];
-      $vars['product_info']['specs'][] = [
-        'icon_num' => '031',
-        'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($hobjects)))),
-      ];
+      if ($cultures) {
+        $vars['product_info']['specs'][] = [
+          'icon_num' => '042',
+          'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($cultures)))),
+        ];
+      }
+      if ($hobjects) {
+        $vars['product_info']['specs'][] = [
+          'icon_num' => '031',
+          'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($hobjects)))),
+        ];
+      }
 
       // программно вставить блок Агро Калькулятор
       $block = block_load("ext_block", 'custom-block-agro-calculator');

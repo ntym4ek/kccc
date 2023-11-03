@@ -40,7 +40,7 @@ function sec_catalog_preprocess_page(&$vars)
           if ($cat_info['icon_num']) {
             $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
           }
-          if ($cat_info['banner']) {
+          if ($cat_info['banner']['uri']) {
             $img_url = $cat_info['banner']['uri'];
           }
         }
@@ -157,7 +157,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
       if ($cat_info['icon_num']) {
         $title_logo = '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>';
       }
-      if ($cat_info['banner']) {
+      if ($cat_info['banner']['uri']) {
         $img_url = $cat_info['banner']['uri'];
       }
     }
