@@ -15,7 +15,7 @@
         <div class="col-xs-12 col-md-3">
           <div class="profile-left">
             <div class="image">
-              <img src="<?php print $user_info["main"]["photo"]["teaser"]; ?>" alt="Фото пользователя" />
+              <img src="<?php print $user_info["main"]["photo"]["url"]; ?>" alt="Фото пользователя" />
             </div>
           </div>
         </div>
