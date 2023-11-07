@@ -237,17 +237,12 @@ function ext_node_preprocess_node(&$vars)
 
 /**
  * Implements hook_node_presave()
- * @param $node
  */
 function ext_node_node_presave($node)
 {
-  // запрос к типографу, причёсываем текст
-  if (in_array($node->type, ['news'])) {
-    foreach($node->body as $lang => $body) {
-      if ($text = ext_node_text_typograph_request($body[0]['value'])) {
-        $node->body[$lang][0]['value'] = $text;
-      }
-    }
+  if (in_array($node->type, ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
+    require_once(drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
+    ext_node_prepare_content_to_save($node);
   }
 }
 
@@ -263,35 +258,14 @@ function ext_node_form_alter(&$form, &$form_state, $form_id)
 }
 
 /**
- * Возвращает типографированный на http://mdash.ru/ текст
+ * Implements hook_form_FORMID_alter().
  */
-function ext_node_text_typograph_request($text)
+function ext_node_form_node_form_alter(&$form, &$form_state)
 {
-  $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
-  $data = [
-    'text' => $text,
-    'OptAlign.oa_oquote'=>'off',
-  ];
-  $headers = [
-    'accept: application/json',
-    'Content-Type: application/x-www-form-urlencoded',
-  ];
-
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL,'http://mdash.ru/api.v1.php');
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-  curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  if ($response = curl_exec($ch)) {
-    $result = drupal_json_decode($response);
-    $result = isset($result['result']) ? urldecode($result['result']) : $result;
+  if (in_array($form["type"]["#value"], ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
+    require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
+    ext_node_prepare_content_to_edit($form);
   }
-  curl_close($ch);
-
-  return $result ?? false;
 }
 
 
