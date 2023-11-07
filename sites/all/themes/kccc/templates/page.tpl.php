@@ -5,11 +5,6 @@
   <div class="nav-mobile">
     <div class="branding">
       <div class="logo"><a href="/"><img src="<?php print $logo; ?>" /></a></div>
-      <div class="global">
-        <a href="https://kccc.group" target="_blank" title="KCCC GROUP">
-          <i class="icon icon-119"></i>
-        </a>
-      </div>
     </div>
     <?php if (isset($search_form_mobile)): ?>
       <div class="search hide-lg">
@@ -17,7 +12,13 @@
       </div>
     <?php endif; ?>
     <div class="menu-mobile-wr">
-      <?php if ($primary_nav): print $primary_nav; endif; ?>
+      <div>
+        <?php if ($primary_nav): print $primary_nav; endif; ?>
+        <div class="global">
+          <div><a href="https://kccc.group" target="_blank" title="KCCC GROUP">KCCC GROUP</a></div>
+        </div>
+      </div>
+
       <?php if ($secondary_nav): print $secondary_nav; endif; ?>
     </div>
   </div>

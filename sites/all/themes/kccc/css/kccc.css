@@ -1947,6 +1947,14 @@ a {
   transform: rotate(-180deg); }
 .nav-mobile .main-menu li:not(.show) .sub-menu {
   display: none; }
+.nav-mobile .global {
+  padding: 0 1rem; }
+  .nav-mobile .global div {
+    border-top: 1px solid #bbb; }
+  .nav-mobile .global a {
+    display: block;
+    color: #fff;
+    padding: 1rem; }
 
 .page-title h1 {
   font-size: 1.875rem;

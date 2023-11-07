@@ -221,6 +221,16 @@ a { color: $brand-color; }
       display: none;
     }
   }
+
+  .global {
+    padding: 0 1rem;
+    div { border-top: 1px solid #bbb; }
+    a {
+      display: block;
+      color: #fff;
+      padding: 1rem;
+    }
+  }
 }
 
 .page-title h1 {
