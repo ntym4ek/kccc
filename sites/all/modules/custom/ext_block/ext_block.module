@@ -288,7 +288,7 @@ function ext_block_get_front_news()
 
     foreach($nodes as $nid) {
       $node_wr = entity_metadata_wrapper('node', $nid);
-      $text = $node_wr->body->summary->value() ?: text_summary($node_wr->body->value->value(), '', 180);
+      $text = $node_wr->body->summary->value() ?: text_summary(strip_tags($node_wr->body->value->value()), '', 240);
       $news[] = [
         'title' => $node_wr->label(),
         'text' => $text,

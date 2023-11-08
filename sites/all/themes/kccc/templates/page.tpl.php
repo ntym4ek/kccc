@@ -18,7 +18,6 @@
           <div><a href="https://kccc.group" target="_blank" title="KCCC GROUP">KCCC GROUP</a></div>
         </div>
       </div>
-
       <?php if ($secondary_nav): print $secondary_nav; endif; ?>
     </div>
   </div>
