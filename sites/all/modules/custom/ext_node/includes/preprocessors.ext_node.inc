@@ -5,33 +5,28 @@
  */
 function ext_node_prepare_content_to_save(&$node)
 {
-  //
-    foreach($node->body as $lang => $body) {
-      // полный текст для проверки
-      $text = $body[0]['value'];
+  foreach($node->body as $lang => $body) {
+    $text = $body[0]['value'];
 
-      // убираем кавычки, чтобы проще было обрабатывать
-      // типограф позже вернёт
-      $text = str_replace(['«', '»'], '"', $text);
+    // убираем кавычки, чтобы проще было обрабатывать
+    // типограф позже вернёт
+    $text = str_replace(['«', '»'], '"', $text);
 
-      // декодируем спецсимволы &;
-      $text = html_entity_decode($text);
+    // декодируем спецсимволы &;
+    $text = html_entity_decode($text);
 
-      // убрать все ссылки (с исключениями)
-      $text = ext_node_remove_all_links($text);
-      // проставить внутренние ссылки
-      $text = ext_node_place_internal_links($text);
+    // убрать все ссылки (с исключениями)
+    $text = ext_node_remove_all_links($text);
+    // проставить внутренние ссылки
+    $text = ext_node_place_internal_links($text);
 
+    $node->body[$lang][0]['value'] = $text;
+
+    // запрос к типографу, причёсываем текст
+    if ($text = ext_node_text_typograph_request($text)) {
       $node->body[$lang][0]['value'] = $text;
     }
-
-  // запрос к типографу, причёсываем текст
-
-    foreach($node->body as $lang => $body) {
-      if ($text = ext_node_text_typograph_request($body[0]['value'])) {
-        $node->body[$lang][0]['value'] = $text;
-      }
-    }
+  }
 }
 
 /**
@@ -41,6 +36,9 @@ function ext_node_prepare_content_to_edit(&$form)
 {
   if (!empty($form["body"]["und"][0]["#default_value"])) {
     $text = $form["body"]["und"][0]["#default_value"];
+
+    // замена &nbsp; на пробелы, тк html_entity_decode меняет на спецсимвол NBSP
+    $text = str_replace('&nbsp;', ' ', $text);
 
     // декодируем спецсимволы &;
     $text = html_entity_decode($text);
@@ -215,6 +213,7 @@ function ext_node_text_typograph_request($text)
   $data = [
     'text' => $text,
     'OptAlign.oa_oquote'=>'off',
+    'Text.paragraphs'=>'off',
   ];
   $headers = [
     'accept: application/json',
