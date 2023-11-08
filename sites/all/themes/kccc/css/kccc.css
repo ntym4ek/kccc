@@ -2560,6 +2560,7 @@ ul.action-links {
         margin-bottom: 2rem; } }
 
 .node-full .text,
+.node-full blockquote,
 .cke_editable {
   font-size: 1.125rem;
   line-height: 1.4; }

@@ -108,8 +108,8 @@ function ext_admin_preprocess_page(&$vars)
 
 function ext_admin_execute_form($form, $form_state)
 {
-  $function = '';
-  $function = 'ext_admin_processing';
+  $function = 'ext_admin_func_nodes_process';
+//  $function = 'ext_admin_func_preparations_import';
 
   $form['message'] = array(
     '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
@@ -125,11 +125,11 @@ function ext_admin_execute_form($form, $form_state)
     '#value' => $function,
   );
 
-  $form['file'] = array(
-    '#type' => 'file',
-    '#title' => 'Файл',
-    '#description' => 'Выберите файл',
-  );
+//  $form['file'] = array(
+//    '#type' => 'file',
+//    '#title' => 'Файл',
+//    '#description' => 'Выберите файл',
+//  );
 
   $form['run'] = [
     '#type' => 'submit',
@@ -172,23 +172,81 @@ function ext_admin_execute_form_submit($form, $form_state)
     drupal_set_message('Неуспешный пуск', 'warning');
   }
 }
-function ext_admin_processing()
+
+function ext_admin_process_item($data)
 {
-  $filename = 'public://file.txt';
+  if (function_exists($data['func'])) {
+    $data['func']($data['item']);
+  }
+}
 
-    $content = file_get_contents($filename);
-
-    if ($arr = drupal_json_decode($content)) {
-      $queue = DrupalQueue::get('processing_queue');
-      foreach ($arr as $prep_item) {
-        $queue->createItem($prep_item);
-      }
-      drupal_set_message('Добавлено ' . count($arr) . ' препаратов для импорта');
+/**
+ * -- обработка: смена формата текста в материалах -----------------------------
+ */
+function ext_admin_func_nodes_process()
+{
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', ['article', 'blog', 'review', 'weed', 'disease', 'pest'], 'IN');
+  $dbr->addField('n', 'nid');
+//  $dbr->range(0, 1);
+  if ($nodes_ids = $dbr->execute()->fetchCol()) {
+    $queue = DrupalQueue::get('processing_queue');
+    foreach ($nodes_ids as $item) {
+      $queue->createItem(['func' => 'ext_admin_func_node_process', 'item' => $item]);
     }
+    drupal_set_message('Добавлено ' . count($nodes_ids) . ' записей для обработки');
+  }
 
   return true;
 }
-function ext_admin_process_item($prep_item)
+function ext_admin_func_node_process($nid)
+{
+
+  try {
+    $node_wr = entity_metadata_wrapper('node', $nid);
+    if (isset($node_wr->body) && $node_wr->body->value()) {
+      if ($node_wr->body->format->value() == 'full_html') $node_wr->body->format = 'filtered_html';
+    }
+    if (isset($node_wr->field_textarea) && $node_wr->field_textarea->value()) {
+      if ($node_wr->field_textarea->format->value() == 'full_html') $node_wr->field_textarea->format = 'filtered_html';
+    }
+    if (isset($node_wr->field_longtext) && $node_wr->field_longtext->value()) {
+      if ($node_wr->field_longtext->format->value() == 'full_html') $node_wr->field_longtext->format = 'filtered_html';
+    }
+    $node_wr->save();
+  }
+  catch (EntityMetadataWrapperException $exc) {
+    watchdog(
+      'ext_admin',
+      'EntityMetadataWrapper exception in %function() <pre>@trace</pre>, with message %m',
+      array('%function' => __FUNCTION__, '@trace' => $exc->getTraceAsString(), '%m' => $exc->getMessage()),
+      WATCHDOG_ERROR
+    );
+  }
+
+
+}
+
+/**
+ * -- обработка: импорт препаратов ---------------------------------------------
+ */
+function ext_admin_func_preparations_import()
+{
+  $filename = 'public://file.txt';
+
+  $content = file_get_contents($filename);
+
+  if ($arr = drupal_json_decode($content)) {
+    $queue = DrupalQueue::get('processing_queue');
+    foreach ($arr as $prep_item) {
+      $queue->createItem(['func' => 'ext_admin_func_preparation_import', 'item' => $prep_item]);
+    }
+    drupal_set_message('Добавлено ' . count($arr) . ' препаратов для импорта');
+  }
+
+  return true;
+}
+function ext_admin_func_preparation_import($prep_item)
 {
   // найти препарат
   $dbr = db_select('node', 'n');
