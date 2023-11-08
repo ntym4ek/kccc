@@ -196,8 +196,8 @@ a { color: $brand-color; }
 .nav-mobile {
   .search { padding: 0 1rem; }
 
-  // аккордеон в меню (+js)
-  .main-menu {
+  // аккордеон в мобильном меню (+js)
+  .menu {
     .expanded > a {
       display: flex; align-items: center;
       cursor: pointer;
@@ -823,9 +823,6 @@ ul.action-links {
     .image { display: flex; align-items: center; justify-content: center; }
     img { max-height: 100%; }
   }
-  .text {
-    font-size: $font-size-large; line-height: 1.4;
-  }
 
   blockquote {
     font-weight: 500;
@@ -861,6 +858,12 @@ ul.action-links {
     .images { margin-bottom: 2rem; }
   }
 }
+.node-full .text,
+.cke_editable {
+  font-size: $font-size-large; line-height: 1.4;
+}
+.cke_editable { padding: 0 1rem; }
+
 
 .node-preparation {
   .product-intro {

@@ -740,8 +740,7 @@
   box-sizing: border-box; }
 
 html, body {
-  margin: 0;
-  overflow-x: hidden; }
+  margin: 0; }
 
 img {
   max-width: 100%; }
@@ -864,8 +863,7 @@ img {
 
 html {
   height: 100%;
-  font-size: 12px;
-  overflow-y: scroll; }
+  font-size: 12px; }
   @media only screen and (min-width: 360px) {
     html {
       font-size: 14px; } }
@@ -887,12 +885,13 @@ a {
   text-decoration: none; }
 
 body {
-  font-family: "Montserrat", Helvetica, Arial, sans-serif;
+  background-color: #fff;
   color: #000;
   line-height: 1.22;
-  background-color: #fff;
-  position: relative;
-  min-height: 100%; }
+  font-family: "Montserrat", Helvetica, Arial, sans-serif;
+  min-height: 100%;
+  overflow-y: scroll;
+  position: relative; }
 
 h1, .h1 {
   font-size: 1.8rem;
@@ -1591,7 +1590,7 @@ ul.menu {
     opacity: 0;
     position: absolute;
     z-index: 10;
-    background-color: #f1f1f1;
+    background-color: #fff;
     min-width: 225px;
     padding: 0.5rem 0;
     transition: all 200ms; }
@@ -1692,14 +1691,11 @@ ul.menu {
     padding: 3rem 0; }
     .nav-mobile .branding .logo {
       height: 80px;
-      margin: 0 1rem 0 0;
       text-align: center; }
       .nav-mobile .branding .logo img {
         max-height: 100%; }
     .nav-mobile .branding a {
       color: inherit; }
-    .nav-mobile .branding .global {
-      opacity: .6; }
   .nav-mobile .menu-mobile-wr {
     display: flex;
     flex-direction: column;
@@ -1711,6 +1707,25 @@ ul.menu {
   .nav-mobile-right .nav-mobile {
     right: 0;
     margin: 0 -300px 0 0; }
+  .nav-mobile .menu .expanded > a {
+    display: flex;
+    align-items: center;
+    cursor: pointer; }
+    .nav-mobile .menu .expanded > a::after {
+      flex-shrink: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-left: auto;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-size: 1.25rem;
+      content: "";
+      transition: transform 200ms ease-out; }
+  .nav-mobile .menu .show.expanded > a::after,
+  .nav-mobile .menu .slidedown.expanded > a::after {
+    transform: rotate(-180deg); }
+  .nav-mobile .menu li:not(.show) .sub-menu {
+    display: none; }
   @media only screen and (min-width: 1280px) {
     .nav-mobile {
       display: none; } }
@@ -1928,11 +1943,11 @@ a {
 
 .nav-mobile .search {
   padding: 0 1rem; }
-.nav-mobile .main-menu .expanded > a {
+.nav-mobile .menu .expanded > a {
   display: flex;
   align-items: center;
   cursor: pointer; }
-  .nav-mobile .main-menu .expanded > a::after {
+  .nav-mobile .menu .expanded > a::after {
     flex-shrink: 0;
     width: 1.25rem;
     height: 1.25rem;
@@ -1942,10 +1957,10 @@ a {
     background-size: 1.25rem;
     content: "";
     transition: transform 200ms ease-out; }
-.nav-mobile .main-menu .show.expanded > a::after,
-.nav-mobile .main-menu .slidedown.expanded > a::after {
+.nav-mobile .menu .show.expanded > a::after,
+.nav-mobile .menu .slidedown.expanded > a::after {
   transform: rotate(-180deg); }
-.nav-mobile .main-menu li:not(.show) .sub-menu {
+.nav-mobile .menu li:not(.show) .sub-menu {
   display: none; }
 .nav-mobile .global {
   padding: 0 1rem; }
@@ -2507,9 +2522,6 @@ ul.action-links {
       justify-content: center; }
     .node-full .images img {
       max-height: 100%; }
-  .node-full .text {
-    font-size: 1.125rem;
-    line-height: 1.4; }
   .node-full blockquote {
     font-weight: 500;
     border: 1px solid #000;
@@ -2546,6 +2558,14 @@ ul.action-links {
       .node-full .summary,
       .node-full .images {
         margin-bottom: 2rem; } }
+
+.node-full .text,
+.cke_editable {
+  font-size: 1.125rem;
+  line-height: 1.4; }
+
+.cke_editable {
+  padding: 0 1rem; }
 
 .node-preparation .product-intro {
   margin-bottom: 2rem; }
