@@ -604,10 +604,9 @@ ul.action-links {
     color: $text-light; font-weight: 700;
     margin-bottom: 1rem;
   }
-  //.nowrap { white-space: normal; } // но у Глифора не входит в горизонтальную карточку
 
   @media #{$tablet} {
-    &.card { margin-bottom: 1rem; }
+    &.card { margin-bottom: 2rem; }
     .title {
       font-size: $font-size-h4;
       margin: .5rem 0;
