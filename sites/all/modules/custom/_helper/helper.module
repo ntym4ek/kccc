@@ -150,3 +150,18 @@ function helper_node_export_import_alter(&$nodes, $format, $save)
 
   }
 }
+
+
+/**
+ * Вернуть отформатированное число
+ */
+function helper_number_format($number, $decimals)
+{
+  // форматируем согласно заданному количеству знаков после запятой
+  $result = number_format($number, $decimals, ',', '');
+  // обрезаем ноли после запятой
+  $result = str_replace(',00', '', $result);
+  $result = strpos($result, ',') ? rtrim($result, '0') : $result;
+
+  return $result;
+}
