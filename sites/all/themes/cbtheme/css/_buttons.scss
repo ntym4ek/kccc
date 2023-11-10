@@ -63,7 +63,12 @@
   &.btn-small {
     border-width: 1px;
     padding: .2em $gutter;
-    //height: $form-item-height*.7;
+  }
+  &.btn-icon {
+    border-radius: 20px;
+    min-height: initial;
+    padding: 0;
+    width: 22px; height: 22px;
   }
   &.btn-wide { padding-left: $gutter*5; padding-right: $gutter*5; }
   &.btn-full-wide { width: 100%; }

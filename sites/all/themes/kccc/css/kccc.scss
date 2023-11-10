@@ -1341,6 +1341,25 @@ ul.action-links {
   }
 }
 
+.form-managed-file {
+  line-height: 1;
+  max-width: 350px;
+  .input-group { flex: auto; }
+  .file-img { margin-bottom: -4px; }
+  .file-widget-data,
+  .form-group,
+  .file {
+    display: flex; align-items: center;
+  }
+  .file-img { margin-right: 5px; }
+  .form-group {
+    margin-right: 2rem;
+  }
+  .file { margin-right: 1rem; }
+  .btn { margin: 0; }
+  .badge { color: $text-light; }
+}
+
 // --- профиль пользователя
 .profile {
   margin: 0 0 2rem;

@@ -1281,6 +1281,12 @@ fieldset {
   .btn.btn-small {
     border-width: 1px;
     padding: 0.2em 1rem; }
+  .btn.btn-icon {
+    border-radius: 20px;
+    min-height: initial;
+    padding: 0;
+    width: 22px;
+    height: 22px; }
   .btn.btn-wide {
     padding-left: 5rem;
     padding-right: 5rem; }
@@ -3094,6 +3100,29 @@ ul.action-links {
         color: #ccc;
         font-size: 0.875rem;
         margin-top: 4px; }
+
+.form-managed-file {
+  line-height: 1;
+  max-width: 350px; }
+  .form-managed-file .input-group {
+    flex: auto; }
+  .form-managed-file .file-img {
+    margin-bottom: -4px; }
+  .form-managed-file .file-widget-data,
+  .form-managed-file .form-group,
+  .form-managed-file .file {
+    display: flex;
+    align-items: center; }
+  .form-managed-file .file-img {
+    margin-right: 5px; }
+  .form-managed-file .form-group {
+    margin-right: 2rem; }
+  .form-managed-file .file {
+    margin-right: 1rem; }
+  .form-managed-file .btn {
+    margin: 0; }
+  .form-managed-file .badge {
+    color: #7D7C7C; }
 
 .profile {
   margin: 0 0 2rem; }

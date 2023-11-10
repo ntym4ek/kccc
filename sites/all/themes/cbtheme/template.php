@@ -232,12 +232,17 @@ function cbtheme_preprocess_button(&$vars)
       if (strpos($vars["element"]["#id"], 'file') !== FALSE || strpos($vars["element"]["#id"], 'image') !== FALSE || strpos($vars["element"]["#id"], 'upload') !== FALSE) {
         $vars["element"]['#attributes']['class'][] = 'btn-small';
       }
-      if (strpos($vars["element"]["#id"], 'submit') !== FALSE) {
+      if (strpos($vars["element"]["#id"], 'delete') !== FALSE || strpos($vars["element"]["#id"], 'remove') !== FALSE) {
+        $vars["element"]['#attributes']['class'][] = 'btn-danger';
+        if (strpos($vars["element"]["#id"], 'file') !== FALSE) {
+          $vars["element"]["#value"] = 'x';
+          $vars["element"]['#attributes']['class'][] = 'btn-icon';
+        }
+      }
+      elseif (strpos($vars["element"]["#id"], 'submit') !== FALSE) {
         $vars["element"]['#attributes']['class'][] = 'btn-brand';
       }
-      elseif (strpos($vars["element"]["#id"], 'delete') !== FALSE || strpos($vars["element"]["#id"], 'remove') !== FALSE) {
-        $vars["element"]['#attributes']['class'][] = 'btn-danger';
-      } else {
+      else {
         $vars["element"]['#attributes']['class'][] = 'btn-default';
       }
     }
