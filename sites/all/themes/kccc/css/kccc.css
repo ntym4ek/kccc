@@ -1530,7 +1530,8 @@ form .ajax-progress,
   .input-group .form-text:not(:last-child) {
     border-right: none; }
   .input-group .btn {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 0 0.5rem; }
 
 .user-auth-form-wrapper {
@@ -2319,11 +2320,9 @@ ul.action-links {
   color: #7D7C7C;
   font-weight: 700;
   margin-bottom: 1rem; }
-.card-product-h .nowrap {
-  white-space: normal; }
 @media only screen and (min-width: 768px) {
   .card-product-h.card {
-    margin-bottom: 1rem; }
+    margin-bottom: 2rem; }
   .card-product-h .title {
     font-size: 1.25rem;
     margin: .5rem 0; }
