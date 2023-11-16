@@ -108,8 +108,9 @@ function ext_admin_preprocess_page(&$vars)
 
 function ext_admin_execute_form($form, $form_state)
 {
-  $function = 'ext_admin_func_nodes_process';
+//  $function = 'ext_admin_func_nodes_process';
 //  $function = 'ext_admin_func_preparations_import';
+  $function = 'ext_admin_func_pvp_import';
 
   $form['message'] = array(
     '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
@@ -248,82 +249,87 @@ function ext_admin_func_preparations_import()
 }
 function ext_admin_func_preparation_import($prep_item)
 {
-  // найти препарат
-  $dbr = db_select('node', 'n');
-  $dbr->condition('n.type', 'preparation');
-  $dbr->condition('n.title', $prep_item['title']);
-  $dbr->addField('n', 'nid');
-  if ($p_nid = $dbr->execute()->fetchField()) {
-    $prep = node_load($p_nid);
+  $transaction = db_transaction();
 
-    foreach ($prep_item['regs'] as $reg_item) {
-      $reglament = entity_create('field_collection_item', ['field_name' => 'field_prep_reglaments']);
-      $reglament->setHostEntity('node', $prep);
+  try {
+    // найти препарат
+    $dbr = db_select('node', 'n');
+    $dbr->condition('n.type', 'preparation');
+    $dbr->condition('n.title', $prep_item['title']);
+    $dbr->addField('n', 'nid');
+    if ($p_nid = $dbr->execute()->fetchField()) {
+      $prep = node_load($p_nid);
 
-      $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament);
+      foreach ($prep_item['regs'] as $reg_item) {
+        $reglament = entity_create('field_collection_item', ['field_name' => 'field_prep_reglaments']);
+        $reglament->setHostEntity('node', $prep);
 
-      if (!empty($reg_item['cultures'])) {
-        foreach ($reg_item['cultures'] as $c_title) {
-          $dbr = db_select('node', 'n');
-          $dbr->condition('n.type', 'culture');
-          $dbr->condition('n.title', $c_title);
-          $dbr->addField('n', 'nid');
-          if ($c_nid = $dbr->execute()->fetchField()) {
-            $reglament_wr->field_cultures[] = $c_nid;
-          }
-          else {
-            watchdog('processing', 'Не найдена культура ' . $c_title . ' в регламент препарата ' . $reg_item['title'], NULL, WATCHDOG_ERROR);
+        $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament);
+
+        if (!empty($reg_item['cultures'])) {
+          foreach ($reg_item['cultures'] as $c_title) {
+            $dbr = db_select('node', 'n');
+            $dbr->condition('n.type', 'culture');
+            $dbr->condition('n.title', $c_title);
+            $dbr->addField('n', 'nid');
+            if ($c_nid = $dbr->execute()->fetchField()) {
+              $reglament_wr->field_cultures[] = $c_nid;
+            }
+            else {
+              watchdog('processing', 'Не найдена культура ' . $c_title . ' в регламент препарата ' . $reg_item['title'], NULL, WATCHDOG_ERROR);
+            }
           }
         }
-      }
-      if ($reg_item['cultures_note']) {
-        $reglament_wr->field_cultures_note->set($reg_item['cultures_note']);
-      }
+        if ($reg_item['cultures_note']) {
+          $reglament_wr->field_cultures_note->set($reg_item['cultures_note']);
+        }
 
-      if (!empty($reg_item['weed_groups'])) {
-        foreach ($reg_item['weed_groups'] as $w_group) {
-          if ($w_group) {
-            $weed_group = entity_create('field_collection_item', ['field_name' => 'field_reg_weed_groups']);
-            $weed_group->setHostEntity('field_collection_item', $reglament);
-            $weed_group_wr = entity_metadata_wrapper('field_collection_item', $weed_group);
+        if (!empty($reg_item['weed_groups'])) {
+          foreach ($reg_item['weed_groups'] as $w_group) {
+            if ($w_group) {
+              $weed_group = entity_create('field_collection_item', ['field_name' => 'field_reg_weed_groups']);
+              $weed_group->setHostEntity('field_collection_item', $reglament);
+              $weed_group_wr = entity_metadata_wrapper('field_collection_item', $weed_group);
 
-            if (!empty($w_group['time'])) {
-              foreach ($w_group['time'] as $time) {
-                $index = array_search($time, [
-                    'Однолетние',
-                    'Двулетние',
-                    'Многолетние'
-                  ]) + 1;
-                $weed_group_wr->field_reg_weed_lifes[] = $index;
-              }
-            }
-
-            if (!empty($w_group['class'])) {
-              foreach ($w_group['class'] as $w_class) {
-                // найти по имени термин с учётом иерархии
-                $dbr = db_select('taxonomy_term_data', 't');
-                $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('flora_classification')->vid);
-                $dbr->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
-                $dbr->addField('t', 'tid');
-                $dbr->condition('t.name', $w_class['class']);
-                $dbr->join('taxonomy_term_data', 't2', 't2.tid = h.parent');
-                $dbr->condition('t2.name', $w_class['parent']);
-                if ($w_tid = $dbr->execute()->fetchField()) {
-                  $weed_group_wr->field_reg_weed_classes[] = $w_tid;
-                } else {
-                  watchdog('processing', 'Не найден класс сорняка ' . $w_class['parent'] . '->' . $w_class['class'] . ' в регламент препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
+              if (!empty($w_group['time'])) {
+                foreach ($w_group['time'] as $time) {
+                  $index = array_search($time, [
+                      'Однолетние',
+                      'Двулетние',
+                      'Многолетние'
+                    ]) + 1;
+                  $weed_group_wr->field_reg_weed_lifes[] = $index;
                 }
               }
-            } else {
-              watchdog('processing', 'Не найден класс сорняка для культуры ' . $c_title . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_ERROR);
+
+              if (!empty($w_group['class'])) {
+                foreach ($w_group['class'] as $w_class) {
+                  // найти по имени термин с учётом иерархии
+                  $dbr = db_select('taxonomy_term_data', 't');
+                  $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('flora_classification')->vid);
+                  $dbr->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
+                  $dbr->addField('t', 'tid');
+                  $dbr->condition('t.name', $w_class['class']);
+                  $dbr->join('taxonomy_term_data', 't2', 't2.tid = h.parent');
+                  $dbr->condition('t2.name', $w_class['parent']);
+                  if ($w_tid = $dbr->execute()->fetchField()) {
+                    $weed_group_wr->field_reg_weed_classes[] = $w_tid;
+                  }
+                  else {
+                    watchdog('processing', 'Не найден класс сорняка ' . $w_class['parent'] . '->' . $w_class['class'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+                  }
+                }
+              }
+              else {
+                watchdog('processing', 'Не найден класс сорняка для культуры ' . $c_title . ' в регламенте препарата ' . $prep_item['title'], NULL, WATCHDOG_ERROR);
+              }
+              $weed_group_wr->save();
             }
-            $weed_group_wr->save();
           }
         }
-      }
 
-      if (!empty($reg_item['pest_classes'])) {
-        foreach ($reg_item['pest_classes'] as $p_class) {
+        if (!empty($reg_item['pest_classes'])) {
+          foreach ($reg_item['pest_classes'] as $p_class) {
             // найти по имени термин с учётом иерархии
             $dbr = db_select('taxonomy_term_data', 't');
             $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('fauna_classification')->vid);
@@ -335,73 +341,326 @@ function ext_admin_func_preparation_import($prep_item)
             else {
               watchdog('processing', 'Не найден класс ' . $p_class . ' вредителя ' . $p_class['parent'] . '->' . $p_class['class'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
             }
+          }
         }
-      }
 
-      if (!empty($reg_item['hobjects'])) {
-        foreach ($reg_item['hobjects'] as $hobject) {
-          $dbr = db_select('node', 'n');
-          $dbr->condition('n.type', $hobject['type']);
-          $dbr->condition('n.title', $hobject['name']);
-          $dbr->addField('n', 'nid');
-          if ($h_nid = $dbr->execute()->fetchField()) {
-            $reglament_wr->field_hobjects[] = $h_nid;
+        if (!empty($reg_item['hobjects'])) {
+          foreach ($reg_item['hobjects'] as $hobject) {
+            $dbr = db_select('node', 'n');
+            $dbr->condition('n.type', $hobject['type']);
+            $dbr->condition('n.title', $hobject['name']);
+            $dbr->addField('n', 'nid');
+            if ($h_nid = $dbr->execute()->fetchField()) {
+              $reglament_wr->field_hobjects[] = $h_nid;
+            }
+            else {
+              watchdog('processing', 'Не найдена ВО ' . $hobject['name'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+            }
+          }
+        }
+        if ($reg_item['hobjects_note']) {
+          $reglament_wr->field_hobjects_note->set($reg_item['hobjects_note']);
+        }
+
+        foreach ($reg_item['prep_spends'] as $p_spend) {
+          $reglament_wr->field_reg_prep_spends[] = [
+            'from' => $p_spend['from'],
+            'to' => $p_spend['to']
+          ];
+        }
+
+        // этапы роста
+        if ($reg_item['period']['start']) {
+          $dbr = db_select('taxonomy_term_data', 't');
+          $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
+          $dbr->addField('t', 'tid');
+          $dbr->condition('t.name', $reg_item['period']['start']);
+          if ($ps_tid = $dbr->execute()->fetchField()) {
+            $reglament_wr->field_reg_treat_start = $ps_tid;
           }
           else {
-            watchdog('processing', 'Не найдена ВО ' . $hobject['name'] . ' в регламент препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+            watchdog('processing', 'Не найден стартовый этап роста  ' . $reg_item['period']['start'] . ' в регламенте препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
           }
         }
-      }
-      if ($reg_item['hobjects_note']) {
-        $reglament_wr->field_hobjects_note->set($reg_item['hobjects_note']);
-      }
-
-      foreach ($reg_item['prep_spends'] as $p_spend) {
-        $reglament_wr->field_reg_prep_spends[] = [
-          'from' => $p_spend['from'],
-          'to' => $p_spend['to']
-        ];
-      }
-
-      // этапы роста
-      if ($reg_item['period']['start']) {
-        $dbr = db_select('taxonomy_term_data', 't');
-        $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
-        $dbr->addField('t', 'tid');
-        $dbr->condition('t.name', $reg_item['period']['start']);
-        if ($ps_tid = $dbr->execute()->fetchField()) {
-          $reglament_wr->field_reg_treat_start = $ps_tid;
-        } else {
-          watchdog('processing', 'Не найден стартовый этап роста  ' . $reg_item['period']['start'] . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
+        if ($reg_item['period']['end']) {
+          $dbr = db_select('taxonomy_term_data', 't');
+          $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
+          $dbr->addField('t', 'tid');
+          $dbr->condition('t.name', $reg_item['period']['end']);
+          if ($pe_tid = $dbr->execute()->fetchField()) {
+            $reglament_wr->field_reg_treat_end = $pe_tid;
+          }
+          else {
+            watchdog('processing', 'Не найден заключительный этап роста  ' . $reg_item['period']['end'] . ' в регламенте препарата ' . $prep_item['title'], NULL, WATCHDOG_WARNING);
+          }
         }
+
+
+        $reglament_wr->field_reg_mix_spend = $reg_item['mix_spend'];
+
+        $reglament_wr->field_reg_description = $reg_item['description'];
+
+        $reglament_wr->field_reg_wait = $reg_item['wait'];
+
+        $reglament_wr->field_reg_ratio = $reg_item['ratio'];
+
+        $reglament_wr->save();
       }
-      if ($reg_item['period']['end']) {
-        $dbr = db_select('taxonomy_term_data', 't');
-        $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('grow_classification')->vid);
-        $dbr->addField('t', 'tid');
-        $dbr->condition('t.name', $reg_item['period']['end']);
-        if ($pe_tid = $dbr->execute()->fetchField()) {
-          $reglament_wr->field_reg_treat_end = $pe_tid;
-        } else {
-          watchdog('processing', 'Не найден заключительный этап роста  ' . $reg_item['period']['end'] . ' в регламенте препарата ' . $prep_item['title'], null, WATCHDOG_WARNING);
-        }
-      }
-
-
-      $reglament_wr->field_reg_mix_spend = $reg_item['mix_spend'];
-
-      $reglament_wr->field_reg_description = $reg_item['description'];
-
-      $reglament_wr->field_reg_wait = $reg_item['wait'];
-
-      $reglament_wr->field_reg_ratio = $reg_item['ratio'];
-
-      $reglament_wr->save();
+      watchdog('processing', 'Импортирован препарат ' . $prep_item['title']);
     }
-    watchdog('processing', 'Импортирован препарат ' . $prep_item['title']);
+    else {
+      $transaction->rollback();
+      watchdog('processing', 'Не найден препарат ' . $prep_item['title'], NULL, WATCHDOG_ERROR);
+    }
+
   }
-  else {
-    watchdog('processing', 'Не найден препарат ' . $prep_item['title'], null, WATCHDOG_ERROR);
+  catch (Exception $e) {
+    $transaction->rollback();
+    watchdog('processing', 'Ошибка выполнения ' . $e->getMessage(), NULL, WATCHDOG_ERROR);
+  }
+}
+
+
+/**
+ * -- обработка: импорт ПвП ----------------------------------------------------
+ */
+function ext_admin_func_pvp_import()
+{
+  $filename = 'public://pvp.txt';
+
+  $content = file_get_contents($filename);
+
+  if ($arr = drupal_json_decode($content)) {
+    $queue = DrupalQueue::get('processing_queue');
+    $queue->deleteQueue();
+    $counter = 0;
+    foreach ($arr as $pvp_item) {
+      if ($counter < 1000) {
+        $queue->createItem(['func' => 'ext_admin_func_pvp_process', 'item' => $pvp_item]);
+        $counter++;
+      } else break;
+    }
+    drupal_set_message('Добавлено ' . $counter . ' записей ПвП для импорта');
   }
 
+  return true;
+}
+function ext_admin_func_pvp_process($pvp_item)
+{
+  // старт транзакции БД, откатить изменения при ошибке
+  $transaction = db_transaction();
+
+  try {
+    // полупустые не импортируем
+    if ($pvp_item['checks'] && $pvp_item['treats']) {
+
+      // найти автора
+      $dbr = db_select('field_data_field_text', 'ft');
+      $dbr->condition('ft.bundle', 'user');
+      $dbr->condition('ft.field_text_value', $pvp_item['author']['id']);
+      $dbr->addField('ft', 'entity_id');
+      $uid = $dbr->execute()->fetchField();
+      if (!$uid) {
+        $uid = 0;
+      }
+
+      // создание нового сезона
+      $season = entity_create('node', [
+        'type' => 'season',
+        'uid' => $uid,
+        'title' => '',
+      ]);
+      node_save($season);
+      $season_wr = entity_metadata_wrapper('node', $season);
+
+      $season_wr->field_pvp_season = $pvp_item['season'];
+      $season_wr->field_pvp_year = $pvp_item['year'];
+
+      // Поле
+      $season_wr->field_pvp_field_owner = $pvp_item['field']['owner'];
+      $season_wr->field_pvp_field_area = $pvp_item['field']['area'];
+
+      // найти Регион
+      $dbr = db_select('taxonomy_term_data', 't');
+      $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('regions')->vid);
+      $dbr->addField('t', 'tid');
+      $dbr->condition('t.name', $pvp_item['field']['region']);
+      if ($region_tid = $dbr->execute()->fetchField()) {
+        $season_wr->field_region = $region_tid;
+      }
+      else {
+        watchdog('processing', 'Не найден Регион ' . $pvp_item['field']['region'] . ' в сезоне ' . $pvp_item['id'], NULL, WATCHDOG_WARNING);
+      }
+
+      // найти Культуру по наименованию
+      $dbr = db_select('node', 'n');
+      $dbr->condition('n.type', 'culture');
+      $dbr->condition('n.title', $pvp_item['culture']['main']);
+      $dbr->addField('n', 'nid');
+      if ($culture_nid = $dbr->execute()->fetchField()) {
+        $season_wr->field_culture = $culture_nid;
+        $season_wr->field_pvp_culture_note = $pvp_item['culture']['note'];
+        $season_wr->field_pvp_culture_satellite = $pvp_item['culture']['satellite'];
+        $season_wr->field_pvp_culture_previous = $pvp_item['culture']['prev'];
+
+        // Контроль
+        foreach ($pvp_item['checks'] as $check_item) {
+          $check = entity_create('field_collection_item', ['field_name' => 'field_pvp_check']);
+          $check->setHostEntity('node', $season);
+          $check_wr = entity_metadata_wrapper('field_collection_item', $check);
+
+          $check_wr->field_date = $check_item['date'];
+
+          // Поле
+          $check_wr->field_pvp_check_culture_comment = $check_item['note'];
+
+          // скачать, сохранить и добавить фото
+          if ($check_item['field_photo']) {
+            $culture_photo = entity_create('field_collection_item', ['field_name' => 'field_pvp_check_culture_photos']);
+            $culture_photo->setHostEntity('field_collection_item', $check);
+            $culture_photo_wr = entity_metadata_wrapper('field_collection_item', $culture_photo);
+
+            $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
+            if (!file_exists($destination)) {
+              mkdir($destination, 0777, TRUE);
+            }
+            $file = (array) system_retrieve_file($check_item['field_photo'], $destination, TRUE);
+            if (isset($file['fid'])) {
+              $culture_photo_wr->field_image = $file;
+            }
+          }
+
+          // Культура
+          // скачать, сохранить и добавить фото
+          if ($check_item['culture_photo']) {
+            $culture_photo = entity_create('field_collection_item', ['field_name' => 'field_pvp_check_culture_photos']);
+            $culture_photo->setHostEntity('field_collection_item', $check);
+            $culture_photo_wr = entity_metadata_wrapper('field_collection_item', $culture_photo);
+
+            $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
+            if (!file_exists($destination)) {
+              mkdir($destination, 0777, TRUE);
+            }
+            $file = (array) system_retrieve_file($check_item['culture_photo'], $destination, TRUE);
+            if (isset($file['fid'])) {
+              $culture_photo_wr->field_image = $file;
+            }
+
+            $culture_photo_wr->field_note = 'Фаза развития: ' . strtolower($check_item['culture_phase']) . ', cостояние: ' . strtolower($check_item['culture_cond']);
+          }
+
+          // вредные объекты
+          if ($check_item['hobjects']) {
+            foreach ($check_item['hobjects'] as $hobject_item) {
+              // найти ВО
+              $dbr = db_select('node', 'n');
+              $dbr->condition('n.type', ['weed', 'pest', 'disease'], 'IN');
+              $dbr->condition('n.title', $hobject_item['label']);
+              $dbr->addField('n', 'nid');
+              if ($ho_nid = $dbr->execute()->fetchField()) {
+                $hobject = entity_create('field_collection_item', ['field_name' => 'field_pvp_check_hobjects']);
+                $hobject->setHostEntity('field_collection_item', $check);
+                $hobject_wr = entity_metadata_wrapper('field_collection_item', $hobject);
+
+                $hobject_wr->field_hobject = $ho_nid;
+                if ($hobject_item['percent']) {
+                  $hobject_wr->field_note = 'Процент гибели - ' . $hobject_item['percent'];
+                }
+
+                if ($hobject_item['photo']) {
+                  $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
+                  if (!file_exists($destination)) {
+                    mkdir($destination, 0777, TRUE);
+                  }
+                  $file = (array) system_retrieve_file($hobject_item['photo'], $destination, TRUE);
+                  if (isset($file['fid'])) {
+                    $hobject_wr->field_image = $file;
+                  }
+                }
+              }
+
+            }
+          }
+
+          $check_wr->save();
+        }
+
+        // Обработки
+        if ($pvp_item['treats']) {
+          foreach ($pvp_item['treats'] as $treat_item) {
+            $treat = entity_create('field_collection_item', ['field_name' => 'field_pvp_treat']);
+            $treat->setHostEntity('node', $season);
+            $treat_wr = entity_metadata_wrapper('field_collection_item', $treat);
+
+            $treat_wr->field_date = $treat_item['date'];
+            $treat_wr->field_comment = 'Время обработки: ' . $treat_item['time'] . '. Условия обработки: кислотность почвы - ' . strtolower($treat_item['acid']) . ', влажность почвы - ' . $treat_item['humid'] .
+              ', дневная температура - ' . $treat_item['temp_day'] . ', ночная - ' . $treat_item['temp_night'] . ', осадки - ' . strtolower($treat_item['precip']) .
+              ', ветер - ' . strtolower($treat_item['wind']) . '. Средства обработки: ' . strtolower($treat_item['mech']) . '.';
+
+            // Фотос
+            $photos = entity_create('field_collection_item', ['field_name' => 'field_pvp_treat_photos']);
+            $photos->setHostEntity('field_collection_item', $treat);
+            $photos_wr = entity_metadata_wrapper('field_collection_item', $photos);
+
+            $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
+            if (!file_exists($destination)) {
+              mkdir($destination, 0777, TRUE);
+            }
+            $file = (array) system_retrieve_file($treat_item['photo'], $destination, TRUE);
+            if (isset($file['fid'])) {
+              $photos_wr->field_image = $file;
+            }
+            //            $photos_wr->save();
+
+            // Препараты
+            foreach ($treat_item['preps'] as $prep_item) {
+              // найти Препарат
+              $prep_title = str_replace('| ', '', $prep_item['label']);
+              if ($prep_title == 'Мантра') {
+                $prep_title = 'Челленджер';
+              }
+              if ($prep_title == 'Илот') {
+                $prep_title = 'Дентайр';
+              }
+              if ($prep_title == 'Тринити') {
+                $prep_title = 'Бетаниум';
+              }
+              $dbr = db_select('node', 'n');
+              $dbr->condition('n.type', 'preparation');
+              $dbr->condition('n.title', $prep_title);
+              $dbr->addField('n', 'nid');
+              if ($prep_nid = $dbr->execute()->fetchField()) {
+                $prep = entity_create('field_collection_item', ['field_name' => 'field_pvp_treat_preparations']);
+                $prep->setHostEntity('field_collection_item', $treat);
+                $prep_wr = entity_metadata_wrapper('field_collection_item', $prep);
+
+                $prep_wr->field_preparation = $prep_nid;
+                $prep_wr->field_prep_spend = floatval(str_replace(',', '.', $prep_item['rate']));
+                $prep_wr->field_mix_spend = floatval(str_replace(',', '.', $prep_item['cons']));
+              }
+              else {
+                watchdog('processing', 'Не найден Препарат ' . $prep_item['label'] . ' в сезоне ' . $pvp_item['id'], NULL, WATCHDOG_WARNING);
+              }
+            }
+
+            $treat_wr->save();
+          }
+        }
+
+        $season_wr->title = $pvp_item['season'] . ' ' . $pvp_item['year'] . '. ' .
+          $season_wr->field_culture->label() . ($pvp_item['culture']['note'] ? ' (' . $pvp_item['culture']['note'] . ')' : '') . '. ' .
+          $season_wr->field_region->label();
+        $season_wr->field_text = $pvp_item['id']; // сохранить старый ID
+        $season_wr->save();
+      }
+      else {
+        $transaction->rollback();
+        watchdog('processing', 'Не найдена Культура ' . $pvp_item['culture']['label'] . ' в сезоне ' . $pvp_item['id'], NULL, WATCHDOG_ERROR);
+      }
+    }
+  }
+  catch (Exception $e) {
+    $transaction->rollback();
+    watchdog('processing', 'Ошибка выполнения кода: <pre>"@trace"</pre> в сезоне ' . $pvp_item['id'], ['@trace' => $e->getTrace()], WATCHDOG_ERROR);
+  }
 }
