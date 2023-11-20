@@ -3188,4 +3188,35 @@ ul.action-links {
     .node-type-list {
       margin-bottom: 4rem; } }
 
+.pvp-teaser {
+  text-align: center;
+  height: 100%;
+  padding-bottom: 5rem;
+  position: relative; }
+  .pvp-teaser > div {
+    margin-bottom: .5rem; }
+  .pvp-teaser .date {
+    background: #E9E9E9;
+    color: #7D7C7C;
+    font-weight: 500;
+    padding: .5rem; }
+  .pvp-teaser .region {
+    font-size: 1.125rem;
+    font-weight: 700; }
+  .pvp-teaser .comment {
+    color: #7D7C7C; }
+    .pvp-teaser .comment span {
+      display: block;
+      color: #000; }
+    .pvp-teaser .comment a {
+      color: inherit; }
+      .pvp-teaser .comment a:hover {
+        text-decoration: underline; }
+  .pvp-teaser .action {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    margin: 0; }
+
 /*# sourceMappingURL=kccc.css.map */

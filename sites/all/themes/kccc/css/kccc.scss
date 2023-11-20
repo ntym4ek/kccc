@@ -1439,3 +1439,34 @@ ul.action-links {
     margin-bottom: 4rem;
   }
 }
+
+.pvp-teaser {
+  text-align: center;
+  height: 100%;
+  padding-bottom: 5rem;
+  position: relative;
+  > div { margin-bottom: .5rem; }
+  .date {
+    background: $gray-lighter;
+    color: $gray-dark; font-weight: 500;
+    padding: .5rem;
+  }
+  .region {
+    font-size: $font-size-large; font-weight: 700;
+  }
+  .comment {
+    color: $text-light;
+    span {
+      display: block;
+      color: $text-color;
+    }
+    a {
+      color: inherit;
+      &:hover { text-decoration: underline; }
+    }
+  }
+  .action {
+    position: absolute; bottom: 2rem; left: 0; right: 0;
+    margin: 0;
+  }
+}

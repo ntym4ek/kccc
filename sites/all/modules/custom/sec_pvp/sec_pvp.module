@@ -1,0 +1,241 @@
+<?php
+
+function sec_pvp_menu()
+{
+  $items['preparaty-v-pole'] = array(
+    'title' => 'Препараты в поле',
+    'description' => 'Примеры работы препаратов компании',
+    'page callback' => 'sec_pvp_list_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'main-menu',
+  );
+
+  return $items;
+}
+
+function sec_pvp_theme()
+{
+  return [
+    'pvp_teaser' => array(
+      'variables' => array('item' => NULL),
+      'template' => 'templates/pvp-teaser',
+    ),
+  ];
+}
+
+function sec_pvp_list_page()
+{
+  $output = '<div class="view view-pvp">';
+  $output .=  '<div class="view-content">';
+
+  // список ПвП с сортировкой по дате обновления
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', 'season');
+  $dbr->orderBy('n.changed', 'DESC');
+  $dbr->addField('n', 'nid');
+  $dbr->range(0, 12);
+  if ($pvp_nids = $dbr->execute()->fetchCol()) {
+    foreach ($pvp_nids as $pvp_nid) {
+      $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid, true);
+      $pvp_teaser = theme('pvp_teaser', ['item' => $pvp_teaser]);
+      $output .= '<div class="views-row col-xs-12 col-md-6 col-lg-3">' . $pvp_teaser . '</div>';
+    }
+
+  }
+  $output .=  '</div>';
+  $output .= '</div>';
+
+  return $output;
+}
+
+function sec_pvp_get_pvp_teaser($pvp_nid)
+{
+  $teaser = &drupal_static(__FUNCTION__ . $pvp_nid);
+  if (!isset($teaser)) {
+    $pvp_wr = entity_metadata_wrapper('node', $pvp_nid);
+
+    if ($pvp_wr->value()) {
+      $teaser = [
+        'id' => $pvp_wr->getIdentifier(),
+        'label' => $pvp_wr->label(),
+        'region' => $pvp_wr->field_region->label(),
+        'culture' => $pvp_wr->field_culture->label(),
+        'path' => drupal_get_path_alias('node/' . $pvp_wr->getIdentifier()),
+        'comment' => 'Перед обработкой',
+      ];
+
+      // для короткого формата найти последнее событие (обработка или контроль)
+      $event_id = $event_date = 0;
+      // найти последний Контроль
+      foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
+        if ($check_wr->field_date->value() > $event_date) {
+          $event_date = $check_wr->field_date->value();
+          $event_id = $check_wr->getIdentifier();
+        }
+      // найти последнюю Обработку
+      $treat_id = $date = 0;
+      foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
+        if ($treat_wr->field_date->value() > $date) {
+          $date = $treat_wr->field_date->value();
+          $treat_id = $treat_wr->getIdentifier();
+        }
+        if ($treat_wr->field_date->value() > $event_date) {
+          $event_date = $treat_wr->field_date->value();
+          $event_id = $treat_wr->getIdentifier();
+        }
+      }
+      if ($event_id) {
+        $event_wr = entity_metadata_wrapper('field_collection_item', $event_id);
+        if ($event_wr->getBundle() == 'field_pvp_check') {
+          $teaser += [
+            'type' => 'check',
+            'date' => date('d.m.Y', $event_wr->field_date->value()),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_check_culture_photos[0]->field_image->file->value()->uri),
+          ];
+        } else {
+          $teaser += [
+            'type' => 'treat',
+            'date' => date('d.m.Y', $event_wr->field_date->value()),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_treat_photos[0]->field_image->file->value()->uri),
+          ];
+        }
+
+        if ($treat_id) {
+          $treat_wr = entity_metadata_wrapper('field_collection_item', $treat_id);
+
+          // получить список препаратов из последней Обработки
+          foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) $preps[] = '<a href="/' . drupal_get_path_alias('node/' . $tp_wr->field_preparation->getIdentifier()) . '">' . $tp_wr->field_preparation->label() . '</a>';
+          if ($preps) {
+            $teaser['comment'] = ($teaser['type'] == 'check' ? 'После обработки препаратами:' : 'Обработка препаратами:') . '<span>' . implode(', ', $preps) . '</span>';
+          }
+        }
+      }
+
+    }
+  }
+
+  return $teaser;
+}
+
+/**
+ * Вернуть информацию о записи GdG
+ * @param $short - короткий формат для тизера
+ */
+function sec_pvp_get_pvp_info($pvp_nid, $short = false)
+{
+  $pvp = &drupal_static(__FUNCTION__ . $pvp_nid . $short);
+  if (!isset($pvp)) {
+    try {
+    $pvp_wr = entity_metadata_wrapper('node', $pvp_nid);
+
+    if ($pvp_wr->value()) {
+      $pvp = [
+        'id' => $pvp_wr->getIdentifier(),
+        'label' => $pvp_wr->label(),
+        'season' => $pvp_wr->field_pvp_season->value(),
+        'year' => $pvp_wr->field_pvp_year->value(),
+        'field' => [
+          'owner' => $pvp_wr->field_pvp_field_owner->value(),
+          'area' => $pvp_wr->field_pvp_field_area->value(),
+          'region' => [
+            'id' => $pvp_wr->field_region->getIdentifier(),
+            'label' => $pvp_wr->field_region->label(),
+          ],
+        ],
+        'culture' => [
+          'id' => $pvp_wr->field_culture->getIdentifier(),
+          'label' => $pvp_wr->field_culture->label(),
+          'note' => $pvp_wr->field_pvp_culture_note->value(),
+          'satellite' => $pvp_wr->field_pvp_culture_satellite->value(),
+          'previous' => $pvp_wr->field_pvp_culture_previous->value(),
+        ],
+
+      ];
+
+      $events = [];
+      // для короткого формата найти последнее событие (обработка или контроль)
+      if ($short) {
+        $event_id = 0;
+        $date = 0;
+        // последний контрль
+        foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
+          if ($check_wr->field_date->value() > $date) {
+            $date = $check_wr->field_date->value();
+            $event_id = $check_wr->getIdentifier();
+          }
+        foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr)
+          if ($treat_wr->field_date->value() > $date) {
+            $date = $treat_wr->field_date->value();
+            $event_id = $treat_wr->getIdentifier();
+          }
+        if ($event_id) {
+          $event_wr = entity_metadata_wrapper('field_collection_item', $event_id);
+          if ($event_wr->getBundle() == 'field_pvp_check') {
+            $event = [
+              'type' => 'check',
+              'date' => $event_wr->field_date->value(),
+              'culture' => [
+                'comment' => $event_wr->field_pvp_check_culture_comment->value(),
+                'photos' => [],
+              ],
+              'hobjects' => [
+                'comment' => $event_wr->field_pvp_check_hobjects_comment->value(),
+                'photos' => [],
+              ],
+            ];
+            foreach ($event_wr->field_pvp_check_culture_photos->getIterator() as $cp_wr) {
+              $event['culture']['photos'][] = [
+                'photo' => $cp_wr->field_image->file->value()->uri,
+                'note' => $cp_wr->field_note->value(),
+              ];
+            }
+            foreach ($event_wr->field_pvp_check_hobjects->getIterator() as $ch_wr) {
+              $event['hobjects']['photos'][] = [
+                'hobject' => [
+                  'id' => $ch_wr->field_hobject->getIdentifier(),
+                  'label' => $ch_wr->field_hobject->label(),
+                ],
+                'photo' => $ch_wr->field_image->value() ? $ch_wr->field_image->file->value()->uri : '',
+                'note' => $ch_wr->field_note->value(),
+              ];
+            }
+          } else {
+            $event = [
+              'type' => 'treat',
+              'date' => $event_wr->field_date->value(),
+              'comment' => $event_wr->field_comment->value(),
+              'preparations' => [],
+              'photos' => [],
+            ];
+            foreach ($event_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) {
+              $event['preparations'][] = [
+                'preparation' => [
+                  'id' => $tp_wr->field_preparation->getIdentifier(),
+                  'label' => $tp_wr->field_preparation->label(),
+                ],
+                'field_prep_spend' => $tp_wr->field_prep_spend->value(),
+                'field_mix_spend' => $tp_wr->field_mix_spend->value(),
+              ];
+            }
+            foreach ($event_wr->field_pvp_treat_photos->getIterator() as $tps_wr) {
+              $event['photos'][] = [
+                'photo' => $tps_wr->field_image->file->value()->uri,
+                'note' => $tps_wr->field_note->value(),
+              ];
+            }
+          }
+        }
+        if (!empty($event)) $events[$event['date']] = $event;
+      }
+
+      $pvp['events'] = $events;
+    }
+    } catch (Exception $e) {
+      $a = 1;
+    }
+  }
+
+  return $pvp;
+}
+
