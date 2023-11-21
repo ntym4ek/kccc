@@ -106,19 +106,14 @@
     </div>
   <?php endif; ?>
 
-  <?php if (count($images)): ?>
-  <div class="images">
-    <?php hide($content['field_image']); ?>
-    <?php hide($content['field_images']); ?>
-    <?php if (count($images) > 1): ?>
-    <div id="slider-images" class="slider slider-images outer-pagination" data-slidesperview-xs="1" data-autoheight="true">
+  <?php if (count($pvp_info['events'])): ?>
+  <div class="events">
+    <div id="carousel-pvp" class="carousel carousel-pvp outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2.3" data-slidesperview-lg="3">
       <div class="swiper">
         <div class="swiper-wrapper">
-          <?php foreach ($images as $key => $image) {
+          <?php foreach ($pvp_info['events'] as $event) {
               print '<div class="swiper-slide">'  .
-                      '<div class="image">' .
-                        drupal_render($image) .
-                      '</div>' .
+                      theme('pvp_event_' . $event['type'], ['event' => $event, 'pvp_info' => $pvp_info]) .
                     '</div>';
           } ?>
         </div>
@@ -127,34 +122,7 @@
       <div class="swiper-button-prev hide show-md"></div>
       <div class="swiper-button-next hide show-md"></div>
     </div>
-    <?php else: ?>
-    <div class="image">
-      <?php print drupal_render($images[0]); ?>
-    </div>
-    <?php endif; ?>
   </div>
   <?php endif; ?>
-
-  <?php if (!empty($body[0]["safe_summary"])): ?>
-  <?php hide($content['body']); ?>
-  <div class="summary">
-    <?php print $body[0]["safe_summary"]; ?>
-  </div>
-  <?php endif; ?>
-
-  <?php if (!empty($body[0]["safe_value"])): ?>
-  <?php hide($content['body']); ?>
-  <div class="text">
-    <?php print $body[0]["safe_value"]; ?>
-  </div>
-  <?php endif; ?>
-
-  <?php if (!empty($content['field_files'])): ?>
-  <div class="files">
-    <?php print drupal_render($content['field_files']); ?>
-  </div>
-  <?php endif; ?>
-
-  <?php print drupal_render($content); ?>
 
 </div>

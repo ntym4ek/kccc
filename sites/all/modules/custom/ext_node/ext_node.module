@@ -175,7 +175,7 @@ function ext_node_preprocess_node(&$vars)
   }
 
   // -- Тип Препарат
-  if ($vars['type'] == 'preparation') {
+  if ($node->type == 'preparation') {
     $vars['product_info'] = sec_catalog_get_product_info($vars['node']->nid);
 
     if ($vars['view_mode'] == 'full') {
@@ -232,6 +232,12 @@ function ext_node_preprocess_node(&$vars)
       $vars['block_app'] = _block_get_renderable_array($blocks);
     }
   }
+
+  // -- Тип Препараты в поле
+  if ($node->type == 'season' && $vars['view_mode'] == 'full') {
+    $vars['pvp_info'] = sec_pvp_get_pvp_info($node->nid);
+  }
+
 
 }
 
