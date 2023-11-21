@@ -9,7 +9,7 @@
   --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
   --swiper-theme-color: #43B02A;
-  --swiper-pagination-bottom: 1rem;
+  //--swiper-pagination-bottom: 1rem;
 }
 
 html {
@@ -593,42 +593,50 @@ ul.action-links {
 }
 
 .card-product-h {
-  &.card { margin-bottom: 3rem; }
+  display: flex; flex-wrap: wrap;
+  padding: 1em 0;
   a { color: inherit; }
   .title {
-    font-size: $font-size-h3; font-weight: 700;
-    margin: .5rem 0 1rem;
+    margin: .5em 0 1em;
+    h3 {
+      font-size: 1.875em; font-weight: 700;
+      margin: 0;
+    }
   }
-  .image { text-align: center; }
+  .image {
+    flex: 100%;
+    text-align: center;
+  }
+  .product-info { flex: 100%; }
   .components {
     color: $text-light; font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 1em;
   }
 
   @media #{$tablet} {
-    &.card { margin-bottom: 2rem; }
+    flex-wrap: nowrap;
     .title {
-      font-size: $font-size-h4;
-      margin: .5rem 0;
+      margin: .5em 0;
+      h3 { font-size: 1.25em; }
     }
-    .product-info {
-      margin-left: -1rem;
-      padding-right: 1rem;
+    .image {
+      flex: 0 0 30%;
+      text-align: left;
     }
-    .image { text-align: left; }
+    .product-info { flex: 0 0 70%; }
     .components {
-      font-size: $font-size-small; font-weight: 500;
-      margin-bottom: 0;
+      font-size: .875em; font-weight: 500;
     }
   }
   @media #{$laptop} {
     .title {
-      font-size: $font-size-h3;
-      margin: .5rem 0 1rem;
+      margin: .5em 0 1em;
+      h3 { font-size: 1.875em; }
     }
+    .product-info { padding: 0 1em; }
     .components {
-      font-size: $font-size-base; font-weight: 700;
-      margin-bottom: 1rem;
+      font-size: 1em; font-weight: 700;
+      margin-bottom: 1em;
     }
   }
 }
@@ -816,11 +824,14 @@ ul.action-links {
       filter: brightness(0) invert(.7);
     }
   }
-  .summary { margin-bottom: 1rem; }
-  .images {
+  .node-summary { margin-bottom: 1rem; }
+  .node-images {
     margin-bottom: 1rem;
     .image { display: flex; align-items: center; justify-content: center; }
-    img { max-height: 100%; }
+    img {
+      display: block;
+      max-height: 100%;
+    }
   }
 
   blockquote {
@@ -847,14 +858,14 @@ ul.action-links {
   }
 
   @media #{$tablet} {
-    .images .image {
+    .node-images .image {
       min-height: 250px;
     }
   }
   @media #{$laptop} {
     margin-bottom: 4rem;
-    .summary,
-    .images { margin-bottom: 2rem; }
+    .node-summary,
+    .node-images { margin-bottom: 2rem; }
   }
 }
 .node-full .text,
@@ -1440,12 +1451,13 @@ ul.action-links {
   }
 }
 
+// --- Препараты в поле
 .pvp-teaser {
   text-align: center;
   height: 100%;
   padding-bottom: 5rem;
   position: relative;
-  > div { margin-bottom: .5rem; }
+  > div { margin-bottom: 1rem; }
   .date {
     background: $gray-lighter;
     color: $gray-dark; font-weight: 500;
@@ -1468,5 +1480,75 @@ ul.action-links {
   .action {
     position: absolute; bottom: 2rem; left: 0; right: 0;
     margin: 0;
+  }
+}
+
+
+
+.node-season {
+  .pvp-event-check,
+  .pvp-event-treat {
+    --swiper-pagination-color: #FBBA00;
+    --swiper-pagination-bullet-inactive-color: #fff;
+    --swiper-pagination-bullet-inactive-opacity: 1;
+    .swiper-pagination { --swiper-pagination-top: 1rem; }
+    height: 100%;
+    > div { margin-bottom: 1rem; }
+    a { color: inherit; }
+    .event-title {
+      color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;
+      padding: .8rem;
+    }
+    .culture,
+    .process {
+      min-height: 490px;
+    }
+    .date { text-align: center; }
+    .header {
+      font-size: $font-size-large; font-weight: 700; text-align: center;
+      margin-bottom: 1rem;
+    }
+    .list {
+      margin-bottom: 1rem;
+      a:hover { text-decoration: underline; }
+    }
+    .comment {
+      padding: 0 1rem;
+    }
+    .note {
+      color: $text-light; font-size: $font-size-small;
+      padding: 0.5rem 1rem;
+      span { color: $text-muted; }
+    }
+  }
+
+  .pvp-event-check .event-title { background: $brand-green; }
+
+  .pvp-event-treat {
+    .event-title { background: $brand-orange; }
+    .preparation {
+      font-size: 11px;
+      margin: 0 .8rem; // отступ для тени от hover-raise
+      .image { flex: 0 0 27%; }
+      .product-info {
+        flex: 0 0 73%;
+        padding: 0 .5em;
+      }
+    }
+    .prep-spend,
+    .mix-spend {
+      font-size: 1rem;
+      span { font-size: 1.2rem; font-weight: 700; }
+    }
+    .mix-spend {
+      margin: 1rem 0 0 3rem;
+    }
+  }
+
+  @media #{$tablet} {
+    .pvp-event-check,
+    .pvp-event-treat {
+      .comment { padding: 0; }
+    }
   }
 }

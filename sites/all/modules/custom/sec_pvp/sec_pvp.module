@@ -102,13 +102,13 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
           $teaser += [
             'type' => 'check',
             'date' => date('d.m.Y', $event_wr->field_date->value()),
-            'photo' => image_style_url('teaser', $event_wr->field_pvp_check_culture_photos[0]->field_image->file->value()->uri),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_check_culture_images[0]->file->value()->uri),
           ];
         } else {
           $teaser += [
             'type' => 'treat',
             'date' => date('d.m.Y', $event_wr->field_date->value()),
-            'photo' => image_style_url('teaser', $event_wr->field_pvp_treat_photos[0]->field_image->file->value()->uri),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_treat_images[0]->file->value()->uri),
           ];
         }
 
@@ -116,9 +116,12 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
           $treat_wr = entity_metadata_wrapper('field_collection_item', $treat_id);
 
           // получить список препаратов из последней Обработки
+          $preps = [];
           foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) $preps[] = '<a href="/' . drupal_get_path_alias('node/' . $tp_wr->field_preparation->getIdentifier()) . '">' . $tp_wr->field_preparation->label() . '</a>';
           if ($preps) {
             $teaser['comment'] = ($teaser['type'] == 'check' ? 'После обработки препаратами:' : 'Обработка препаратами:') . '<span>' . implode(', ', $preps) . '</span>';
+          } else {
+            $teaser['comment'] = 'Проведена обработка';
           }
         }
       }
@@ -160,7 +163,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'satellite' => $pvp_wr->field_pvp_culture_satellite->value(),
             'previous' => $pvp_wr->field_pvp_culture_previous->value(),
           ],
-
+          'events' => [],
         ];
 
         $events = [];
@@ -171,18 +174,18 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'type' => 'check',
             'date' => $check_wr->field_date->value(),
             'culture' => [
-              'comment' => $check_wr->field_pvp_check_culture_comment->value(),
+              'comment' => strip_tags(is_array($check_wr->field_pvp_check_culture_comment->value()) ? $check_wr->field_pvp_check_culture_comment->value->value() : $check_wr->field_pvp_check_culture_comment->value()),
               'photos' => [],
             ],
             'hobjects' => [
-              'comment' => $check_wr->field_pvp_check_hobjects_comment->value(),
+              'comment' => strip_tags(is_array($check_wr->field_pvp_check_hobjects_comment->value()) ? $check_wr->field_pvp_check_hobjects_comment->value->value() : $check_wr->field_pvp_check_hobjects_comment->value()),
               'list' => [],
             ],
           ];
-          foreach ($check_wr->field_pvp_check_culture_photos->getIterator() as $cp_wr) {
+          foreach ($check_wr->field_pvp_check_culture_images->getIterator() as $cp_wr) {
             $event['culture']['photos'][] = [
-              'photo' => $cp_wr->field_image->file->value()->uri,
-              'note' => $cp_wr->field_note->value(),
+              'photo_uri' => $cp_wr->file->value()->uri,
+              'note' => $cp_wr->title->value(),
             ];
           }
           foreach ($check_wr->field_pvp_check_hobjects->getIterator() as $ch_wr) {
@@ -191,13 +194,14 @@ function sec_pvp_get_pvp_info($pvp_nid)
               'label' => $ch_wr->field_hobject->label(),
             ];
             if ($ch_wr->field_image->value()) {
-              $ho['photo'] = $ch_wr->field_image->file->value()->uri;
-              $ho['note'] = $ch_wr->field_note->value();
+              $ho['photo_uri'] = $ch_wr->field_image->file->value()->uri;
+              $ho['note'] = $ch_wr->field_image->title->value();
             }
             $event['hobjects']['list'][] = $ho;
           }
 
-          $events[$event['date']] = $event;
+          // при одинаковой дате Контроль ставить перед Обработкой
+          $events[$event['date'] . '0' . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
         }
 
         // записи Обработок
@@ -206,7 +210,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'id' => $treat_wr->getIdentifier(),
             'type' => 'treat',
             'date' => $treat_wr->field_date->value(),
-            'comment' => $treat_wr->field_comment->value(),
+            'comment' => strip_tags(is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value()),
             'preparations' => [],
             'photos' => [],
           ];
@@ -216,22 +220,23 @@ function sec_pvp_get_pvp_info($pvp_nid)
                 'id' => $tp_wr->field_preparation->getIdentifier(),
                 'label' => $tp_wr->field_preparation->label(),
               ],
-              'field_prep_spend' => $tp_wr->field_prep_spend->value(),
-              'field_mix_spend' => $tp_wr->field_mix_spend->value(),
+              'prep_spend' => $tp_wr->field_prep_spend->value(),
+              'mix_spend' => $tp_wr->field_mix_spend->value(),
             ];
           }
-          foreach ($treat_wr->field_pvp_treat_photos->getIterator() as $tps_wr) {
+          foreach ($treat_wr->field_pvp_treat_images->getIterator() as $tps_wr) {
             $event['photos'][] = [
-              'photo' => $tps_wr->field_image->file->value()->uri,
-              'note' => $tps_wr->field_note->value(),
+              'photo_uri' => $tps_wr->file->value()->uri,
+              'note' => $tps_wr->title->value(),
             ];
           }
+          // при одинаковой дате Обработку ставить после Контроля
+          $events[$event['date'] . '1' . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
         }
 
-        $events[$event['date']] = $event;
       }
 
-      ksort($event);
+      ksort($events);
       $pvp['events'] = $events;
     } catch (Exception $e) {
       $a = 1;
@@ -252,21 +257,24 @@ function sec_pvp_preprocess_pvp_event_check(&$vars)
 
   // добавляем стилизованные фото и тег alt
   foreach ($vars['event']['culture']['photos'] as $key => $item) {
-    $vars['event']['culture']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo']);
+    $vars['event']['culture']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
+    $vars['event']['culture']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
     $vars['event']['culture']['photos'][$key]['photo_alt'] = $pvp['culture']['label'];
   }
   $hos = [];
-  $has_photo = false;
-  foreach ($vars['event']['hobjects']['list'] as $key => $item) {
-    if (!empty($item['photo'])) {
-      $has_photo = true;
-      $vars['event']['hobjects']['list'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo']);
-      $vars['event']['hobjects']['list'][$key]['photo_alt'] = $item['label'];
+  foreach ($vars['event']['hobjects']['list'] as $item) {
+    if (!empty($item['photo_uri'])) {
+      $vars['event']['hobjects']['photos'][] = [
+        'photo_teaser' => image_style_url('teaser', $item['photo_uri']),
+        'photo_url' => file_create_url($item['photo_uri']),
+        'label' => $item['label'],
+        'photo_alt' => $item['label'],
+        'note' => $item['note'],
+      ];
     } else {
-      $hos[] = '<a href="' . drupal_get_path_alias('node/' . $item['id']) . '">' . $item['label'] . '</a>';
+      $hos[] = '<a href="/' . drupal_get_path_alias('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
     }
   }
-  $vars['event']['hobjects']['has_photo'] = $has_photo;
   // список ВО без фото
   if ($hos) {
     $vars['event']['hobjects']['list_formatted'] = implode(', ', $hos);
@@ -280,4 +288,41 @@ function sec_pvp_preprocess_pvp_event_check(&$vars)
 function sec_pvp_preprocess_pvp_event_treat(&$vars)
 {
   $vars['event']['date_formatted'] = date('d.m.Y', $vars['event']['date']);
+
+  // добавляем стилизованные фото и тег alt
+  foreach ($vars['event']['photos'] as $key => $item) {
+    $vars['event']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
+    $vars['event']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
+    $vars['event']['photos'][$key]['photo_alt'] = 'Обработка препаратами ' . variable_get('site_name');
+  }
+
+  if ($vars['event']['preparations']) {
+    $treat_unit_apply = '';
+    foreach ($vars['event']['preparations'] as $key => $item) {
+      $product_info = sec_catalog_get_product_info($item['preparation']['id']);
+      $treat_unit_apply = $product_info['units']['apply'];
+      if (!empty($item['old_mix_spend'])) {
+        $summary = '<div class="prep-spend">Расход: <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
+      }
+      else {
+        $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">Расход препарата: <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
+      }
+
+      $card = [
+        'title' => $product_info['title'],
+        'label' => $product_info['label'],
+        'path' => $product_info['path'],
+        'image' => $product_info['image'],
+        'components' => $product_info['components'],
+        'summary' => $summary,
+      ];
+      $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
+    }
+
+    // todo
+    $vars['event']['mix_spend'] = '200';
+
+    $text = count($vars['event']['preparations']) > 1 ? 'Расход баковой смеси:' : 'Расход рабочей жидкости:';
+    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . $text . ' <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
+  }
 }

@@ -6,10 +6,14 @@
   &.outer-pagination {
     margin-bottom: 4rem;
     > .swiper-pagination { --swiper-pagination-bottom: -2.5rem; }
+    &.top-pagination {
+      margin-top: 4rem; margin-bottom: 0;
+      > .swiper-pagination { --swiper-pagination-top: -2.5rem; }
+    }
   }
   &.top-pagination {
-    margin-top: 4rem; margin-bottom: 0;
-    > .swiper-pagination { --swiper-pagination-top: -2.5rem; }
+    --swiper-pagination-top: 1rem;
+    --swiper-pagination-bottom: auto;
   }
 
   .swiper-button-prev,

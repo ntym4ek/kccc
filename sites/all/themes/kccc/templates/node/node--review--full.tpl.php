@@ -107,7 +107,7 @@
   <?php endif; ?>
 
   <?php hide($content['field_image']); ?>
-  <div class="images">
+  <div class="node-images">
     <div class="image">
       <?php print drupal_render($images[0]); ?>
     </div>

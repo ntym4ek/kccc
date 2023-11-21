@@ -90,12 +90,12 @@
 
   <?php if (!empty($body[0]["safe_value"])): ?>
     <?php hide($content['body']); ?>
-    <div class="summary">
+    <div class="node-summary">
       <?php print $body[0]["safe_value"]; ?>
     </div>
   <?php endif; ?>
 
-  <div class="images">
+  <div class="node-images">
   <?php if (count($images)): ?>
     <?php hide($content['field_image']); ?>
     <?php hide($content['field_images']); ?>

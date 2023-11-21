@@ -106,6 +106,13 @@
     </div>
   <?php endif; ?>
 
+  <?php if (!empty($body[0]["value"])): ?>
+    <?php hide($content['body']); ?>
+    <div class="node-summary">
+      <?php print $body[0]["value"]; ?>
+    </div>
+  <?php endif; ?>
+
   <?php if (count($pvp_info['events'])): ?>
   <div class="events">
     <div id="carousel-pvp" class="carousel carousel-pvp outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2.3" data-slidesperview-lg="3">
@@ -118,9 +125,8 @@
           } ?>
         </div>
       </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev hide show-md"></div>
-      <div class="swiper-button-next hide show-md"></div>
+      <?php if (count($pvp_info['events']) > 3): ?><div class="swiper-button-prev hide show-md"></div><?php endif; ?>
+      <?php if (count($pvp_info['events']) > 3): ?><div class="swiper-button-next hide show-md"></div><?php endif; ?>
     </div>
   </div>
   <?php endif; ?>

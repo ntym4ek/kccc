@@ -42,6 +42,7 @@ function ext_node_preprocess_page(&$vars)
       if ($vars['node']->type == 'disease')                     { $vars['title'] = 'Болезни культур'; }
       if ($vars['node']->type == 'pest')                        { $vars['title'] = 'Вредители культур'; }
       if ($vars['node']->type == 'weed')                        { $vars['title'] = 'Сорные растения'; }
+      if ($vars['node']->type == 'season')                      { $vars['title'] = 'Препараты в поле'; }
       if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['title'] = 'Публикации'; }
 
       // -- Препараты

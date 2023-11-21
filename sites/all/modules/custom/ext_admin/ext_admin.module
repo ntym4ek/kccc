@@ -512,41 +512,34 @@ function ext_admin_func_pvp_process($pvp_item)
           $check_wr->field_date = $check_item['date'];
 
           // Поле
-          $check_wr->field_pvp_check_culture_comment = $check_item['note'];
+          $check_wr->field_pvp_check_culture_comment = ['value' => $check_item['note']];
+
+          //$a = $check_wr->field_pvp_check_culture_comment->value();
 
           // скачать, сохранить и добавить фото
           if ($check_item['field_photo']) {
-            $culture_photo = entity_create('field_collection_item', ['field_name' => 'field_pvp_check_culture_photos']);
-            $culture_photo->setHostEntity('field_collection_item', $check);
-            $culture_photo_wr = entity_metadata_wrapper('field_collection_item', $culture_photo);
-
             $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
             if (!file_exists($destination)) {
               mkdir($destination, 0777, TRUE);
             }
             $file = (array) system_retrieve_file($check_item['field_photo'], $destination, TRUE);
             if (isset($file['fid'])) {
-              $culture_photo_wr->field_image = $file;
+              $check_wr->field_pvp_check_culture_images[] = $file;
             }
           }
 
           // Культура
           // скачать, сохранить и добавить фото
           if ($check_item['culture_photo']) {
-            $culture_photo = entity_create('field_collection_item', ['field_name' => 'field_pvp_check_culture_photos']);
-            $culture_photo->setHostEntity('field_collection_item', $check);
-            $culture_photo_wr = entity_metadata_wrapper('field_collection_item', $culture_photo);
-
             $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
             if (!file_exists($destination)) {
               mkdir($destination, 0777, TRUE);
             }
             $file = (array) system_retrieve_file($check_item['culture_photo'], $destination, TRUE);
+            $file['title'] = 'Фаза развития: ' . drupal_strtolower($check_item['culture_phase']) . ', cостояние: ' . drupal_strtolower($check_item['culture_cond']);
             if (isset($file['fid'])) {
-              $culture_photo_wr->field_image = $file;
+              $check_wr->field_pvp_check_culture_images[] = $file;
             }
-
-            $culture_photo_wr->field_note = 'Фаза развития: ' . strtolower($check_item['culture_phase']) . ', cостояние: ' . strtolower($check_item['culture_cond']);
           }
 
           // вредные объекты
@@ -563,9 +556,6 @@ function ext_admin_func_pvp_process($pvp_item)
                 $hobject_wr = entity_metadata_wrapper('field_collection_item', $hobject);
 
                 $hobject_wr->field_hobject = $ho_nid;
-                if ($hobject_item['percent']) {
-                  $hobject_wr->field_note = 'Процент гибели - ' . $hobject_item['percent'];
-                }
 
                 if ($hobject_item['photo']) {
                   $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
@@ -573,6 +563,9 @@ function ext_admin_func_pvp_process($pvp_item)
                     mkdir($destination, 0777, TRUE);
                   }
                   $file = (array) system_retrieve_file($hobject_item['photo'], $destination, TRUE);
+                  if ($hobject_item['percent']) {
+                    $file['title'] = 'Эффективность: ' . $hobject_item['percent'] . '%';
+                  }
                   if (isset($file['fid'])) {
                     $hobject_wr->field_image = $file;
                   }
@@ -593,24 +586,19 @@ function ext_admin_func_pvp_process($pvp_item)
             $treat_wr = entity_metadata_wrapper('field_collection_item', $treat);
 
             $treat_wr->field_date = $treat_item['date'];
-            $treat_wr->field_comment = 'Время обработки: ' . $treat_item['time'] . '. Условия обработки: кислотность почвы - ' . strtolower($treat_item['acid']) . ', влажность почвы - ' . $treat_item['humid'] .
-              ', дневная температура - ' . $treat_item['temp_day'] . ', ночная - ' . $treat_item['temp_night'] . ', осадки - ' . strtolower($treat_item['precip']) .
-              ', ветер - ' . strtolower($treat_item['wind']) . '. Средства обработки: ' . strtolower($treat_item['mech']) . '.';
+            $treat_wr->field_comment = ['value' => 'Время обработки: ' . $treat_item['time'] . '.' . PHP_EOL . 'Условия обработки: кислотность почвы - ' . drupal_strtolower($treat_item['acid']) . ', влажность почвы - ' . $treat_item['humid'] .
+              '%, дневная температура - ' . $treat_item['temp_day'] . '°C, ночная - ' . $treat_item['temp_night'] . '°C, осадки - ' . drupal_strtolower($treat_item['precip']) .
+              ', ветер - ' . drupal_strtolower($treat_item['wind']) . ' м/с.' . PHP_EOL . 'Средства обработки: ' . drupal_strtolower($treat_item['mech']) . '.'];
 
             // Фотос
-            $photos = entity_create('field_collection_item', ['field_name' => 'field_pvp_treat_photos']);
-            $photos->setHostEntity('field_collection_item', $treat);
-            $photos_wr = entity_metadata_wrapper('field_collection_item', $photos);
-
             $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
             if (!file_exists($destination)) {
               mkdir($destination, 0777, TRUE);
             }
             $file = (array) system_retrieve_file($treat_item['photo'], $destination, TRUE);
             if (isset($file['fid'])) {
-              $photos_wr->field_image = $file;
+              $treat_wr->field_pvp_treat_images[] = $file;
             }
-            //            $photos_wr->save();
 
             // Препараты
             foreach ($treat_item['preps'] as $prep_item) {
@@ -661,6 +649,6 @@ function ext_admin_func_pvp_process($pvp_item)
   }
   catch (Exception $e) {
     $transaction->rollback();
-    watchdog('processing', 'Ошибка выполнения кода: <pre>"@trace"</pre> в сезоне ' . $pvp_item['id'], ['@trace' => $e->getTrace()], WATCHDOG_ERROR);
+    watchdog('processing', 'Ошибка выполнения кода: <pre>"@trace"</pre> в сезоне ' . $pvp_item['id'], ['@trace' => print_r($e->getTrace())], WATCHDOG_ERROR);
   }
 }
