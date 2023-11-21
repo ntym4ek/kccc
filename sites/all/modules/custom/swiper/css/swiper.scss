@@ -5,11 +5,11 @@
   position: relative;
   &.outer-pagination {
     margin-bottom: 4rem;
-    --swiper-pagination-bottom: -2.5rem;
+    > .swiper-pagination { --swiper-pagination-bottom: -2.5rem; }
   }
   &.top-pagination {
     margin-top: 4rem; margin-bottom: 0;
-    --swiper-pagination-top: -2.5rem;
+    > .swiper-pagination { --swiper-pagination-top: -2.5rem; }
   }
 
   .swiper-button-prev,
@@ -35,6 +35,9 @@
       margin-right: calc(-50vw + 50%);
   }
   @media #{$laptop} {
-    &.outer-navigation { padding-left: 4rem; padding-right: 4rem; }
+    &.outer-navigation > .swiper-button-prev,
+    &.outer-navigation > .swiper-button-next {
+      --swiper-navigation-sides-offset: -4rem;
+    }
   }
 }
