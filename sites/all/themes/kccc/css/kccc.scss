@@ -1016,6 +1016,14 @@ ul.action-links {
     }
   }
 
+  .product-reglaments {
+    .carousel-reglaments {
+      @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+        @include screen-width();
+      }
+    }
+  }
+
   .product-how-it-works {
     margin-bottom: 2rem;
     .banner {
@@ -1497,16 +1505,16 @@ ul.action-links {
     a { color: inherit; }
     .event-title {
       color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;
-      padding: .8rem;
+      padding: .8rem; margin: 0 35px 1rem 2rem;
+      height: 42px;
       // стрелка справа
-      margin-right: 21px;
       position: relative;
       &::after {
         content: "";
-        position: absolute; top: 50%; right: -20px; // пересечение 1px
-        transform: translateY(-50%);
-        width: 0; height: 0;
-        border-top: 21px solid transparent; border-bottom: 21px solid transparent; border-left: 21px solid $gray-lighter;
+        width: 21px; height: 42px;
+        clip-path: polygon(0 0, 1px 0, 100% 50%, 1px 100%, 0 100%);
+        background-color: $gray-lighter;
+        position: absolute; top: 0; right: -20px;
       }
     }
     .culture,
@@ -1535,13 +1543,13 @@ ul.action-links {
 
   .pvp-event-check .event-title {
     background: $brand-green;
-    &::after { border-left-color: $brand-green; }
+    &::after { background: $brand-green; }
   }
 
   .pvp-event-treat {
     .event-title {
       background: $brand-orange;
-      &::after { border-left-color: $brand-orange; }
+      &::after { background: $brand-orange; }
     }
     .preparation {
       font-size: 11px;
@@ -1565,6 +1573,9 @@ ul.action-links {
   @media #{$tablet} {
     .pvp-event-check,
     .pvp-event-treat {
+      .event-title {
+        margin: 0 21px 1rem 0;
+      }
       .comment,
       .list { padding: 0; }
     }

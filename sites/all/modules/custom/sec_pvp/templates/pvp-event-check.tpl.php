@@ -7,7 +7,7 @@
 
   <div class="culture">
     <div class="images">
-      <div id="slider-culture-images-<?php print $event['id']; ?>" class="slider slider-culture-images top-pagination" data-slidesperview-xs="1">
+      <div id="slider-culture-images-<?php print $event['id']; ?>" class="slider slider-culture-images top-pagination">
         <div class="swiper">
           <div class="swiper-wrapper">
             <?php foreach ($event['culture']['photos'] as $i => $item) {
@@ -37,7 +37,7 @@
     <div class="header">Вредные объекты</div>
     <?php if (!empty($event['hobjects']['photos'])): ?>
     <div class="images">
-      <div id="slider-hobjects-images-<?php print $event['id']; ?>" class="slider slider-hobjects-images top-pagination" data-slidesperview-xs="1">
+      <div id="slider-hobjects-images-<?php print $event['id']; ?>" class="slider slider-hobjects-images top-pagination">
         <div class="swiper">
           <div class="swiper-wrapper">
             <?php foreach ($event['hobjects']['photos'] as $i => $item) {

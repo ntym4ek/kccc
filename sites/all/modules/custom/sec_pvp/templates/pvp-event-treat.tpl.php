@@ -7,7 +7,7 @@
 
   <div class="process">
     <div class="images">
-      <div id="slider-process-images-<?php print $event['id']; ?>" class="slider slider-process-images top-pagination" data-slidesperview-xs="1">
+      <div id="slider-process-images-<?php print $event['id']; ?>" class="slider slider-process-images top-pagination">
         <div class="swiper">
           <div class="swiper-wrapper">
             <?php foreach ($event['photos'] as $i => $item) {

@@ -1,4 +1,4 @@
-@import "../../../../themes/kccc/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+@import "../../../../themes/kccc/css/includes";
 
 .block-front-banner {
   .swiper-slide {
@@ -70,9 +70,16 @@
 }
 
 .block-new-products {
-  .carousel { padding-top: 1rem; }
-  .swiper { padding: 1rem; } // чтобы тени карточек не попадали под границы
   .card-product-v .text { padding: 1rem 0; }
+
+  .carousel-products {
+    padding-top: 1rem;
+    .swiper { padding: 1rem; } // чтобы тени карточек не попадали под границы
+
+    @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+      @include screen-width();
+    }
+  }
 
   @media #{$laptop} {
     .card-product-v {

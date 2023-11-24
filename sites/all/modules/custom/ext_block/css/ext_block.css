@@ -65,12 +65,18 @@
     margin-right: 1rem;
     padding: 2rem 24rem 4rem 1rem; } }
 
-.block-new-products .carousel {
-  padding-top: 1rem; }
-.block-new-products .swiper {
-  padding: 1rem; }
 .block-new-products .card-product-v .text {
   padding: 1rem 0; }
+.block-new-products .carousel-products {
+  padding-top: 1rem; }
+  .block-new-products .carousel-products .swiper {
+    padding: 1rem; }
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1279px) {
+    .block-new-products .carousel-products {
+      position: relative;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+      overflow: hidden; } }
 @media only screen and (min-width: 1280px) {
   .block-new-products .card-product-v {
     transition: all 200ms; }

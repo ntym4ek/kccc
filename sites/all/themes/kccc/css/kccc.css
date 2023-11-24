@@ -2762,6 +2762,12 @@ ul.action-links {
       .node-preparation .product-specs .spec .text {
         font-size: 1.25rem;
         font-weight: 700; } }
+@media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1279px) {
+  .node-preparation .product-reglaments .carousel-reglaments {
+    position: relative;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    overflow: hidden; } }
 .node-preparation .product-how-it-works {
   margin-bottom: 2rem; }
   .node-preparation .product-how-it-works .banner {
@@ -3282,20 +3288,19 @@ ul.action-links {
     letter-spacing: 1px;
     text-align: center;
     padding: .8rem;
-    margin-right: 21px;
+    margin: 0 35px 1rem 2rem;
+    height: 42px;
     position: relative; }
     .node-season .pvp-event-check .event-title::after,
     .node-season .pvp-event-treat .event-title::after {
       content: "";
+      width: 21px;
+      height: 42px;
+      clip-path: polygon(0 0, 1px 0, 100% 50%, 1px 100%, 0 100%);
+      background-color: #E9E9E9;
       position: absolute;
-      top: 50%;
-      right: -20px;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 21px solid transparent;
-      border-bottom: 21px solid transparent;
-      border-left: 21px solid #E9E9E9; }
+      top: 0;
+      right: -20px; }
   .node-season .pvp-event-check .culture,
   .node-season .pvp-event-check .process,
   .node-season .pvp-event-treat .culture,
@@ -3334,11 +3339,11 @@ ul.action-links {
 .node-season .pvp-event-check .event-title {
   background: #36AA3D; }
   .node-season .pvp-event-check .event-title::after {
-    border-left-color: #36AA3D; }
+    background: #36AA3D; }
 .node-season .pvp-event-treat .event-title {
   background: #FBBA00; }
   .node-season .pvp-event-treat .event-title::after {
-    border-left-color: #FBBA00; }
+    background: #FBBA00; }
 .node-season .pvp-event-treat .preparation {
   font-size: 11px;
   margin: 0 .8rem; }
@@ -3357,6 +3362,9 @@ ul.action-links {
 .node-season .pvp-event-treat .mix-spend {
   margin: 1rem 0 0 3rem; }
 @media only screen and (min-width: 768px) {
+  .node-season .pvp-event-check .event-title,
+  .node-season .pvp-event-treat .event-title {
+    margin: 0 21px 1rem 0; }
   .node-season .pvp-event-check .comment,
   .node-season .pvp-event-check .list,
   .node-season .pvp-event-treat .comment,
