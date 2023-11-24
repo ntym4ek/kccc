@@ -1463,9 +1463,12 @@ ul.action-links {
 .pvp-teaser {
   text-align: center;
   height: 100%;
-  padding-bottom: 5rem;
   position: relative;
-  > div { margin-bottom: 1rem; }
+  display: flex; flex-direction: column;
+  > div {
+    margin-bottom: .8rem;
+    flex: 0 0 auto;
+  }
   .date {
     background: $gray-lighter;
     color: $gray-dark; font-weight: 500;
@@ -1475,6 +1478,7 @@ ul.action-links {
     font-size: $font-size-large; font-weight: 700;
   }
   .comment {
+    flex: 1 0 auto;
     color: $text-light;
     span {
       display: block;
@@ -1483,11 +1487,12 @@ ul.action-links {
     a {
       color: inherit;
       &:hover { text-decoration: underline; }
+      img { display: block; }
     }
   }
   .action {
-    position: absolute; bottom: 2rem; left: 0; right: 0;
-    margin: 0;
+    //position: absolute; bottom: 2rem; left: 0; right: 0;
+    //margin: 0;
   }
 }
 

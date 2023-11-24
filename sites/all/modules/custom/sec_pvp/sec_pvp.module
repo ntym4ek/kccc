@@ -34,7 +34,7 @@ function sec_pvp_theme()
 
 function sec_pvp_list_page()
 {
-  $pvp_per_page = 8;
+  $pvp_per_page = 12;
   $pvp_page = $_GET['page'] ?? 0;
 
   $output = '<div class="view view-pvp">';

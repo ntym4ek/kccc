@@ -434,7 +434,7 @@ function ext_admin_func_pvp_import()
     $queue = DrupalQueue::get('processing_queue');
     $queue->deleteQueue();
     $counter = 0;
-    $arr = array_reverse($arr);    // todo убрать в проде
+//    $arr = array_reverse($arr);
     foreach ($arr as $pvp_item) {
       if ($counter < 1000) {
         $queue->createItem(['func' => 'ext_admin_func_pvp_process', 'item' => $pvp_item]);
@@ -624,7 +624,7 @@ function ext_admin_func_pvp_process($pvp_item)
                 $prep_wr = entity_metadata_wrapper('field_collection_item', $prep);
 
                 $prep_wr->field_preparation = $prep_nid;
-                $prep_wr->field_prep_spend = floatval($prep_item['rate']);
+                $prep_wr->field_prep_spend = $prep_item['rate'] ? floatval($prep_item['rate']) : 0;
                 $prep_mix_spend = floatval($prep_item['cons']);
                 $prep_wr->field_mix_spend = $prep_mix_spend;
                 $treat_mix_spend = $prep_mix_spend ?: $treat_mix_spend;

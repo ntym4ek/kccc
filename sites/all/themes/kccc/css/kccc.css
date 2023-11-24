@@ -3237,10 +3237,12 @@ ul.action-links {
 .pvp-teaser {
   text-align: center;
   height: 100%;
-  padding-bottom: 5rem;
-  position: relative; }
+  position: relative;
+  display: flex;
+  flex-direction: column; }
   .pvp-teaser > div {
-    margin-bottom: 1rem; }
+    margin-bottom: .8rem;
+    flex: 0 0 auto; }
   .pvp-teaser .date {
     background: #E9E9E9;
     color: #7D7C7C;
@@ -3250,6 +3252,7 @@ ul.action-links {
     font-size: 1.125rem;
     font-weight: 700; }
   .pvp-teaser .comment {
+    flex: 1 0 auto;
     color: #7D7C7C; }
     .pvp-teaser .comment span {
       display: block;
@@ -3258,12 +3261,8 @@ ul.action-links {
       color: inherit; }
       .pvp-teaser .comment a:hover {
         text-decoration: underline; }
-  .pvp-teaser .action {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;
-    right: 0;
-    margin: 0; }
+      .pvp-teaser .comment a img {
+        display: block; }
 
 .node-season .pvp-event-check,
 .node-season .pvp-event-treat {
