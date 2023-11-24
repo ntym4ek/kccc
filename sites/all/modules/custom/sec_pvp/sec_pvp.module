@@ -41,15 +41,6 @@ function sec_pvp_list_page()
 
   // список ПвП с сортировкой по дате обновления
   $dbr = db_select('node', 'n');
-  $dbr->condition('n.type', 'season');
-  $dbr->condition('n.status', 1);
-//  $dbr
-//  $dbr->addField('n', 'nid');
-//  $dbr->distinct();
-  $dbr_n = clone($dbr);
-  $dbr->countQuery();
-
-  $dbr = db_select('node', 'n');
   $dbr->condition('n.status', 1);
   $dbr->condition('n.type', 'season');
   $dbr->addField('n', 'nid');
@@ -77,7 +68,6 @@ function sec_pvp_list_page()
   } else {
     $output .= '<div class="view-empty">Записей не найдено, попробуйте изменить фильтры.</div>';
   }
-
 
   $output .= '</div>';
 
@@ -240,6 +230,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'comment' => is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value(),
             'preparations' => [],
             'photos' => [],
+            'mix_spend' => $treat_wr->field_pvp_treat_mix_spend->value(),
           ];
           foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) {
             $event['preparations'][] = [
@@ -344,9 +335,6 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
       ];
       $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
     }
-
-    // todo
-    $vars['event']['mix_spend'] = '200';
 
     $text = count($vars['event']['preparations']) > 1 ? 'Расход баковой смеси:' : 'Расход рабочей жидкости:';
     $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . $text . ' <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';

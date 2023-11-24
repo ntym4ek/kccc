@@ -515,8 +515,6 @@ function ext_admin_func_pvp_process($pvp_item)
           // Поле
           $check_wr->field_pvp_check_culture_comment = ['value' => $check_item['note']];
 
-          //$a = $check_wr->field_pvp_check_culture_comment->value();
-
           // скачать, сохранить и добавить фото
           if ($check_item['field_photo']) {
             $destination = file_default_scheme() . '://images/tmp/' . $season->nid;
@@ -603,6 +601,7 @@ function ext_admin_func_pvp_process($pvp_item)
             }
 
             // Препараты
+            $treat_mix_spend = 0;
             foreach ($treat_item['preps'] as $prep_item) {
               // найти Препарат
               $prep_title = str_replace('| ', '', $prep_item['label']);
@@ -625,13 +624,16 @@ function ext_admin_func_pvp_process($pvp_item)
                 $prep_wr = entity_metadata_wrapper('field_collection_item', $prep);
 
                 $prep_wr->field_preparation = $prep_nid;
-                $prep_wr->field_prep_spend = floatval(str_replace(',', '.', $prep_item['rate']));
-                $prep_wr->field_mix_spend = floatval(str_replace(',', '.', $prep_item['cons']));
+                $prep_wr->field_prep_spend = floatval($prep_item['rate']);
+                $prep_mix_spend = floatval($prep_item['cons']);
+                $prep_wr->field_mix_spend = $prep_mix_spend;
+                $treat_mix_spend = $prep_mix_spend ?: $treat_mix_spend;
               }
               else {
                 watchdog('processing', 'Не найден Препарат ' . $prep_item['label'] . ' в сезоне ' . $pvp_item['id'], NULL, WATCHDOG_WARNING);
               }
             }
+            $treat_wr->field_pvp_treat_mix_spend = $treat_mix_spend;
 
             $treat_wr->save();
           }
