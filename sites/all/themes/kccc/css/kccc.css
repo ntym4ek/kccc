@@ -3261,8 +3261,8 @@ ul.action-links {
       color: inherit; }
       .pvp-teaser .comment a:hover {
         text-decoration: underline; }
-      .pvp-teaser .comment a img {
-        display: block; }
+  .pvp-teaser .image img {
+    display: block; }
 
 .node-season .pvp-event-check,
 .node-season .pvp-event-treat {

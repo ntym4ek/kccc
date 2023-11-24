@@ -1487,13 +1487,9 @@ ul.action-links {
     a {
       color: inherit;
       &:hover { text-decoration: underline; }
-      img { display: block; }
     }
   }
-  .action {
-    //position: absolute; bottom: 2rem; left: 0; right: 0;
-    //margin: 0;
-  }
+  .image img { display: block; }
 }
 
 

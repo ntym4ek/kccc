@@ -126,11 +126,11 @@ function ext_admin_execute_form($form, $form_state)
     '#value' => $function,
   );
 
-//  $form['file'] = array(
-//    '#type' => 'file',
-//    '#title' => 'Файл',
-//    '#description' => 'Выберите файл',
-//  );
+  $form['file'] = array(
+    '#type' => 'file',
+    '#title' => 'Файл',
+    '#description' => 'Выберите файл',
+  );
 
   $form['run'] = [
     '#type' => 'submit',
@@ -426,7 +426,7 @@ function ext_admin_func_preparation_import($prep_item)
  */
 function ext_admin_func_pvp_import()
 {
-  $filename = 'public://pvp.txt';
+  $filename = 'public://pvp2.txt';
 
   $content = file_get_contents($filename);
 
@@ -468,6 +468,7 @@ function ext_admin_func_pvp_process($pvp_item)
       // создание нового сезона
       $season = entity_create('node', [
         'type' => 'season',
+        'created' => $pvp_item['created'],
         'uid' => $uid,
         'title' => '',
       ]);
@@ -643,7 +644,13 @@ function ext_admin_func_pvp_process($pvp_item)
           $season_wr->field_culture->label() . ($pvp_item['culture']['note'] ? ' (' . $pvp_item['culture']['note'] . ')' : '') . '. ' .
           $season_wr->field_region->label();
         $season_wr->field_text = $pvp_item['id']; // сохранить старый ID
+
         $season_wr->save();
+
+        db_update('node')
+          ->fields(array('changed' => $pvp_item['changed']))
+          ->condition('nid', $season_wr->getIdentifier())
+          ->execute();
       }
       else {
         $transaction->rollback();
