@@ -6,7 +6,6 @@
   <div class="date"><?php print $event['date_formatted']; ?></div>
 
   <div class="culture">
-    <div class="header">Культура</div>
     <div class="images">
       <div id="slider-culture-images-<?php print $event['id']; ?>" class="slider slider-culture-images top-pagination" data-slidesperview-xs="1">
         <div class="swiper">

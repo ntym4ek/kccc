@@ -6,7 +6,6 @@
   <div class="date"><?php print $event['date_formatted']; ?></div>
 
   <div class="process">
-    <div class="header">&nbsp;</div>
     <div class="images">
       <div id="slider-process-images-<?php print $event['id']; ?>" class="slider slider-process-images top-pagination" data-slidesperview-xs="1">
         <div class="swiper">

@@ -3305,6 +3305,9 @@ ul.action-links {
   .node-season .pvp-event-check .comment,
   .node-season .pvp-event-treat .comment {
     padding: 0 1rem; }
+    .node-season .pvp-event-check .comment p,
+    .node-season .pvp-event-treat .comment p {
+      margin: 0 0 .5em 0; }
   .node-season .pvp-event-check .note,
   .node-season .pvp-event-treat .note {
     color: #7D7C7C;

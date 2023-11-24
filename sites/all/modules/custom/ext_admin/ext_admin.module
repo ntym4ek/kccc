@@ -434,8 +434,9 @@ function ext_admin_func_pvp_import()
     $queue = DrupalQueue::get('processing_queue');
     $queue->deleteQueue();
     $counter = 0;
+    $arr = array_reverse($arr);
     foreach ($arr as $pvp_item) {
-      if ($counter < 1000) {
+      if ($counter < 12) {
         $queue->createItem(['func' => 'ext_admin_func_pvp_process', 'item' => $pvp_item]);
         $counter++;
       } else break;
@@ -509,7 +510,7 @@ function ext_admin_func_pvp_process($pvp_item)
           $check->setHostEntity('node', $season);
           $check_wr = entity_metadata_wrapper('field_collection_item', $check);
 
-          $check_wr->field_date = $check_item['date'];
+          $check_wr->field_datetime = $check_item['date'];
 
           // Поле
           $check_wr->field_pvp_check_culture_comment = ['value' => $check_item['note']];
@@ -585,10 +586,11 @@ function ext_admin_func_pvp_process($pvp_item)
             $treat->setHostEntity('node', $season);
             $treat_wr = entity_metadata_wrapper('field_collection_item', $treat);
 
-            $treat_wr->field_date = $treat_item['date'];
-            $treat_wr->field_comment = ['value' => 'Время обработки: ' . $treat_item['time'] . '.' . PHP_EOL . 'Условия обработки: кислотность почвы - ' . drupal_strtolower($treat_item['acid']) . ', влажность почвы - ' . $treat_item['humid'] .
-              '%, дневная температура - ' . $treat_item['temp_day'] . '°C, ночная - ' . $treat_item['temp_night'] . '°C, осадки - ' . drupal_strtolower($treat_item['precip']) .
-              ', ветер - ' . drupal_strtolower($treat_item['wind']) . ' м/с.' . PHP_EOL . 'Средства обработки: ' . drupal_strtolower($treat_item['mech']) . '.'];
+            $treat_wr->field_datetime = $treat_item['date'];
+            if (drupal_strtolower($treat_item['precip']) == 'без осадков') $treat_item['precip'] = 'нет';
+            $treat_wr->field_comment = ['value' => 'Время обработки: ' . $treat_item['time'] . '.' . PHP_EOL . 'Условия обработки: кислотность почвы – ' . drupal_strtolower($treat_item['acid']) . ', влажность почвы – ' . $treat_item['humid'] .
+              '%, дневная температура – ' . $treat_item['temp_day'] . '°C, ночная – ' . $treat_item['temp_night'] . '°C, осадки – ' . drupal_strtolower($treat_item['precip']) .
+              ', ветер – ' . drupal_strtolower($treat_item['wind']) . ' м/с.' . PHP_EOL . 'Средства обработки: ' . drupal_strtolower($treat_item['mech']) . '.'];
 
             // Фотос
             $destination = file_default_scheme() . '://images/tmp/' . $season->nid;

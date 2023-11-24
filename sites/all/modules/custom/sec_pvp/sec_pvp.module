@@ -174,11 +174,11 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'type' => 'check',
             'date' => $check_wr->field_date->value(),
             'culture' => [
-              'comment' => strip_tags(is_array($check_wr->field_pvp_check_culture_comment->value()) ? $check_wr->field_pvp_check_culture_comment->value->value() : $check_wr->field_pvp_check_culture_comment->value()),
+              'comment' => is_array($check_wr->field_pvp_check_culture_comment->value()) ? $check_wr->field_pvp_check_culture_comment->value->value() : $check_wr->field_pvp_check_culture_comment->value(),
               'photos' => [],
             ],
             'hobjects' => [
-              'comment' => strip_tags(is_array($check_wr->field_pvp_check_hobjects_comment->value()) ? $check_wr->field_pvp_check_hobjects_comment->value->value() : $check_wr->field_pvp_check_hobjects_comment->value()),
+              'comment' => is_array($check_wr->field_pvp_check_hobjects_comment->value()) ? $check_wr->field_pvp_check_hobjects_comment->value->value() : $check_wr->field_pvp_check_hobjects_comment->value(),
               'list' => [],
             ],
           ];
@@ -210,7 +210,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'id' => $treat_wr->getIdentifier(),
             'type' => 'treat',
             'date' => $treat_wr->field_date->value(),
-            'comment' => strip_tags(is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value()),
+            'comment' => is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value(),
             'preparations' => [],
             'photos' => [],
           ];
