@@ -1517,14 +1517,10 @@ ul.action-links {
         position: absolute; top: 0; right: -20px;
       }
     }
-    .culture,
-    .process {
-      min-height: 490px;
-    }
     .date { text-align: center; }
     .header {
       font-size: $font-size-large; font-weight: 700; text-align: center;
-      margin-bottom: 1rem;
+      margin: 2rem 0 1rem;
     }
     .list {
       padding: 0 1rem; margin-bottom: 1rem;
@@ -1576,8 +1572,12 @@ ul.action-links {
       .event-title {
         margin: 0 21px 1rem 0;
       }
+      .header { margin-top: 0; }
       .comment,
       .list { padding: 0; }
+      .culture,
+      .process { min-height: 490px; }
     }
   }
+
 }
