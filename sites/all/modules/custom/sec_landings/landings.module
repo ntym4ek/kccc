@@ -1,7 +1,6 @@
 <?php
 
 const LANDINGS_URL_WEBINAR = 'webinar';
-const LANDINGS_URL_WEBINAR2 = 'webinar2';
 
 /**
  *  Implementation of hook_menu()
@@ -18,6 +17,12 @@ function landings_menu()
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
     'file' => 'includes/webinar2.landings.inc',
+  );
+  $items['landing/webinar-sovremennye-podhody-k-vozdelyvaniyu-soi'] = array(
+    'page callback' => 'landings_webinar3_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/webinar3.landings.inc',
   );
 
   return $items;
