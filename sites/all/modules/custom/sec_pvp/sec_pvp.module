@@ -34,24 +34,51 @@ function sec_pvp_theme()
 
 function sec_pvp_list_page()
 {
+  $pvp_per_page = 8;
+  $pvp_page = $_GET['page'] ?? 0;
+
   $output = '<div class="view view-pvp">';
-  $output .=  '<div class="view-content">';
 
   // список ПвП с сортировкой по дате обновления
   $dbr = db_select('node', 'n');
   $dbr->condition('n.type', 'season');
-  $dbr->orderBy('n.changed', 'DESC');
+  $dbr->condition('n.status', 1);
+//  $dbr
+//  $dbr->addField('n', 'nid');
+//  $dbr->distinct();
+  $dbr_n = clone($dbr);
+  $dbr->countQuery();
+
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.status', 1);
+  $dbr->condition('n.type', 'season');
   $dbr->addField('n', 'nid');
-  $dbr->range(0, 12);
-  if ($pvp_nids = $dbr->execute()->fetchCol()) {
+  $dbr->innerJoin('field_data_field_pvp_check', 'fpc', 'fpc.entity_id = n.nid');
+  $dbr->distinct();
+  $dbr_n = clone($dbr);
+  $pvp_total = count($dbr->execute()->fetchAll());
+  if ($pvp_total) {
+    $dbr_n->orderBy('n.changed', 'DESC');
+    $dbr_n->range($pvp_page*$pvp_per_page, $pvp_per_page);
+    $pvp_nids = $dbr_n->execute()->fetchCol();
+
+    $output .=  '<div class="view-content">';
     foreach ($pvp_nids as $pvp_nid) {
-      $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid, true);
+      $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid);
       $pvp_teaser = theme('pvp_teaser', ['item' => $pvp_teaser]);
       $output .= '<div class="views-row col-xs-12 col-md-6 col-lg-3">' . $pvp_teaser . '</div>';
     }
+    $output .=  '</div>';
 
+    // Пейджер
+    pager_default_initialize($pvp_total, $pvp_per_page);
+    $output .= theme('pager');
+
+  } else {
+    $output .= '<div class="view-empty">Записей не найдено, попробуйте изменить фильтры.</div>';
   }
-  $output .=  '</div>';
+
+
   $output .= '</div>';
 
   return $output;
@@ -200,8 +227,8 @@ function sec_pvp_get_pvp_info($pvp_nid)
             $event['hobjects']['list'][] = $ho;
           }
 
-          // при одинаковой дате Контроль ставить перед Обработкой
-          $events[$event['date'] . '0' . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
+          // при одинаковой дате сортируем по ID
+          $events[$event['date'] . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
         }
 
         // записи Обработок
@@ -230,10 +257,9 @@ function sec_pvp_get_pvp_info($pvp_nid)
               'note' => $tps_wr->title->value(),
             ];
           }
-          // при одинаковой дате Обработку ставить после Контроля
-          $events[$event['date'] . '1' . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
+          // при одинаковой дате сортируем по ID
+          $events[$event['date'] . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
         }
-
       }
 
       ksort($events);
