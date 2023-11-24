@@ -7,13 +7,17 @@
     .slider.outer-pagination > .swiper-pagination,
     .carousel.outer-pagination > .swiper-pagination {
       --swiper-pagination-bottom: -2.5rem; }
+    .slider.outer-pagination.top-pagination,
+    .carousel.outer-pagination.top-pagination {
+      margin-top: 4rem;
+      margin-bottom: 0; }
+      .slider.outer-pagination.top-pagination > .swiper-pagination,
+      .carousel.outer-pagination.top-pagination > .swiper-pagination {
+        --swiper-pagination-top: -2.5rem; }
   .slider.top-pagination,
   .carousel.top-pagination {
-    margin-top: 4rem;
-    margin-bottom: 0; }
-    .slider.top-pagination > .swiper-pagination,
-    .carousel.top-pagination > .swiper-pagination {
-      --swiper-pagination-top: -2.5rem; }
+    --swiper-pagination-top: 1rem;
+    --swiper-pagination-bottom: auto; }
   .slider .swiper-button-prev,
   .slider .swiper-button-next,
   .carousel .swiper-button-prev,
@@ -24,24 +28,6 @@
   .carousel.outer-navigation .swiper-button-prev,
   .carousel.outer-navigation .swiper-button-next {
     text-shadow: none; }
-  @media only screen and (max-width: 359px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
-  @media only screen and (min-width: 360px) and (max-width: 767px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
-  @media only screen and (min-width: 768px) and (max-width: 1279px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
   @media only screen and (min-width: 1280px) {
     .slider.outer-navigation > .swiper-button-prev, .slider.outer-navigation > .swiper-button-next,
     .carousel.outer-navigation > .swiper-button-prev,

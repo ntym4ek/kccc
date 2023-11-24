@@ -42,6 +42,7 @@ function ext_node_preprocess_page(&$vars)
       if ($vars['node']->type == 'disease')                     { $vars['title'] = 'Болезни культур'; }
       if ($vars['node']->type == 'pest')                        { $vars['title'] = 'Вредители культур'; }
       if ($vars['node']->type == 'weed')                        { $vars['title'] = 'Сорные растения'; }
+      if ($vars['node']->type == 'season')                      { $vars['title'] = 'Препараты в поле'; }
       if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['title'] = 'Публикации'; }
 
       // -- Препараты
@@ -175,7 +176,7 @@ function ext_node_preprocess_node(&$vars)
   }
 
   // -- Тип Препарат
-  if ($vars['type'] == 'preparation') {
+  if ($node->type == 'preparation') {
     $vars['product_info'] = sec_catalog_get_product_info($vars['node']->nid);
 
     if ($vars['view_mode'] == 'full') {
@@ -232,6 +233,12 @@ function ext_node_preprocess_node(&$vars)
       $vars['block_app'] = _block_get_renderable_array($blocks);
     }
   }
+
+  // -- Тип Препараты в поле
+  if ($node->type == 'season' && $vars['view_mode'] == 'full') {
+    $vars['pvp_info'] = sec_pvp_get_pvp_info($node->nid);
+  }
+
 
 }
 

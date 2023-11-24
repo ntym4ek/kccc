@@ -6,10 +6,14 @@
   &.outer-pagination {
     margin-bottom: 4rem;
     > .swiper-pagination { --swiper-pagination-bottom: -2.5rem; }
+    &.top-pagination {
+      margin-top: 4rem; margin-bottom: 0;
+      > .swiper-pagination { --swiper-pagination-top: -2.5rem; }
+    }
   }
   &.top-pagination {
-    margin-top: 4rem; margin-bottom: 0;
-    > .swiper-pagination { --swiper-pagination-top: -2.5rem; }
+    --swiper-pagination-top: 1rem;
+    --swiper-pagination-bottom: auto;
   }
 
   .swiper-button-prev,
@@ -19,21 +23,6 @@
     .swiper-button-next { text-shadow: none; }
   }
 
-  @media #{$phone-only} {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
-  }
-  @media #{$smartphone-only} {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
-  }
-  @media #{$tablet-only} {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
-  }
   @media #{$laptop} {
     &.outer-navigation > .swiper-button-prev,
     &.outer-navigation > .swiper-button-next {

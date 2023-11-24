@@ -107,11 +107,11 @@
   <?php endif; ?>
 
   <?php if (count($images)): ?>
-  <div class="images">
+  <div class="node-images">
     <?php hide($content['field_image']); ?>
     <?php hide($content['field_images']); ?>
     <?php if (count($images) > 1): ?>
-    <div id="slider-images" class="slider slider-products outer-pagination" data-slidesperview-xs="1" data-autoheight="true">
+    <div id="slider-images" class="slider slider-images outer-pagination" data-slidesperview-xs="1" data-autoheight="true">
       <div class="swiper">
         <div class="swiper-wrapper">
           <?php foreach ($images as $key => $image) {
@@ -137,7 +137,7 @@
 
   <?php if (!empty($body[0]["safe_summary"])): ?>
   <?php hide($content['body']); ?>
-  <div class="summary">
+  <div class="node-summary">
     <?php print $body[0]["safe_summary"]; ?>
   </div>
   <?php endif; ?>

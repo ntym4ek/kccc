@@ -42,13 +42,10 @@ h6, .h6 { font-size: $font-size-h6; font-weight: 500; margin: 1rem 0; }
 }
 .h1, .h2, .h3, .h4, .h5, .h6 { margin: 0; }
 
-// растянуть блок на всю ширину экрана за рамки .container
 .screen-width {
-  position: relative;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  overflow: hidden;                                         // предотвращает выход margin за границы блока (схлопывание)
+  @include screen-width();
 }
+
 
 // --- Разметка страницы --------------------------------------------------------------
 .container {
@@ -325,5 +322,35 @@ fieldset {
     @media #{$tablet} {
       padding: 1rem 2rem;
     }
+  }
+}
+
+// --- Подкат ------------------------------------------------------------------------
+.readmore {
+  margin-bottom: 15px;
+  overflow: hidden;
+  position: relative;
+  &.closed {
+    cursor: pointer;
+    &:after {
+      display: block;
+      content: ' ';
+      height: 40px;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, #fbfbfb73 30%, white);
+      transition: background-color 500ms;
+    }
+  }
+  &.open {
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    &:after { background: none; }
+  }
+  ~ .more {
+    background: $gray-lighter;
+    cursor: pointer;
+    color: $text-light; font-size: $font-size-small; text-align: center;
+    height: 15px;
+    margin-top: -15px;
   }
 }

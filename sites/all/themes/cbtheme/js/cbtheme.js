@@ -23,51 +23,24 @@
         }
       }
 
-        // если < 1280, то выводится боковое меню
-        // повесить обработчик свайпа
-      if ($(window).width() < 1280) {
-        // клик по иконке Меню
-        $(".nav-mobile-label").on("click", (e) => {
-          toggleMobileNav();
-          e.stopPropagation();
-          // e.stopPropagation().preventDefault();
-        });
-
-        $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile-label").on("swiped-right", (e) => {
-          // если свайп вправо на Свайпере или блоке с классом main-menu-disabled, то не показываем меню
-          let is_swiper = $(e.target).closest(".main-menu-disabled, .swiper").length > 0;
-          if (!is_swiper) { showMobileNav(); }
-        });
-        $(".nav-mobile-right .page, .nav-mobile-right .nav-mobile-label").on("swiped-left", (e) => {
-          // если свайп вправо на Свайпере, то не показываем меню
-          let is_swiper = $(e.target).closest(".swiper").length > 0;
-          if (!is_swiper) { showMobileNav(); }
-        });
-        $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile, .nav-mobile-left .nav-mobile-label").on("swiped-left", () => {
-          hideMobileNav();
-        });
-        $(".nav-mobile-right .page, .nav-mobile-right .nav-mobile, .nav-mobile-right .nav-mobile-label").on("swiped-right", () => {
-          hideMobileNav();
-        });
-        $(".page").on("click", () => {
-          hideMobileNav();
-        });
-      }
-
-      // -- Аккордеон пунктов в мобильном меню
-      class MobileMenuAccordion {
+      // -- Аккордеон
+      class Accordion {
         constructor(target, config) {
           this._el = typeof target === "string" ? document.querySelector(target) : target;
-          const defaultConfig = {
-            alwaysOpen: true,
-            duration: 350
-          };
-          this._config = Object.assign(defaultConfig, config);
-          this.addEventListener();
+          if (this._el ) {
+            const defaultConfig = {
+              alwaysOpen: true,
+              duration: 350,
+              linkSelector: ".acc-link",
+              boxSelector: ".acc-box",
+            };
+            this._config = Object.assign(defaultConfig, config);
+            this.addEventListener();
+          }
         }
         addEventListener() {
           this._el.addEventListener("click", (e) => {
-            const elHeader = e.target.closest(".expanded > a");
+            const elHeader = e.target.closest(this._config.linkSelector);
             if (!elHeader) {
               return;
             }
@@ -81,7 +54,7 @@
           });
         }
         show(el) {
-          const elBody = el.querySelector(".expanded .sub-menu");
+          const elBody = el.querySelector(this._config.boxSelector);
           if (elBody.classList.contains("collapsing") || el.classList.contains("show")) {
             return;
           }
@@ -106,7 +79,7 @@
           }, this._config.duration);
         }
         hide(el) {
-          const elBody = el.querySelector(".expanded .sub-menu");
+          const elBody = el.querySelector(this._config.boxSelector);
           if (elBody.classList.contains("collapsing") || !el.classList.contains("show")) {
             return;
           }
@@ -132,11 +105,95 @@
           el.classList.contains("show") ? this.hide(el) : this.show(el);
         }
       }
-      new MobileMenuAccordion(document.querySelector(".nav-mobile .main-menu"), {
-        alwaysOpen: false
+      document.querySelectorAll(".accordion").forEach(
+        (el) => {
+          new Accordion(el, {
+            alwaysOpen: false,
+          });
+        }
+      );
+
+
+      // -- блоки с подкатом
+        // Высота элемента в закрытом состоянии задаётся атрибутом data-closed-height.
+        // Обёрнуто в timeout, так как иначе неверно определяет высоту контейнеров
+      setTimeout(() => {
+        $(".readmore").each((i, el) => {
+        var collEl = $(el);
+        const fullHeight = collEl.height();
+        const closedHeight = collEl.data("closed-height") ?? 0;
+        // если высота с текстом больше заданной,
+        // то скрыть подкатом лишнее и добавить ссылку для открытия
+        if (fullHeight > closedHeight) {
+          const moreText = "развернуть";
+          const lessText = "cвернуть";
+          const duration = 250;
+          collEl.addClass("closed").css("height", closedHeight);
+          collEl.after("<div class='more'>" + moreText + "</div>");
+          var collLink = collEl.next(".more");
+
+          var openMore = function() {
+            collEl.animate({"height": fullHeight}, {duration: duration }, "linear");
+            collEl.addClass("open").removeClass("closed");
+            collLink.text(lessText).addClass("open").removeClass("closed");
+            collEl.unbind("click", openMore).bind("click", closeMore);
+            collLink.unbind("click", openMore).bind("click", closeMore);
+          };
+
+          var closeMore = function() {
+            collEl.animate({"height": closedHeight}, {duration: duration }, "linear");
+            collEl.addClass("closed").removeClass("open");
+            collLink.text(moreText).addClass("closed").removeClass("open");
+            collEl.unbind("click").bind("click", openMore);
+            collLink.unbind("click").bind("click", openMore);
+          };
+
+          collEl.bind("click", openMore);
+          collLink.bind("click", openMore);
+        }
       });
-      new MobileMenuAccordion(document.querySelector(".nav-mobile .secondary-menu"), {
-        alwaysOpen: false
+      }, 100);
+
+      // если < 1280, то выводится боковое меню
+        // повесить обработчик свайпа
+      if ($(window).width() < 1280) {
+        // клик по иконке Меню
+        $(".nav-mobile-label").on("click", (e) => {
+          toggleMobileNav();
+          e.stopPropagation();
+        });
+
+        $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile-label").on("swiped-right", (e) => {
+          // если свайп вправо на Свайпере или блоке с классом main-menu-disabled, то не показываем меню
+          let is_swiper = $(e.target).closest(".main-menu-disabled, .swiper").length > 0;
+          if (!is_swiper) { showMobileNav(); }
+        });
+        $(".nav-mobile-right .page, .nav-mobile-right .nav-mobile-label").on("swiped-left", (e) => {
+          // если свайп вправо на Свайпере, то не показываем меню
+          let is_swiper = $(e.target).closest(".swiper").length > 0;
+          if (!is_swiper) { showMobileNav(); }
+        });
+        $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile, .nav-mobile-left .nav-mobile-label").on("swiped-left", () => {
+          hideMobileNav();
+        });
+        $(".nav-mobile-right .page, .nav-mobile-right .nav-mobile, .nav-mobile-right .nav-mobile-label").on("swiped-right", () => {
+          hideMobileNav();
+        });
+        $(".page").on("click", () => {
+          hideMobileNav();
+        });
+      }
+
+      // -- Аккордеон пунктов в мобильном меню
+      new Accordion(document.querySelector(".nav-mobile .main-menu"), {
+        alwaysOpen: false,
+        linkSelector: ".expanded > a",
+        boxSelector: ".expanded .sub-menu",
+      });
+      new Accordion(document.querySelector(".nav-mobile .secondary-menu"), {
+        alwaysOpen: false,
+        linkSelector: ".expanded > a",
+        boxSelector: ".expanded .sub-menu",
       });
 
     }

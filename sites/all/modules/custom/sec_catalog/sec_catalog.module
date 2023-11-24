@@ -244,8 +244,6 @@ function sec_catalog_get_category_info($cat_id)
 
 /**
  * Вернуть массив возможных значений фильтров Каталога и выбранные значения
- *
- * @return array
  */
 function sec_catalog_get_filters_set()
 {
@@ -469,7 +467,7 @@ function sec_catalog_get_product_info($node)
         'short' => $node_wr->field_prep_formulation->value() ? $node_wr->field_prep_formulation->field_acronym->value() : '',
         'full' => $node_wr->field_prep_formulation->label(),
       ];
-      $product['path'] = drupal_get_path_alias('node/' . $node_wr->getIdentifier());
+      $product['path'] = '/' . drupal_get_path_alias('node/' . $node_wr->getIdentifier());
 
       $product['summary'] = $node_wr->field_prep_summary->value();
 

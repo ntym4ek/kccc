@@ -14,7 +14,8 @@ $content-well-max-width: 1200px !default; // Set the max-width of the content we
 
 $sm-start: ($xs-max + 1); // 360 px
 $md-start: ($sm-max + 1); // 768 px
-$lg-start: ($md-max + 1); // 1366 px
+//$lg-start: ($md-max + 1); // 1366 px
+$lg-start: ($md-max + 1); // 1280 px
 $xl-start: ($lg-max + 1); // 1440 px
 
 // Breakpoints

@@ -2,7 +2,7 @@
 ?>
 
 <div class="card card-product-v">
-  <a href="/<?php print $path; ?>">
+  <a href="<?php print $path; ?>">
     <div class="img">
       <img src="<?php print $image['teaser']; ?>" alt="<?php print $title; ?>">
     </div>

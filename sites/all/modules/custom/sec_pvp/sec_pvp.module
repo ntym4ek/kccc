@@ -1,0 +1,342 @@
+<?php
+
+function sec_pvp_menu()
+{
+  $items['preparaty-v-pole'] = array(
+    'title' => 'Препараты в поле',
+    'description' => 'Примеры работы препаратов компании',
+    'page callback' => 'sec_pvp_list_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'main-menu',
+  );
+
+  return $items;
+}
+
+function sec_pvp_theme()
+{
+  return [
+    'pvp_teaser' => [
+      'variables' => ['item' => null],
+      'template' => 'templates/pvp-teaser',
+    ],
+    'pvp_event_check' => [
+      'variables' => ['event' => null, 'pvp_info' => null],
+      'template' => 'templates/pvp-event-check',
+    ],
+    'pvp_event_treat' => [
+      'variables' => ['event' => null, 'pvp_info' => null],
+      'template' => 'templates/pvp-event-treat',
+    ],
+  ];
+}
+
+function sec_pvp_list_page()
+{
+  $pvp_per_page = 8;
+  $pvp_page = $_GET['page'] ?? 0;
+
+  $output = '<div class="view view-pvp">';
+
+  // список ПвП с сортировкой по дате обновления
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.status', 1);
+  $dbr->condition('n.type', 'season');
+  $dbr->addField('n', 'nid');
+  $dbr->innerJoin('field_data_field_pvp_check', 'fpc', 'fpc.entity_id = n.nid');
+  $dbr->distinct();
+  $dbr_n = clone($dbr);
+  $pvp_total = count($dbr->execute()->fetchAll());
+  if ($pvp_total) {
+    $dbr_n->orderBy('n.changed', 'DESC');
+    $dbr_n->range($pvp_page*$pvp_per_page, $pvp_per_page);
+    $pvp_nids = $dbr_n->execute()->fetchCol();
+
+    $output .=  '<div class="view-content">';
+    foreach ($pvp_nids as $pvp_nid) {
+      $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid);
+      $pvp_teaser = theme('pvp_teaser', ['item' => $pvp_teaser]);
+      $output .= '<div class="views-row col-xs-12 col-md-6 col-lg-3">' . $pvp_teaser . '</div>';
+    }
+    $output .=  '</div>';
+
+    // Пейджер
+    pager_default_initialize($pvp_total, $pvp_per_page);
+    $output .= theme('pager');
+
+  } else {
+    $output .= '<div class="view-empty">Записей не найдено, попробуйте изменить фильтры.</div>';
+  }
+
+  $output .= '</div>';
+
+  return $output;
+}
+
+/**
+ * Вернуть массив информации для вывода тизера ПвП в списке
+ */
+function sec_pvp_get_pvp_teaser($pvp_nid)
+{
+  $teaser = &drupal_static(__FUNCTION__ . $pvp_nid);
+  if (!isset($teaser)) {
+    $pvp_wr = entity_metadata_wrapper('node', $pvp_nid);
+
+    if ($pvp_wr->value()) {
+      $teaser = [
+        'id' => $pvp_wr->getIdentifier(),
+        'label' => $pvp_wr->label(),
+        'region' => $pvp_wr->field_region->label(),
+        'culture' => $pvp_wr->field_culture->label(),
+        'path' => drupal_get_path_alias('node/' . $pvp_wr->getIdentifier()),
+        'comment' => 'Перед обработкой',
+      ];
+
+      // для короткого формата найти последнее событие (обработка или контроль)
+      $event_id = $event_date = 0;
+      // найти последний Контроль
+      foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
+        if ($check_wr->field_datetime->value() > $event_date) {
+          $event_date = $check_wr->field_datetime->value();
+          $event_id = $check_wr->getIdentifier();
+        }
+      // найти последнюю Обработку
+      $treat_id = $date = 0;
+      foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
+        if ($treat_wr->field_datetime->value() > $date) {
+          $date = $treat_wr->field_datetime->value();
+          $treat_id = $treat_wr->getIdentifier();
+        }
+        if ($treat_wr->field_datetime->value() > $event_date) {
+          $event_date = $treat_wr->field_datetime->value();
+          $event_id = $treat_wr->getIdentifier();
+        }
+      }
+      if ($event_id) {
+        $event_wr = entity_metadata_wrapper('field_collection_item', $event_id);
+        if ($event_wr->getBundle() == 'field_pvp_check') {
+          $teaser += [
+            'type' => 'check',
+            'date' => date('d.m.Y', $event_wr->field_datetime->value()),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_check_culture_images[0]->file->value()->uri),
+          ];
+        } else {
+          $teaser += [
+            'type' => 'treat',
+            'date' => date('d.m.Y', $event_wr->field_datetime->value()),
+            'photo' => image_style_url('teaser', $event_wr->field_pvp_treat_images[0]->file->value()->uri),
+          ];
+        }
+
+        if ($treat_id) {
+          $treat_wr = entity_metadata_wrapper('field_collection_item', $treat_id);
+
+          // получить список препаратов из последней Обработки
+          $preps = [];
+          foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) $preps[] = '<a href="/' . drupal_get_path_alias('node/' . $tp_wr->field_preparation->getIdentifier()) . '">' . $tp_wr->field_preparation->label() . '</a>';
+          if ($preps) {
+            $teaser['comment'] = ($teaser['type'] == 'check' ? 'После обработки препаратами:' : 'Обработка препаратами:') . '<span>' . implode(', ', $preps) . '</span>';
+          } else {
+            $teaser['comment'] = 'Проведена обработка';
+          }
+        }
+      }
+
+    }
+  }
+
+  return $teaser;
+}
+
+/**
+ * Вернуть информацию о записи ПвП
+ */
+function sec_pvp_get_pvp_info($pvp_nid)
+{
+  $pvp = &drupal_static(__FUNCTION__ . $pvp_nid);
+  if (!isset($pvp)) {
+    try {
+      $pvp_wr = entity_metadata_wrapper('node', $pvp_nid);
+
+      if ($pvp_wr->value()) {
+        $pvp = [
+          'id' => $pvp_wr->getIdentifier(),
+          'label' => $pvp_wr->label(),
+          'season' => $pvp_wr->field_pvp_season->value(),
+          'year' => $pvp_wr->field_pvp_year->value(),
+          'field' => [
+            'owner' => $pvp_wr->field_pvp_field_owner->value(),
+            'area' => $pvp_wr->field_pvp_field_area->value(),
+            'region' => [
+              'id' => $pvp_wr->field_region->getIdentifier(),
+              'label' => $pvp_wr->field_region->label(),
+            ],
+          ],
+          'culture' => [
+            'id' => $pvp_wr->field_culture->getIdentifier(),
+            'label' => $pvp_wr->field_culture->label(),
+            'note' => $pvp_wr->field_pvp_culture_note->value(),
+            'satellite' => $pvp_wr->field_pvp_culture_satellite->value(),
+            'previous' => $pvp_wr->field_pvp_culture_previous->value(),
+          ],
+          'events' => [],
+        ];
+
+        $events = [];
+        // записи Контроля
+        foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr) {
+          $event = [
+            'id' => $check_wr->getIdentifier(),
+            'type' => 'check',
+            'date' => $check_wr->field_datetime->value(),
+            'culture' => [
+              'comment' => is_array($check_wr->field_pvp_check_culture_comment->value()) ? $check_wr->field_pvp_check_culture_comment->value->value() : $check_wr->field_pvp_check_culture_comment->value(),
+              'photos' => [],
+            ],
+            'hobjects' => [
+              'comment' => is_array($check_wr->field_pvp_check_hobjects_comment->value()) ? $check_wr->field_pvp_check_hobjects_comment->value->value() : $check_wr->field_pvp_check_hobjects_comment->value(),
+              'list' => [],
+            ],
+          ];
+          foreach ($check_wr->field_pvp_check_culture_images->getIterator() as $cp_wr) {
+            $event['culture']['photos'][] = [
+              'photo_uri' => $cp_wr->file->value()->uri,
+              'note' => $cp_wr->title->value(),
+            ];
+          }
+          foreach ($check_wr->field_pvp_check_hobjects->getIterator() as $ch_wr) {
+            $ho = [
+              'id' => $ch_wr->field_hobject->getIdentifier(),
+              'label' => $ch_wr->field_hobject->label(),
+            ];
+            if ($ch_wr->field_image->value()) {
+              $ho['photo_uri'] = $ch_wr->field_image->file->value()->uri;
+              $ho['note'] = $ch_wr->field_image->title->value();
+            }
+            $event['hobjects']['list'][] = $ho;
+          }
+
+          // при одинаковой дате сортируем по ID
+          $events[$event['date'] . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
+        }
+
+        // записи Обработок
+        foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
+          $event = [
+            'id' => $treat_wr->getIdentifier(),
+            'type' => 'treat',
+            'date' => $treat_wr->field_datetime->value(),
+            'comment' => is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value(),
+            'preparations' => [],
+            'photos' => [],
+            'mix_spend' => $treat_wr->field_pvp_treat_mix_spend->value(),
+          ];
+          foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) {
+            $event['preparations'][] = [
+              'preparation' => [
+                'id' => $tp_wr->field_preparation->getIdentifier(),
+                'label' => $tp_wr->field_preparation->label(),
+              ],
+              'prep_spend' => $tp_wr->field_prep_spend->value(),
+              'mix_spend' => $tp_wr->field_mix_spend->value(),
+            ];
+          }
+          foreach ($treat_wr->field_pvp_treat_images->getIterator() as $tps_wr) {
+            $event['photos'][] = [
+              'photo_uri' => $tps_wr->file->value()->uri,
+              'note' => $tps_wr->title->value(),
+            ];
+          }
+          // при одинаковой дате сортируем по ID
+          $events[$event['date'] . str_pad($event['id'], 6, '0', STR_PAD_LEFT)] = $event;
+        }
+      }
+
+      ksort($events);
+      $pvp['events'] = $events;
+    } catch (Exception $e) {
+      $a = 1;
+    }
+  }
+
+  return $pvp;
+}
+
+/**
+ * Implements hook_preprocess_hook()
+ */
+function sec_pvp_preprocess_pvp_event_check(&$vars)
+{
+  $pvp = $vars['pvp_info'];
+
+  $vars['event']['date_formatted'] = date('d.m.Y', $vars['event']['date']);
+
+  // добавляем стилизованные фото и тег alt
+  foreach ($vars['event']['culture']['photos'] as $key => $item) {
+    $vars['event']['culture']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
+    $vars['event']['culture']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
+    $vars['event']['culture']['photos'][$key]['photo_alt'] = $pvp['culture']['label'];
+  }
+  $hos = [];
+  foreach ($vars['event']['hobjects']['list'] as $item) {
+    if (!empty($item['photo_uri'])) {
+      $vars['event']['hobjects']['photos'][] = [
+        'photo_teaser' => image_style_url('teaser', $item['photo_uri']),
+        'photo_url' => file_create_url($item['photo_uri']),
+        'label' => $item['label'],
+        'photo_alt' => $item['label'],
+        'note' => $item['note'],
+      ];
+    } else {
+      $hos[] = '<a href="/' . drupal_get_path_alias('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
+    }
+  }
+  // список ВО без фото
+  if ($hos) {
+    $vars['event']['hobjects']['list_formatted'] = implode(', ', $hos);
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_hook()
+ */
+function sec_pvp_preprocess_pvp_event_treat(&$vars)
+{
+  $vars['event']['date_formatted'] = date('d.m.Y', $vars['event']['date']);
+
+  // добавляем стилизованные фото и тег alt
+  foreach ($vars['event']['photos'] as $key => $item) {
+    $vars['event']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
+    $vars['event']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
+    $vars['event']['photos'][$key]['photo_alt'] = 'Обработка препаратами ' . variable_get('site_name');
+  }
+
+  if ($vars['event']['preparations']) {
+    $treat_unit_apply = '';
+    foreach ($vars['event']['preparations'] as $key => $item) {
+      $product_info = sec_catalog_get_product_info($item['preparation']['id']);
+      $treat_unit_apply = $product_info['units']['apply'];
+      if (!empty($item['old_mix_spend'])) {
+        $summary = '<div class="prep-spend">Расход: <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
+      }
+      else {
+        $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">Расход препарата: <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
+      }
+
+      $card = [
+        'title' => $product_info['title'],
+        'label' => $product_info['label'],
+        'path' => $product_info['path'],
+        'image' => $product_info['image'],
+        'components' => $product_info['components'],
+        'summary' => $summary,
+      ];
+      $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
+    }
+
+    $text = count($vars['event']['preparations']) > 1 ? 'Расход баковой смеси:' : 'Расход рабочей жидкости:';
+    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . $text . ' <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
+  }
+}

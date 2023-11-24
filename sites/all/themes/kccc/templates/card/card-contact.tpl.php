@@ -4,7 +4,7 @@
 ?>
 
 <?php if ($active): ?>
-  <a href="/<?php print $url; ?>">
+  <a href="<?php print $url; ?>">
 <?php endif; ?>
 
 <div class="card card-contact">
@@ -13,7 +13,7 @@
       <?php if ($active): ?>
         <img src="<?php print $main['photo']['url']; ?>" alt="<?php print $label; ?>">
       <?php else: ?>
-        <a href="/<?php print $url; ?>"><img src="<?php print $main['photo']['url']; ?>" alt="<?php print $label; ?>"></a>
+        <a href="<?php print $url; ?>"><img src="<?php print $main['photo']['url']; ?>" alt="<?php print $label; ?>"></a>
       <?php endif; ?>
     </div>
     <div class="contact-info">
@@ -22,7 +22,7 @@
         <?php if ($active): ?>
           <?php if (!empty($main['name_full'])) : ?><?php print $main['name_full']; ?><?php endif; ?>
         <?php else: ?>
-          <?php if (!empty($main['name_full'])) : ?><a href="/<?php print $url; ?>"><?php print $main['name_full']; ?></a><?php endif; ?>
+          <?php if (!empty($main['name_full'])) : ?><a href="<?php print $url; ?>"><?php print $main['name_full']; ?></a><?php endif; ?>
         <?php endif; ?>
       </div>
       <?php if (!empty($staff['office']['title'])) : ?><div class="office"><?php print $staff['office']['title']; ?></div><?php endif; ?>

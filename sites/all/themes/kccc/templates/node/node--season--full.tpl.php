@@ -91,7 +91,7 @@
   <?php if (!empty($date) || !empty($stats)): ?>
   <div class="info">
     <div class="date"><?php print $date; ?></div>
-    <?php if (!empty($stats['totalcount'])): ?>
+    <?php if (isset($stats['totalcount'])): ?>
     <div class="stats">
       <div class="media"><i class="icon icon-099"></i></div>
       <div class="text"><?php print $stats['totalcount']; ?></div>
@@ -106,19 +106,31 @@
     </div>
   <?php endif; ?>
 
-  <?php hide($content['field_image']); ?>
-  <div class="node-images">
-    <div class="image">
-      <?php print drupal_render($images[0]); ?>
+  <?php if (!empty($body[0]["value"])): ?>
+    <?php hide($content['body']); ?>
+    <div class="node-summary">
+      <?php print $body[0]["value"]; ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if (count($pvp_info['events'])): ?>
+  <div class="events">
+    <div id="carousel-pvp" class="carousel carousel-pvp outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2.3" data-slidesperview-lg="3">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <?php foreach ($pvp_info['events'] as $event) {
+              print '<div class="swiper-slide">'  .
+                      theme('pvp_event_' . $event['type'], ['event' => $event, 'pvp_info' => $pvp_info]) .
+                    '</div>';
+          } ?>
+        </div>
+      </div>
+      <?php if (count($pvp_info['events']) > 3): ?>
+      <div class="swiper-button-prev hide show-lg"></div>
+      <div class="swiper-button-next hide show-lg"></div>
+      <?php endif; ?>
     </div>
   </div>
-
-  <?php print render($content['field_textarea']); ?>
-  <blockquote>
-    <?php print render($content['body']); ?>
-  </blockquote>
-
-
-  <?php print drupal_render($content); ?>
+  <?php endif; ?>
 
 </div>

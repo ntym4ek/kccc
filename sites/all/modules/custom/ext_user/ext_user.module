@@ -498,8 +498,7 @@ function ext_user_get_user_info($user = null)
         $email = $account->mail;
         $phone = $main_wr->field_user_phone->value() ? $main_wr->field_user_phone->value() : '';
         if ($main_wr->field_user_photo->value()) {
-          $file = $main_wr->field_user_photo->file->value();
-          $photo_uri = $file->uri;
+          $photo_uri = $main_wr->field_user_photo->file->value()->uri;
         }
       }
 
@@ -663,7 +662,7 @@ function ext_user_get_user_info($user = null)
         ]
       ],
       'staff' => $staff,
-      'url' => drupal_get_path_alias('user/' . $account->uid)
+      'url' => '/' . drupal_get_path_alias('user/' . $account->uid)
     ];
   }
 

@@ -1227,6 +1227,36 @@ fieldset {
     .horizontal-tabs fieldset.horizontal-tabs-pane {
       padding: 1rem 2rem; } }
 
+.readmore {
+  margin-bottom: 15px;
+  overflow: hidden;
+  position: relative; }
+  .readmore.closed {
+    cursor: pointer; }
+    .readmore.closed:after {
+      display: block;
+      content: ' ';
+      height: 40px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, #fbfbfb73 30%, white);
+      transition: background-color 500ms; }
+  .readmore.open {
+    cursor: pointer;
+    margin-bottom: 1.5rem; }
+    .readmore.open:after {
+      background: none; }
+  .readmore ~ .more {
+    background: #E9E9E9;
+    cursor: pointer;
+    color: #7D7C7C;
+    font-size: 0.875rem;
+    text-align: center;
+    height: 15px;
+    margin-top: -15px; }
+
 .btn {
   display: inline-block;
   background: transparent;
@@ -1760,10 +1790,9 @@ ul.menu {
   overflow: hidden; }
 
 :root {
-  --swiper-navigation-size: 44px;
+  --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
-  --swiper-theme-color: #43B02A;
-  --swiper-pagination-bottom: 1rem; }
+  --swiper-theme-color: #43B02A; }
 
 @media only screen and (min-width: 360px) {
   html {
@@ -2306,43 +2335,53 @@ ul.action-links {
   .card-product-v .more {
     margin-top: auto; }
 
-.card-product-h.card {
-  margin-bottom: 3rem; }
-.card-product-h a {
-  color: inherit; }
-.card-product-h .title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin: .5rem 0 1rem; }
-.card-product-h .image {
-  text-align: center; }
-.card-product-h .components {
-  color: #7D7C7C;
-  font-weight: 700;
-  margin-bottom: 1rem; }
-@media only screen and (min-width: 768px) {
-  .card-product-h.card {
-    margin-bottom: 2rem; }
+.card-product-h {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1em 0; }
+  .card-product-h a {
+    color: inherit; }
   .card-product-h .title {
-    font-size: 1.25rem;
-    margin: .5rem 0; }
-  .card-product-h .product-info {
-    margin-left: -1rem;
-    padding-right: 1rem; }
+    margin: .5em 0 1em; }
+    .card-product-h .title h3 {
+      font-size: 1.875em;
+      font-weight: 700;
+      margin: 0; }
   .card-product-h .image {
-    text-align: left; }
+    flex: 100%;
+    text-align: center; }
+  .card-product-h .product-info {
+    flex: 100%; }
   .card-product-h .components {
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 0; } }
-@media only screen and (min-width: 1280px) {
-  .card-product-h .title {
-    font-size: 1.875rem;
-    margin: .5rem 0 1rem; }
-  .card-product-h .components {
-    font-size: 1rem;
+    color: #7D7C7C;
     font-weight: 700;
-    margin-bottom: 1rem; } }
+    margin-bottom: 1em; }
+  @media only screen and (min-width: 768px) {
+    .card-product-h {
+      flex-wrap: nowrap; }
+      .card-product-h .title {
+        margin: .5em 0; }
+        .card-product-h .title h3 {
+          font-size: 1.25em; }
+      .card-product-h .image {
+        flex: 0 0 30%;
+        text-align: left; }
+      .card-product-h .product-info {
+        flex: 0 0 70%; }
+      .card-product-h .components {
+        font-size: .875em;
+        font-weight: 500; } }
+  @media only screen and (min-width: 1280px) {
+    .card-product-h .title {
+      margin: .5em 0 1em; }
+      .card-product-h .title h3 {
+        font-size: 1.875em; }
+    .card-product-h .product-info {
+      padding: 0 1em; }
+    .card-product-h .components {
+      font-size: 1em;
+      font-weight: 700;
+      margin-bottom: 1em; } }
 
 .card-contact {
   display: flex; }
@@ -2517,15 +2556,16 @@ ul.action-links {
     padding-bottom: 2rem; }
     .node-full .info .stats .icon {
       filter: brightness(0) invert(0.7); }
-  .node-full .summary {
+  .node-full .node-summary {
     margin-bottom: 1rem; }
-  .node-full .images {
+  .node-full .node-images {
     margin-bottom: 1rem; }
-    .node-full .images .image {
+    .node-full .node-images .image {
       display: flex;
       align-items: center;
       justify-content: center; }
-    .node-full .images img {
+    .node-full .node-images img {
+      display: block;
       max-height: 100%; }
   .node-full blockquote {
     font-weight: 500;
@@ -2555,13 +2595,13 @@ ul.action-links {
     .node-full blockquote .field {
       margin-bottom: 0; }
   @media only screen and (min-width: 768px) {
-    .node-full .images .image {
+    .node-full .node-images .image {
       min-height: 250px; } }
   @media only screen and (min-width: 1280px) {
     .node-full {
       margin-bottom: 4rem; }
-      .node-full .summary,
-      .node-full .images {
+      .node-full .node-summary,
+      .node-full .node-images {
         margin-bottom: 2rem; } }
 
 .node-full .text,
@@ -2722,6 +2762,12 @@ ul.action-links {
       .node-preparation .product-specs .spec .text {
         font-size: 1.25rem;
         font-weight: 700; } }
+@media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1279px) {
+  .node-preparation .product-reglaments .carousel-reglaments {
+    position: relative;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    overflow: hidden; } }
 .node-preparation .product-how-it-works {
   margin-bottom: 2rem; }
   .node-preparation .product-how-it-works .banner {
@@ -3187,5 +3233,145 @@ ul.action-links {
   @media only screen and (min-width: 1280px) {
     .node-type-list {
       margin-bottom: 4rem; } }
+
+.pvp-teaser {
+  text-align: center;
+  height: 100%;
+  padding-bottom: 5rem;
+  position: relative; }
+  .pvp-teaser > div {
+    margin-bottom: 1rem; }
+  .pvp-teaser .date {
+    background: #E9E9E9;
+    color: #7D7C7C;
+    font-weight: 500;
+    padding: .5rem; }
+  .pvp-teaser .region {
+    font-size: 1.125rem;
+    font-weight: 700; }
+  .pvp-teaser .comment {
+    color: #7D7C7C; }
+    .pvp-teaser .comment span {
+      display: block;
+      color: #000; }
+    .pvp-teaser .comment a {
+      color: inherit; }
+      .pvp-teaser .comment a:hover {
+        text-decoration: underline; }
+  .pvp-teaser .action {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    margin: 0; }
+
+.node-season .pvp-event-check,
+.node-season .pvp-event-treat {
+  --swiper-pagination-color: #FBBA00;
+  --swiper-pagination-bullet-inactive-color: #fff;
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  height: 100%; }
+  .node-season .pvp-event-check .swiper-pagination,
+  .node-season .pvp-event-treat .swiper-pagination {
+    --swiper-pagination-top: 1rem; }
+  .node-season .pvp-event-check > div,
+  .node-season .pvp-event-treat > div {
+    margin-bottom: 1rem; }
+  .node-season .pvp-event-check a,
+  .node-season .pvp-event-treat a {
+    color: inherit; }
+  .node-season .pvp-event-check .event-title,
+  .node-season .pvp-event-treat .event-title {
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: .8rem;
+    margin: 0 35px 1rem 2rem;
+    height: 42px;
+    position: relative; }
+    .node-season .pvp-event-check .event-title::after,
+    .node-season .pvp-event-treat .event-title::after {
+      content: "";
+      width: 21px;
+      height: 42px;
+      clip-path: polygon(0 0, 1px 0, 100% 50%, 1px 100%, 0 100%);
+      background-color: #E9E9E9;
+      position: absolute;
+      top: 0;
+      right: -20px; }
+  .node-season .pvp-event-check .date,
+  .node-season .pvp-event-treat .date {
+    text-align: center; }
+  .node-season .pvp-event-check .header,
+  .node-season .pvp-event-treat .header {
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0 1rem; }
+  .node-season .pvp-event-check .list,
+  .node-season .pvp-event-treat .list {
+    padding: 0 1rem;
+    margin-bottom: 1rem; }
+    .node-season .pvp-event-check .list a:hover,
+    .node-season .pvp-event-treat .list a:hover {
+      text-decoration: underline; }
+  .node-season .pvp-event-check .comment,
+  .node-season .pvp-event-treat .comment {
+    padding: 0 1rem; }
+    .node-season .pvp-event-check .comment p,
+    .node-season .pvp-event-treat .comment p {
+      margin: 0 0 .5em 0; }
+  .node-season .pvp-event-check .note,
+  .node-season .pvp-event-treat .note {
+    color: #7D7C7C;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem; }
+    .node-season .pvp-event-check .note span,
+    .node-season .pvp-event-treat .note span {
+      color: #ccc; }
+.node-season .pvp-event-check .event-title {
+  background: #36AA3D; }
+  .node-season .pvp-event-check .event-title::after {
+    background: #36AA3D; }
+.node-season .pvp-event-treat .event-title {
+  background: #FBBA00; }
+  .node-season .pvp-event-treat .event-title::after {
+    background: #FBBA00; }
+.node-season .pvp-event-treat .preparation {
+  font-size: 11px;
+  margin: 0 .8rem; }
+  .node-season .pvp-event-treat .preparation .image {
+    flex: 0 0 27%; }
+  .node-season .pvp-event-treat .preparation .product-info {
+    flex: 0 0 73%;
+    padding: 0 .5em; }
+.node-season .pvp-event-treat .prep-spend,
+.node-season .pvp-event-treat .mix-spend {
+  font-size: 1rem; }
+  .node-season .pvp-event-treat .prep-spend span,
+  .node-season .pvp-event-treat .mix-spend span {
+    font-size: 1.2rem;
+    font-weight: 700; }
+.node-season .pvp-event-treat .mix-spend {
+  margin: 1rem 0 0 3rem; }
+@media only screen and (min-width: 768px) {
+  .node-season .pvp-event-check .event-title,
+  .node-season .pvp-event-treat .event-title {
+    margin: 0 21px 1rem 0; }
+  .node-season .pvp-event-check .header,
+  .node-season .pvp-event-treat .header {
+    margin-top: 0; }
+  .node-season .pvp-event-check .comment,
+  .node-season .pvp-event-check .list,
+  .node-season .pvp-event-treat .comment,
+  .node-season .pvp-event-treat .list {
+    padding: 0; }
+  .node-season .pvp-event-check .culture,
+  .node-season .pvp-event-check .process,
+  .node-season .pvp-event-treat .culture,
+  .node-season .pvp-event-treat .process {
+    min-height: 490px; } }
 
 /*# sourceMappingURL=kccc.css.map */

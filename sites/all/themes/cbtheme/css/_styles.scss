@@ -12,6 +12,7 @@
 @import "../flexbox/main.scss";       // flex-grid на базе изменённого http://sassflexboxgrid.com
 
 // общие стили Базовой темы
+@import "mixins";
 @import "helper";
 @import "common";
 @import "buttons";
