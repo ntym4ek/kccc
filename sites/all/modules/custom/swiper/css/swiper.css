@@ -28,24 +28,6 @@
   .carousel.outer-navigation .swiper-button-prev,
   .carousel.outer-navigation .swiper-button-next {
     text-shadow: none; }
-  @media only screen and (max-width: 359px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
-  @media only screen and (min-width: 360px) and (max-width: 767px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
-  @media only screen and (min-width: 768px) and (max-width: 1279px) {
-    .slider,
-    .carousel {
-      padding: 0;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%); } }
   @media only screen and (min-width: 1280px) {
     .slider.outer-navigation > .swiper-button-prev, .slider.outer-navigation > .swiper-button-next,
     .carousel.outer-navigation > .swiper-button-prev,
