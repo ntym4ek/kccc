@@ -625,7 +625,7 @@ function ext_admin_func_pvp_process($pvp_item)
                 $prep_wr = entity_metadata_wrapper('field_collection_item', $prep);
 
                 $prep_wr->field_preparation = $prep_nid;
-                $prep_wr->field_prep_spend = $prep_item['rate'] ? floatval($prep_item['rate']) : 0;
+                $prep_wr->field_prep_spend = isset($prep_item['rate']) ? floatval($prep_item['rate']) : 0;
                 $prep_mix_spend = floatval($prep_item['cons']);
                 $prep_wr->field_mix_spend = $prep_mix_spend;
                 $treat_mix_spend = $prep_mix_spend ?: $treat_mix_spend;

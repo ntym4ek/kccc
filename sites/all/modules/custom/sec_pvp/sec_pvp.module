@@ -340,3 +340,23 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
     $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . $text . ' <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
   }
 }
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function sec_pvp_form_node_form_alter(&$form, &$form_state, $form_id)
+{
+  if ($form["#form_id"] == 'season_node_form') {
+    // изменить поле Сезон
+    $form["field_pvp_season"]["und"][0]["value"]["#type"] = 'select';
+    $form["field_pvp_season"]["und"][0]["value"]["#size"] = 1;
+    $form["field_pvp_season"]["und"][0]["value"]["#options"] = [
+      'Весна' => 'Весна',
+      'Осень' => 'Осень',
+    ];
+    // старый ID
+    $form["field_text"]["#access"] = false;
+    $form["title"]["#description"] = 'Внутреннее название для менеджеров. Отображается только в админке.';
+  }
+}
