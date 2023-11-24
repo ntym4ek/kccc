@@ -42,13 +42,10 @@ h6, .h6 { font-size: $font-size-h6; font-weight: 500; margin: 1rem 0; }
 }
 .h1, .h2, .h3, .h4, .h5, .h6 { margin: 0; }
 
-// растянуть блок на всю ширину экрана за рамки .container
 .screen-width {
-  position: relative;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  overflow: hidden;                                         // предотвращает выход margin за границы блока (схлопывание)
+  @include screen-width();
 }
+
 
 // --- Разметка страницы --------------------------------------------------------------
 .container {
