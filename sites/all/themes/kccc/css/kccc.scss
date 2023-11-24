@@ -1498,6 +1498,16 @@ ul.action-links {
     .event-title {
       color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;
       padding: .8rem;
+      // стрелка справа
+      margin-right: 21px;
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute; top: 50%; right: -20px; // пересечение 1px
+        transform: translateY(-50%);
+        width: 0; height: 0;
+        border-top: 21px solid transparent; border-bottom: 21px solid transparent; border-left: 21px solid $gray-lighter;
+      }
     }
     .culture,
     .process {
@@ -1509,7 +1519,7 @@ ul.action-links {
       margin-bottom: 1rem;
     }
     .list {
-      margin-bottom: 1rem;
+      padding: 0 1rem; margin-bottom: 1rem;
       a:hover { text-decoration: underline; }
     }
     .comment {
@@ -1523,10 +1533,16 @@ ul.action-links {
     }
   }
 
-  .pvp-event-check .event-title { background: $brand-green; }
+  .pvp-event-check .event-title {
+    background: $brand-green;
+    &::after { border-left-color: $brand-green; }
+  }
 
   .pvp-event-treat {
-    .event-title { background: $brand-orange; }
+    .event-title {
+      background: $brand-orange;
+      &::after { border-left-color: $brand-orange; }
+    }
     .preparation {
       font-size: 11px;
       margin: 0 .8rem; // отступ для тени от hover-raise
@@ -1549,7 +1565,8 @@ ul.action-links {
   @media #{$tablet} {
     .pvp-event-check,
     .pvp-event-treat {
-      .comment { padding: 0; }
+      .comment,
+      .list { padding: 0; }
     }
   }
 }

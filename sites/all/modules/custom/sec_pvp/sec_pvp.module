@@ -97,19 +97,19 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
       $event_id = $event_date = 0;
       // найти последний Контроль
       foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
-        if ($check_wr->field_date->value() > $event_date) {
-          $event_date = $check_wr->field_date->value();
+        if ($check_wr->field_datetime->value() > $event_date) {
+          $event_date = $check_wr->field_datetime->value();
           $event_id = $check_wr->getIdentifier();
         }
       // найти последнюю Обработку
       $treat_id = $date = 0;
       foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
-        if ($treat_wr->field_date->value() > $date) {
-          $date = $treat_wr->field_date->value();
+        if ($treat_wr->field_datetime->value() > $date) {
+          $date = $treat_wr->field_datetime->value();
           $treat_id = $treat_wr->getIdentifier();
         }
-        if ($treat_wr->field_date->value() > $event_date) {
-          $event_date = $treat_wr->field_date->value();
+        if ($treat_wr->field_datetime->value() > $event_date) {
+          $event_date = $treat_wr->field_datetime->value();
           $event_id = $treat_wr->getIdentifier();
         }
       }
@@ -118,13 +118,13 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
         if ($event_wr->getBundle() == 'field_pvp_check') {
           $teaser += [
             'type' => 'check',
-            'date' => date('d.m.Y', $event_wr->field_date->value()),
+            'date' => date('d.m.Y', $event_wr->field_datetime->value()),
             'photo' => image_style_url('teaser', $event_wr->field_pvp_check_culture_images[0]->file->value()->uri),
           ];
         } else {
           $teaser += [
             'type' => 'treat',
-            'date' => date('d.m.Y', $event_wr->field_date->value()),
+            'date' => date('d.m.Y', $event_wr->field_datetime->value()),
             'photo' => image_style_url('teaser', $event_wr->field_pvp_treat_images[0]->file->value()->uri),
           ];
         }
@@ -189,7 +189,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
           $event = [
             'id' => $check_wr->getIdentifier(),
             'type' => 'check',
-            'date' => $check_wr->field_date->value(),
+            'date' => $check_wr->field_datetime->value(),
             'culture' => [
               'comment' => is_array($check_wr->field_pvp_check_culture_comment->value()) ? $check_wr->field_pvp_check_culture_comment->value->value() : $check_wr->field_pvp_check_culture_comment->value(),
               'photos' => [],
@@ -226,7 +226,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
           $event = [
             'id' => $treat_wr->getIdentifier(),
             'type' => 'treat',
-            'date' => $treat_wr->field_date->value(),
+            'date' => $treat_wr->field_datetime->value(),
             'comment' => is_array($treat_wr->field_comment->value()) ? $treat_wr->field_comment->value->value() : $treat_wr->field_comment->value(),
             'preparations' => [],
             'photos' => [],

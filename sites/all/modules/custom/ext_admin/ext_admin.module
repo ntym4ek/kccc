@@ -434,9 +434,9 @@ function ext_admin_func_pvp_import()
     $queue = DrupalQueue::get('processing_queue');
     $queue->deleteQueue();
     $counter = 0;
-    $arr = array_reverse($arr);
+    $arr = array_reverse($arr);    // todo убрать в проде
     foreach ($arr as $pvp_item) {
-      if ($counter < 12) {
+      if ($counter < 1000) {
         $queue->createItem(['func' => 'ext_admin_func_pvp_process', 'item' => $pvp_item]);
         $counter++;
       } else break;

@@ -115,7 +115,7 @@
 
   <?php if (count($pvp_info['events'])): ?>
   <div class="events">
-    <div id="carousel-pvp" class="carousel carousel-pvp outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2.3" data-slidesperview-lg="3">
+    <div id="carousel-pvp" class="carousel carousel-pvp outer-pagination outer-navigation" data-slidesperview-xs="1" data-slidesperview-md="2" data-slidesperview-lg="3">
       <div class="swiper">
         <div class="swiper-wrapper">
           <?php foreach ($pvp_info['events'] as $event) {
@@ -125,8 +125,10 @@
           } ?>
         </div>
       </div>
-      <?php if (count($pvp_info['events']) > 3): ?><div class="swiper-button-prev hide show-md"></div><?php endif; ?>
-      <?php if (count($pvp_info['events']) > 3): ?><div class="swiper-button-next hide show-md"></div><?php endif; ?>
+      <?php if (count($pvp_info['events']) > 3): ?>
+      <div class="swiper-button-prev hide show-md"></div>
+      <div class="swiper-button-next hide show-md"></div>
+      <?php endif; ?>
     </div>
   </div>
   <?php endif; ?>

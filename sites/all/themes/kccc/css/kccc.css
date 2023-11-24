@@ -3281,7 +3281,21 @@ ul.action-links {
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
-    padding: .8rem; }
+    padding: .8rem;
+    margin-right: 21px;
+    position: relative; }
+    .node-season .pvp-event-check .event-title::after,
+    .node-season .pvp-event-treat .event-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 21px solid transparent;
+      border-bottom: 21px solid transparent;
+      border-left: 21px solid #E9E9E9; }
   .node-season .pvp-event-check .culture,
   .node-season .pvp-event-check .process,
   .node-season .pvp-event-treat .culture,
@@ -3298,6 +3312,7 @@ ul.action-links {
     margin-bottom: 1rem; }
   .node-season .pvp-event-check .list,
   .node-season .pvp-event-treat .list {
+    padding: 0 1rem;
     margin-bottom: 1rem; }
     .node-season .pvp-event-check .list a:hover,
     .node-season .pvp-event-treat .list a:hover {
@@ -3318,8 +3333,12 @@ ul.action-links {
       color: #ccc; }
 .node-season .pvp-event-check .event-title {
   background: #36AA3D; }
+  .node-season .pvp-event-check .event-title::after {
+    border-left-color: #36AA3D; }
 .node-season .pvp-event-treat .event-title {
   background: #FBBA00; }
+  .node-season .pvp-event-treat .event-title::after {
+    border-left-color: #FBBA00; }
 .node-season .pvp-event-treat .preparation {
   font-size: 11px;
   margin: 0 .8rem; }
@@ -3339,7 +3358,9 @@ ul.action-links {
   margin: 1rem 0 0 3rem; }
 @media only screen and (min-width: 768px) {
   .node-season .pvp-event-check .comment,
-  .node-season .pvp-event-treat .comment {
+  .node-season .pvp-event-check .list,
+  .node-season .pvp-event-treat .comment,
+  .node-season .pvp-event-treat .list {
     padding: 0; } }
 
 /*# sourceMappingURL=kccc.css.map */
