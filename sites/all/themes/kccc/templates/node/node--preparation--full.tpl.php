@@ -207,7 +207,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row center-xs">
       <?php if ($product_info['how_it_works_banner']): ?>
       <div class="col-xs-12">
         <div class="banner">

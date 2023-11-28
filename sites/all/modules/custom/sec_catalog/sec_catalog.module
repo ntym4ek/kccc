@@ -140,7 +140,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
-      'wrapper' => 'catalog',
+      'wrapper' => '',
       'callback' => 'sec_catalog_filters_form_ajax',
     ],
   ];
@@ -499,7 +499,7 @@ function sec_catalog_get_product_info($node)
         'text' => $node_wr->field_prep_formulation->label(),
       ];
 
-      $product['how_it_works_banner'] = $node_wr->field_prep_how_it_works->value() ? $node_wr->field_prep_how_it_works_banner->file->url->value() : '';
+      $product['how_it_works_banner'] = $node_wr->field_prep_how_it_works_banner->value() ? $node_wr->field_prep_how_it_works_banner->file->url->value() : '';
       $product['how_it_works'] = [];
       foreach ($node_wr->field_prep_how_it_works->getIterator() as $how_wr) {
         $product['how_it_works'][] = [

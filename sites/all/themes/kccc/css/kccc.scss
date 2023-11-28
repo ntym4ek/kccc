@@ -1033,7 +1033,7 @@ ul.action-links {
     .how-it-works {
       display: flex; flex-direction: column;
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2rem; padding-top: 2rem;
       .media { flex: 0 0 9rem; }
       i.icon {
         font-size: 8rem;

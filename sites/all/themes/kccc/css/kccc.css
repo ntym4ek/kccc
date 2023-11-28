@@ -2778,7 +2778,8 @@ ul.action-links {
     display: flex;
     flex-direction: column;
     text-align: center;
-    margin-bottom: 2rem; }
+    margin-bottom: 2rem;
+    padding-top: 2rem; }
     .node-preparation .product-how-it-works .how-it-works .media {
       flex: 0 0 9rem; }
     .node-preparation .product-how-it-works .how-it-works i.icon {
