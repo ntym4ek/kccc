@@ -1175,8 +1175,7 @@ ul.tabs.secondary {
       max-width: 270px; } }
 
 table {
-  margin-bottom: 1rem;
-  width: 100%; }
+  margin-bottom: 1rem; }
   table th {
     font-weight: 500;
     padding: .5rem;
@@ -1187,12 +1186,14 @@ table {
   table td {
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
-    font-size: 0.875rem;
     padding: .5rem; }
     table td:last-child {
       border-right: 1px solid #ccc; }
   table tr:last-child td {
     border-bottom: 1px solid #ccc; }
+  table tr.odd .form-item,
+  table tr.even .form-item {
+    white-space: initial; }
 
 fieldset {
   border-width: 1px;
@@ -1334,7 +1335,9 @@ fieldset {
     width: 5rem; }
   .btn.btn-file {
     position: relative;
-    overflow: hidden; }
+    overflow: hidden;
+    justify-content: center;
+    min-width: 2rem; }
     .btn.btn-file input[type=file] {
       background: white;
       display: block;
@@ -1352,9 +1355,7 @@ fieldset {
 
 .form-item,
 .field-type-text-long,
-.field-type-text-with-summary,
-tr.odd .form-item,
-tr.even .form-item {
+.field-type-text-with-summary {
   margin-top: 0;
   margin-bottom: 1rem; }
   .form-item label,
@@ -1362,11 +1363,7 @@ tr.even .form-item {
   .field-type-text-long label,
   .field-type-text-long .label,
   .field-type-text-with-summary label,
-  .field-type-text-with-summary .label,
-  tr.odd .form-item label,
-  tr.odd .form-item .label,
-  tr.even .form-item label,
-  tr.even .form-item .label {
+  .field-type-text-with-summary .label {
     color: #000;
     font-weight: 500;
     margin-bottom: 6px; }
@@ -1375,11 +1372,7 @@ tr.even .form-item {
     .field-type-text-long label .field-edit-link a,
     .field-type-text-long .label .field-edit-link a,
     .field-type-text-with-summary label .field-edit-link a,
-    .field-type-text-with-summary .label .field-edit-link a,
-    tr.odd .form-item label .field-edit-link a,
-    tr.odd .form-item .label .field-edit-link a,
-    tr.even .form-item label .field-edit-link a,
-    tr.even .form-item .label .field-edit-link a {
+    .field-type-text-with-summary .label .field-edit-link a {
       color: #7D7C7C;
       font-weight: 300; }
   .form-item .form-text,
@@ -1390,13 +1383,7 @@ tr.even .form-item {
   .field-type-text-long .form-select,
   .field-type-text-with-summary .form-text,
   .field-type-text-with-summary .form-textarea,
-  .field-type-text-with-summary .form-select,
-  tr.odd .form-item .form-text,
-  tr.odd .form-item .form-textarea,
-  tr.odd .form-item .form-select,
-  tr.even .form-item .form-text,
-  tr.even .form-item .form-textarea,
-  tr.even .form-item .form-select {
+  .field-type-text-with-summary .form-select {
     font-family: inherit;
     padding: 0.45em 1rem;
     color: #000;
@@ -1424,19 +1411,7 @@ tr.even .form-item {
     .field-type-text-with-summary .form-textarea[readonly],
     .field-type-text-with-summary .form-textarea.form-disabled,
     .field-type-text-with-summary .form-select[readonly],
-    .field-type-text-with-summary .form-select.form-disabled,
-    tr.odd .form-item .form-text[readonly],
-    tr.odd .form-item .form-text.form-disabled,
-    tr.odd .form-item .form-textarea[readonly],
-    tr.odd .form-item .form-textarea.form-disabled,
-    tr.odd .form-item .form-select[readonly],
-    tr.odd .form-item .form-select.form-disabled,
-    tr.even .form-item .form-text[readonly],
-    tr.even .form-item .form-text.form-disabled,
-    tr.even .form-item .form-textarea[readonly],
-    tr.even .form-item .form-textarea.form-disabled,
-    tr.even .form-item .form-select[readonly],
-    tr.even .form-item .form-select.form-disabled {
+    .field-type-text-with-summary .form-select.form-disabled {
       background-color: #E9E9E9;
       cursor: default;
       pointer-events: none; }
@@ -1448,21 +1423,13 @@ tr.even .form-item {
   .field-type-text-long.form-disabled .form-select,
   .field-type-text-with-summary.form-disabled .form-text,
   .field-type-text-with-summary.form-disabled .form-textarea,
-  .field-type-text-with-summary.form-disabled .form-select,
-  tr.odd .form-item.form-disabled .form-text,
-  tr.odd .form-item.form-disabled .form-textarea,
-  tr.odd .form-item.form-disabled .form-select,
-  tr.even .form-item.form-disabled .form-text,
-  tr.even .form-item.form-disabled .form-textarea,
-  tr.even .form-item.form-disabled .form-select {
+  .field-type-text-with-summary.form-disabled .form-select {
     background-color: #E9E9E9;
     cursor: default;
     pointer-events: none; }
   .form-item .form-button-disabled,
   .field-type-text-long .form-button-disabled,
-  .field-type-text-with-summary .form-button-disabled,
-  tr.odd .form-item .form-button-disabled,
-  tr.even .form-item .form-button-disabled {
+  .field-type-text-with-summary .form-button-disabled {
     opacity: .5;
     cursor: default;
     pointer-events: none; }
@@ -1471,32 +1438,30 @@ tr.even .form-item {
   .field-type-text-long .form-text,
   .field-type-text-long .form-select,
   .field-type-text-with-summary .form-text,
-  .field-type-text-with-summary .form-select,
-  tr.odd .form-item .form-text,
-  tr.odd .form-item .form-select,
-  tr.even .form-item .form-text,
-  tr.even .form-item .form-select {
+  .field-type-text-with-summary .form-select {
     height: 2.3em; }
   .form-item .description,
   .field-type-text-long .description,
-  .field-type-text-with-summary .description,
-  tr.odd .form-item .description,
-  tr.even .form-item .description {
+  .field-type-text-with-summary .description {
     color: #ccc;
     font-size: 0.875rem;
     padding-top: 0.2rem; }
     .form-item .description strong,
     .field-type-text-long .description strong,
-    .field-type-text-with-summary .description strong,
-    tr.odd .form-item .description strong,
-    tr.even .form-item .description strong {
+    .field-type-text-with-summary .description strong {
       font-weight: 400; }
   .form-item .form-radios input,
   .field-type-text-long .form-radios input,
-  .field-type-text-with-summary .form-radios input,
-  tr.odd .form-item .form-radios input,
-  tr.even .form-item .form-radios input {
+  .field-type-text-with-summary .form-radios input {
     margin-top: 0; }
+
+fieldset .fieldset-legend {
+  color: #000;
+  font-weight: 500;
+  margin-bottom: 6px; }
+
+td > .form-wrapper {
+  margin-bottom: 1rem; }
 
 .field-type-text-with-summary .text-summary-wrapper .form-item,
 .field-type-text-long .text-summary-wrapper .form-item {
@@ -1542,6 +1507,8 @@ form .ajax-progress,
     float: initial; }
   .form-managed-file .image-widget-data .form-group {
     display: none; }
+  .form-managed-file .form-item {
+    margin-bottom: 0; }
 
 .form-items-inline {
   display: flex;
@@ -3027,6 +2994,20 @@ ul.action-links {
   .form-item-fz152-agreement a {
     color: inherit;
     text-decoration: underline; }
+
+.node-season-form fieldset[id*=format] {
+  display: none; }
+.node-season-form .container-inline-date .form-item {
+  margin-bottom: 0; }
+.node-season-form table#field-pvp-check-values > tbody > tr.even,
+.node-season-form table#field-pvp-check-values > tbody > tr.odd,
+.node-season-form table#field-pvp-treat-values > tbody > tr.even,
+.node-season-form table#field-pvp-treat-values > tbody > tr.odd {
+  border-bottom: 2rem solid #fff; }
+.node-season-form fieldset[id*=images] {
+  border: none;
+  padding: 0;
+  margin: 0; }
 
 .underline {
   background: #43B02A;

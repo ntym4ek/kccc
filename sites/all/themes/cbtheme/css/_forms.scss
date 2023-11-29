@@ -2,9 +2,8 @@
 
 .form-item,
 .field-type-text-long,
-.field-type-text-with-summary,
-tr.odd .form-item,
-tr.even .form-item {
+.field-type-text-with-summary
+{
   margin-top: 0;
   margin-bottom: 1rem;
   label,
@@ -59,6 +58,15 @@ tr.even .form-item {
   }
 }
 
+fieldset .fieldset-legend {
+  color: $text-color; font-weight: 500;
+  margin-bottom: 6px;
+}
+
+td > .form-wrapper {
+  margin-bottom: 1rem;
+}
+
 .field-type-text-with-summary,
 .field-type-text-long {
   .text-summary-wrapper .form-item {
@@ -93,6 +101,7 @@ form,
   .image-widget-data,
   .file-widget-data { float: initial; }
   .image-widget-data .form-group { display: none; }
+  .form-item { margin-bottom: 0; } // в тебличной части убирает лишний отступ
 }
 .form-items-inline {
   display: flex;

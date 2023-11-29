@@ -90,6 +90,8 @@
   &.btn-file {
     position: relative;
     overflow: hidden;
+    justify-content: center;
+    min-width: 2rem;
     input[type=file] {
       background: white;
       display: block;

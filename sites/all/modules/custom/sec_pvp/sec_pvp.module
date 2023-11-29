@@ -266,6 +266,21 @@ function sec_pvp_get_pvp_info($pvp_nid)
 /**
  * Implements hook_preprocess_hook()
  */
+function sec_pvp_preprocess_node(&$vars)
+{
+  if (isset($vars["node"]) && $vars["node"]->type == 'season') {
+    // сформировать составной Заголовок
+    $when = $vars["node"]->field_pvp_season["und"][0]["value"] . ' ' . $vars["node"]->field_pvp_year["und"][0]["value"];
+    $what = $vars["node"]->field_culture["und"][0]["entity"]->title;
+    $where = $vars["node"]->field_region["und"][0]["taxonomy_term"]->name;
+
+    drupal_set_title($when . '. ' . $what . '. ' . $where);
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook()
+ */
 function sec_pvp_preprocess_pvp_event_check(&$vars)
 {
   $pvp = $vars['pvp_info'];
@@ -355,8 +370,31 @@ function sec_pvp_form_node_form_alter(&$form, &$form_state, $form_id)
       'Весна' => 'Весна',
       'Осень' => 'Осень',
     ];
-    // старый ID
-    $form["field_text"]["#access"] = false;
-    $form["title"]["#description"] = 'Внутреннее название для менеджеров. Отображается только в админке.';
+
+    // поле Год
+    $form["field_pvp_year"]["und"][0]["value"]['#element_validate'][] = 'sec_pvp_form_year_validate';
+    $form["field_pvp_year"]["und"][0]["value"]["#description"] = 'формат: 20xx';
+
+    // убрать поля с формы
+    $form["field_text"]["#access"] = false;       // старый ID
+    $form["title"]["#access"] = false;
+
+    $form["#submit"][] = 'sec_pvp_form_node_form_submit';
   }
+}
+
+function sec_pvp_form_year_validate($form, &$form_state)
+{
+  if (!is_numeric($form_state["values"]["field_pvp_year"]["und"][0]["value"]) || strlen($form_state["values"]["field_pvp_year"]["und"][0]["value"]) != 4) {
+    form_set_error('field_pvp_year][und][0][value', 'Некорректно указан год. Введите в формате: 20xx');
+  }
+}
+
+function sec_pvp_form_node_form_submit($form, &$form_state)
+{
+  $when = $form_state["values"]["field_pvp_season"]["und"][0]["value"] . ' ' . $form_state["values"]["field_pvp_year"]["und"][0]["value"];
+  $what = $form_state["input"]["field_culture"]["und"][0]["target_id"];
+  $where = trim(str_replace('-', '', $form["field_region"]["und"]["#options"][$form_state["values"]["field_region"]["und"][0]["tid"]]));
+
+  $form_state["values"]["title"] = $when . '. ' . $what . '. ' . $where;
 }

@@ -248,6 +248,7 @@ function ext_node_preprocess_node(&$vars)
 function ext_node_node_presave($node)
 {
   if (in_array($node->type, ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
+    // обработка текста перед сохранением
     require_once(drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
     ext_node_prepare_content_to_save($node);
   }

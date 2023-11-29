@@ -1239,6 +1239,26 @@ ul.action-links {
   a { color: inherit; text-decoration: underline; }
 }
 
+.node-season-form {
+  fieldset[id*=format] {
+    display: none;
+  }
+  .container-inline-date .form-item { margin-bottom: 0; }
+  table#field-pvp-check-values,
+  table#field-pvp-treat-values {
+    > tbody {
+      > tr.even,
+      > tr.odd {
+        border-bottom: 2rem solid #fff;
+      }
+    }
+  }
+  fieldset[id*=images] {
+    border: none;
+    padding: 0; margin: 0;
+  }
+}
+
 // --- Элементы оформления -------------------------------------------------------------
 .underline {
   background: $brand-color;
