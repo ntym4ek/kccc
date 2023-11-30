@@ -202,9 +202,16 @@ function kccc_webform_managed_file($variables)
   return $output;
 }
 
-function kccc_image_widget($variables)
+function kccc_preprocess_image_widget(&$vars)
 {
-  $element = $variables['element'];
+  if (in_array($vars["element"]["#bundle"], ['field_pvp_check', 'field_pvp_check_hobjects', 'field_pvp_treat'])) {
+    $vars["element"]["title"]["#description"] = 'Комментарий к фото';
+  }
+}
+
+function kccc_image_widget($vars)
+{
+  $element = $vars['element'];
   $output = '';
   $output .= '<div class="image-widget form-managed-file clearfix">';
 

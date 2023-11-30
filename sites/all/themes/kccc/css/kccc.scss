@@ -1243,7 +1243,10 @@ ul.action-links {
   fieldset[id*=format] {
     display: none;
   }
-  .container-inline-date .form-item { margin-bottom: 0; }
+  .container-inline-date {
+    .form-item { margin-bottom: 0; }
+    .description { display: none; }
+  }
   table {
     .tabledrag-toggle-weight-wrapper { display: none; }
     td { padding: 1rem; }
@@ -1303,7 +1306,10 @@ ul.action-links {
       padding: 0 2rem 0 0;
       //input.form-text.form-item .description { width: 100%; }
     }
-    .field-name-field-hobject { flex: 0 0 34%; }
+    .field-name-field-hobject {
+      flex: 0 0 34%;
+      input { width: 100%; }
+    }
   }
   .image-widget-data .form-type-textfield {
     width: 100%;

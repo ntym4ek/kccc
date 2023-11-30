@@ -1444,8 +1444,7 @@ fieldset {
   .field-type-text-long .form-select,
   .field-type-text-with-summary .form-text,
   .field-type-text-with-summary .form-select {
-    height: 2.3em;
-    width: 100%; }
+    height: 2.3em; }
   .form-item .description,
   .field-type-text-long .description,
   .field-type-text-with-summary .description {
@@ -3006,6 +3005,8 @@ ul.action-links {
   display: none; }
 .node-season-form .container-inline-date .form-item {
   margin-bottom: 0; }
+.node-season-form .container-inline-date .description {
+  display: none; }
 .node-season-form table .tabledrag-toggle-weight-wrapper {
   display: none; }
 .node-season-form table td {
@@ -3102,6 +3103,9 @@ ul.action-links {
   .node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) .field-name-field-hobject,
   .node-season-form .field-name-field-pvp-check-hobjects .field-multiple-table td:nth-child(2) .field-name-field-hobject {
     flex: 0 0 34%; }
+    .node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) .field-name-field-hobject input,
+    .node-season-form .field-name-field-pvp-check-hobjects .field-multiple-table td:nth-child(2) .field-name-field-hobject input {
+      width: 100%; }
 .node-season-form .image-widget-data .form-type-textfield {
   width: 100%; }
   .node-season-form .image-widget-data .form-type-textfield label {
