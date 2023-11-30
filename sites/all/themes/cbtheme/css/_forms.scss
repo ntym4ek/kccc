@@ -47,9 +47,10 @@
   .form-text,
   .form-select {
     height: $form-item-height;
+    width: 100%;
   }
   .description {
-    color: $text-muted; font-size: $font-size-small;
+    color: $text-muted; font-size: $font-size-small; white-space: initial;
     padding-top: 0.2rem;
     strong { font-weight: 400; }
   }
@@ -61,10 +62,6 @@
 fieldset .fieldset-legend {
   color: $text-color; font-weight: 500;
   margin-bottom: 6px;
-}
-
-td > .form-wrapper {
-  margin-bottom: 1rem;
 }
 
 .field-type-text-with-summary,
@@ -97,6 +94,11 @@ form,
   .form-item label { display: inline-block; }
 }
 .form-managed-file {
+  display: flex;
+  .image-preview {
+    flex: 0 0 120px;
+    padding-bottom: 0;
+  }
   .image-widget-data,
   .file-widget-data { float: initial; }
   .image-widget-data .form-group { display: none; }

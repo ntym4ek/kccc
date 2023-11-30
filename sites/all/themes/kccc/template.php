@@ -210,13 +210,14 @@ function kccc_image_widget($variables)
 
   if (isset($element['preview'])) {
     $output .= '<div class="image-preview">';
-    $output .= drupal_render($element['preview']);
+    $output .=    drupal_render($element['preview']);
     $output .= '</div>';
   }
 
   $output .= '<div class="image-widget-data">';
   if ($element['fid']['#value'] != 0) {
-    $element['filename']['#markup'] = '<div class="form-group">' . $element['filename']['#markup'] . ' <span class="file-size badge">' . format_size($element['#file']->filesize) . '</span></div>';
+    hide($element['filename']);
+//    $element['filename']['#markup'] = '<div class="form-group">' . $element['filename']['#markup'] . ' <span class="file-size badge">' . format_size($element['#file']->filesize) . '</span></div>';
   }
   else {
     $element['upload']['#prefix'] = '<div class="input-group"><span class="input-group-btn"><span class="btn btn-brand btn-file">+';
@@ -244,8 +245,12 @@ function kccc_image_widget($variables)
     })(jQuery)
   ', 'inline');
 
-  $output .= drupal_render_children($element);
-  $output .= '</div>';
+  if (isset($element["title"])) {
+    $output .= drupal_render($element['title']);
+  }
+  $output .=   '</div>';
+
+  $output .=   '<div class="image-action">' . drupal_render_children($element) . '</div>';
   $output .= '</div>';
 
   return $output;

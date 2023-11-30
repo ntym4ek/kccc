@@ -1295,12 +1295,32 @@ ul.action-links {
       > tbody > tr { border: 1px solid #ccc; }
     }
   }
-  .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) {
+  .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2),
+  .field-name-field-pvp-check-hobjects .field-multiple-table td:nth-child(2) {
     display: flex; align-items: flex-start;
     > div {
-      margin: 0 2rem 0 0;
+      flex: auto;
+      padding: 0 2rem 0 0;
+      //input.form-text.form-item .description { width: 100%; }
     }
-    .btn { margin-top: 24px; }
+    .field-name-field-hobject { flex: 0 0 34%; }
+  }
+  .image-widget-data .form-type-textfield {
+    width: 100%;
+    label { display: none; }
+    input { width: 100%; }
+  }
+  .image-action {
+    position: relative;
+    input[name*=remove] {
+      background: none;
+      border: none;
+      color: #ccc; font-size: $font-size-small; text-transform: lowercase;
+      height: initial; min-height: initial;
+      display: inline;
+      padding: 0;
+      position: absolute; bottom: 0; right: 0;
+    }
   }
 }
 
@@ -1434,9 +1454,7 @@ ul.action-links {
     display: flex; align-items: center;
   }
   .file-img { margin-right: 5px; }
-  .form-group {
-    margin-right: 2rem;
-  }
+  .form-group { margin-right: 2rem; }
   .file { margin-right: 1rem; }
   .btn { margin: 0; }
   .badge { color: $text-light; }
