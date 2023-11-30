@@ -239,7 +239,6 @@ function sec_pvp_get_pvp_info($pvp_nid)
                 'label' => $tp_wr->field_preparation->label(),
               ],
               'prep_spend' => $tp_wr->field_prep_spend->value(),
-              'mix_spend' => $tp_wr->field_mix_spend->value(),
             ];
           }
           foreach ($treat_wr->field_pvp_treat_images->getIterator() as $tps_wr) {

@@ -1362,7 +1362,8 @@ fieldset {
 .field-type-text-long,
 .field-type-text-with-summary {
   margin-top: 0;
-  margin-bottom: 1rem; }
+  margin-bottom: 1rem;
+  max-width: 100%; }
   .form-item label,
   .form-item .label,
   .field-type-text-long label,
