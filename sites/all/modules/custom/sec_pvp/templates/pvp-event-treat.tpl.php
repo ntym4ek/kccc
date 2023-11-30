@@ -34,7 +34,7 @@
 
   <?php if (count($event['preparations'])): ?>
   <div class="preparations">
-    <div class="header">Препараты</div>
+    <div class="header"><?php print $event['title']; ?></div>
     <?php foreach ($event['preparations'] as $item): ?>
     <div class="preparation hover-raise">
       <?php print $item['preparation']['rendered']; ?>

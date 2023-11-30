@@ -266,21 +266,6 @@ function sec_pvp_get_pvp_info($pvp_nid)
 /**
  * Implements hook_preprocess_hook()
  */
-function sec_pvp_preprocess_node(&$vars)
-{
-  if (isset($vars["node"]) && $vars["node"]->type == 'season') {
-    // сформировать составной Заголовок
-    $when = $vars["node"]->field_pvp_season["und"][0]["value"] . ' ' . $vars["node"]->field_pvp_year["und"][0]["value"];
-    $what = $vars["node"]->field_culture["und"][0]["entity"]->title;
-    $where = $vars["node"]->field_region["und"][0]["taxonomy_term"]->name;
-
-    drupal_set_title($when . '. ' . $what . '. ' . $where);
-  }
-}
-
-/**
- * Implements hook_preprocess_hook()
- */
 function sec_pvp_preprocess_pvp_event_check(&$vars)
 {
   $pvp = $vars['pvp_info'];
@@ -351,8 +336,8 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
       $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
     }
 
-    $text = count($vars['event']['preparations']) > 1 ? 'Расход баковой смеси:' : 'Расход рабочей жидкости:';
-    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . $text . ' <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
+    $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? 'Баковая смесь' : 'Препарат';
+    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">Расход рабочей жидкости: <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
   }
 }
 

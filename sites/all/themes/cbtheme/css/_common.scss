@@ -285,6 +285,13 @@ table {
   tr.even .form-item {
     white-space: initial; // в системной теме перенос запрещён
   }
+
+  a.tabledrag-handle .handle {
+    height: 22px; width: 22px;
+  }
+  form &.field-multiple-table td.field-multiple-drag a.tabledrag-handle {
+    padding: 0;
+  }
 }
 
 fieldset {

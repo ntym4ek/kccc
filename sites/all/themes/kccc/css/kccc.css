@@ -1194,6 +1194,11 @@ table {
   table tr.odd .form-item,
   table tr.even .form-item {
     white-space: initial; }
+  table a.tabledrag-handle .handle {
+    height: 22px;
+    width: 22px; }
+  form table.field-multiple-table td.field-multiple-drag a.tabledrag-handle {
+    padding: 0; }
 
 fieldset {
   border-width: 1px;
@@ -1393,8 +1398,7 @@ fieldset {
     border: 1px solid #ccc;
     border-radius: 2px;
     transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    max-width: 100%;
-    width: 100%; }
+    max-width: 100%; }
     .form-item .form-text[readonly], .form-item .form-text.form-disabled,
     .form-item .form-textarea[readonly],
     .form-item .form-textarea.form-disabled,
@@ -1500,15 +1504,13 @@ form .ajax-progress,
   .filter-wrapper .form-item label {
     display: inline-block; }
 
-.form-managed-file {
-  margin-bottom: .5rem; }
-  .form-managed-file .image-widget-data,
-  .form-managed-file .file-widget-data {
-    float: initial; }
-  .form-managed-file .image-widget-data .form-group {
-    display: none; }
-  .form-managed-file .form-item {
-    margin-bottom: 0; }
+.form-managed-file .image-widget-data,
+.form-managed-file .file-widget-data {
+  float: initial; }
+.form-managed-file .image-widget-data .form-group {
+  display: none; }
+.form-managed-file .form-item {
+  margin-bottom: 0; }
 
 .form-items-inline {
   display: flex;
@@ -2999,15 +3001,98 @@ ul.action-links {
   display: none; }
 .node-season-form .container-inline-date .form-item {
   margin-bottom: 0; }
+.node-season-form table .tabledrag-toggle-weight-wrapper {
+  display: none; }
+.node-season-form table td {
+  padding: 1rem; }
 .node-season-form table#field-pvp-check-values > tbody > tr.even,
-.node-season-form table#field-pvp-check-values > tbody > tr.odd,
+.node-season-form table#field-pvp-check-values > tbody > tr.odd {
+  border-top: 1rem solid #36AA3D; }
 .node-season-form table#field-pvp-treat-values > tbody > tr.even,
 .node-season-form table#field-pvp-treat-values > tbody > tr.odd {
-  border-bottom: 2rem solid #fff; }
+  border-top: 1rem solid #FBBA00; }
 .node-season-form fieldset[id*=images] {
   border: none;
   padding: 0;
   margin: 0; }
+  .node-season-form fieldset[id*=images] table {
+    width: 100%; }
+.node-season-form .field-name-field-datetime,
+.node-season-form .field-name-field-pvp-check-culture-comment,
+.node-season-form .field-name-field-pvp-check-hobjects-comment,
+.node-season-form .field-name-field-comment,
+.node-season-form .field-name-field-pvp-check-culture-images,
+.node-season-form .field-name-field-pvp-treat-images,
+.node-season-form .field-name-field-pvp-check-hobjects,
+.node-season-form .field-name-field-pvp-treat-preparations,
+.node-season-form .field-name-field-pvp-treat-mix-spend {
+  margin-bottom: 2rem; }
+  .node-season-form .field-name-field-datetime > div > div > label,
+  .node-season-form .field-name-field-datetime .form-type-date-combo > label,
+  .node-season-form .field-name-field-datetime .form-type-textarea > label,
+  .node-season-form .field-name-field-datetime fieldset > legend span,
+  .node-season-form .field-name-field-datetime .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-check-culture-comment > div > div > label,
+  .node-season-form .field-name-field-pvp-check-culture-comment .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-check-culture-comment .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-check-culture-comment fieldset > legend span,
+  .node-season-form .field-name-field-pvp-check-culture-comment .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-check-hobjects-comment > div > div > label,
+  .node-season-form .field-name-field-pvp-check-hobjects-comment .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-check-hobjects-comment .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-check-hobjects-comment fieldset > legend span,
+  .node-season-form .field-name-field-pvp-check-hobjects-comment .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-comment > div > div > label,
+  .node-season-form .field-name-field-comment .form-type-date-combo > label,
+  .node-season-form .field-name-field-comment .form-type-textarea > label,
+  .node-season-form .field-name-field-comment fieldset > legend span,
+  .node-season-form .field-name-field-comment .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-check-culture-images > div > div > label,
+  .node-season-form .field-name-field-pvp-check-culture-images .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-check-culture-images .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-check-culture-images fieldset > legend span,
+  .node-season-form .field-name-field-pvp-check-culture-images .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-treat-images > div > div > label,
+  .node-season-form .field-name-field-pvp-treat-images .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-treat-images .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-treat-images fieldset > legend span,
+  .node-season-form .field-name-field-pvp-treat-images .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-check-hobjects > div > div > label,
+  .node-season-form .field-name-field-pvp-check-hobjects .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-check-hobjects .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-check-hobjects fieldset > legend span,
+  .node-season-form .field-name-field-pvp-check-hobjects .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-treat-preparations > div > div > label,
+  .node-season-form .field-name-field-pvp-treat-preparations .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-treat-preparations .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-treat-preparations fieldset > legend span,
+  .node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table .field-label label,
+  .node-season-form .field-name-field-pvp-treat-mix-spend > div > div > label,
+  .node-season-form .field-name-field-pvp-treat-mix-spend .form-type-date-combo > label,
+  .node-season-form .field-name-field-pvp-treat-mix-spend .form-type-textarea > label,
+  .node-season-form .field-name-field-pvp-treat-mix-spend fieldset > legend span,
+  .node-season-form .field-name-field-pvp-treat-mix-spend .field-multiple-table .field-label label {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 6px; }
+.node-season-form .field-name-field-pvp-check-culture-images table > thead,
+.node-season-form .field-name-field-pvp-check-hobjects-images table > thead,
+.node-season-form .field-name-field-pvp-treat-images table > thead {
+  display: none; }
+.node-season-form .field-name-field-pvp-check-hobjects table,
+.node-season-form .field-name-field-pvp-treat-preparations table {
+  width: 100%; }
+  .node-season-form .field-name-field-pvp-check-hobjects table > tbody > tr,
+  .node-season-form .field-name-field-pvp-treat-preparations table > tbody > tr {
+    border: 1px solid #ccc; }
+.node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) {
+  display: flex;
+  align-items: flex-start; }
+  .node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) > div {
+    margin: 0 2rem 0 0; }
+  .node-season-form .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2) .btn {
+    margin-top: 24px; }
 
 .underline {
   background: #43B02A;
@@ -3129,8 +3214,7 @@ ul.action-links {
         margin-top: 4px; }
 
 .form-managed-file {
-  line-height: 1;
-  max-width: 350px; }
+  line-height: 1; }
   .form-managed-file .input-group {
     flex: auto; }
   .form-managed-file .file-img {
