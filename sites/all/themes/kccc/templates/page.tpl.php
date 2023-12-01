@@ -194,6 +194,9 @@
                   <ul>
                     <li><a href="/o-kompanii">Общая информация</a></li>
                     <li><a href="/otzyvy">Отзывы</a></li>
+                    <?php if (isset($price_list_url)): ?>
+                      <li><a href="<?php print $price_list_url; ?>" download" title="Скачать прайс-лист">Прайс-лист</a></li>
+                    <?php endif;?>
                   </ul>
                 </div>
               </div>

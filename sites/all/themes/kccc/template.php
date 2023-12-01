@@ -19,13 +19,17 @@ function kccc_preprocess_page(&$vars)
 
   // -- Форма поиска в шапке
   if ($_GET['q'] != 'poisk') {
-//    $vars['search_form'] = ext_views_get_view_exposed_form('search');
     $vars['search_form'] = drupal_get_form('ext_form_search_form');
     $vars['search_form_mobile'] = drupal_get_form('ext_form_search_form');
   }
 
   // -- Форма подписки в футере
   $vars['subscribe_form'] = drupal_get_form('ext_form_subscribe_form');
+
+  // -- Ссылка на прайслист в футере
+  if ($file = file_load(variable_get('price_list'))) {
+    $vars['price_list_url'] = file_create_url($file->uri);
+  }
 }
 
 
