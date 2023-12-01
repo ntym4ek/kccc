@@ -2,6 +2,7 @@
 
 .catalog {
   margin-bottom: 2rem;
+  .catalog-filters .form-item .form-select { width: 100%; }
   .catalog-content { padding-top: 2rem; }
   .category {
     font-size: $font-size-h4; line-height: 2.2rem;

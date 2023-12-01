@@ -1,5 +1,7 @@
 .catalog {
   margin-bottom: 2rem; }
+  .catalog .catalog-filters .form-item .form-select {
+    width: 100%; }
   .catalog .catalog-content {
     padding-top: 2rem; }
   .catalog .category {
