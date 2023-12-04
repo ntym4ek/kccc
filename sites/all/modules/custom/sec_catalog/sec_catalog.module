@@ -58,39 +58,42 @@ function sec_catalog_preprocess_page(&$vars)
 
 function sec_catalog_page()
 {
+  $output = '';
   // форма фильтров
   $form = drupal_get_form('sec_catalog_filters_form');
 
-  $content = sec_catalog_page_get_content($form['#data']['filters']);
+  $output .= '<div id="catalog" class="view view-catalog">';
+  $output .=    '<div class="view-filters">';
+  $output .=      drupal_render($form);
+  $output .=    '</div>';
 
-  return  '<div id="catalog" class="catalog view">' .
-            '<div class="catalog-filters">' .
-              drupal_render($form) .
-            '</div>' .
-            '<div class="catalog-content">' .
-              $content .
-            '</div>' .
-          '</div>';
+  $filters = sec_catalog_get_filters_set();
+
+  // список Препаратов
+  if ($catalog = sec_catalog_get_products_filtered($filters)) {
+    $output .= '<div class="view-content">';
+    foreach ($catalog as $category) {
+      foreach ($category['products'] as $product_info) {
+        $output .= '<div class="view-row col-xs-12 col-md-6">';
+        $output .=   theme('card_product_h', $product_info);
+        $output .= '</div>';
+      }
+    }
+    $output .= '</div>';
+  } else {
+    $output .= '<div class="view-content">';
+    $output .=  'Препаратов не найдено, попробуйте изменить фильтры.';
+    $output .= '</div>';
+  }
+
+  return $output;
 }
 
 function sec_catalog_page_get_content($filters)
 {
   $content = '';
 
-  // список Препаратов
-  if ($catalog = sec_catalog_get_products_filtered($filters)) {
-    $content .= '<div class="row">';
-    foreach ($catalog as $category) {
-      foreach ($category['products'] as $product_info) {
-        $content .= '<div class="col-xs-12 col-md-6">';
-        $content .=   theme('card_product_h', $product_info);
-        $content .= '</div>';
-      }
-    }
-    $content .= '</div>';
-  } else {
-    $content .= 'Препаратов не найдено, попробуйте изменить фильтры.';
-  }
+
 
   return $content;
 }
@@ -189,10 +192,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   $img_url = 'public://images/page-banners/katalog.jpg';
 
   // отправить новую форму
-  $commands[] = ajax_command_html('#catalog .catalog-filters', drupal_render($form));
-
-  // отправить новое содержимое страницы
-  $commands[] = ajax_command_html('#catalog .catalog-content', sec_catalog_page_get_content($form['#data']['filters']));
+  $commands[] = ajax_command_html('#catalog', sec_catalog_page());
 
   // определить новый URL, которому соответствует содержимое страницы
   // URL будет установлен в адресную строку браузера через history.pushState
