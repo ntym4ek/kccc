@@ -2,12 +2,12 @@
   Drupal.behaviors.kccc = {
     attach: function (context, settings) {
 
-      // -- share links
+      // -- Share links
       $(".share-btn").click((e) => {
         $(e.target).closest(".share").toggleClass("open");
       });
 
-      // -- скролл мышкой подменю на десктопах
+      // -- Скролл мышкой подменю на десктопах
       $(".page-highlighted .sub-menu").mousedown(function(event) {
         let $this = $(this),
           startX = event.pageX - $this.offset().left,
@@ -26,6 +26,14 @@
           $(document).off('mousemove', $this.data('mouseMoveHandler'));
         });
       });
+
+      // -- Обновить историю URL
+        // если содержимое страницы загружено с помощью AJAX,
+        // установить новую ссылку, соОтветствующую содержмому
+        // (Каталог и ПвП)
+      if (settings.history) {
+        window.history.pushState(null, null, settings.history.url);
+      }
 
 
     }

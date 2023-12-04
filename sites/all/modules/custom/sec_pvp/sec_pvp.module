@@ -1,5 +1,7 @@
 <?php
 
+const PVP_PER_PAGE = 12;
+
 function sec_pvp_menu()
 {
   $items['preparaty-v-pole'] = array(
@@ -32,36 +34,30 @@ function sec_pvp_theme()
   ];
 }
 
-function sec_pvp_list_page1()
-{
-  // форма фильтров
-  $form = drupal_get_form('sec_pvp_filters_form');
-
-  $content = sec_pvp_list_page_get_content($form['#data']['filters']);
-
-  return  '<div id="pvp" class="view view-pvp">' .
-            '<div class="view-filters">' .
-              drupal_render($form) .
-            '</div>' .
-            '<div class="view-content">' .
-              $content .
-            '</div>' .
-          '</div>';
-}
-
 function sec_pvp_list_page()
 {
-  $pvp_per_page = 12;
   $pvp_page = $_GET['page'] ?? 0;
 
-  $output = '<div id="pvp" class="view view-pvp">';
-
   $form = drupal_get_form('sec_pvp_filters_form');
-  $output .= '<div class="view-filters">';
-  $output .=   drupal_render($form);
-  $output .= '</div>';
+  $filters = $form['#data']['filters'];
+  $content = sec_pvp_get_content_filtered($filters, PVP_PER_PAGE, $pvp_page);
+  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total_rows'], 'per_page' => PVP_PER_PAGE]);
 
-  $filters = sec_pvp_get_filters_set();
+  $view = [
+    'id' => 'pvp',
+    'classes' => 'view view-pvp',
+    'exposed' => drupal_render($form),
+    'content' => $content['output'],
+    'pager' => $pager,
+  ];
+  $output = theme('custom_view', ['view' => $view]);
+
+  return $output;
+}
+
+function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0)
+{
+  $output = '';
 
   // список ПвП с сортировкой по дате обновления
   $dbr = db_select('node', 'n');
@@ -91,28 +87,22 @@ function sec_pvp_list_page()
   $pvp_total = count($dbr->execute()->fetchAll());
   if ($pvp_total) {
     $dbr_n->orderBy('n.changed', 'DESC');
-    $dbr_n->range($pvp_page*$pvp_per_page, $pvp_per_page);
+    $dbr_n->range($pvp_page_num*$pvp_per_page, $pvp_per_page);
     $pvp_nids = $dbr_n->execute()->fetchCol();
 
-    $output .=  '<div class="view-content">';
     foreach ($pvp_nids as $pvp_nid) {
       $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid);
       $pvp_teaser = theme('pvp_teaser', ['item' => $pvp_teaser]);
       $output .= '<div class="views-row col-xs-12 col-md-6 col-lg-3">' . $pvp_teaser . '</div>';
     }
-    $output .=  '</div>';
-
-    // Пейджер
-    pager_default_initialize($pvp_total, $pvp_per_page);
-    $output .= theme('pager');
-
   } else {
     $output .= '<div class="view-empty">Записей не найдено, попробуйте изменить фильтры.</div>';
   }
 
-  $output .= '</div>';
-
-  return $output;
+  return [
+    'output' => $output,
+    'total_rows' => $pvp_total,
+  ];
 }
 
 /**
@@ -394,6 +384,7 @@ function sec_pvp_get_filters_set()
       'regions'     => ['current_id' => NULL, 'options' => []],
       'cultures'    => ['current_id' => NULL, 'options' => []],
       'components'  => ['current_id' => NULL, 'options' => []],
+      'query' => ['q' => 'preparaty-v-pole'],
     ];
 
     // Регионы
@@ -408,6 +399,7 @@ function sec_pvp_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($filters['regions']['options'][$curr_reg_id])) {
       $filters['regions']['current_id'] = $curr_reg_id;
+      $filters['query']['region'] = $curr_reg_id;
     }
 
     // Культуры
@@ -422,6 +414,7 @@ function sec_pvp_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($filters['cultures']['options'][$curr_cult_id])) {
       $filters['cultures']['current_id'] = $curr_cult_id;
+      $filters['query']['culture'] = $curr_cult_id;
     }
 
     // Действующие вещества
@@ -436,6 +429,7 @@ function sec_pvp_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($filters['components']['options'][$curr_comp_id])) {
       $filters['components']['current_id'] = $curr_comp_id;
+      $filters['query']['component'] = $curr_comp_id;
     }
   }
 
@@ -546,20 +540,20 @@ function sec_pvp_filters_form($form, &$form_state)
     '#attributes' => ['class' => ['row']],
   ];
 
+  // Формируем Фильтры только один раз в форме, так как здесь часть из них может быть сброшена.
+  // Далее нужно пользоваться сохранёнными в $from или $form_state
   $filters = sec_pvp_get_filters_set();
   // если за изменённым фильтром есть другие, то их нужно сбросить
   if (isset($form_state['filters'])) {
-    if ($form_state['filters']['regions']['current_id']
-      && ((!empty($_GET['region']) && $form_state['filters']['regions']['current_id'] != $_GET['region'])
-        || (!empty($_POST['region']) && $form_state['filters']['regions']['current_id'] != $_POST['region']))
+    if ((!empty($_GET['region']) && $form_state['filters']['regions']['current_id'] != $_GET['region'])
+        || (!empty($_POST['region']) && $form_state['filters']['regions']['current_id'] != $_POST['region'])
     )
     {
       $filters['cultures']['current_id'] = null;
       $filters['components']['current_id'] = null;
     }
-    if ($form_state['filters']['cultures']['current_id']
-      && ((!empty($_GET['culture']) && $form_state['filters']['cultures']['current_id'] != $_GET['culture'])
-        || (!empty($_POST['culture']) && $form_state['filters']['cultures']['current_id'] != $_POST['culture']))
+    if ((!empty($_GET['culture']) && $form_state['filters']['cultures']['current_id'] != $_GET['culture'])
+        || (!empty($_POST['culture']) && $form_state['filters']['cultures']['current_id'] != $_POST['culture'])
     )
     {
       $filters['components']['current_id'] = null;
@@ -575,8 +569,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['region'] = [
     '#type' => 'select',
     '#title' => 'Регион',
-    '#options' => ['all' => 'Все'] + $filters['regions']['options'],
-    '#default_value' => $filters['regions']['current_id'] ?? null,
+    '#options' => [0 => 'Все'] + $filters['regions']['options'],
+    '#default_value' => $filters['regions']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -588,8 +582,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['culture'] = [
     '#type' => 'select',
     '#title' => 'Культура',
-    '#options' => ['all' => 'Все'] + $filters['cultures']['options'],
-    '#default_value' => $filters['cultures']['current_id'] ?? null,
+    '#options' => [0 => 'Все'] + $filters['cultures']['options'],
+    '#default_value' => $filters['cultures']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -601,8 +595,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['component'] = [
     '#type' => 'select',
     '#title' => 'Действующее вещество',
-    '#options' => ['all' => 'Все'] + $filters['components']['options'],
-    '#default_value' => $filters['components']['current_id'] ?? null,
+    '#options' => [0 => 'Все'] + $filters['components']['options'],
+    '#default_value' => $filters['components']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -617,7 +611,27 @@ function sec_pvp_filters_form($form, &$form_state)
 
 function sec_pvp_filters_form_ajax($form, $form_state)
 {
-  $commands[] = ajax_command_replace('#pvp', sec_pvp_list_page());
+  // Фильтры берём из формы, так как они могут быть в ней изменены
+  $filters = $form['#data']['filters'];
+  $content = sec_pvp_get_content_filtered($filters, PVP_PER_PAGE, $_GET['page'] ?? 0);
+  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total_rows'], 'per_page' => PVP_PER_PAGE]);
+
+  $view = [
+    'id' => 'pvp',
+    'classes' => 'view view-pvp',
+    'exposed' => drupal_render($form),
+    'content' => $content['output'],
+    'pager' => $pager,
+  ];
+  $commands[] = ajax_command_replace('#pvp', theme('custom_view', ['view' => $view]));
+
+  // определить новый URL, которому соответствует содержимое страницы
+  // URL будет установлен в адресную строку браузера через history.pushState
+  $url = '/' . $filters['query']['q'];
+  $parameters = drupal_get_query_parameters($filters['query']);
+  if ($parameters) $url .= '?' . drupal_http_build_query($parameters);
+  $setting['history']['url'] = $GLOBALS['base_url'] . $url;
+  $commands[] = ajax_command_settings($setting);
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }

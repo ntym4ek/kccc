@@ -50,50 +50,54 @@ function sec_catalog_preprocess_page(&$vars)
 
     $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
     $vars['title_background'] = $img_url;
-
-    drupal_add_js(drupal_get_path('module', 'sec_catalog') . '/js/sec_catalog.js');
-    drupal_add_css(drupal_get_path('module', 'sec_catalog') . '/css/sec_catalog.css');
   }
 }
 
 function sec_catalog_page()
 {
-  $output = '';
+
   // форма фильтров
+//  $form = drupal_get_form('sec_catalog_filters_form');
+
+//  $output .= '<div id="catalog" class="view view-catalog">';
+//  $output .=    '<div class="view-filters">';
+//  $output .=      drupal_render($form);
+//  $output .=    '</div>';
+
+//  $filters = $form['filters'];
+
   $form = drupal_get_form('sec_catalog_filters_form');
+  $filters = $form['#data']['filters'];
+  $content = sec_catalog_get_content_filtered($filters);
 
-  $output .= '<div id="catalog" class="view view-catalog">';
-  $output .=    '<div class="view-filters">';
-  $output .=      drupal_render($form);
-  $output .=    '</div>';
-
-  $filters = sec_catalog_get_filters_set();
-
-  // список Препаратов
-  if ($catalog = sec_catalog_get_products_filtered($filters)) {
-    $output .= '<div class="view-content">';
-    foreach ($catalog as $category) {
-      foreach ($category['products'] as $product_info) {
-        $output .= '<div class="view-row col-xs-12 col-md-6">';
-        $output .=   theme('card_product_h', $product_info);
-        $output .= '</div>';
-      }
-    }
-    $output .= '</div>';
-  } else {
-    $output .= '<div class="view-content">';
-    $output .=  'Препаратов не найдено, попробуйте изменить фильтры.';
-    $output .= '</div>';
-  }
+  $view = [
+    'id' => 'catalog',
+    'classes' => 'view view-catalog',
+    'exposed' => drupal_render($form),
+    'content' => $content,
+  ];
+  $output = theme('custom_view', ['view' => $view]);
 
   return $output;
 }
 
-function sec_catalog_page_get_content($filters)
+function sec_catalog_get_content_filtered($filters)
 {
   $content = '';
 
-
+  if ($catalog = sec_catalog_get_products_filtered($filters)) {
+    foreach ($catalog as $category) {
+      foreach ($category['products'] as $product_info) {
+        $content .= '<div class="view-row col-xs-12 col-md-6">';
+        $content .=   theme('card_product_h', $product_info);
+        $content .= '</div>';
+      }
+    }
+  } else {
+    $content .= '<div class="view-empty">';
+    $content .=  'Препаратов не найдено, попробуйте изменить фильтры.';
+    $content .= '</div>';
+  }
 
   return $content;
 }
@@ -105,20 +109,20 @@ function sec_catalog_filters_form($form, &$form_state)
     '#attributes' => ['class' => ['row']],
   ];
 
+  // Формируем Фильтры только один раз в форме, так как здесь часть из них может быть сброшена.
+  // Далее нужно пользоваться сохранёнными в $from или $form_state
   $filters = sec_catalog_get_filters_set();
   // если за изменённым фильтром есть другие, то их нужно сбросить
   if (isset($form_state['filters'])) {
-    if ($form_state['filters']['categories']['current_id']
-      && ((!empty($_GET['category']) && $form_state['filters']['categories']['current_id'] != $_GET['category'])
-          || (!empty($_POST['category']) && $form_state['filters']['categories']['current_id'] != $_POST['category']))
+    if ((!empty($_GET['category']) && $form_state['filters']['categories']['current_id'] != $_GET['category'])
+          || (!empty($_POST['category']) && $form_state['filters']['categories']['current_id'] != $_POST['category'])
     )
     {
       $filters['components']['current_id'] = null;
       $filters['cultures']['current_id'] = null;
     }
-    if ($form_state['filters']['components']['current_id']
-      && ((!empty($_GET['components']) && $form_state['filters']['components']['current_id'] != $_GET['components'])
-          || (!empty($_POST['components']) && $form_state['filters']['components']['current_id'] != $_POST['components']))
+    if ((!empty($_GET['component']) && $form_state['filters']['components']['current_id'] != $_GET['component'])
+          || (!empty($_POST['component']) && $form_state['filters']['components']['current_id'] != $_POST['component'])
     )
     {
       $filters['cultures']['current_id'] = null;
@@ -131,7 +135,7 @@ function sec_catalog_filters_form($form, &$form_state)
   // сбрасываем установленные значения фильтров формы, установим ниже с учётом сброшенных
   unset($form_state["input"]);
 
-  $cat_options = ['all' => 'Все'];
+  $cat_options = [0 => 'Все'];
   foreach ($filters['categories']['options'] as $id => $label) {
     $cat_options[$id] = $label;
   }
@@ -139,7 +143,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#type' => 'select',
     '#title' => 'Категория',
     '#options' => $cat_options,
-    '#default_value' => $filters['categories']['current_id'] ?? null,
+    '#default_value' => $filters['categories']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -148,7 +152,7 @@ function sec_catalog_filters_form($form, &$form_state)
     ],
   ];
 
-  $cmp_options = ['all' => 'Все'];
+  $cmp_options = [0 => 'Все'];
   foreach ($filters['components']['options'] as $id => $label) {
     $cmp_options[$id] = $label;
   }
@@ -156,7 +160,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#type' => 'select',
     '#title' => 'Действующее вещество',
     '#options' => $cmp_options,
-    '#default_value' => $filters['components']['current_id'] ?? null,
+    '#default_value' => $filters['components']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -165,7 +169,7 @@ function sec_catalog_filters_form($form, &$form_state)
     ],
   ];
 
-  $cultures_options = ['all' => 'Все'];
+  $cultures_options = [0 => 'Все'];
   foreach ($filters['cultures']['options'] as $id => $label) {
     $cultures_options[$id] = $label;
   }
@@ -173,7 +177,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#type' => 'select',
     '#title' => 'Культура',
     '#options' => $cultures_options,
-    '#default_value' => $filters['cultures']['current_id'] ?? null,
+    '#default_value' => $filters['cultures']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -187,21 +191,40 @@ function sec_catalog_filters_form($form, &$form_state)
 
 function sec_catalog_filters_form_ajax($form, $form_state)
 {
+  // Фильтры берём из формы, так как они могут быть в ней изменены
+  $filters = $form['#data']['filters'];
+  $content = sec_catalog_get_content_filtered($filters);
+
+  $view = [
+    'id' => 'catalog',
+    'classes' => 'view view-catalog',
+    'exposed' => drupal_render($form),
+    'content' => $content,
+  ];
+  $commands[] = ajax_command_replace('#catalog', theme('custom_view', ['view' => $view]));
+
+
+  // отправить новую форму
+//  $commands[] = ajax_command_html('#catalog', sec_catalog_page());
+
   $title = 'Каталог препаратов';
   $title_logo = '';
   $img_url = 'public://images/page-banners/katalog.jpg';
 
-  // отправить новую форму
-  $commands[] = ajax_command_html('#catalog', sec_catalog_page());
-
   // определить новый URL, которому соответствует содержимое страницы
   // URL будет установлен в адресную строку браузера через history.pushState
-  $url = '/katalog';
-  $query = [];
-  if (is_numeric($form_state['values']['category'])) {
-    if ($cat_info = sec_catalog_get_category_info($form_state['values']['category'])) {
+  $url = '/' . $filters['query']['q'];
+  $parameters = drupal_get_query_parameters($filters['query']);
+  if ($parameters) $url .= '?' . drupal_http_build_query($parameters);
+
+
+//  $url = '/katalog';
+//  $query = [];
+//  $filters = $form_state['filters'];
+  if ($filters['categories']['current_id']) {
+    if ($cat_info = sec_catalog_get_category_info($filters['categories']['current_id'])) {
       $title = $cat_info['title'];
-      $url .= '/' . strtolower(transliteration_get($title));
+//      $url .= '/' . strtolower(transliteration_get($title));
       if ($cat_info['icon_num']) {
         $title_logo = '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>';
       }
@@ -210,10 +233,13 @@ function sec_catalog_filters_form_ajax($form, $form_state)
       }
     }
   }
-  if (is_numeric($form_state['values']['component'])) {
-    $query['component'] = $form_state['values']['component'];
-  }
-  if ($query) $url .= '?' . drupal_http_build_query($query);
+//  if ($filters['components']['current_id']) {
+//    $query['component'] = $filters['components']['current_id'];
+//  }
+//  if ($filters['cultures']['current_id']) {
+//    $query['culture'] = $filters['cultures']['current_id'];
+//  }
+//  if ($query) $url .= '?' . drupal_http_build_query($query);
   $setting['history']['url'] = $GLOBALS['base_url'] . $url;
   $commands[] = ajax_command_settings($setting);
 
@@ -255,6 +281,7 @@ function sec_catalog_get_filters_set()
       'categories'  => ['current_id' => NULL, 'options' => []],
       'components'  => ['current_id' => NULL, 'options' => []],
       'cultures'    => ['current_id' => NULL, 'options' => []],
+      'query' => ['q' => 'katalog'],
     ];
 
     // Категории
@@ -272,6 +299,10 @@ function sec_catalog_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($categories[$curr_cat_id])) {
       $filters['categories']['current_id'] = $curr_cat_id;
+      // фильтр категории задаётся как часть пути
+      if ($cat_info = sec_catalog_get_category_info($filters['categories']['current_id'])) {
+        $filters['query']['q'] .= '/' . strtolower(transliteration_get($cat_info['title']));
+      }
     }
 
     // Действующие вещества
@@ -289,6 +320,7 @@ function sec_catalog_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($components[$curr_comp_id])) {
       $filters['components']['current_id'] = $curr_comp_id;
+      $filters['query']['component'] = $curr_comp_id;
     }
 
     // Культуры
@@ -306,6 +338,7 @@ function sec_catalog_get_filters_set()
     // проверить наличие заданного значения в списке фильтра
     if (!empty($cultures[$curr_cult_id])) {
       $filters['cultures']['current_id'] = $curr_cult_id;
+      $filters['query']['culture'] = $curr_cult_id;
     }
   }
 
