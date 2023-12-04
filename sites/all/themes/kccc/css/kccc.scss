@@ -488,6 +488,12 @@ ul.action-links {
 
 // --- Views и прочие списки ---------------------------------------------------------------------------
 .view {
+  .view-filters {
+    margin-bottom: 1rem;
+    .form-text,
+    .form-select { width: 100%; }
+  }
+
   .card {
     border-radius: 5px;
     color: $text-color;
@@ -496,6 +502,7 @@ ul.action-links {
   }
 
   @media #{$laptop} {
+    .view-filters { margin-bottom: 2rem; }
     .card { padding: .5rem; }
 
     .node-teaser,
@@ -512,6 +519,33 @@ ul.action-links {
   }
 }
 
+.pager {
+  li.pager-ellipsis,
+  li.pager-current {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 40px; width: 40px;
+    margin: 0; padding: 0;
+  }
+  li.pager-previous,
+  li.pager-first,
+  li.pager-next,
+  li.pager-last,
+  li.pager-item {
+    margin: 0; padding: 0;
+    a {
+      border-radius: 5px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: $text-color;
+      height: 40px; width: 40px;
+      transition: all 200ms;
+      &:hover {
+        box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
 .page-content,
 .page-right {
   .view {
@@ -524,6 +558,7 @@ ul.action-links {
       @include col('xs', 12);
     }
 
+    .view-row,
     .views-row {
       //@include col('xs', 12);   // проставлено в Представлениях
       margin-bottom: 1rem;
@@ -532,18 +567,9 @@ ul.action-links {
 }
 
 .page-content {
-  //.view           .views-row { @include col('md', 6); }  // проставлено в Представлениях
-  //.view-programs  .views-row { @include col('md', 4); }
-  //.view-cultures  .views-row,
-  //.view-diseases  .views-row,
-  //.view-weeds  .views-row,
-  //.view-pests  .views-row {
-  //  @include col('md', 4);
-  //  @include col('lg', 3);
-  //}
-
   @media #{$laptop} {
     .view {
+      .view-row,
       .views-row {
         margin-bottom: 2rem;
       }
@@ -555,6 +581,7 @@ ul.action-links {
 // и содержимое выстраивается по горизонтали
 .page-right {
   .view {
+    .view-row,
     .views-row {
       @include col('md', 4);
       @include col('lg', 12);
@@ -1384,32 +1411,6 @@ ul.action-links {
   //margin-top: 0.2em;
 }
 
-.pager {
-  li.pager-ellipsis,
-  li.pager-current {
-    display: inline-flex; align-items: center; justify-content: center;
-    height: 40px; width: 40px;
-    margin: 0; padding: 0;
-  }
-  li.pager-previous,
-  li.pager-first,
-  li.pager-next,
-  li.pager-last,
-  li.pager-item {
-    margin: 0; padding: 0;
-    a {
-      border-radius: 5px;
-      display: inline-flex; align-items: center; justify-content: center;
-      color: $text-color;
-      height: 40px; width: 40px;
-      transition: all 200ms;
-      &:hover {
-        box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
-        transform: translateY(-2px);
-      }
-    }
-  }
-}
 
 // --- Оформление разделов (без отдельных css файлов) ------------------------------------------------------------------
 .contacts,
