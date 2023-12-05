@@ -1073,6 +1073,8 @@ ul.tabs.secondary {
   @media only screen and (min-width: 1280px) {
     .block p:last-child {
       margin-bottom: 0; } }
+  .block .view {
+    margin-bottom: 0; }
 
 .view {
   margin-bottom: 2rem; }

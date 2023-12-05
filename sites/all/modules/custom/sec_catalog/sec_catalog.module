@@ -307,7 +307,7 @@ function sec_catalog_get_filters_set()
       'categories'  => ['current_id' => NULL, 'options' => []],
       'components'  => ['current_id' => NULL, 'options' => []],
       'cultures'    => ['current_id' => NULL, 'options' => []],
-      'query' => ['q' => 'katalog'],
+      'query' => ['q' => 'katalog'],                                  // для формирования ссылки и подмены в строке браузера
     ];
 
     // Категории

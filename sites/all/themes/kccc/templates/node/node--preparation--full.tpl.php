@@ -82,6 +82,7 @@
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
+  <?php if (!$section): ?>
   <div class="product-intro">
     <div class="row">
       <div class="col-xs-12 col-md-4 col-lg-6">
@@ -260,4 +261,16 @@
 
   <!-- блок Приложение -->
   <?php print drupal_render($block_app); ?>
+
+  <?php elseif ($section == 'primenenie'): ?>
+    <!-- блок Опыт применения -->
+    <?php print drupal_render($block_prep_pvp); ?>
+
+    <!-- блок Связаться с нами -->
+    <?php print drupal_render($block_contact_us); ?>
+
+    <!-- блок Рекомендуемые -->
+    <?php print drupal_render($block_recommended); ?>
+  <?php endif; ?>
+
 </div>

@@ -41,7 +41,7 @@ function sec_pvp_list_page()
   $form = drupal_get_form('sec_pvp_filters_form');
   $filters = $form['#data']['filters'];
   $content = sec_pvp_get_content_filtered($filters, PVP_PER_PAGE, $pvp_page);
-  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total_rows'], 'per_page' => PVP_PER_PAGE]);
+  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total'], 'per_page' => PVP_PER_PAGE]);
 
   $view = [
     'id' => 'pvp',
@@ -57,7 +57,39 @@ function sec_pvp_list_page()
 
 function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0)
 {
-  $output = '';
+  $content = [
+    'output' => '',
+  ];
+
+  if ($pvps = sec_pvp_get_pvp_filtered($filters, $pvp_per_page, $pvp_page_num*$pvp_per_page)) {
+    $content['total'] = $pvps['total'];
+    foreach ($pvps['list'] as $pvp_teaser) {
+      $content['output'] .= '<div class="view-row col-xs-12 col-md-6 col-lg-3">';
+      $content['output'] .=   theme('pvp_teaser', ['item' => $pvp_teaser]);
+      $content['output'] .= '</div>';
+    }
+  } else {
+    $content['output'] .= '<div class="view-empty">';
+    $content['output'] .=  'Записей не найдено, попробуйте изменить фильтры.';
+    $content['output'] .= '</div>';
+  }
+
+  return $content;
+}
+
+/**
+ * Вернуть заданное число тизеров Препаратов в поле и их общее количество.
+ * Можно задать фильтры.
+ *
+ * @param $filters
+ * @param $qty - количество записей
+ * @param $from - начиная с записи
+ */
+function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
+{
+  $pvps = [
+    'list' => [],
+  ];
 
   // список ПвП с сортировкой по дате обновления
   $dbr = db_select('node', 'n');
@@ -74,6 +106,12 @@ function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0
     $dbr->innerJoin('field_data_field_culture', 'fc', 'fc.entity_id = n.nid');
     $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
   }
+  if ($filters['preparations']['current_id']) {
+    $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.entity_id = n.nid');
+    $dbr->innerJoin('field_data_field_pvp_treat_preparations', 'fps', 'fps.entity_id = ft.field_pvp_treat_value');
+    $dbr->innerJoin('field_data_field_preparation', 'fp', 'fp.entity_id = fps.field_pvp_treat_preparations_value');
+    $dbr->condition('fp.field_preparation_target_id', $filters['preparations']['current_id']);
+  }
   if ($filters['components']['current_id']) {
     $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.entity_id = n.nid');
     $dbr->innerJoin('field_data_field_pvp_treat_preparations', 'fps', 'fps.entity_id = ft.field_pvp_treat_value');
@@ -84,25 +122,17 @@ function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0
   }
   $dbr->distinct();
   $dbr_n = clone($dbr);
-  $pvp_total = count($dbr->execute()->fetchAll());
-  if ($pvp_total) {
+  if ($pvps['total'] = count($dbr->execute()->fetchAll())) {
     $dbr_n->orderBy('n.changed', 'DESC');
-    $dbr_n->range($pvp_page_num*$pvp_per_page, $pvp_per_page);
+    if ($qty) $dbr_n->range($from, $qty);
     $pvp_nids = $dbr_n->execute()->fetchCol();
 
     foreach ($pvp_nids as $pvp_nid) {
-      $pvp_teaser = sec_pvp_get_pvp_teaser($pvp_nid);
-      $pvp_teaser = theme('pvp_teaser', ['item' => $pvp_teaser]);
-      $output .= '<div class="views-row col-xs-12 col-md-6 col-lg-3">' . $pvp_teaser . '</div>';
+      $pvps['list'][$pvp_nid] = sec_pvp_get_pvp_teaser($pvp_nid);
     }
-  } else {
-    $output .= '<div class="view-empty">Записей не найдено, попробуйте изменить фильтры.</div>';
   }
 
-  return [
-    'output' => $output,
-    'total_rows' => $pvp_total,
-  ];
+  return $pvps;
 }
 
 /**
@@ -371,6 +401,17 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
   }
 }
 
+
+function sec_pvp_get_filters_default()
+{
+  return [
+    'regions'      => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
+    'cultures'     => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
+    'preparations' => ['current_id' => NULL, 'options' => []],  // используется в блоке Опыты применения в препарате
+    'components'   => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
+    'query'        => ['q' => 'preparaty-v-pole'],              // для формирования ссылки и подмены в строке браузера
+  ];
+}
 /**
  * Вернуть массив возможных значений фильтров ПвП и выбранные значения
  */
@@ -380,12 +421,7 @@ function sec_pvp_get_filters_set()
   $filters = &drupal_static(__FUNCTION__ . $key);
   if (!isset($filters)) {
 
-    $filters = [
-      'regions'     => ['current_id' => NULL, 'options' => []],
-      'cultures'    => ['current_id' => NULL, 'options' => []],
-      'components'  => ['current_id' => NULL, 'options' => []],
-      'query' => ['q' => 'preparaty-v-pole'],
-    ];
+    $filters = sec_pvp_get_filters_default();
 
     // Регионы
     $curr_reg_id = null;

@@ -1,5 +1,15 @@
 @import "../../../../themes/kccc/css/includes";
 
+.block {
+  .section-title { position: relative; }
+  .more-all {
+    color: $brand-color; font-size: $font-size-large; font-weight: 500; text-align: center;
+  }
+  @media #{$tablet} {
+    .more-all { position: absolute; top: 2rem; right: 2rem; }
+  }
+}
+
 .block-front-banner {
   .swiper-slide {
     height: 635px;
@@ -813,9 +823,6 @@
   .more {
     color: $brand-color; font-size: $font-size-large;
   }
-  .more-all {
-    color: $brand-color; font-size: $font-size-large; font-weight: 500; text-align: center;
-  }
 
   @media #{$tablet} {
     .news { margin: 0; }
@@ -825,6 +832,14 @@
       min-height: 16rem;
     }
     .more { position: absolute; bottom: 2rem; left: 2rem; }
-    .more-all { position: absolute; top: 2rem; right: 2rem; }
+  }
+}
+
+.block-prep-pvp {
+  .view-empty {
+    font-size: $font-size-h4; font-weight: 500; text-align: center;
+  }
+  @media #{$laptop} {
+    .view .view-row { margin-bottom: 0!important; }
   }
 }

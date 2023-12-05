@@ -183,54 +183,77 @@ function ext_node_preprocess_node(&$vars)
       // категория препарата для темизации в цвет
       $vars['classes_array'][] = 'category-' . $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
 
-      // подготовить карточки Регламентов и два пункта Характеристик
-      $reglaments_cards = [];
-      $cultures = $hobjects = [];
-      if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
-        foreach ($product_regs as $reg) {
-          $reglaments_cards[] = theme('card_reglament', ['card' => $reg]);
-          $cultures = array_merge($cultures, array_values($reg['cultures']['list']));
+      // В зависимости от вида ссылки на странице препарата может выводиться разная информация.
+      // Информация делится на секции: Описание, Опыт применения, Медиа, Документы
+      $vars['section'] = $_GET['s'] ?? '';
+      // секция Описание
+      if (!$vars['section']) {
+        // подготовить карточки Регламентов и два пункта Характеристик
+        $reglaments_cards = [];
+        $cultures = $hobjects = [];
+        if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
+          foreach ($product_regs as $reg) {
+            $reglaments_cards[] = theme('card_reglament', ['card' => $reg]);
+            $cultures = array_merge($cultures, array_values($reg['cultures']['list']));
 
-          foreach ($reg['hobjects']['weed_groups'] as $wg) {
-            $hobjects[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
+            foreach ($reg['hobjects']['weed_groups'] as $wg) {
+              $hobjects[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
+            }
+            $hobjects = array_merge($hobjects, $reg['hobjects']['pest_classes']);
+            $hobjects = array_merge($hobjects, array_column($reg['hobjects']['list'], 'name'));
           }
-          $hobjects = array_merge($hobjects, $reg['hobjects']['pest_classes']);
-          $hobjects = array_merge($hobjects, array_column($reg['hobjects']['list'], 'name'));
         }
+        $vars['product_info']['reglaments_cards'] = $reglaments_cards;
+        if ($cultures) {
+          $vars['product_info']['specs'][] = [
+            'icon_num' => '042',
+            'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($cultures)))),
+          ];
+        }
+        if ($hobjects) {
+          $vars['product_info']['specs'][] = [
+            'icon_num' => '031',
+            'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($hobjects)))),
+          ];
+        }
+
+        // программно вставить блок Агро Калькулятор
+        $block = block_load("ext_block", 'custom-block-agro-calculator');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_calc'] = _block_get_renderable_array($blocks);
+
+        // программно вставить блок Связаться с нами
+        $block = block_load("ext_block", 'custom-block-contact-us');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_contact_us'] = _block_get_renderable_array($blocks);
+
+        // программно вставить блок Рекомендуемые
+        $block = block_load("ext_block", 'custom-block-recommended');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_recommended'] = _block_get_renderable_array($blocks);
+
+        // программно вставить блок Приложение
+        $block = block_load("ext_block", 'custom-block-app');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_app'] = _block_get_renderable_array($blocks);
       }
-      $vars['product_info']['reglaments_cards'] = $reglaments_cards;
-      if ($cultures) {
-        $vars['product_info']['specs'][] = [
-          'icon_num' => '042',
-          'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($cultures)))),
-        ];
+      // секция Опыт применения
+      elseif ($vars['section'] == 'primenenie') {
+        // программно вставить блок Опыт применения
+        $block = block_load("ext_block", 'custom-block-prep-pvp');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_prep_pvp'] = _block_get_renderable_array($blocks);
+
+        // программно вставить блок Связаться с нами
+        $block = block_load("ext_block", 'custom-block-contact-us');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_contact_us'] = _block_get_renderable_array($blocks);
+
+        // программно вставить блок Рекомендуемые
+        $block = block_load("ext_block", 'custom-block-recommended');
+        $blocks = _block_render_blocks([$block]);
+        $vars['block_recommended'] = _block_get_renderable_array($blocks);
       }
-      if ($hobjects) {
-        $vars['product_info']['specs'][] = [
-          'icon_num' => '031',
-          'text' => drupal_ucfirst(drupal_strtolower(implode(', ', array_unique($hobjects)))),
-        ];
-      }
-
-      // программно вставить блок Агро Калькулятор
-      $block = block_load("ext_block", 'custom-block-agro-calculator');
-      $blocks = _block_render_blocks([$block]);
-      $vars['block_calc'] = _block_get_renderable_array($blocks);
-
-      // программно вставить блок Связаться с нами
-      $block = block_load("ext_block", 'custom-block-contact-us');
-      $blocks = _block_render_blocks([$block]);
-      $vars['block_contact_us'] = _block_get_renderable_array($blocks);
-
-      // программно вставить блок Рекомендуемые
-      $block = block_load("ext_block", 'custom-block-recommended');
-      $blocks = _block_render_blocks([$block]);
-      $vars['block_recommended'] = _block_get_renderable_array($blocks);
-
-      // программно вставить блок Приложение
-      $block = block_load("ext_block", 'custom-block-app');
-      $blocks = _block_render_blocks([$block]);
-      $vars['block_app'] = _block_get_renderable_array($blocks);
     }
   }
 

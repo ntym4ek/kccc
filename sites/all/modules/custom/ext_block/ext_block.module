@@ -84,6 +84,9 @@ function ext_block_block_info()
     'custom-block-news' => [
       'info' => 'CB | Новости',
     ],
+    'custom-block-prep-pvp' => [
+      'info' => 'CB | Препарат | Опыт применения',
+    ],
   ];
 }
 
@@ -125,6 +128,23 @@ function ext_block_block_view($delta = '')
 
   elseif ($delta == 'custom-block-news') {
     $block['content'] = theme($delta, ['cards' => ext_block_get_front_news()]);
+  }
+
+  elseif ($delta == 'custom-block-prep-pvp') {
+    $block['subject'] = null;
+    $filters = sec_pvp_get_filters_default();
+    // получаем контекст
+    $nid = str_replace('node/', '', $_GET['q']);
+    if (is_numeric($nid)) {
+      $filters['preparations']['current_id'] = $nid;
+      $content = sec_pvp_get_content_filtered($filters, 4);
+      if ($content['output']) {
+        $content = $content['output'];
+      } else {
+        $content = '<div class="view-empty col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
+      }
+      $block['content'] = theme($delta, ['content' => $content]);
+    }
   }
 
   // блоки со статичной разметкой
@@ -251,6 +271,10 @@ function ext_block_theme()
     'custom-block-news' => [
       'variables' => [],
       'template' => 'templates/block-news',
+    ],
+    'custom-block-prep-pvp' => [
+      'variables' => [],
+      'template' => 'templates/block-prep-pvp',
     ],
   ];
 }
