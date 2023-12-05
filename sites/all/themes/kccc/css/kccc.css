@@ -3177,6 +3177,10 @@ ul.action-links {
     bottom: 0;
     right: 0; }
 
+[id^=ext-form-search-form] .form-text,
+[id^=ext-form-subscribe-form] .form-text {
+  width: 100%; }
+
 .underline {
   background: #43B02A;
   width: 8em;

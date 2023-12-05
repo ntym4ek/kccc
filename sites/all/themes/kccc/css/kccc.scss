@@ -1357,6 +1357,11 @@ ul.action-links {
   }
 }
 
+[id^=ext-form-search-form] ,
+[id^=ext-form-subscribe-form] {
+  .form-text { width: 100%; }
+}
+
 // --- Элементы оформления -------------------------------------------------------------
 .underline {
   background: $brand-color;
