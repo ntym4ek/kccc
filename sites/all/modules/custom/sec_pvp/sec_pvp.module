@@ -41,7 +41,8 @@ function sec_pvp_list_page()
   $form = drupal_get_form('sec_pvp_filters_form');
   $filters = $form['#data']['filters'];
   $content = sec_pvp_get_content_filtered($filters, PVP_PER_PAGE, $pvp_page);
-  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total'], 'per_page' => PVP_PER_PAGE]);
+  $query = helper_get_query_from_filters('preparaty-v-pole', $filters);
+  $pager = theme('custom_pager', ['query' => $query, 'total' => $content['total'], 'per_page' => PVP_PER_PAGE]);
 
   $view = [
     'id' => 'pvp',
@@ -98,27 +99,27 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
   $dbr->addField('n', 'nid');
   // есть Контроль
   $dbr->innerJoin('field_data_field_pvp_check', 'fpc', 'fpc.entity_id = n.nid');
-  if ($filters['regions']['current_id']) {
+  if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = n.nid');
-    $dbr->condition('fr.field_region_tid', $filters['regions']['current_id']);
+    $dbr->condition('fr.field_region_tid', $filters['region']['current_id']);
   }
-  if ($filters['cultures']['current_id']) {
+  if ($filters['culture']['current_id']) {
     $dbr->innerJoin('field_data_field_culture', 'fc', 'fc.entity_id = n.nid');
-    $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
+    $dbr->condition('fc.field_culture_target_id', $filters['culture']['current_id']);
   }
-  if ($filters['preparations']['current_id']) {
+  if ($filters['preparation']['current_id']) {
     $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.entity_id = n.nid');
     $dbr->innerJoin('field_data_field_pvp_treat_preparations', 'fps', 'fps.entity_id = ft.field_pvp_treat_value');
     $dbr->innerJoin('field_data_field_preparation', 'fp', 'fp.entity_id = fps.field_pvp_treat_preparations_value');
-    $dbr->condition('fp.field_preparation_target_id', $filters['preparations']['current_id']);
+    $dbr->condition('fp.field_preparation_target_id', $filters['preparation']['current_id']);
   }
-  if ($filters['components']['current_id']) {
+  if ($filters['component']['current_id']) {
     $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.entity_id = n.nid');
     $dbr->innerJoin('field_data_field_pvp_treat_preparations', 'fps', 'fps.entity_id = ft.field_pvp_treat_value');
     $dbr->innerJoin('field_data_field_preparation', 'fp', 'fp.entity_id = fps.field_pvp_treat_preparations_value');
     $dbr->innerJoin('field_data_field_prep_components', 'fpcoms', 'fpcoms.entity_id = fp.field_preparation_target_id');
     $dbr->innerJoin('field_data_field_component', 'fpcom', 'fpcom.entity_id = fpcoms.field_prep_components_value');
-    $dbr->condition('fpcom.field_component_tid', $filters['components']['current_id']);
+    $dbr->condition('fpcom.field_component_tid', $filters['component']['current_id']);
   }
   $dbr->distinct();
   $dbr_n = clone($dbr);
@@ -195,7 +196,9 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
 
           // получить список препаратов из последней Обработки
           $preps = [];
-          foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) $preps[] = '<a href="/' . drupal_get_path_alias('node/' . $tp_wr->field_preparation->getIdentifier()) . '">' . $tp_wr->field_preparation->label() . '</a>';
+          foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $tp_wr) {
+            $preps[] = $tp_wr->field_preparation->label();
+          }
           if ($preps) {
             $teaser['comment'] = ($teaser['type'] == 'check' ? 'После обработки препаратами:' : 'Обработка препаратами:') . '<span>' . implode(', ', $preps) . '</span>';
           } else {
@@ -405,11 +408,10 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
 function sec_pvp_get_filters_default()
 {
   return [
-    'regions'      => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
-    'cultures'     => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
-    'preparations' => ['current_id' => NULL, 'options' => []],  // используется в блоке Опыты применения в препарате
-    'components'   => ['current_id' => NULL, 'options' => []],  // используется как фильтр в ПвП
-    'query'        => ['q' => 'preparaty-v-pole'],              // для формирования ссылки и подмены в строке браузера
+    'region'      => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
+    'culture'     => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
+    'preparation' => ['current_id' => 0, 'options' => []],  // используется в блоке Опыты применения в препарате
+    'component'   => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
   ];
 }
 /**
@@ -425,62 +427,58 @@ function sec_pvp_get_filters_set()
 
     // Регионы
     $curr_reg_id = null;
-    $filters['regions']['options'] = sec_pvp_get_regions();
-    if ($_GET['q'] == 'system/ajax' && isset($_POST["region"]) && is_numeric($_POST["region"])) {
+    $filters['region']['options'] = sec_pvp_get_regions();
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["region"])) {
       $curr_reg_id = $_POST["region"];
     }
     elseif (isset($_GET['region']) && is_numeric($_GET['region'])) {
       $curr_reg_id = $_GET['region'];
     }
     // проверить наличие заданного значения в списке фильтра
-    if (!empty($filters['regions']['options'][$curr_reg_id])) {
-      $filters['regions']['current_id'] = $curr_reg_id;
-      $filters['query']['region'] = $curr_reg_id;
+    if (!empty($filters['region']['options'][$curr_reg_id])) {
+      $filters['region']['current_id'] = $curr_reg_id;
     }
 
     // Культуры
     $curr_cult_id = null;
-    $filters['cultures']['options'] = sec_pvp_get_filter_cultures($filters);
-    if ($_GET['q'] == 'system/ajax' && isset($_POST["culture"]) && is_numeric($_POST["culture"])) {
+    $filters['culture']['options'] = sec_pvp_get_filter_cultures($filters);
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["culture"])) {
       $curr_cult_id = $_POST["culture"];
     }
     elseif (isset($_GET['culture']) && is_numeric($_GET['culture'])) {
       $curr_cult_id = $_GET['culture'];
     }
     // проверить наличие заданного значения в списке фильтра
-    if (!empty($filters['cultures']['options'][$curr_cult_id])) {
-      $filters['cultures']['current_id'] = $curr_cult_id;
-      $filters['query']['culture'] = $curr_cult_id;
+    if (!empty($filters['culture']['options'][$curr_cult_id])) {
+      $filters['culture']['current_id'] = $curr_cult_id;
     }
 
     // Препарат
     $curr_prep_id = null;
-    $filters['preparations']['options'] = sec_pvp_get_filter_preparations($filters);
-    if ($_GET['q'] == 'system/ajax' && isset($_POST["preparation"]) && is_numeric($_POST["preparation"])) {
+    $filters['preparation']['options'] = sec_pvp_get_filter_preparations($filters);
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["preparation"])) {
       $curr_prep_id = $_POST["preparation"];
     }
     elseif (isset($_GET['preparation']) && is_numeric($_GET['preparation'])) {
       $curr_prep_id = $_GET['preparation'];
     }
     // проверить наличие заданного значения в списке фильтра
-    if (!empty($filters['preparations']['options'][$curr_prep_id])) {
-      $filters['preparations']['current_id'] = $curr_prep_id;
-      $filters['query']['preparation'] = $curr_prep_id;
+    if (!empty($filters['preparation']['options'][$curr_prep_id])) {
+      $filters['preparation']['current_id'] = $curr_prep_id;
     }
 
     // Действующие вещества
     $curr_comp_id = null;
-    $filters['components']['options'] = sec_pvp_get_filter_components($filters);
-    if ($_GET['q'] == 'system/ajax' && isset($_POST["component"]) && is_numeric($_POST["component"])) {
+    $filters['component']['options'] = sec_pvp_get_filter_components($filters);
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["component"])) {
       $curr_comp_id = $_POST["component"];
     }
     elseif (isset($_GET['component']) && is_numeric($_GET['component'])) {
       $curr_comp_id = $_GET['component'];
     }
     // проверить наличие заданного значения в списке фильтра
-    if (!empty($filters['components']['options'][$curr_comp_id])) {
-      $filters['components']['current_id'] = $curr_comp_id;
-      $filters['query']['component'] = $curr_comp_id;
+    if (!empty($filters['component']['options'][$curr_comp_id])) {
+      $filters['component']['current_id'] = $curr_comp_id;
     }
 
   }
@@ -526,9 +524,9 @@ function sec_pvp_get_filter_cultures($filters)
   $dbr->condition('ns.type', 'season');
   $dbr->condition('ns.status', 1);
 
-  if ($filters['regions']['current_id']) {
+  if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = fc.entity_id');
-    $dbr->condition('fr.field_region_tid', $filters['regions']['current_id']);
+    $dbr->condition('fr.field_region_tid', $filters['region']['current_id']);
   }
   $dbr->orderBy('n.title');
   $dbr->fields('n', ['nid', 'title']);
@@ -557,17 +555,17 @@ function sec_pvp_get_filter_preparations($filters)
   $dbr->innerJoin('node', 'ns', 'ns.nid = ft.entity_id');
   $dbr->condition('ns.status', 1);
   // если задан Регион
-  if ($filters['regions']['current_id']) {
+  if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = ft.entity_id');
     $dbr->condition('fr.bundle', 'season');
-    $dbr->condition('fr.field_region_tid', $filters['regions']['current_id']);
+    $dbr->condition('fr.field_region_tid', $filters['region']['current_id']);
   }
 
   // если задана Культура
-  if ($filters['cultures']['current_id']) {
+  if ($filters['culture']['current_id']) {
     $dbr->innerJoin('field_data_field_culture', 'fc', 'fc.entity_id = ft.entity_id');
     $dbr->condition('fc.bundle', 'season');
-    $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
+    $dbr->condition('fc.field_culture_target_id', $filters['culture']['current_id']);
   }
   $dbr->orderBy('n.title');
   $dbr->fields('n', ['nid', 'title']);
@@ -601,22 +599,22 @@ function sec_pvp_get_filter_components($filters)
   $dbr->condition('ns.status', 1);
 
   // если задан Регион
-  if ($filters['regions']['current_id']) {
+  if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = ft.entity_id');
     $dbr->condition('fr.bundle', 'season');
-    $dbr->condition('fr.field_region_tid', $filters['regions']['current_id']);
+    $dbr->condition('fr.field_region_tid', $filters['region']['current_id']);
   }
 
   // если задана Культура
-  if ($filters['cultures']['current_id']) {
+  if ($filters['culture']['current_id']) {
     $dbr->innerJoin('field_data_field_culture', 'fc', 'fc.entity_id = ft.entity_id');
     $dbr->condition('fc.bundle', 'season');
-    $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
+    $dbr->condition('fc.field_culture_target_id', $filters['culture']['current_id']);
   }
 
   // если задана Препарат
-  if ($filters['preparations']['current_id']) {
-    $dbr->condition('n.nid', $filters['preparations']['current_id']);
+  if ($filters['preparation']['current_id']) {
+    $dbr->condition('n.nid', $filters['preparation']['current_id']);
   }
 
   $dbr->orderBy('t.name');
@@ -642,26 +640,14 @@ function sec_pvp_filters_form($form, &$form_state)
   $filters = sec_pvp_get_filters_set();
   // если за изменённым фильтром есть другие, то их нужно сбросить
   if (isset($form_state['filters'])) {
-    if ((!empty($_GET['region']) && $form_state['filters']['regions']['current_id'] != $_GET['region'])
-        || (!empty($_POST['region']) && $form_state['filters']['regions']['current_id'] != $_POST['region'])
-    )
-    {
-      $filters['cultures']['current_id'] = null;
-      $filters['preparations']['current_id'] = null;
-      $filters['components']['current_id'] = null;
-    }
-    if ((!empty($_GET['culture']) && $form_state['filters']['cultures']['current_id'] != $_GET['culture'])
-        || (!empty($_POST['culture']) && $form_state['filters']['cultures']['current_id'] != $_POST['culture'])
-    )
-    {
-      $filters['preparations']['current_id'] = null;
-      $filters['components']['current_id'] = null;
-    }
-    if ((!empty($_GET['preparation']) && $form_state['filters']['preparations']['current_id'] != $_GET['preparation'])
-        || (!empty($_POST['preparation']) && $form_state['filters']['preparations']['current_id'] != $_POST['preparation'])
-    )
-    {
-      $filters['components']['current_id'] = null;
+    $flag = false;
+    foreach($filters as $name => $filter) {
+      if (!$flag) {
+        $flag = ((isset($_GET[$name]) && $form_state['filters'][$name]['current_id'] != $_GET[$name])
+              || (isset($_POST[$name]) && $form_state['filters'][$name]['current_id'] != $_POST[$name]));
+      } else {
+        $filters[$name]['current_id'] = 0;
+      }
     }
   }
   // запоминаем фильтры
@@ -674,8 +660,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['region'] = [
     '#type' => 'select',
     '#title' => 'Регион',
-    '#options' => [0 => 'Все'] + $filters['regions']['options'],
-    '#default_value' => $filters['regions']['current_id'],
+    '#options' => [0 => 'Все'] + $filters['region']['options'],
+    '#default_value' => $filters['region']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -687,8 +673,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['culture'] = [
     '#type' => 'select',
     '#title' => 'Культура',
-    '#options' => [0 => 'Все'] + $filters['cultures']['options'],
-    '#default_value' => $filters['cultures']['current_id'],
+    '#options' => [0 => 'Все'] + $filters['culture']['options'],
+    '#default_value' => $filters['culture']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -700,8 +686,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['preparation'] = [
     '#type' => 'select',
     '#title' => 'Препарат',
-    '#options' => [0 => 'Все'] + $filters['preparations']['options'],
-    '#default_value' => $filters['preparations']['current_id'],
+    '#options' => [0 => 'Все'] + $filters['preparation']['options'],
+    '#default_value' => $filters['preparation']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -713,8 +699,8 @@ function sec_pvp_filters_form($form, &$form_state)
   $form['filters']['component'] = [
     '#type' => 'select',
     '#title' => 'Действующее вещество',
-    '#options' => [0 => 'Все'] + $filters['components']['options'],
-    '#default_value' => $filters['components']['current_id'],
+    '#options' => [0 => 'Все'] + $filters['component']['options'],
+    '#default_value' => $filters['component']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [
@@ -727,12 +713,14 @@ function sec_pvp_filters_form($form, &$form_state)
   return $form;
 }
 
+
 function sec_pvp_filters_form_ajax($form, $form_state)
 {
   // Фильтры берём из формы, так как они могут быть в ней изменены
   $filters = $form['#data']['filters'];
   $content = sec_pvp_get_content_filtered($filters, PVP_PER_PAGE, $_GET['page'] ?? 0);
-  $pager = theme('custom_pager', ['query' => $filters['query'], 'total' => $content['total_rows'], 'per_page' => PVP_PER_PAGE]);
+  $query = helper_get_query_from_filters('preparaty-v-pole', $filters);
+  $pager = theme('custom_pager', ['query' => $query, 'total' => $content['total'], 'per_page' => PVP_PER_PAGE]);
 
   $view = [
     'id' => 'pvp',
@@ -745,8 +733,8 @@ function sec_pvp_filters_form_ajax($form, $form_state)
 
   // определить новый URL, которому соответствует содержимое страницы
   // URL будет установлен в адресную строку браузера через history.pushState
-  $url = '/' . $filters['query']['q'];
-  $parameters = drupal_get_query_parameters($filters['query']);
+  $url = '/' . $query['q'];
+  $parameters = drupal_get_query_parameters($query);
   if ($parameters) $url .= '?' . drupal_http_build_query($parameters);
   $setting['history']['url'] = $GLOBALS['base_url'] . $url;
   $commands[] = ajax_command_settings($setting);

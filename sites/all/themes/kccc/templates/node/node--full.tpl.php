@@ -144,7 +144,7 @@
 
   <?php if (!empty($body[0]["safe_value"])): ?>
   <?php hide($content['body']); ?>
-  <div class="text">
+  <div class="node-text">
     <?php print $body[0]["safe_value"]; ?>
   </div>
   <?php endif; ?>

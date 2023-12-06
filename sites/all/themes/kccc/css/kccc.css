@@ -2237,6 +2237,8 @@ ul.action-links {
   margin-bottom: 1rem; }
   .view .card.card-contact {
     margin-bottom: 2rem; }
+.view.view-admin-views-user .views-table {
+  width: 100%; }
 @media only screen and (min-width: 1280px) {
   .view .view-filters {
     margin-bottom: 2rem; }
@@ -2628,7 +2630,7 @@ ul.action-links {
       .node-full .node-images {
         margin-bottom: 2rem; } }
 
-.node-full .text,
+.node-full .node-text,
 .node-full blockquote,
 .cke_editable {
   font-size: 1.125rem;
@@ -2842,6 +2844,8 @@ ul.action-links {
     .node-preparation .product-instructions .instruction .title {
       font-size: 1.125rem;
       font-weight: 700; }
+    .node-preparation .product-instructions .instruction .text {
+      font-size: 1.125rem; }
     .node-preparation .product-instructions .instruction p {
       margin-bottom: 0; }
   @media only screen and (min-width: 768px) {
@@ -3361,6 +3365,11 @@ ul.action-links {
   .pvp-teaser > div {
     margin-bottom: .8rem;
     flex: 0 0 auto; }
+  .pvp-teaser > .text {
+    flex: 1 0 auto;
+    padding: 0 .5rem; }
+    .pvp-teaser > .text > div {
+      margin-bottom: .8rem; }
   .pvp-teaser .date {
     background: #E9E9E9;
     color: #7D7C7C;
@@ -3370,7 +3379,6 @@ ul.action-links {
     font-size: 1.125rem;
     font-weight: 700; }
   .pvp-teaser .comment {
-    flex: 1 0 auto;
     color: #7D7C7C; }
     .pvp-teaser .comment span {
       display: block;

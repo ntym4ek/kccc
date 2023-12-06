@@ -484,8 +484,6 @@ ul.action-links {
   }
 }
 
-// --- Закладки ------------------------------------------------------------------------
-
 // --- Views и прочие списки ---------------------------------------------------------------------------
 .view {
   .view-filters {
@@ -499,6 +497,10 @@ ul.action-links {
     color: $text-color;
     margin-bottom: 1rem;
     &.card-contact { margin-bottom: 2rem; }
+  }
+
+  &.view-admin-views-user {
+    .views-table { width: 100%; }
   }
 
   @media #{$laptop} {
@@ -895,7 +897,7 @@ ul.action-links {
     .node-images { margin-bottom: 2rem; }
   }
 }
-.node-full .text,
+.node-full .node-text,
 .node-full blockquote,
 .cke_editable {
   font-size: $font-size-large; line-height: 1.4;
@@ -1105,6 +1107,7 @@ ul.action-links {
         font-size: 3rem;
       }
       .title { font-size: $font-size-large; font-weight: 700; }
+      .text { font-size: $font-size-large; }
       p { margin-bottom: 0; }
     }
     @media #{$tablet} {
@@ -1563,6 +1566,13 @@ ul.action-links {
     margin-bottom: .8rem;
     flex: 0 0 auto;
   }
+  > .text {
+    flex: 1 0 auto;
+    padding: 0 .5rem;
+    > div {
+      margin-bottom: .8rem;
+    }
+  }
   .date {
     background: $gray-lighter;
     color: $gray-dark; font-weight: 500;
@@ -1572,7 +1582,6 @@ ul.action-links {
     font-size: $font-size-large; font-weight: 700;
   }
   .comment {
-    flex: 1 0 auto;
     color: $text-light;
     span {
       display: block;

@@ -17,7 +17,7 @@
 
       <div class="row">
         <div class="col-xs-12">
-          <div id="carousel-news" class="carousel carousel-news outer-pagination" data-autoheight="true" data-slidesperview-xs="1" data-slidesperview-md="2">
+          <div id="carousel-news" class="carousel carousel-news outer-pagination" data-slidesperview-xs="1" data-slidesperview-md="2">
             <div class="swiper">
               <div class="swiper-wrapper">
                 <?php foreach ($cards as $card): ?>
@@ -30,7 +30,6 @@
                           <p><?php print $card['text']; ?></p>
                           <div class="more"><?php print t('Read article') . ' >'; ?></div>
                         </div>
-
                       </a>
                     </div>
                   </div>

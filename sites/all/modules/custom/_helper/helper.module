@@ -165,3 +165,18 @@ function helper_number_format($number, $decimals)
 
   return $result;
 }
+
+/**
+ * Вернуть $_GET-подобный массив с параметрами для установленных фильтров
+ */
+function helper_get_query_from_filters($path, $filters)
+{
+  $query = ['q' => $path];
+  foreach($filters as $name => $filter) {
+    if ($filter['current_id']) {
+      $query[$name] = $filter['current_id'];
+    }
+  }
+
+  return $query;
+}

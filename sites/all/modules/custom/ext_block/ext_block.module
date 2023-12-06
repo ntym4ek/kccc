@@ -136,17 +136,20 @@ function ext_block_block_view($delta = '')
     // получаем контекст
     $nid = str_replace('node/', '', $_GET['q']);
     if (is_numeric($nid)) {
-      $filters['preparations']['current_id'] = $nid;
+      $filters['preparation']['current_id'] = $nid;
       $content = sec_pvp_get_content_filtered($filters, 4);
       if ($content['output']) {
-        $content = $content['output'];
-        $more_link = '/preparaty-v-pole?preparation=' . $nid;
+        $block_content = $content['output'];
       } else {
-        $content = '<div class="view-empty col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
-        $more_link = '/preparaty-v-pole';
+        $block_content = '<div class="view-empty col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
+      }
+      if ($content['total'] > 4) {
+        $more_link = '<a href="/preparaty-v-pole?preparation=' . $nid . '">Показать все ></a>';
+      } else {
+        $more_link = '<a href="/preparaty-v-pole">Показать другие ></a>';
       }
 
-      $block['content'] = theme($delta, ['content' => $content, 'more_url' => $more_link]);
+      $block['content'] = theme($delta, ['content' => $block_content, 'more_link' => $more_link]);
     }
   }
 
