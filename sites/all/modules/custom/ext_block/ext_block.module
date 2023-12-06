@@ -140,10 +140,13 @@ function ext_block_block_view($delta = '')
       $content = sec_pvp_get_content_filtered($filters, 4);
       if ($content['output']) {
         $content = $content['output'];
+        $more_link = '/preparaty-v-pole?preparation=' . $nid;
       } else {
         $content = '<div class="view-empty col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
+        $more_link = '/preparaty-v-pole';
       }
-      $block['content'] = theme($delta, ['content' => $content]);
+
+      $block['content'] = theme($delta, ['content' => $content, 'more_url' => $more_link]);
     }
   }
 

@@ -453,6 +453,21 @@ function sec_pvp_get_filters_set()
       $filters['query']['culture'] = $curr_cult_id;
     }
 
+    // Препарат
+    $curr_prep_id = null;
+    $filters['preparations']['options'] = sec_pvp_get_filter_preparations($filters);
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["preparation"]) && is_numeric($_POST["preparation"])) {
+      $curr_prep_id = $_POST["preparation"];
+    }
+    elseif (isset($_GET['preparation']) && is_numeric($_GET['preparation'])) {
+      $curr_prep_id = $_GET['preparation'];
+    }
+    // проверить наличие заданного значения в списке фильтра
+    if (!empty($filters['preparations']['options'][$curr_prep_id])) {
+      $filters['preparations']['current_id'] = $curr_prep_id;
+      $filters['query']['preparation'] = $curr_prep_id;
+    }
+
     // Действующие вещества
     $curr_comp_id = null;
     $filters['components']['options'] = sec_pvp_get_filter_components($filters);
@@ -467,10 +482,12 @@ function sec_pvp_get_filters_set()
       $filters['components']['current_id'] = $curr_comp_id;
       $filters['query']['component'] = $curr_comp_id;
     }
+
   }
 
   return $filters;
 }
+
 /**
  * Вернуть массив с Регионами из ПвП
  */
@@ -524,6 +541,45 @@ function sec_pvp_get_filter_cultures($filters)
   return $cultures;
 }
 
+
+/**
+ * Вернуть массив Препаратов из ПвП с учётом заданной фильтрации
+ */
+function sec_pvp_get_filter_preparations($filters)
+{
+  $preps = [];
+
+  $dbr = db_select('node', 'n');
+  $dbr->innerJoin('field_data_field_preparation', 'fp', 'fp.field_preparation_target_id = n.nid');
+  $dbr->condition('fp.bundle', 'field_pvp_treat_preparations');
+  $dbr->innerJoin('field_data_field_pvp_treat_preparations', 'fps', 'fps.field_pvp_treat_preparations_value = fp.entity_id');
+  $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.field_pvp_treat_value = fps.entity_id');
+  $dbr->innerJoin('node', 'ns', 'ns.nid = ft.entity_id');
+  $dbr->condition('ns.status', 1);
+  // если задан Регион
+  if ($filters['regions']['current_id']) {
+    $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = ft.entity_id');
+    $dbr->condition('fr.bundle', 'season');
+    $dbr->condition('fr.field_region_tid', $filters['regions']['current_id']);
+  }
+
+  // если задана Культура
+  if ($filters['cultures']['current_id']) {
+    $dbr->innerJoin('field_data_field_culture', 'fc', 'fc.entity_id = ft.entity_id');
+    $dbr->condition('fc.bundle', 'season');
+    $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
+  }
+  $dbr->orderBy('n.title');
+  $dbr->fields('n', ['nid', 'title']);
+  if ($items = $dbr->execute()->fetchAll()) {
+    foreach ($items as $item) {
+      $preps[$item->nid] = $item->title;
+    }
+  }
+
+  return $preps;
+}
+
 /**
  * Вернуть массив ДВ из ПвП с учётом заданной фильтрации
  */
@@ -558,6 +614,11 @@ function sec_pvp_get_filter_components($filters)
     $dbr->condition('fc.field_culture_target_id', $filters['cultures']['current_id']);
   }
 
+  // если задана Препарат
+  if ($filters['preparations']['current_id']) {
+    $dbr->condition('n.nid', $filters['preparations']['current_id']);
+  }
+
   $dbr->orderBy('t.name');
   $dbr->fields('t', ['tid', 'name']);
   if ($items = $dbr->execute()->fetchAll()) {
@@ -586,10 +647,18 @@ function sec_pvp_filters_form($form, &$form_state)
     )
     {
       $filters['cultures']['current_id'] = null;
+      $filters['preparations']['current_id'] = null;
       $filters['components']['current_id'] = null;
     }
     if ((!empty($_GET['culture']) && $form_state['filters']['cultures']['current_id'] != $_GET['culture'])
         || (!empty($_POST['culture']) && $form_state['filters']['cultures']['current_id'] != $_POST['culture'])
+    )
+    {
+      $filters['preparations']['current_id'] = null;
+      $filters['components']['current_id'] = null;
+    }
+    if ((!empty($_GET['preparation']) && $form_state['filters']['preparations']['current_id'] != $_GET['preparation'])
+        || (!empty($_POST['preparation']) && $form_state['filters']['preparations']['current_id'] != $_POST['preparation'])
     )
     {
       $filters['components']['current_id'] = null;
@@ -620,6 +689,19 @@ function sec_pvp_filters_form($form, &$form_state)
     '#title' => 'Культура',
     '#options' => [0 => 'Все'] + $filters['cultures']['options'],
     '#default_value' => $filters['cultures']['current_id'],
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#suffix' => '</div>',
+    '#ajax' => [
+      'wrapper' => '',
+      'callback' => 'sec_pvp_filters_form_ajax',
+    ],
+  ];
+
+  $form['filters']['preparation'] = [
+    '#type' => 'select',
+    '#title' => 'Препарат',
+    '#options' => [0 => 'Все'] + $filters['preparations']['options'],
+    '#default_value' => $filters['preparations']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
     '#ajax' => [

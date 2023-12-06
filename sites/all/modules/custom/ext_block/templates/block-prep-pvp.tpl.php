@@ -7,7 +7,7 @@
       <div class="section-title">
         <div>Последние опыты</div>
         <div class="underline"></div>
-        <div class="more-all"><a href="/preparaty-v-pole"><?php print t('Show all') .' >'; ?></a></div>
+        <div class="more-all"><a href="<?php print $more_url; ?>"><?php print t('Show all') .' >'; ?></a></div>
       </div>
     </div>
   </div>
