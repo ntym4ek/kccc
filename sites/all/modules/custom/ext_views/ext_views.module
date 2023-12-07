@@ -106,4 +106,14 @@ function ext_views_get_view_exposed_form($view_name, $display_id = 'page')
   return '';
 }
 
-
+/**
+ * Implements hook_views_filters_selective_sort_alter().
+ */
+function ext_views_views_filters_selective_sort_alter(array &$oids, $handler)
+{
+  $items = $oids;
+  // исключить из Selective фильтров значения Empty
+  foreach($items as $key => $item) {
+    if (strpos(drupal_strtolower($item), 'empty') !== false) unset($oids[$key]);
+  }
+}

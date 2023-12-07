@@ -264,7 +264,7 @@ function ext_node_preprocess_node(&$vars)
         $view->pre_execute();
         $view->execute();
         $vars['block_media'] = $view->render();
-        if (count($view->result) > 4) {
+        if (count($view->result) > 2) {
           $vars['media_more_link'] = '<a href="/video?preparation=' . $node->nid . '">Показать все ></a>';
         } else {
           $vars['media_more_link'] = '<a href="/video">Показать другие ></a>';

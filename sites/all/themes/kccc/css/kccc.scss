@@ -495,6 +495,15 @@ ul.action-links {
     .form-select { width: 100%; }
   }
 
+  .views-exposed-widgets {
+    @include row();
+    .views-exposed-widget:not(.views-submit-button) {
+      @include col('xs', 12);
+      @include col('md', 6);
+      @include col('lg', 3);
+    }
+  }
+
   .card {
     border-radius: 5px;
     color: $text-color;

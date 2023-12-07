@@ -2235,6 +2235,29 @@ ul.action-links {
   .view .view-filters .form-text,
   .view .view-filters .form-select {
     width: 100%; }
+.view .views-exposed-widgets {
+  margin: 0 -1rem;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 1320px; }
+  .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+    flex-basis: 100%;
+    max-width: 100%;
+    padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+        flex-basis: 50%;
+        max-width: 50%;
+        padding: 0 1rem; } }
+    @media only screen and (min-width: 1280px) {
+      .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+        flex-basis: 25%;
+        max-width: 25%;
+        padding: 0 1rem; } }
 .view .card {
   border-radius: 5px;
   color: #000;
