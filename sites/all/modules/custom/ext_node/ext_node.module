@@ -237,6 +237,7 @@ function ext_node_preprocess_node(&$vars)
         $blocks = _block_render_blocks([$block]);
         $vars['block_app'] = _block_get_renderable_array($blocks);
       }
+
       // секция Опыт применения
       elseif ($vars['section'] == 'primenenie') {
         // программно вставить блок Опыт применения
@@ -254,6 +255,27 @@ function ext_node_preprocess_node(&$vars)
         $blocks = _block_render_blocks([$block]);
         $vars['block_recommended'] = _block_get_renderable_array($blocks);
       }
+
+      // секция Медиа
+      elseif ($vars['section'] == 'media') {
+        $view = views_get_view('video');
+        $view->set_display('block_1');
+        $view->set_arguments([$node->nid]);
+        $view->pre_execute();
+        $view->execute();
+        $vars['block_media'] = $view->render();
+        if (count($view->result) > 4) {
+          $vars['media_more_link'] = '<a href="/video?preparation=' . $node->nid . '">Показать все ></a>';
+        } else {
+          $vars['media_more_link'] = '<a href="/video">Показать другие ></a>';
+        }
+      }
+
+      // секция Файлы
+      elseif ($vars['section'] == 'faily') {
+
+      }
+
     }
   }
 

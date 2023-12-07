@@ -89,7 +89,7 @@
   <?php endif; ?>
 
   <?php if (!empty($date) || !empty($stats)): ?>
-  <div class="info">
+  <div class="node-info">
     <div class="date"><?php print $date; ?></div>
     <?php if (!empty($stats['totalcount'])): ?>
     <div class="stats">

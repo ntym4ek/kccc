@@ -141,7 +141,7 @@ function ext_block_block_view($delta = '')
       if ($content['output']) {
         $block_content = $content['output'];
       } else {
-        $block_content = '<div class="view-empty col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
+        $block_content = '<div class="view-empty message col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
       }
       if ($content['total'] > 4) {
         $more_link = '<a href="/preparaty-v-pole?preparation=' . $nid . '">Показать все ></a>';

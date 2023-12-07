@@ -80,10 +80,10 @@
  * @ingroup themeable
  */
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+<div class="row">
+  <div class="col-xs-12 col-md-8">
 
-  <div class="row">
-    <div class="col-xs-12 col-md-8">
+    <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
       <?php if ($title): ?>
       <div class="node-title">
@@ -92,7 +92,7 @@
       <?php endif; ?>
 
       <?php if (!empty($date) || !empty($stats)): ?>
-      <div class="info">
+      <div class="node-info">
         <div class="date"><?php print $date; ?></div>
         <?php if (!empty($stats['totalcount'])): ?>
         <div class="stats">
@@ -122,18 +122,19 @@
       </div>
 
     </div>
-    <div class="col-xs-12 col-md-4">
-      <?php print drupal_render($job_webform); ?>
-
-      <div class="block-attention">
-        <div class="h4">ВНИМАНИЕ!</div>
-        <p>Если вакансия вам не&nbsp;подходит – отправьте своё резюме в&nbsp;наш кадровый резерв. Возможно специалист вашей квалификации скоро нам потребуется.</p>
-        <div class="actions">
-          <a href="/rezerv" class="btn btn-brand btn-large btn-wide btn-underline">Кадровый резерв</a>
-        </div>
-      </div>
-
-    </div>
   </div>
+  <div class="col-xs-12 col-md-4">
+    <?php print drupal_render($job_webform); ?>
 
+    <div class="block-attention">
+      <div class="h4">ВНИМАНИЕ!</div>
+      <p>Если вакансия вам не&nbsp;подходит – отправьте своё резюме в&nbsp;наш кадровый резерв. Возможно специалист вашей квалификации скоро нам потребуется.</p>
+      <div class="actions">
+        <a href="/rezerv" class="btn btn-brand btn-large btn-wide btn-underline">Кадровый резерв</a>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+

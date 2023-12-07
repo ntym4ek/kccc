@@ -359,6 +359,9 @@ a { color: $brand-color; }
 .notice {
   color: $text-muted; font-size: $font-size-small;
 }
+.message {
+  font-size: $font-size-large; font-weight: 500;
+}
 
 .hover-raise {
   transition: all 200ms;
@@ -802,7 +805,7 @@ ul.action-links {
 
 // --- Ноды ----------------------------------------------------------------------------
 .node {
-  > .info {
+  > .node-info {
     display: flex; justify-content: space-between; align-items: center;
     .stats {
       display: flex; align-items: center;
@@ -815,7 +818,7 @@ ul.action-links {
 }
 
 .node-teaser {
-  > .info {
+  > .node-info {
     background-color: $brand-color;
     color: #fff; font-weight: 500;
     padding: .5rem 1rem;
@@ -846,7 +849,7 @@ ul.action-links {
   .author {
     padding-bottom: 2rem;
   }
-  .info {
+  > .node-info {
     color: $text-light;
     padding-bottom: 2rem;
     .stats .icon {
@@ -1378,6 +1381,8 @@ ul.action-links {
 .section-title {
   color: $brand-color; font-size: $font-size-h3; font-weight: 700; text-align: center;
   padding: 1rem 0 2rem;
+  position: relative;
+
   .underline {
     width: 4em; height: 3px;
     margin: 0.5rem auto;
@@ -1390,8 +1395,14 @@ ul.action-links {
     .underline { background: #fff; }
   }
 
+  .more-all {
+    color: $brand-color; font-size: $font-size-large; font-weight: 500; text-align: center;
+  }
+
+
   @media #{$tablet} {
     &:not(.invert) { padding-bottom: 3rem; }
+    .more-all { position: absolute; top: 2rem; right: 2rem; }
   }
   @media #{$laptop} {
     font-size: $font-size-h3;

@@ -271,6 +271,42 @@
 
     <!-- блок Рекомендуемые -->
     <?php print drupal_render($block_recommended); ?>
+
+  <?php elseif ($section == 'media'): ?>
+
+    <?php if (empty($block_media)): ?>
+      <div class="message">
+        Для данного препарата нет связанных медиаматериалов.
+      </div>
+    <?php else: ?>
+      <div class="media">
+        <div class="section-title">
+          <div>Последние видео</div>
+          <div class="underline"></div>
+          <div class="more-all"><?php print $media_more_link; ?></div>
+        </div>
+
+        <?php print $block_media; ?>
+      </div>
+    <?php endif; ?>
+
+  <?php elseif ($section == 'faily'): ?>
+
+    <?php if (empty($content['field_files'])): ?>
+      <div class="message">
+        Для данного препарата нет файлов.
+      </div>
+    <?php else: ?>
+      <div class="files">
+        <div class="section-title">
+          <div>Файлы для скачивания</div>
+          <div class="underline"></div>
+        </div>
+
+        <?php print drupal_render($content['field_files']); ?>
+      </div>
+    <?php endif; ?>
+
   <?php endif; ?>
 
 </div>

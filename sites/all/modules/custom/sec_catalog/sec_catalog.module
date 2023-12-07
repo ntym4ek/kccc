@@ -34,6 +34,18 @@ function sec_catalog_menu()
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
   ];
+  $items['preparation/media'] = [
+    'title' => 'Медиа',
+    'page callback' => 'dumb',
+    'access arguments' => ['access content'],
+    'type' => MENU_NORMAL_ITEM,
+  ];
+  $items['preparation/files'] = [
+    'title' => 'Файлы',
+    'page callback' => 'dumb',
+    'access arguments' => ['access content'],
+    'type' => MENU_NORMAL_ITEM,
+  ];
 
   return $items;
 }
@@ -51,6 +63,12 @@ function sec_catalog_translated_menu_link_alter(&$item, $map)
     }
     if ($item["href"] == 'preparation/pvp') {
       $item['href'] = drupal_get_path_alias($_GET["q"]) . '/primenenie';
+    }
+    if ($item["href"] == 'preparation/media') {
+      $item['href'] = drupal_get_path_alias($_GET["q"]) . '/media';
+    }
+    if ($item["href"] == 'preparation/files') {
+      $item['href'] = drupal_get_path_alias($_GET["q"]) . '/faily';
     }
   }
 }
@@ -77,6 +95,9 @@ function sec_catalog_url_inbound_alter(&$path, $original_path, $path_language)
   }
 }
 
+/**
+ * Implements hook_preprocess_page().
+ */
 function sec_catalog_preprocess_page(&$vars)
 {
   if (arg(0) == 'katalog') {
