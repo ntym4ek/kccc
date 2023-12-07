@@ -274,19 +274,33 @@
 
   <?php elseif ($section == 'media'): ?>
 
-    <?php if (empty($block_media)): ?>
+    <?php if (empty($media_video_block) && empty($media_blog_block)): ?>
       <div class="message">
         Для данного препарата нет связанных медиаматериалов.
       </div>
-    <?php else: ?>
+    <?php endif; ?>
+    <?php if (!empty($media_video_block)): ?>
       <div class="media">
         <div class="section-title">
           <div>Последние видео</div>
           <div class="underline"></div>
-          <div class="more-all"><?php print $media_more_link; ?></div>
+          <div class="more-all"><?php print $media_video_more_link; ?></div>
         </div>
 
-        <?php print $block_media; ?>
+        <?php print $media_video_block; ?>
+      </div>
+    <?php endif; ?>
+
+
+    <?php if (!empty($media_blog_block)): ?>
+      <div class="media">
+        <div class="section-title">
+          <div>Последние записи блога</div>
+          <div class="underline"></div>
+          <div class="more-all"><?php print $media_blog_more_link; ?></div>
+        </div>
+
+        <?php print $media_blog_block; ?>
       </div>
     <?php endif; ?>
 
