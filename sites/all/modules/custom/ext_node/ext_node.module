@@ -345,6 +345,7 @@ function ext_node_entity_property_info_alter(&$info)
   $info['node']['properties']['search_sort_order'] = array(
     'type' => 'integer',
     'label' => t('Search sort order'),
+    'description' => 'Кастомное поле веса материала для сортировки в поиске',
     'getter callback' => 'ext_node_search_sort_order_getter_callback',
   );
 }
@@ -353,8 +354,8 @@ function ext_node_search_sort_order_getter_callback($item)
   // определить вес по типу контента
   $weight = 999;
 
-  // todo добавить Препараты в поле
-  $arr = ['preparation', 'review', 'blog', 'article', 'culture', 'weed', 'pest', 'disease'];
+  // порядок вывода материалов в поиске
+  $arr = ['preparation', 'season', 'review', 'blog', 'article', 'culture', 'weed', 'pest', 'disease'];
 
   $index = array_search($item->type, $arr);
 
