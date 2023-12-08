@@ -26,9 +26,20 @@ function kccc_preprocess_page(&$vars)
   // -- Форма подписки в футере
   $vars['subscribe_form'] = drupal_get_form('ext_form_subscribe_form');
 
-  // -- Ссылка на прайслист в футере
+  // -- URL прайслиста для футера
   if ($file = file_load(variable_get('price_list'))) {
     $vars['price_list_url'] = file_create_url($file->uri);
+  }
+
+  // -- Телефон администратора для футера
+  if ($phone = variable_get('phone_reception', '')) {
+    $vars['phone_reception'] = [
+      'raw' => ext_user_normalize_phone($phone),
+      'formatted' => ext_user_format_phone($phone),
+    ];
+  }
+  if ($email = variable_get('email_reception', '')) {
+    $vars['email_reception'] = $email;
   }
 }
 

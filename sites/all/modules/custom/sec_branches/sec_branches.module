@@ -50,7 +50,7 @@ function sec_branches_page()
   foreach ($contacts as $iso => $contact) {
     if ($iso != $iso_code) {
       foreach ($contact as $index => $item) {
-        $branches_html .= '<div class="branch"><div class="title"><a href="#" id="' . $iso . $index . '">' . $item['address'] . '</a></div>';
+        $branches_html .= '<div class="branch"><div class="title"><a href="#branches" id="' . $iso . $index . '">' . $item['address'] . '</a></div>';
         $phones_arr = [];
         foreach ($item['phones'] as $phone) {
           $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
@@ -72,7 +72,7 @@ function sec_branches_page()
               '<div class="links"><a href="/sites/default/files/attached/card_td_kchk.pdf" download>Скачать реквизиты</a></div>' .
             '</div>' .
             '<div id="map" class="map"></div>' .
-            '<div class="h4">Филиалы в других регионах</div>' .
+            '<div class="h4">Филиалы в других регионах<div class="notice">Кликните по адресу, чтобы открыть его на карте</div></div>' .
             '<div id="list" class="list">' . $branches_html . '</div>' .
           '</div>';
 }

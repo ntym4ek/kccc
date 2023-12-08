@@ -57,7 +57,7 @@
           var linkID = branch.properties.get("linkID");
           $("#" + linkID).bind("click", function(e) {
             myMap.setCenter(branch.geometry.getCoordinates());
-            e.preventDefault();
+            // e.preventDefault();
           });
         });
       });
