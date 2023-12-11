@@ -1517,6 +1517,7 @@ ul.action-links {
 // --- профиль пользователя
 .profile {
   margin: 0 0 2rem;
+  .profile-left .image img { width: initial; }
   .profile-name {
     font-size: $font-size-h3; font-weight: 700; line-height: 2.2rem;
     margin-bottom: 2rem;

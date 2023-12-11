@@ -3348,6 +3348,8 @@ ul.action-links {
 
 .profile {
   margin: 0 0 2rem; }
+  .profile .profile-left .image img {
+    width: initial; }
   .profile .profile-name {
     font-size: 1.875rem;
     font-weight: 700;

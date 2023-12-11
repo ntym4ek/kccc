@@ -44,6 +44,12 @@ function sec_branches_page()
     }
   }
 
+
+  // -- URL карточки организации
+  if ($file = file_load(variable_get('company_card', 0))) {
+    $company_card_url = file_create_url($file->uri);
+  }
+
   drupal_add_js(['sec_branches' => ['regions' => $contacts, 'iso_start' => $iso_code]], 'setting');
 
   $branches_html = '';
@@ -69,7 +75,7 @@ function sec_branches_page()
               '<div class="title"><a href="#" id="RU-KIR0">613048, Кировская обл., г. Кирово-Чепецк, ул.Производственная, 6</a></div>' .
               '<div class="phones"><a href="tel:+' . ext_user_normalize_phone(variable_get('phone_reception', '')) . '">' . ext_user_format_phone(variable_get('phone_reception', '')) . '</a>, <a href="mailto:' . variable_get('email_reception', '') . '">' . variable_get('email_reception', '') . '</a></div>' .
               '<div class=""><p>ОГРН 1084312000750&nbsp;&nbsp;ИНН 4312138026</p></div>' .
-              '<div class="links"><a href="/sites/default/files/attached/card_td_kchk.pdf" download>Скачать реквизиты</a></div>' .
+              (empty($company_card_url) ? '' : '<div class="links"><a href="' . $company_card_url . '" download>Скачать реквизиты</a></div>') .
             '</div>' .
             '<div id="map" class="map"></div>' .
             '<div class="h4">Филиалы в других регионах<div class="notice">Кликните по адресу, чтобы открыть его на карте</div></div>' .

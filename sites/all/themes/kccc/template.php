@@ -27,7 +27,7 @@ function kccc_preprocess_page(&$vars)
   $vars['subscribe_form'] = drupal_get_form('ext_form_subscribe_form');
 
   // -- URL прайслиста для футера
-  if ($file = file_load(variable_get('price_list'))) {
+  if ($file = file_load(variable_get('price_list', 0))) {
     $vars['price_list_url'] = file_create_url($file->uri);
   }
 
