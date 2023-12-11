@@ -763,6 +763,35 @@ function sec_pvp_form_node_form_alter(&$form, &$form_state, $form_id)
     $form["field_text"]["#access"] = false;       // старый ID
     $form["title"]["#access"] = false;
     $form["author"]["#access"] = false;
+    $form["options"]["promote"]["#access"] = false;
+    $form["options"]["sticky"]["#access"] = false;
+
+    // изменение оформления
+    $form["field_pvp_check"]["und"]["add_more"]["#value"] = 'Добавить новый контроль';
+    $form["field_pvp_treat"]["und"]["add_more"]["#value"] = 'Добавить новую обработку';
+
+    foreach($form["field_pvp_check"]["und"] as $key => &$item) {
+      if (is_numeric($key) && isset($item["remove_button"])) {
+        $item["remove_button"]["#value"] = 'Удалить контроль';
+      }
+      if (isset($item["field_pvp_check_hobjects"]["und"]["add_more"])) {
+        $item["field_pvp_check_hobjects"]["und"]["add_more"]['#value'] = 'Добавить вредный объект';
+      }
+      if (isset($item["field_pvp_check_culture_images"]["und"]["#file_upload_title"])) {
+        $item["field_pvp_check_culture_images"]["und"]["#file_upload_title"] = 'Добавить фото';
+      }
+    }
+    foreach($form["field_pvp_treat"]["und"] as $key => &$item) {
+      if (is_numeric($key) && isset($item["remove_button"])) {
+        $item["remove_button"]["#value"] = 'Удалить обработку';
+      }
+      if (isset($item["field_pvp_treat_preparations"]["und"]["add_more"])) {
+        $item["field_pvp_treat_preparations"]["und"]["add_more"]['#value'] = 'Добавить препарат';
+      }
+      if (isset($item["field_pvp_treat_images"]["und"]["#file_upload_title"])) {
+        $item["field_pvp_treat_images"]["und"]["#file_upload_title"] = 'Добавить фото';
+      }
+    }
 
     $form["#submit"][] = 'sec_pvp_form_node_form_submit';
   }

@@ -1074,6 +1074,7 @@ ul.action-links {
   .product-reglaments {
     margin-bottom: 2rem;
     .carousel-reglaments {
+      .swiper { padding: 0 2rem 0 1rem; }
       @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
         @include screen-width();
       }
@@ -1308,8 +1309,8 @@ ul.action-links {
     .form-item { margin-bottom: 0; }
     .description { display: none; }
   }
+  .tabledrag-toggle-weight-wrapper { display: none; }
   table {
-    .tabledrag-toggle-weight-wrapper { display: none; }
     td { padding: 1rem; }
   }
 
@@ -1361,14 +1362,12 @@ ul.action-links {
   }
   .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2),
   .field-name-field-pvp-check-hobjects .field-multiple-table td:nth-child(2) {
-    display: flex; align-items: flex-start;
+    display: flex; align-items: flex-start; flex-wrap: wrap;
     > div {
       flex: auto;
       padding: 0 2rem 0 0;
-      //input.form-text.form-item .description { width: 100%; }
     }
     .field-name-field-hobject {
-      flex: 0 0 34%;
       input { width: 100%; }
     }
   }
@@ -1387,6 +1386,16 @@ ul.action-links {
       display: inline;
       padding: 0;
       position: absolute; bottom: 0; right: 0;
+    }
+  }
+
+  @media #{$laptop} {
+    .field-name-field-pvp-treat-preparations .field-multiple-table td:nth-child(2),
+    .field-name-field-pvp-check-hobjects .field-multiple-table td:nth-child(2) {
+      flex-wrap: nowrap;
+      .field-name-field-hobject {
+        flex: 0 0 34%;
+      }
     }
   }
 }
@@ -1512,6 +1521,7 @@ ul.action-links {
   .file { margin-right: 1rem; }
   .btn { margin: 0; }
   .badge { color: $text-light; }
+  &.file-widget { align-items: center; } // выровнять добавление файлов в админке
 }
 
 // --- профиль пользователя

@@ -264,11 +264,13 @@ function ext_node_preprocess_node(&$vars)
         $view->get_total_rows = true;
         $view->pre_execute();
         $view->execute();
-        $vars['media_video_block'] = $view->render();
-        if ($view->total_rows > 2) {
-          $vars['media_video_more_link'] = '<a href="/video?preparation=' . $node->nid . '">Показать все ></a>';
-        } else {
-          $vars['media_video_more_link'] = '<a href="/video">Показать другие ></a>';
+        if ($view->total_rows) {
+          $vars['media_video_block'] = $view->render();
+          if ($view->total_rows > 2) {
+            $vars['media_video_more_link'] = '<a href="/video?preparation=' . $node->nid . '">Показать все ></a>';
+          } else {
+            $vars['media_video_more_link'] = '<a href="/video">Показать другие ></a>';
+          }
         }
 
         $view = views_get_view('blog');
@@ -277,11 +279,14 @@ function ext_node_preprocess_node(&$vars)
         $view->get_total_rows = true;
         $view->pre_execute();
         $view->execute();
-        $vars['media_blog_block'] = $view->render();
-        if ($view->total_rows > 2) {
-          $vars['media_blog_more_link'] = '<a href="/blog?preparation=' . $node->nid . '">Показать все ></a>';
-        } else {
-          $vars['media_blog_more_link'] = '<a href="/blog">Показать другие ></a>';
+        if ($view->total_rows) {
+          $vars['media_blog_block'] = $view->render();
+          if ($view->total_rows > 2) {
+            $vars['media_blog_more_link'] = '<a href="/blog?preparation=' . $node->nid . '">Показать все ></a>';
+          }
+          else {
+            $vars['media_blog_more_link'] = '<a href="/blog">Показать другие ></a>';
+          }
         }
       }
 
@@ -330,6 +335,11 @@ function ext_node_form_alter(&$form, &$form_state, $form_id)
 function ext_node_form_node_form_alter(&$form, &$form_state)
 {
   if (in_array($form["type"]["#value"], ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
+    // убрать неиспользуемые опции
+    $form["options"]["promote"]["#access"] = false;
+    $form["options"]["sticky"]["#access"] = false;
+
+    // предварительная обработка текстов
     require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
     ext_node_prepare_content_to_edit($form);
   }
