@@ -75,7 +75,7 @@
 
   .carousel-products {
     padding-top: 1rem;
-    .swiper { padding: 1rem; } // чтобы тени карточек не попадали под границы
+    .swiper { padding: 1rem 2rem; } // чтобы тени карточек не попадали под границы
 
     @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
       @include screen-width();
@@ -592,7 +592,6 @@
   .info {
     display: flex; flex-direction: column;
     height: 100%;
-    padding: 0 2rem;
   }
   .img {
     flex: 0 0 auto;
@@ -600,13 +599,10 @@
   }
   .text {
     flex: auto;
-    display: flex; align-items: center;
+    display: flex;
     background: $well-bkg-clr;
     padding: 2rem;
   }
-
-  .carousel.top-pagination { margin-top: 0; }
-
   .milestone {
     display: inline-block;
     height: 40px; width: 140px;
@@ -650,38 +646,54 @@
     }
   }
 
-  @media #{$tablet} {
-    .swiper-pagination {
-      --swiper-pagination-top: -4rem;
-      --swiper-pagination-bottom: none;
-      .milestone:first-child:before { border-color: transparent; }
-      .swiper-pagination-bullet {
-        b { font-weight: 400; }
-      }
+  .carousel.outer-pagination.top-pagination {
+    margin-top: 0;
+    .swiper { padding: 0 2rem; }
+    .swiper-slide { height: initial; }
+    @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+      @include screen-width();
     }
-    .milestone { width: 100px; }
-    .carousel.top-pagination { margin-top: 4rem; }
+  }
+
+  @media #{$tablet} {
     .info {
       flex-direction: row;
       margin: 0 auto;
     }
     .img { flex: 0 0 40%; }
     .text {
+      align-items: center;
       font-size: $font-size-large;
       padding: 2rem 3rem;
     }
-  }
-  @media #{$laptop} {
-    .swiper-pagination {
-      .swiper-pagination-bullet {
-        font-size: $font-size-large;
-        b { font-weight: 700; }
+    .milestone {
+      width: 100px;
+      &:first-child:before { border-color: transparent; }
+    }
+
+    .carousel.outer-pagination.top-pagination {
+      margin-top: 4rem;
+      > .swiper-pagination {
+        --swiper-pagination-top: -4rem;
+        --swiper-pagination-bottom: none;
+        .swiper-pagination-bullet b { font-weight: 400; }
       }
     }
+  }
+  @media #{$laptop} {
     .milestone { width: 140px; }
     .info {
       padding-left: 0; padding-right: 0;
       width: 968px;
+    }
+
+    .carousel.outer-pagination.top-pagination {
+      > .swiper-pagination {
+        .swiper-pagination-bullet {
+          font-size: $font-size-large;
+          b { font-weight: 700; }
+        }
+      }
     }
   }
 }

@@ -34,7 +34,8 @@ function theme_custom_pager($vars)
   // поэтому меняем адрес на время формирования пейджера
   $bak = $_GET;
   $_GET = $vars['query'];
-  $pager = theme('pager');
+  $tags = ['«', '‹', ' ', '›', '»'];
+  $pager = theme('pager', ['tags' => $tags]);
   $_GET = $bak;
 
   return $pager;

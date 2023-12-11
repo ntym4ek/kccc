@@ -219,7 +219,15 @@ function kccc_webform_managed_file($variables)
 
 function kccc_preprocess_image_widget(&$vars)
 {
-  if (in_array($vars["element"]["#bundle"], ['field_pvp_check', 'field_pvp_check_hobjects', 'field_pvp_treat'])) {
+  // изменить поле ввода и комментарий тега title для изображения
+  if (isset($vars["element"]["title"])
+      && in_array($vars["element"]["#bundle"], ['article', 'blog', 'field_pvp_check', 'field_pvp_check_hobjects', 'field_pvp_treat']))
+  {
+    $vars["element"]["title"]["#type"] = 'textarea';
+    $vars["element"]["title"]["#title"] = '';
+    $vars["element"]["title"]["#cols"] = 40;
+    $vars["element"]["title"]["#rows"] = 2;
+    $vars["element"]["title"]["#theme"] = 'textarea';
     $vars["element"]["title"]["#description"] = 'Комментарий к фото';
   }
 }

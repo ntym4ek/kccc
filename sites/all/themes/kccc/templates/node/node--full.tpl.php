@@ -119,6 +119,7 @@
                       '<div class="image">' .
                         drupal_render($image) .
                       '</div>' .
+                      '<div class="image-note"><span>Фото ' . ++$key . ' из ' . count($images) . '.</span> ' . $image['#item']['title'] . '</div>' .
                     '</div>';
           } ?>
         </div>

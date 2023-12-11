@@ -44,6 +44,7 @@ h6, .h6 { font-size: $font-size-h6; font-weight: 500; margin: 1rem 0; }
 
 .screen-width {
   @include screen-width();
+  overflow: hidden;
 }
 
 

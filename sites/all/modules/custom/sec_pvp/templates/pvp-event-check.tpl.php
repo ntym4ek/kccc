@@ -17,7 +17,7 @@
                           '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
                         '</a>' .
                       '</div>' .
-                      '<div class="note"><span>Фото ' . ++$i . ' из ' . count($event['culture']['photos']) . '.</span> ' . $item['note'] . '</div>' .
+                      '<div class="image-note"><span>Фото ' . ++$i . ' из ' . count($event['culture']['photos']) . '.</span> ' . $item['note'] . '</div>' .
                     '</div>';
             } ?>
           </div>
@@ -48,7 +48,7 @@
                             '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
                           '</a>' .
                         '</div>' .
-                        '<div class="note"><span>Фото ' . ++$i . ' из ' . count($event['hobjects']['photos']) . '.</span> ' . $item['label'] . '. ' . $item['note'] . '</div>' .
+                        '<div class="image-note"><span>Фото ' . ++$i . ' из ' . count($event['hobjects']['photos']) . '.</span> ' . $item['label'] . '. ' . $item['note'] . '</div>' .
                       '</div>';
               }
             } ?>

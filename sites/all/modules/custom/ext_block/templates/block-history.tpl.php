@@ -7,8 +7,7 @@
     <div class="underline"></div>
   </div>
 
-  <div id="carousel-history" class="carousel carousel-history outer-pagination top-pagination" data-autoplay="3000" data-slidesperview="1" data-pagination-dynamic-bullets="true" data-pagination-render-bullet="Drupal.ext_block.renderBulletHistory">
-    <div class="swiper-pagination hide show-md"></div>
+  <div id="carousel-history" class="carousel carousel-history outer-pagination top-pagination" data-autoplay="3000" data-slidesperview-xs="1.1" data-slidesperview-md="1" data-pagination-dynamic-bullets="true" data-pagination-render-bullet="Drupal.ext_block.renderBulletHistory">
     <div class="swiper">
       <div class="swiper-wrapper">
 
@@ -88,6 +87,7 @@
 
       </div>
     </div>
+    <div class="swiper-pagination hide show-md"></div>
     <div class="swiper-button-prev hide"></div>
     <div class="swiper-button-next hide"></div>
   </div>

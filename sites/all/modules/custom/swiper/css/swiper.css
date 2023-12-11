@@ -1,6 +1,10 @@
 .slider,
 .carousel {
   position: relative; }
+  .slider.top-pagination,
+  .carousel.top-pagination {
+    --swiper-pagination-top: 1rem;
+    --swiper-pagination-bottom: none; }
   .slider.outer-pagination,
   .carousel.outer-pagination {
     margin-bottom: 4rem; }
@@ -13,11 +17,8 @@
       margin-bottom: 0; }
       .slider.outer-pagination.top-pagination > .swiper-pagination,
       .carousel.outer-pagination.top-pagination > .swiper-pagination {
-        --swiper-pagination-top: -2.5rem; }
-  .slider.top-pagination,
-  .carousel.top-pagination {
-    --swiper-pagination-top: 1rem;
-    --swiper-pagination-bottom: auto; }
+        --swiper-pagination-top: -2.5rem;
+        --swiper-pagination-bottom: auto; }
   .slider .swiper-button-prev,
   .slider .swiper-button-next,
   .carousel .swiper-button-prev,

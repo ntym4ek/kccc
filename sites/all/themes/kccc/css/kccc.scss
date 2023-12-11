@@ -406,6 +406,17 @@ a { color: $brand-color; }
   }
 }
 
+.image img {
+  display: block;
+  width: 100%;
+}
+.image-note {
+  color: $text-light; font-size: $font-size-small;
+  padding: .5rem 1rem;
+  span { color: $text-muted; }
+}
+
+
 // --- Блоки ---------------------------------------------------------------------------
 .block-title {
   font-size: $font-size-h4; text-align: center;
@@ -1061,10 +1072,15 @@ ul.action-links {
   }
 
   .product-reglaments {
+    margin-bottom: 2rem;
     .carousel-reglaments {
       @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
         @include screen-width();
       }
+    }
+
+    @media #{$tablet} {
+      margin-bottom: 4rem;
     }
   }
 
@@ -1656,11 +1672,6 @@ ul.action-links {
     .comment {
       padding: 0 1rem;
       p { margin: 0 0 .5em 0; }
-    }
-    .note {
-      color: $text-light; font-size: $font-size-small;
-      padding: 0.5rem 1rem;
-      span { color: $text-muted; }
     }
   }
 

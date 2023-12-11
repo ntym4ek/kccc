@@ -176,6 +176,7 @@
       <div class="underline"></div>
     </div>
 
+    <?php if (count($product_info['reglaments_cards']) > 2): ?>
     <div id="carousel-reglaments" class="carousel carousel-reglaments outer-pagination outer-navigation" data-autoheight="true" data-slidesperview-xs="1" data-slidesperview-md="1.5" data-slidesperview-lg="2">
       <div class="swiper">
         <div class="swiper-wrapper">
@@ -191,8 +192,16 @@
       <div class="swiper-pagination"></div>
       <div class="swiper-button-prev hide show-lg"></div>
       <div class="swiper-button-next hide show-lg"></div>
-
     </div>
+    <?php else: ?>
+    <div class="row center-xs">
+      <?php foreach($product_info['reglaments_cards'] as $card): ?>
+      <div class="col-xs-12 col-md-6">
+        <?php print $card?>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
 
