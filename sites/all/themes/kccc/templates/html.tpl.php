@@ -52,6 +52,7 @@
   <?php print $scripts; ?>
 
   <?php if (!strpos($_SERVER['HTTP_HOST'], '.local')): ?>
+
     <?php // скрипт пикселя (Татьянох) ?>
     <script type="text/javascript" src="//pixel.smr8.ru/metric/100502CC-24A2-4D8E-96D7-39B0A324C0C9" charset="UTF-8" async></script>
 

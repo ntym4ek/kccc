@@ -120,6 +120,21 @@ function ext_redirect_init()
     }
   }
 
+  // переадресовать Справочники
+  include_once 'includes/url_list.ext_redirect.inc';
+  if (function_exists('ext_redirect_get_redirects_list')) {
+    if ($redirects_list = ext_redirect_get_redirects_list()) {
+      foreach($redirects_list as $from_url => $to_url) {
+        if ($old_path == $from_url) {
+          if (drupal_valid_path($to_url) || drupal_lookup_path('source', $to_url)) {
+            $new_path = 'https://kccc.ru/' . $to_url;
+            break;
+          }
+        }
+      }
+    }
+  }
+
   // wildcard
   if (!$new_path) {
     $path = str_replace(
