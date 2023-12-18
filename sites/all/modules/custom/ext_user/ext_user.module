@@ -329,6 +329,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form["locale"]["#access"] = false;
       $form["mimemail"]["#access"] = false;
       $form["account"]["name"]["#access"] = false;
+      $form["field_text"]["#access"] = false;
 
       // изменить вид полей
       $form['account']['mail']['#title'] = 'E-Mail';
@@ -337,14 +338,17 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form["account"]["mail"]["#weight"] = -6;
 
       if (user_own_account()) {
-        $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
-        $form['account']['current_pass']['#suffix'] = '</div>';
-        $form['account']['current_pass']['#title'] = 'Текущий пароль';
-        $form["account"]["current_pass"]["#description"] = 'Для смены пароля необходимо ввести старый пароль.';
-        $form["account"]["current_pass"]["#type"] = 'textfield';
-        $form["account"]["current_pass"]["#weight"] = -4;
-        $form['account']['pass']['#prefix'] = '<div class="col-xs-12 col-md-6">';
-        $form['account']['pass']['#suffix'] = '</div></div>';
+        // если это не форма смены пароля
+        if ($form["account"]["current_pass"]["#access"]) {
+          $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
+          $form['account']['current_pass']['#suffix'] = '</div>';
+          $form['account']['current_pass']['#title'] = 'Текущий пароль';
+          $form["account"]["current_pass"]["#description"] = 'Для смены пароля необходимо ввести старый пароль.';
+          $form["account"]["current_pass"]["#type"] = 'textfield';
+          $form["account"]["current_pass"]["#weight"] = -4;
+          $form['account']['pass']['#prefix'] = '<div class="col-xs-12 col-md-6">';
+          $form['account']['pass']['#suffix'] = '</div></div>';
+        }
         $form['account']['pass']['#title'] = 'Новый пароль';
         $form['account']['pass']['#type'] = 'textfield';
         unset($form["account"]["pass"]["#description"]);
@@ -356,6 +360,8 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
         $form["account"]["current_pass"]["#access"] = false;
         $form["account"]["pass"]["#access"] = false;
       }
+
+      $form["#submit"][] = 'ext_user_form_user_profile_form_submit';
     }
   }
 
@@ -378,6 +384,11 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form["profile_staff"]["field_staff_phone_expert"]["und"][0]['value']['#states']['visible'][':input[name="profile_staff[field_staff_office][und]"]'][] = ['value' => $office];
     }
   }
+}
+
+function ext_user_form_user_profile_form_submit($form, &$form_state)
+{
+  $form_state['redirect'] = 'user';
 }
 
 /**
