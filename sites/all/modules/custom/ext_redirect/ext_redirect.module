@@ -166,6 +166,10 @@ function ext_redirect_init()
   }
 
   if ($new_path) {
+    unset($_GET['q']);
+    if ($query = drupal_http_build_query($_GET)) {
+      $new_path .= '?' . $query;
+    }
     header('Location: ' . $new_path, true, 301);
     drupal_exit();
   }
@@ -178,14 +182,12 @@ function ext_redirect_init()
   if (!drupal_valid_path($old_path)) { // Not a system URL.
     if (!drupal_lookup_path('source', $old_path))  { // Not a path alias.
 
-      // переадресация ещё нереализованного функционала на старый сайт
-      // например: Препараты в поле
-      switch($old_path) {
-        case 'preparaty-v-pole' : $new_path = 'before-after'; break;
+      $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
+
+      unset($_GET['q']);
+      if ($query = drupal_http_build_query($_GET)) {
+        $new_path .= '?' . $query;
       }
-
-      if (!$new_path) $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
-
       header('Location: ' . $new_path, true, 302);
       drupal_exit();
     }

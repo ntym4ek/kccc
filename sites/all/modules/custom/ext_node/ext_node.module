@@ -339,6 +339,11 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
     $form["options"]["promote"]["#access"] = false;
     $form["options"]["sticky"]["#access"] = false;
 
+    // изменить формат поля Body на редактор по умолчанию
+    if (isset($form["body"]["und"][0]["#type"]) && $form["body"]["und"][0]["#type"] == 'text_format' && !$form["body"]["und"][0]["#format"]) {
+      $form["body"]["und"][0]["#format"] = 'filtered_html';
+    }
+
     // предварительная обработка текстов
     require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
     ext_node_prepare_content_to_edit($form);
