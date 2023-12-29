@@ -588,7 +588,7 @@ function sec_catalog_get_product_info($node)
         $product['instructions'][] = [
           'title' => $instr_wr->field_prep_instruction_title->label(),
           'icon_num' => $instr_wr->field_prep_instruction_title->field_icon->value(),
-          'text' => $instr_wr->field_textarea->value->value(),
+          'text' => $instr_wr->field_textarea->value() ? $instr_wr->field_textarea->value->value() : '',
         ];
       }
 
