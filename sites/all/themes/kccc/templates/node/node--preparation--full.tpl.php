@@ -171,9 +171,9 @@
 
   <?php if ($product_info['reglaments_cards']): ?>
   <div class="product-reglaments">
-    <div class="section-title">
+    <div class="section-title category-clr">
       <div>Регламенты применения</div>
-      <div class="underline"></div>
+      <div class="underline category-bkg"></div>
     </div>
 
     <?php if (count($product_info['reglaments_cards']) > 2): ?>
@@ -212,7 +212,7 @@
   <div class="product-how-it-works">
     <div class="screen-width">
       <div class="section-title invert">
-        <div>Механизм действия</div>
+        <div>Действие препарата</div>
         <div class="underline"></div>
       </div>
     </div>
@@ -229,7 +229,7 @@
       <?php foreach($product_info['how_it_works'] as $how): ?>
         <div class="col-xs-12 col-md-4">
           <div class="how-it-works">
-            <div class="media category-clr"><i class="icon icon-<?php print $how['icon_num']; ?>"></i></div>
+<!--            <div class="media category-clr"><i class="icon icon---><?php //print $how['icon_num']; ?><!--"></i></div>-->
             <div class="text"><?php print $how['text']; ?></div>
           </div>
         </div>

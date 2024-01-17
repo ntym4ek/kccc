@@ -1405,6 +1405,22 @@ ul.action-links {
   .form-text { width: 100%; }
 }
 
+.field-type-datestamp {
+  .date-form-element-content-multiline {
+    border: none;
+    padding: 0;
+  }
+  .date-form-element-content {
+    display: flex;
+    .date-no-float { width: initial; }
+    .form-type-date-popup {
+      display: flex;
+      label { margin: 0.5rem 0.5rem 0; }
+      .description { display: none; }
+    }
+  }
+}
+
 // --- Элементы оформления -------------------------------------------------------------
 .underline {
   background: $brand-color;

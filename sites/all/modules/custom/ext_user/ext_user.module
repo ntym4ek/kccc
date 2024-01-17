@@ -169,7 +169,7 @@ function ext_user_form_user_pass_alter(&$form, &$form_state)
   if (!user_has_role(ADMIN_RID)) {
     $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
     $form['#prefix'] .=   '<h1>' . t('Password recovery') . '</h1>';
-    $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">Вход</a> или <a href="/user/register">Регистрация</a></div>';
+    $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">' . t('Login') . '</a> ' . t('or') . ' <a href="/user/register">' . t('Register') . '</a></div>';
     $form['#suffix'] =  '</div>';
     $form['name']['#title'] = t('E-Mail');
     $form["mail"]["#markup"] = t('The recovery link will be sent to E-Mail above.');
@@ -196,7 +196,7 @@ function ext_user_form_user_login_alter(&$form, &$form_state)
   // обёртка для темизации формы
   $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
   $form['#prefix'] .=   '<h1>' . t('Log in') . '</h1>';
-  $form['#prefix'] .=   '<div class="user-links"><a href="/user/register">Регистрация</a> или <a href="/user/password">Восстановление пароля</a></div>';
+  $form['#prefix'] .=   '<div class="user-links"><a href="/user/register">' . t('Register') . '</a> ' . t('or') . ' <a href="/user/password">' . t('Password recovery') . '</a></div>';
   $form['#suffix'] = '</div>';
 
   // изменить вид полей
@@ -261,10 +261,9 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     $form["profile_main"]["field_user_surname"]['#prefix'] = '<div class="col-xs-12 col-md-6">';
     $form["profile_main"]["field_user_surname"]['#suffix'] = '</div></div>';
 
-
     // если пользователя редактирует Маркетинг
     if (user_has_role(MARKETING_RID)) {
-      $form["fz152_agreement"]["#access"] = false;
+      if (isset($form["fz152_agreement"])) $form["fz152_agreement"]["#access"] = false;
       // поле со старым ID только для менеджера
       $form["field_text"]["#access"] = true;
     }
@@ -273,13 +272,13 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
       // обёртка для темизации формы
       $form['#prefix'] = '<div class="user-auth-form-wrapper">';
       $form['#prefix'] .= '<h1>' . t('Register') . '</h1>';
-      $form['#prefix'] .= '<div class="user-links"><a href="/user/login">Вход</a> или <a href="/user/password">Восстановление пароля</a></div>';
+      $form['#prefix'] .= '<div class="user-links"><a href="/user/login">' . t('Log in') . '</a> ' . t('or') . ' <a href="/user/password">' . t('Password recovery') . '</a></div>';
       $form['#suffix'] = '</div>';
 
       $form["profile_main"]["field_user_photo"]["#access"] = FALSE;
       $form["profile_main"]["field_user_name2"]["#access"] = FALSE;
 
-      $form["fz152_agreement"]["#weight"] = 10;
+      if (isset($form["fz152_agreement"])) $form["fz152_agreement"]["#weight"] = 10;
       $form["actions"]["#weight"] = 11;
     }
 
@@ -300,7 +299,7 @@ function ext_user_user_register_form_email_validate($form, &$form_state)
             '!.*@.*\.site!s', '!.*@.*\.gq!s', '!.*@.*\.network!s', '!.*@.*\.xyz!s', '!.*@.*\.cf!s', '!.*@.*\.club!s', '!.*@.*\.jokeray\.com!s', '!.*@.*\.dynainbox\.com!s'
             , '!.*@.*\.mailsmail\.ru!s', '!.*@.*\.mailyaha\.ru!s', '!.*@.*\.aolmail\.fun!s', '!.*@.*\.osakass\.!s'] as $pattern) {
     if (preg_match($pattern, $form_state['values']['mail'])) {
-      form_set_error('mail', t('Регистрация недоступна.'));
+      form_set_error('mail', t('Registration unavailable.'));
     }
   }
 }
@@ -421,6 +420,9 @@ function ext_user_username_alter(&$name, $account)
   $name = $result ?? $name;
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function ext_user_preprocess_menu_link(&$vars)
 {
   if ($GLOBALS['theme'] != 'seven') {

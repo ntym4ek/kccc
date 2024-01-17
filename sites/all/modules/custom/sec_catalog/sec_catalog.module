@@ -439,6 +439,7 @@ function sec_catalog_get_new_products()
 
   $dbr = db_select('node', 'n');
   $dbr->condition('n.type', 'preparation');
+  $dbr->condition('n.status', 1);
   $dbr->innerJoin('field_data_field_prep_novelty', 'fpn', 'fpn.entity_id = n.nid');
   $dbr->condition('fpn.field_prep_novelty_value', 1);
   $dbr->addField('n', 'nid');
@@ -463,6 +464,7 @@ function sec_catalog_get_recommended_products()
 
   $dbr = db_select('node', 'n');
   $dbr->condition('n.type', 'preparation');
+  $dbr->condition('n.status', 1);
   $dbr->addField('n', 'nid');
   $dbr->range(0, 5);
   $dbr->orderRandom();
@@ -493,7 +495,11 @@ function sec_catalog_get_product_info($node)
       $product['novelty'] = $node_wr->field_prep_novelty->value();
       $trademark = $node_wr->field_prep_trademark->value() ? '<span class="tm">®</span>' : '';
       // наименование для вывода (с формуляцией, например)
-      $product['label'] = preg_replace('/^(.*?)((?:\sПро)|(?:\sЭкстра)|(?:\sУльтра)|(?:\s22)|(?:\sФорте)|)$/', '$1' . $trademark . '$2', $product['title']);
+      if (strpos($product['title'], ' ') !== false) {
+        $product['label'] = preg_replace('/^((?:Солонайт)|(?:АгроМинерал)|(?:Гранберг)|(?:Октапон)|(?:Грандсил)|(?:Бетаниум)|(?:Глифор))((?:\s.*?))$/', '$1' . $trademark . '$2', $product['title']);
+      } else {
+        $product['label'] = $product['title'] . $trademark;
+      }
       $image_uri = 'public://images/default/no_image.png';
       if ($node_wr->field_image->value()) {
         $image_uri = $node_wr->field_image->file->value()->uri;

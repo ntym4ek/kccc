@@ -12,7 +12,7 @@
         <div class="title">Калькулятор стоимости обработки</div>
         Поможем рассчитать стоимость защиты сельскохозяйственных культур
       </div>
-      <a href="#" class="btn btn-brand btn-large btn-wide">Рассчитать</a>
+      <a href="/eksperty" class="btn btn-brand btn-large btn-wide">Рассчитать</a>
     </div>
   </div>
 

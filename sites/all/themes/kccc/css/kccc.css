@@ -1265,6 +1265,9 @@ fieldset {
     height: 15px;
     margin-top: -15px; }
 
+.icon {
+  line-height: 0; }
+
 .btn {
   display: inline-block;
   background: transparent;
@@ -3238,6 +3241,20 @@ ul.action-links {
 [id^=ext-form-search-form] .form-text,
 [id^=ext-form-subscribe-form] .form-text {
   width: 100%; }
+
+.field-type-datestamp .date-form-element-content-multiline {
+  border: none;
+  padding: 0; }
+.field-type-datestamp .date-form-element-content {
+  display: flex; }
+  .field-type-datestamp .date-form-element-content .date-no-float {
+    width: initial; }
+  .field-type-datestamp .date-form-element-content .form-type-date-popup {
+    display: flex; }
+    .field-type-datestamp .date-form-element-content .form-type-date-popup label {
+      margin: 0.5rem 0.5rem 0; }
+    .field-type-datestamp .date-form-element-content .form-type-date-popup .description {
+      display: none; }
 
 .underline {
   background: #43B02A;

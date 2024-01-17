@@ -149,7 +149,11 @@ function ext_node_preprocess_node(&$vars)
   if ($node->type == 'video') {
     // преобразовать ссылку https://www.youtube.com/watch?v=BiNh9OXi95g в embed (https://www.youtube.com/embed/BiNh9OXi95g)
     $url = $vars['field_text'][0]['value'];
-    $vars['video_embed_url'] = str_replace('watch?v=', 'embed/', $url);
+    if (strpos($url, 'https://youtu.be/') !== false) {
+      $vars['video_embed_url'] = str_replace('https://youtu.be/', 'https://www.youtube.com/embed/', $url);
+    } elseif (strpos($url, 'https://www.youtube.com/watch?v=') !== false) {
+      $vars['video_embed_url'] = str_replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/', $url);
+    }
   }
 
   // -- Тип Вакансия

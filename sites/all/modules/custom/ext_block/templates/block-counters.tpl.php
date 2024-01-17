@@ -31,7 +31,7 @@
             </div>
             <div class="col-xs-12 col-md-3">
               <div class="counter">
-                <span>1998</span>
+                <span>1997</span>
                 <p>год основания</p>
               </div>
             </div>
