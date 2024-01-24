@@ -207,6 +207,9 @@
                     <?php if (isset($price_list_url)): ?>
                       <li><a id="pricelist" href="<?php print $price_list_url; ?>" title="Скачать прайс-лист" download>Прайс-лист</a></li>
                     <?php endif;?>
+                    <?php if (isset($catalog_url)): ?>
+                      <li><a id="catalog_pdf" href="<?php print $catalog_url; ?>" title="Скачать каталог" download>Каталог на <?php print date('Y'); ?> год</a></li>
+                    <?php endif;?>
                   </ul>
                 </div>
               </div>

@@ -31,6 +31,11 @@ function kccc_preprocess_page(&$vars)
     $vars['price_list_url'] = file_create_url($file->uri);
   }
 
+  // -- URL каталога для футера
+  if ($file = file_load(variable_get('catalog', 0))) {
+    $vars['catalog_url'] = file_create_url($file->uri);
+  }
+
   // -- Телефон администратора для футера
   if ($phone = variable_get('phone_reception', '')) {
     $vars['phone_reception'] = [
