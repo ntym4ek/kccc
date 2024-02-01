@@ -359,14 +359,15 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
         $form["account"]["current_pass"]["#access"] = false;
         $form["account"]["pass"]["#access"] = false;
       }
-
-      $form["#submit"][] = 'ext_user_form_user_profile_form_submit';
     }
+
+    if ($form["#user_category"] == 'main') {
+      $form["profile_main"]["field_user_photo"]["und"][0]["#description"] = '';
+    }
+
+    $form["#submit"][] = 'ext_user_form_user_profile_form_submit';
   }
 
-  if ($form["#user_category"] == 'main') {
-    $form["profile_main"]["field_user_photo"]["und"][0]["#description"] = '';
-  }
 
   if ($form["#user_category"] == 'staff') {
     if (empty($form["profile_staff"]["field_staff_office"]["und"]['#default_value'])) {

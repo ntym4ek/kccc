@@ -135,6 +135,23 @@ function ext_redirect_init()
     }
   }
 
+  if (function_exists('ext_redirect_get_redirects_w_query_list')) {
+    if ($redirects_list = ext_redirect_get_redirects_w_query_list()) {
+      foreach($redirects_list as $from_url => $to_url) {
+        if ($old_path . '?' . $_SERVER["QUERY_STRING"] == $from_url) {
+          if (drupal_valid_path($to_url) || drupal_lookup_path('source', $to_url)) {
+            unset($_GET["region"]);
+            unset($_GET["culture"]);
+            unset($_GET["ingredient"]);
+            unset($_GET["year"]);
+            $new_path = 'https://kccc.ru/' . $to_url;
+            break;
+          }
+        }
+      }
+    }
+  }
+
   // wildcard
   if (!$new_path) {
     $path = str_replace(

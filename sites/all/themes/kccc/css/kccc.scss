@@ -1598,17 +1598,6 @@ ul.action-links {
   }
 }
 
-//#edit-account {
-//  @include row();
-//  > div { @include col('xs', 12); }
-//  .form-item-pass,
-//  .form-item-current-pass { @include col('xs', 6); }
-//
-//  @media #{$tablet} {
-//    width: 50%;
-//  }
-//}
-
 .node-type-list {
   margin-bottom: 2rem;
   dt { font-weight: 500; }

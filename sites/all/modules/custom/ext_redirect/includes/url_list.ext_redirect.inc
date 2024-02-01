@@ -822,3 +822,51 @@ function ext_redirect_get_redirects_list()
     'handbook/weeds/amethystea-caerulea-l' => 'spravochniki/sornye-rasteniya/ametistka-golubaya',
   ];
 }
+
+function ext_redirect_get_redirects_w_query_list()
+{
+  return [
+    'before-after?region=All&culture=All&ingredient=73117&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/protraviteli/vitalon/primenenie',
+    'before-after?region=All&culture=All&ingredient=71624&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=112',
+    'before-after?region=All&culture=All&ingredient=71623&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/protraviteli/grandsil-ultra/primenenie',
+    'before-after?region=All&culture=All&ingredient=73213&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/protraviteli/grifon/primenenie',
+    'before-after?region=All&culture=All&ingredient=All&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole',
+    'before-after?region=All&culture=All&ingredient=72914&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/protraviteli/sablya/primenenie',
+    'before-after?region=All&culture=All&ingredient=71618&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=51',
+    'before-after?region=All&culture=All&ingredient=72815&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/agronika-grand/primenenie',
+    'before-after?region=All&culture=All&ingredient=71599&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/arbalet/primenenie',
+    'before-after?region=All&culture=All&ingredient=72805&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=48',
+    'before-after?region=All&culture=All&ingredient=71601&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=60',
+    'before-after?region=All&culture=All&ingredient=71604&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/betanium/primenenie',
+    'before-after?region=All&culture=All&ingredient=71603&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/betanium-22/primenenie',
+    'before-after?region=All&culture=All&ingredient=72761&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/garnizon/primenenie',
+    'before-after?region=All&culture=All&ingredient=71615&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/gerbiks/primenenie',
+    'before-after?region=All&culture=All&ingredient=71628&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=28',
+    'before-after?region=All&culture=All&ingredient=71607&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/gran-pri/primenenie',
+    'before-after?region=All&culture=All&ingredient=71596&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/kanon/primenenie',
+    'before-after?region=All&culture=All&ingredient=71612&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=50',
+    'before-after?region=All&culture=All&ingredient=71619&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/megalit/primenenie',
+    'before-after?region=All&culture=All&ingredient=71598&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/monolit/primenenie',
+    'before-after?page=4&region=All&culture=All&ingredient=71616&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=8',
+    'before-after?region=All&culture=All&ingredient=71597&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/olimp/primenenie',
+    'before-after?region=All&culture=All&ingredient=71609&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/referi/primenenie',
+    'before-after?region=All&culture=All&ingredient=71613&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=133',
+    'before-after?region=All&culture=All&ingredient=71617&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/tristar/primenenie',
+    'before-after?region=All&culture=All&ingredient=71626&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/ciceron/primenenie',
+    'before-after?region=All&culture=All&ingredient=72806&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/gerbicidy/chellendzher/primenenie',
+    'before-after?region=All&culture=All&ingredient=73214&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=12',
+    'before-after?region=All&culture=All&ingredient=72891&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/fungicidy/armadeks/primenenie',
+    'before-after?region=All&culture=All&ingredient=71620&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/fungicidy/buldog/primenenie',
+    'before-after?region=All&culture=All&ingredient=71622&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/fungicidy/kensel/primenenie',
+    'before-after?region=All&culture=All&ingredient=71621&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/fungicidy/cipros/primenenie',
+    'before-after?region=All&culture=All&ingredient=71625&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/insekticidy/akkord/primenenie',
+    'before-after?region=All&culture=All&ingredient=72893&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/insekticidy/vostorg/primenenie',
+    'before-after?region=All&culture=All&ingredient=71627&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/insekticidy/lasso/primenenie',
+    'before-after?region=All&culture=All&ingredient=72937&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/insekticidy/noril/primenenie',
+    'before-after?region=All&culture=All&ingredient=71994&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'preparaty-v-pole?component=34',
+    'before-after?region=All&culture=All&ingredient=71993&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/desikanty/rekton/primenenie',
+    'before-after?region=All&culture=All&ingredient=72764&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/drugie/lip/primenenie',
+    'before-after?region=All&culture=All&ingredient=73224&year=All&utm_source=qr-code&utm_medium=offline&utm_campaign=use' => 'katalog/drugie/greff/primenenie',
+
+  ];
+}
