@@ -19,7 +19,7 @@
             </div>
           </div>
         </div>
-        <div class="col-xs-12 col-md-9">
+        <div class="col-xs-12 col-md-9 col-lg-6">
           <div class="profile-right">
             <div class="profile-header">
               <div class="profile-role">
@@ -74,6 +74,18 @@
             <?php endif; ?>
           </div>
         </div>
+
+        <?php if (!empty($user_info["staff"]["qr_url"])): ?>
+        <div class="col-xs-12 col-md-6 col-md-offset-3 col-lg-3 col-lg-offset-0">
+          <div class="profile-qr">
+            <div class="image">
+              <img src="<?php print $user_info["staff"]["qr_url"]; ?>" alt="Контакт представителя KCCC" />
+            </div>
+            <p class="text-muted text-center"><?php print t('Scan to add contact.'); ?></p>
+          </div>
+        </div>
+        <?php endif; ?>
+
       </div>
 
     </div>

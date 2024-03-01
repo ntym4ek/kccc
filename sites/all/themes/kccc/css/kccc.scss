@@ -1574,6 +1574,10 @@ ul.action-links {
   }
   a { color: inherit; }
 
+  .profile-qr {
+    padding: 2rem;
+    image { max-width: 500px; }
+  }
 
   @media #{$tablet} {
     margin-bottom: 4rem;

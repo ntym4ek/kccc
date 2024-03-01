@@ -531,6 +531,12 @@ function ext_user_get_user_info($user = null)
           $manage = $department->name;
         }
 
+        // QR код
+        $qr_image_uri = '';
+        if ($staff_wr->field_staff_qr_image->value()) {
+          $qr_image_uri = $staff_wr->field_staff_qr_image->file->value()->uri;
+        }
+
         $directions = $areas = $regions = [];
         $regions_formatted = '';
         // регионы
@@ -651,6 +657,7 @@ function ext_user_get_user_info($user = null)
           'is_in_contacts' => $staff_wr->field_staff_is_in_contacts->value(),
           'hide_contact' => $staff_wr->field_staff_hide_contact->value(),
           'counts' => $counts,
+          'qr_url' => $qr_image_uri ? file_create_url($qr_image_uri) : '',
         ];
 
         $label = $office;

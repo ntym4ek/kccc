@@ -3406,6 +3406,10 @@ ul.action-links {
     width: 4rem; }
   .profile a {
     color: inherit; }
+  .profile .profile-qr {
+    padding: 2rem; }
+    .profile .profile-qr image {
+      max-width: 500px; }
   @media only screen and (min-width: 768px) {
     .profile {
       margin-bottom: 4rem; }
