@@ -535,9 +535,10 @@ function sec_catalog_get_product_info($node)
           'label' => $name,
           'concentration' => $conc,
         ];
-        $conc_formatted = helper_number_format($conc, 2);
+        $conc_formatted = empty($conc) ? '' : helper_number_format($conc, 2);
         $wrap = strlen($name) > 32;
-        $list2[] = '<span class="' . ($wrap ? '' : 'nowrap') . '">' . $name . ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">г/' . $unit_short . '</span></span>';
+        $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">г/' . $unit_short . '</span>' : '';
+        $list2[] = '<span class="' . ($wrap ? '' : 'nowrap') . '">' . $name . $suffix . '</span>';
       }
       $product['components'] = [
         'list' => $list,
