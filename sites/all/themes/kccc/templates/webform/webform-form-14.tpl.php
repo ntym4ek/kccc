@@ -41,7 +41,7 @@
         <p>Это форма отправки сообщения без&nbsp;идентификации пользователя и&nbsp;обратной связи.</p>
         <p>Если вы&nbsp;хотите получить ответ на&nbsp;своё обращение, воспользуйтесь «Центром идей».</p>
         <div class="actions">
-          <a href="/ideya" class="btn btn-brand btn-large btn-underline">Центр идей</a>
+          <a href="/ideya" class="btn btn-brand btn-wide btn-underline">Центр идей</a>
         </div>
       </div>
     </div>

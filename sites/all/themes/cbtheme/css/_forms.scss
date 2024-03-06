@@ -5,7 +5,7 @@
 .field-type-text-with-summary
 {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: $form-bottom-margin;
   max-width: 100%;
   label,
   .label {
@@ -20,14 +20,14 @@
   .form-textarea,
   .form-select {
     font-family: inherit;
-    padding: .45em $gutter;
-    color: $text-color; font-size: $font-size-base;
-    background-color: #fff; background-image: none; border: 1px solid #ccc; border-radius: 2px;
+    padding: .45em 1em;
+    color: $text-color; font-size: 1em;
+    background-color: #fff; background-image: none; border: $input-border-width solid #ccc; border-radius: $input-border-radius;
     transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
     max-width: 100%;
     &[readonly],
     &.form-disabled {
-      background-color: $gray-lighter;
+      background-color: $gray-lightest;
       cursor: default; pointer-events: none;
     }
   }
@@ -35,7 +35,7 @@
     .form-text,
     .form-textarea,
     .form-select {
-      background-color: $gray-lighter;
+      background-color: $gray-lightest;
       cursor: default; pointer-events: none;
     }
   }
@@ -49,13 +49,14 @@
     height: $form-item-height;
   }
   .description {
-    color: $text-muted; font-size: $font-size-small; white-space: initial;
-    padding-top: 0.2rem;
+    color: $text-muted; font-size: .8em; white-space: initial;
+    padding-top: 0.2em;
     strong { font-weight: 400; }
   }
   .form-radios {
     input { margin-top: 0; }
   }
+
 }
 
 fieldset .fieldset-legend {
@@ -66,16 +67,20 @@ fieldset .fieldset-legend {
 .field-type-text-with-summary,
 .field-type-text-long {
   .text-summary-wrapper .form-item {
-    margin-bottom: $gutter;
+    margin-bottom: 1em;
   }
   .description { margin-top: 0; }
   .filter-wrapper {
-    padding: $gutter 0;
+    padding: 1em 0;
+  }
+  .text-format-wrapper fieldset {
+    font-size: .8em;
+    margin-bottom: 0;
   }
 }
 
-.form-actions { margin-top: $gutter*2; }
-.form-submit { font-size: $font-size-base; }
+.form-actions { margin-top: 1em*2; }
+.form-submit { font-size: 1em; }
 
 form,
 .form-content {
@@ -111,7 +116,10 @@ form,
 }
 .input-group {
   display: flex;
-  .form-item { margin-bottom: 0; }
+  .form-item {
+    margin-bottom: 0;
+    input { border-top-right-radius: initial; border-bottom-right-radius: initial; }
+  }
   .form-item:not(:first-child) .form-text,
   .form-text:not(:first-child) {
     border-left: none;
@@ -123,6 +131,7 @@ form,
   .btn {
     display: flex; align-items: center;
     padding: 0 0.5rem;
+    border-top-left-radius: initial; border-bottom-left-radius: initial;
   }
 }
 

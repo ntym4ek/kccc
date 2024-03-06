@@ -40,7 +40,7 @@
         <div class="h4">ВНИМАНИЕ!</div>
         <p>Если вы&nbsp;хотите оставить предложение анонимно, то&nbsp;воспользуйтесь разделом «Жалобы и&nbsp;предложения»</p>
         <div class="actions">
-          <a href="/predlozheniya" class="btn btn-brand btn-large btn-underline">Жалобы и&nbsp;предложения</a>
+          <a href="/predlozheniya" class="btn btn-brand btn-wide btn-underline">Жалобы и&nbsp;предложения</a>
         </div>
       </div>
     </div>

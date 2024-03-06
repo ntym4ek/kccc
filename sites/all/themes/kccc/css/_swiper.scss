@@ -1,4 +1,4 @@
-@import "../../../../themes/kccc/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+@import "variables"; // чтобы переменные не подсвечивались
 
 .slider,
 .carousel {
@@ -10,8 +10,8 @@
   }
 
   &.outer-pagination {
-    margin-bottom: 4rem;
-    > .swiper-pagination { --swiper-pagination-bottom: -2.5rem; }
+    margin-bottom: 3rem;
+    > .swiper-pagination { --swiper-pagination-bottom: -2rem; }
 
     &.top-pagination {
       margin-top: 4rem; margin-bottom: 0;

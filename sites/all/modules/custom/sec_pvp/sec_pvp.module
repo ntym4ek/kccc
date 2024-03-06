@@ -5,8 +5,8 @@ const PVP_PER_PAGE = 12;
 function sec_pvp_menu()
 {
   $items['preparaty-v-pole'] = array(
-    'title' => 'Препараты в поле',
-    'description' => 'Примеры работы препаратов компании',
+    'title' => 'Products in the fields',
+    'description' => t('Products in use experience'),
     'page callback' => 'sec_pvp_list_page',
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
@@ -71,7 +71,7 @@ function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0
     }
   } else {
     $content['output'] .= '<div class="view-empty">';
-    $content['output'] .=  'Записей не найдено, попробуйте изменить фильтры.';
+    $content['output'] .=  t('No records found, try changing the filters.');
     $content['output'] .= '</div>';
   }
 
@@ -152,7 +152,7 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
         'region' => $pvp_wr->field_region->label(),
         'culture' => $pvp_wr->field_culture->label(),
         'path' => drupal_get_path_alias('node/' . $pvp_wr->getIdentifier()),
-        'comment' => 'Перед обработкой',
+        'comment' => t('Before treatment'),
       ];
 
       // для короткого формата найти последнее событие (обработка или контроль)
@@ -200,9 +200,9 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
             $preps[] = $tp_wr->field_preparation->label();
           }
           if ($preps) {
-            $teaser['comment'] = ($teaser['type'] == 'check' ? 'После обработки препаратами:' : 'Обработка препаратами:') . '<span>' . implode(', ', $preps) . '</span>';
+            $teaser['comment'] = ($teaser['type'] == 'check' ? t('After treatment with products') : t('Treatment with products:')) . '<span>' . implode(', ', $preps) . '</span>';
           } else {
-            $teaser['comment'] = 'Проведена обработка';
+            $teaser['comment'] = t('Treatment has been carried out');
           }
         }
       }
@@ -373,7 +373,7 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
   foreach ($vars['event']['photos'] as $key => $item) {
     $vars['event']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
     $vars['event']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
-    $vars['event']['photos'][$key]['photo_alt'] = 'Обработка препаратами ' . variable_get('site_name');
+    $vars['event']['photos'][$key]['photo_alt'] = t('Treatment with products') . ' ' . variable_get('site_name');
   }
 
   if ($vars['event']['preparations']) {
@@ -382,10 +382,10 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
       $product_info = sec_catalog_get_product_info($item['preparation']['id']);
       $treat_unit_apply = $product_info['units']['apply'];
       if (!empty($item['old_mix_spend'])) {
-        $summary = '<div class="prep-spend">Расход: <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
+        $summary = '<div class="prep-spend">' . t('Mix spend') . ': <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
       }
       else {
-        $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">Расход препарата: <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
+        $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">' . t('Product spend') . ': <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
       }
 
       $card = [
@@ -399,8 +399,8 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
       $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
     }
 
-    $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? 'Баковая смесь' : 'Препарат';
-    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">Расход рабочей жидкости: <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
+    $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? t('Tank mix') : t('Product');
+    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . t('Tank mix spend') . ': <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
   }
 }
 
@@ -659,8 +659,8 @@ function sec_pvp_filters_form($form, &$form_state)
 
   $form['filters']['region'] = [
     '#type' => 'select',
-    '#title' => 'Регион',
-    '#options' => [0 => 'Все'] + $filters['region']['options'],
+    '#title' => t('Region'),
+    '#options' => [0 => t('All')] + $filters['region']['options'],
     '#default_value' => $filters['region']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
@@ -672,8 +672,8 @@ function sec_pvp_filters_form($form, &$form_state)
 
   $form['filters']['culture'] = [
     '#type' => 'select',
-    '#title' => 'Культура',
-    '#options' => [0 => 'Все'] + $filters['culture']['options'],
+    '#title' => t('Culture'),
+    '#options' => [0 => t('All')] + $filters['culture']['options'],
     '#default_value' => $filters['culture']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
@@ -685,8 +685,8 @@ function sec_pvp_filters_form($form, &$form_state)
 
   $form['filters']['preparation'] = [
     '#type' => 'select',
-    '#title' => 'Препарат',
-    '#options' => [0 => 'Все'] + $filters['preparation']['options'],
+    '#title' => t('Product'),
+    '#options' => [0 => t('All')] + $filters['preparation']['options'],
     '#default_value' => $filters['preparation']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',
@@ -698,8 +698,8 @@ function sec_pvp_filters_form($form, &$form_state)
 
   $form['filters']['component'] = [
     '#type' => 'select',
-    '#title' => 'Действующее вещество',
-    '#options' => [0 => 'Все'] + $filters['component']['options'],
+    '#title' => t('Component'),
+    '#options' => [0 => t('All')] + $filters['component']['options'],
     '#default_value' => $filters['component']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
     '#suffix' => '</div>',

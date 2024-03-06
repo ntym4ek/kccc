@@ -3,7 +3,7 @@
 function sec_sellers_menu()
 {
   $items['predstaviteli'] = array(
-    'title' => 'Представители',
+    'title' => 'Representatives',
     'description' => 'Региональные представители',
     'page callback' => 'sec_sellers_page',
     'access arguments' => array('access content'),
@@ -19,13 +19,8 @@ function sec_sellers_menu()
 function sec_sellers_preprocess_page(&$vars)
 {
   if (arg(0) == 'predstaviteli') {
-    $vars['title'] = 'Контакты';
-
-    $module_path = drupal_get_path('module', 'sec_sellers');
-//    drupal_add_js($module_path . '/js/sec_sellers.js');
-//    drupal_add_js($module_path . '/js/mapsvg.js');
-    drupal_add_css($module_path . '/css/sec_sellers.css');
-//    drupal_add_css($module_path . '/css/mapsvg.css');
+    $vars['banner_title'] = t('Contacts');
+    $vars['is_title_on'] = false;
   }
 }
 
@@ -82,7 +77,7 @@ function sec_sellers_page()
       }
     }
   } else {
-    $content .= 'Представителей не найдено, измените фильтры.';
+    $content .= t('No representatives were found, change the filters.');
   }
 
   return  '<div id="sellers" class="sellers view">' .
@@ -90,7 +85,7 @@ function sec_sellers_page()
               '<div class="row">' .
                 '<div class="col-xs-12 col-md-7 col-lg-6">' .
                   '<div class="intro">' .
-                    'Региональные менеджеры и&nbsp;представители компании в&nbsp;регионах помогут составить оптимальную программу защиты Вашей культуры и&nbsp;купить необходимые для этого гербициды, инсектициды, фунгициды, протравители семян и&nbsp;удобрения.' .
+                    t('Regional managers and representatives of the company in the regions will help you create an optimal program for protecting your crop and buy the necessary herbicides, insecticides, fungicides, seed protectants and fertilizers.') .
                   '</div>' .
                 '</div>' .
                 '<div class="col-xs-12 col-md-5 col-lg-6">' .
@@ -118,7 +113,7 @@ function sec_sellers_filters_form($from, &$form_state)
     '#attributes' => ['class' => ['row']],
   ];
 
-  $reg_options = ['all' => 'Все'];
+  $reg_options = ['all' => t('All')];
   foreach($filters['areas']['options'] as $id => $area) {
     $reg_options[$id] = $area;
   }

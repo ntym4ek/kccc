@@ -83,7 +83,7 @@
 <div class="row">
   <div class="col-xs-12 col-md-8">
 
-    <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+    <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
       <?php if ($title): ?>
       <div class="node-title">

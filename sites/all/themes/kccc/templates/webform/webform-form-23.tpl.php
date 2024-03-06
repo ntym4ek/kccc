@@ -40,7 +40,7 @@
         <div class="h4">ВНИМАНИЕ!</div>
         <p>Возможно, у нас уже есть вакансия по Вашей специальности. Проверить можно в разделе «Вакансии»</p>
         <div class="actions">
-          <a href="/vakansii" class="btn btn-brand btn-large btn-wide btn-underline">Вакансии</a>
+          <a href="/vakansii" class="btn btn-brand btn-wide btn-underline">Вакансии</a>
         </div>
       </div>
     </div>

@@ -60,7 +60,7 @@
     <div class="maintenance">
       <div class="text">
         <?php if (!empty($title)): ?>
-          <h1 class="page-header"><?php print $title; ?></h1>
+          <h1 class="page-title"><?php print $title; ?></h1>
         <?php endif; ?>
         <?php if (!empty($content)): ?>
           <?php print $content; ?>

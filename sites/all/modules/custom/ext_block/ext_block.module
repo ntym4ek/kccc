@@ -108,7 +108,7 @@ function ext_block_block_view($delta = '')
       foreach ($novelties as $product) {
         $cards[] = theme('card_product_v', $product);
       }
-      $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'Новинки']);
+      $block['content'] = theme($delta, ['cards' => $cards, 'title' => t('New products')]);
     } else $block['content'] = null;
   }
 
@@ -117,7 +117,7 @@ function ext_block_block_view($delta = '')
     foreach (sec_catalog_get_recommended_products() as $product) {
       $cards[] = theme('card_product_v', $product);
     }
-    $block['content'] = theme($delta, ['cards' => $cards, 'title' => 'С этим препаратом покупают']);
+    $block['content'] = theme($delta, ['cards' => $cards, 'title' => t('Recommended')]);
   }
 
   elseif ($delta == 'custom-block-catalog') {
@@ -141,12 +141,14 @@ function ext_block_block_view($delta = '')
       if ($content['output']) {
         $block_content = $content['output'];
       } else {
-        $block_content = '<div class="view-empty message col-xs-12">По данному препарату нет записей об опыте применения, но есть по <a href="/preparaty-v-pole">другим</a>.</div>';
+        $block_content =  '<div class="view-empty message col-xs-12">' .
+                            t('This product has no application experience records, but we have by <a href="/preparaty-v-pole">others</a>.') .
+                          '</div>';
       }
       if ($content['total'] > 4) {
-        $more_link = '<a href="/preparaty-v-pole?preparation=' . $nid . '">Показать все ></a>';
+        $more_link = '<a href="/preparaty-v-pole?preparation=' . $nid . '">' . t('Show all') . ' ></a>';
       } else {
-        $more_link = '<a href="/preparaty-v-pole">Показать другие ></a>';
+        $more_link = '<a href="/preparaty-v-pole">' . t('Show others') . ' ></a>';
       }
 
       $block['content'] = theme($delta, ['content' => $block_content, 'more_link' => $more_link]);
@@ -161,7 +163,6 @@ function ext_block_block_view($delta = '')
   // общее для программных блоков
   if (strpos($delta, 'custom-block-') === 0) {
     $block['subject'] = null;
-    drupal_add_css(drupal_get_path('module', 'ext_block') . '/css/ext_block.css');
     drupal_add_js(drupal_get_path('module', 'ext_block') . '/js/ext_block.js');
   }
 
@@ -297,7 +298,7 @@ function ext_block_get_front_banner_slides()
         'title' => $term->name,
         'description' => $term->description,
         'img' => file_create_url($term->field_image["und"][0]["uri"]),
-        'path' => $term->field_text["und"][0]["value"],
+        'path' => url($term->field_text["und"][0]["value"]),
       ];
     }
   }

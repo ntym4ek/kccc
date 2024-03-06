@@ -3,5 +3,3 @@ description = Модуль для вывода слайдеров и карус�
 core = 7.x
 package = Custom
 version = 1.21
-
-stylesheets[all][] = css/swiper.css

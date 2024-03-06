@@ -3,7 +3,7 @@
 
 <div class="block-history">
   <div class="section-title">
-    <div>История компании</div>
+    <div><?php print t('Company history'); ?></div>
     <div class="underline"></div>
   </div>
 
@@ -17,9 +17,9 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_1.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Основание компании.</p>
-                <p>Торговля пестицидами и&nbsp;удобрениями.</p>
-                <p>Запуск первой линии по&nbsp;производству смачивающихся порошков</p></div>
+                <p><?php print t('The foundation of the company.'); ?></p>
+                <p><?php print t('Trade in pesticides and fertilizers.'); ?></p>
+                <p><?php print t('Launch of the first line for the production of wettable powders.'); ?></p></div>
             </div>
           </div>
         </div>
@@ -29,9 +29,9 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_2.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Освоение производства жидких препаративных форм.</p>
-                <p>Строительство новых установок.</p>
-                <p>Первое контрактное производство</p></div>
+                <p><?php print t('Mastering the production of liquid formulations.'); ?></p>
+                <p><?php print t('Construction of new installations.'); ?></p>
+                <p><?php print t('The first contract production.'); ?></p></div>
             </div>
           </div>
         </div>
@@ -41,8 +41,8 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_3.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Освоение производства препаратов в&nbsp;форме концентратов суспензий и&nbsp;гранул.</p>
-                <p>Активное строительство и&nbsp;запуск складов, производственных линий для разных типов формуляций.</p></div>
+                <p><?php print t('Mastering the production of products in the form of concentrates of suspensions and granules.'); ?></p>
+                <p><?php print t('Active construction and launch of warehouses, production lines for different types of formulations.'); ?></p></div>
             </div>
           </div>
         </div>
@@ -52,9 +52,9 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_4.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Запуск производства фунгицидов, протравителей.</p>
-                <p>Увеличение мощностей по&nbsp;производству гербицидов.</p>
-                <p>Активное строительство складов.</p></div>
+                <p><?php print t('Launching the production of fungicides and mordants.'); ?></p>
+                <p><?php print t('Increased capacity for the production of herbicides.'); ?></p>
+                <p><?php print t('Active construction of warehouses.'); ?></p></div>
             </div>
           </div>
         </div>
@@ -64,8 +64,8 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_5.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Расширение территории предприятия в&nbsp;2&nbsp;раза (до&nbsp;32,4&nbsp;га).</p>
-                <p>Строительство новых линий для фунгицидов и&nbsp;протравителей, станции получения азота.</p>
+                <p><?php print t('Expansion of the territory of the enterprise in 2 times (up to 32.4hectares).'); ?></p>
+                <p><?php print t('Construction of new lines for fungicides and mordants, nitrogen production stations.'); ?></p>
               </div>
             </div>
           </div>
@@ -76,10 +76,10 @@
             <div class="img"><img src="/sites/all/modules/custom/ext_block/images/history_6.jpg" alt=""></div>
             <div class="text">
               <div class="description">
-                <p>Освоение новых препаративных форм.</p>
-                <p>Активная модернизация оборудования.</p>
-                <p>Автоматизация процесса упаковки.</p>
-                <p>Строительство новых линий.</p>
+                <p><?php print t('The development of new formulations.'); ?></p>
+                <p><?php print t('Active modernization of equipment.'); ?></p>
+                <p><?php print t('Automation of the packaging process.'); ?></p>
+                <p><?php print t('Construction of new lines.'); ?></p>
               </div>
             </div>
           </div>

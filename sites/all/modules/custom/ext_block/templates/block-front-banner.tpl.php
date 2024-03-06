@@ -15,7 +15,7 @@
                     <div class="text">
                       <h2><?php print $slide['title']; ?></h2>
                       <?php if ($slide['description']): ?><div class="summary"><?php print $slide['description']; ?></div><?php endif; ?>
-                      <div class="more"><a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-large">Подробнее</a></div>
+                      <div class="more"><a href="<?php print $slide['path']; ?>" class="btn btn-brand btn-wide btn-large"><?php print t('Show more'); ?></a></div>
                     </div>
                   </div>
                 </div>

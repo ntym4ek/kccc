@@ -80,7 +80,7 @@
  * @ingroup themeable
  */
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
   <?php if (!$section): ?>
   <div class="product-intro">
@@ -285,13 +285,14 @@
 
     <?php if (empty($media_video_block) && empty($media_blog_block)): ?>
       <div class="message">
-        Для данного препарата нет связанных медиаматериалов.
+        <?php print t('There are no associated media materials for this product.'); ?>
+<!--        Для данного препарата нет связанных медиаматериалов.-->
       </div>
     <?php endif; ?>
     <?php if (!empty($media_video_block)): ?>
       <div class="media">
         <div class="section-title">
-          <div>Последние видео</div>
+          <div><?php print t('Latest video'); ?></div>
           <div class="underline"></div>
           <div class="more-all"><?php print $media_video_more_link; ?></div>
         </div>
@@ -304,7 +305,7 @@
     <?php if (!empty($media_blog_block)): ?>
       <div class="media">
         <div class="section-title">
-          <div>Последние записи блога</div>
+          <div><?php print t('Latest blog records'); ?></div>
           <div class="underline"></div>
           <div class="more-all"><?php print $media_blog_more_link; ?></div>
         </div>
@@ -317,12 +318,13 @@
 
     <?php if (empty($content['field_files'])): ?>
       <div class="message">
-        Для данного препарата нет файлов.
+        <?php print t('There are no files for this product.'); ?>
+<!--        Для данного препарата нет файлов.-->
       </div>
     <?php else: ?>
       <div class="files">
         <div class="section-title">
-          <div>Файлы для скачивания</div>
+          <div><?php print t('Files for download'); ?></div>
           <div class="underline"></div>
         </div>
 

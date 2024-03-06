@@ -2,78 +2,54 @@
 
 
 .btn {
-  display: inline-block;
-  background: transparent;
-  border: $button-border-width solid $text-color;
-  color: $text-color; text-decoration: none; text-align: center; line-height: normal;
-  padding: .45em $gutter;
-  transition: all 200ms;
-  //vertical-align: top;
-  cursor: pointer;
-  margin-bottom: 0; // For input.btn
-  min-height: $form-item-height;
-  &:not(:last-child) { margin-right: 1rem; }
-  &:hover, &:focus {
-    background: darken(#fff, 15%);
+  &:not(.btn-link) {
+    @include btn();
   }
-  &.btn-default {
-    background: $gray-lighter;
-    border-color: $gray;
-    color: $text-color;
-    &:hover, &:focus {
-      background: darken($gray-lighter, 5%);
-      border-color: $gray;
-    }
-  }
-  &.btn-brand {
-    background: $brand-color;
-    border-color: $brand-color;
-    color: #fff;
-    &:hover, &:focus {
-      background: darken($brand-color, 5%);
-      border-color: darken($brand-color, 5%);
-    }
-  }
-  &.btn-danger {
-    background: $brand-red;
-    border-color: $brand-red;
-    color: #fff;
-    &:hover, &:focus {
-      background: darken($brand-red, 5%);
-      border-color: darken($brand-red, 5%);
-    }
-  }
-  &.btn-warning {
-    background: $brand-orange;
-    border-color: $brand-orange;
-    color: #fff;
-    &:hover, &:focus {
-      background: darken($brand-orange, 5%);
-      border-color: darken($brand-orange, 5%);
-    }
-  }
+  //&:not(:last-child) { margin-right: 1rem; } // если кнопка AJAX, то к ней добавляется throbber и она перестаёт быть последней
+  //& { margin-right: 1rem; }
+
+  &.btn-static {} // для кнопок, не меняющих состояние при наведении
+
+  &.btn-default   { @include btn-color($gray-light); }
+  &.btn-brand     { @include btn-color($brand-color); }
+  &.btn-danger    { @include btn-color($brand-red); }
+  &.btn-warning   { @include btn-color($brand-orange); }
+
+  &.btn-outline.btn-default   { @include btn-color-outline($gray-lightest); }
+  &.btn-outline.btn-brand     { @include btn-color-outline($brand-color); }
+  &.btn-outline.btn-danger    { @include btn-color-outline($brand-red); }
+  &.btn-outline.btn-warning   { @include btn-color-outline($brand-orange); }
+
   &.btn-large {
     font-size: $font-size-h4; font-weight: 500;
   }
   &.btn-huge {
     font-size: $font-size-h3; font-weight: 700;
-    //padding: $gutter*.6 $gutter*1.5;
-    //height: $form-item-height*1.2;
   }
-  &.btn-small {
-    border-width: 1px;
-    padding: .2em $gutter;
-  }
+  &.btn-small { font-size: $font-size-small; }
+  &.btn-badge { font-size: .6rem; }
+
+  // кнопка-иконка, без рамок и фона
   &.btn-icon {
+    border: none;
+    background: none;
+  }
+  // кнопка с текстом и иконкой
+  &.btn-with-icon {
     border-radius: 20px;
     min-height: initial;
     padding: 0;
     width: 22px; height: 22px;
   }
-  &.btn-wide { padding-left: $gutter*5; padding-right: $gutter*5; }
+  &.btn-wide { padding-left: 1em*3; padding-right: 1em*3; }
   &.btn-full-wide { width: 100%; }
+  &.btn-full-height {
+    display: inline-flex; justify-content: center; align-items: center;
+    height: 100%;
+  }
 
   &.btn-underline {
+    flex-direction: column;
     &:after {
       content: ' ';
       background-color: #fff;
@@ -86,6 +62,14 @@
       width: 5rem;
     }
   }
+
+  &.btn-uppercase {
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  &.btn-with-icon-right .icon { margin-left: .8em; }
+  &.btn-with-icon-left .icon { margin-right: .8em; }
 
   &.btn-file {
     position: relative;
@@ -104,4 +88,19 @@
       cursor: inherit;
     }
   }
+
+  &.btn-disabled,
+  [disabled] {
+    opacity: .5;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+
+.badge {
+  position: absolute; top: -10px; right: -10px;
+  background: $brand-color; border-radius: 999px;
+  color: #fff; font-weight: 700;
+  padding: .25em .6em;
 }

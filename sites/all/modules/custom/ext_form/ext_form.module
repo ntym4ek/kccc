@@ -18,7 +18,9 @@ function ext_form_subscribe_form($form, $form_state)
   ];
 
   $form['notice'] = [
-    '#markup' => '<div class="form-item-fz152-agreement">Отправляя форму, Вы даёте согласие на <a href="/privacy-policy" target="_blank" rel="nofollow">обработку своих персональных данных</a>.</div>'
+    '#markup' => '<div class="form-item-fz152-agreement">' .
+                  t('Submitting this form you agree with <a href="/privacy-policy" target="_blank" rel="nofollow">personal data processing policy</a>.') .
+                 '</div>'
   ];
   return $form;
 }
@@ -56,7 +58,7 @@ function ext_form_form_alter(&$form, &$form_state, $form_id)
   if (strpos($form_id, 'webform_client_form') === 0) {
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-brand';
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-wide';
-    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-large';
+//    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-large';
   }
 }
 
@@ -81,7 +83,7 @@ function ext_form_webform_client_form_14_ajax_callback($form, $form_state)
 {
   if (!empty($form["#submission"])) {
     $form['submitted']['complete'] = [
-      '#markup' => '<div class="complete"><h4>Обращение отправлено.</h4></div>',
+      '#markup' => '<div class="complete"><h4>' . t('Message been sent.') . '</h4></div>',
     ];
   }
   // сбросить сообщение после обновления страницы
@@ -111,7 +113,12 @@ function ext_form_webform_client_form_21_ajax_callback($form, $form_state)
 {
   if (!empty($form["#submission"])) {
     $form['submitted']['complete'] = [
-      '#markup' => '<div class="complete"><h4>Резюме отправлено.</h4><p>Наш сотрудник изучит его и свяжется с Вами при необходимости.</p></div>',
+      '#markup' => '<div class="complete">' .
+//                      '<h4>Резюме отправлено.</h4>' .
+                      '<h4>' . t('Message been sent.') . '</h4>' .
+//                      '<p>Наш сотрудник изучит его и свяжется с Вами при необходимости.</p>' .
+                      '<p>' . t('Our manager will study it and contact you if necessary') . '</p>' .
+                    '</div>',
     ];
   }
   // сбросить сообщение после обновления страницы
@@ -140,7 +147,11 @@ function ext_form_webform_client_form_23_ajax_callback($form, $form_state)
 {
   if (!empty($form["#submission"])) {
     $form['submitted']['complete'] = [
-      '#markup' => '<div class="complete"><h4>Резюме отправлено.</h4><p>Как только у нас появится соответствующая вакансия, мы рассмотрим ваше резюме в числе первых.</p></div>',
+      '#markup' => '<div class="complete">' .
+                     '<h4>' . t('Message been sent.') . '</h4>' .
+//                    '<p>Как только у нас появится соответствующая вакансия, мы рассмотрим ваше резюме в числе первых.</p>' .
+                    '<p>' . t('As soon as we have a suitable vacancy, we will consider your resume among the first.') . '</p>' .
+                   '</div>',
     ];
   }
   // сбросить сообщение после обновления страницы

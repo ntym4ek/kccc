@@ -14,7 +14,7 @@ define('CAT_OTHER_TID',  406);
 function sec_catalog_menu()
 {
   $items['katalog'] = [
-    'title' => 'Каталог',
+    'title' => 'Catalog',
     'page callback' => 'sec_catalog_page',
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
@@ -23,25 +23,25 @@ function sec_catalog_menu()
 
   // заглушки для создания Контекстного меню
   $items['preparation/description'] = [
-    'title' => 'Описание',
+    'title' => 'Description',
     'page callback' => 'dumb',
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
   ];
   $items['preparation/pvp'] = [
-    'title' => 'Опыт применения',
+    'title' => 'Products in the fields',
     'page callback' => 'dumb',
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
   ];
   $items['preparation/media'] = [
-    'title' => 'Медиа',
+    'title' => 'Media',
     'page callback' => 'dumb',
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
   ];
   $items['preparation/files'] = [
-    'title' => 'Файлы',
+    'title' => 'Files',
     'page callback' => 'dumb',
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
@@ -102,28 +102,29 @@ function sec_catalog_preprocess_page(&$vars)
 {
   if (arg(0) == 'katalog') {
     // вывод Заголовка в виде баннера
-    $vars['is_title_as_banner'] = true;
-    $img_url = 'public://images/page-banners/katalog.jpg';
+    $vars['is_banner_on'] = true;
+    $vars['is_title_on'] = false;
+    $img_uri = 'public://images/page-banners/katalog.jpg';
 
     // Заголовок
-    $title = 'Каталог продукции';
+    $banner_title = 'Каталог продукции';
     if (arg(1)) {
       if ($category_id = sec_catalog_get_category_id_by_name(arg(1))) {
         if ($cat_info = sec_catalog_get_category_info($category_id)) {
-          $title = $cat_info['title'];
+          $banner_title = $cat_info['title'];
           if ($cat_info['icon_num']) {
-            $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
+            $banner_title = '<i class="icon icon-' . $cat_info['icon_num'] . '"></i>' . $banner_title;
           }
           if ($cat_info['banner']['uri']) {
-            $img_url = $cat_info['banner']['uri'];
+            $img_uri = $cat_info['banner']['uri'];
           }
         }
       }
     }
-    $vars['title'] = $title;
+    $vars['banner_title'] = $banner_title;
 
-    $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
-    $vars['title_background'] = $img_url;
+    $vars['banner_url'] = file_create_url($img_uri);
+    $vars['banner_mobile_url'] = image_style_url('banner_mobile', $img_uri);
   }
 }
 
@@ -157,7 +158,8 @@ function sec_catalog_get_content_filtered($filters)
     }
   } else {
     $content .= '<div class="view-empty">';
-    $content .=  'Препаратов не найдено, попробуйте изменить фильтры.';
+//    $content .=  'Препаратов не найдено, попробуйте изменить фильтры.';
+    $content .=  t('No products were found, try changing the filters.');
     $content .= '</div>';
   }
 
@@ -193,13 +195,13 @@ function sec_catalog_filters_form($form, &$form_state)
   // сбрасываем установленные значения фильтров формы, установим ниже с учётом сброшенных
   unset($form_state["input"]);
 
-  $cat_options = [0 => 'Все'];
+  $cat_options = [0 => t('All')];
   foreach ($filters['category']['options'] as $id => $label) {
     $cat_options[$id] = $label;
   }
   $form['filters']['category'] = [
     '#type' => 'select',
-    '#title' => 'Категория',
+    '#title' => t('Category'),
     '#options' => $cat_options,
     '#default_value' => $filters['category']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
@@ -216,7 +218,7 @@ function sec_catalog_filters_form($form, &$form_state)
   }
   $form['filters']['component'] = [
     '#type' => 'select',
-    '#title' => 'Действующее вещество',
+    '#title' => t('Component'),
     '#options' => $cmp_options,
     '#default_value' => $filters['component']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
@@ -233,7 +235,7 @@ function sec_catalog_filters_form($form, &$form_state)
   }
   $form['filters']['culture'] = [
     '#type' => 'select',
-    '#title' => 'Культура',
+    '#title' => t('Culture'),
     '#options' => $cultures_options,
     '#default_value' => $filters['culture']['current_id'],
     '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
@@ -263,7 +265,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   $commands[] = ajax_command_replace('#catalog', theme('custom_view', ['view' => $view]));
 
   // определить Заголовок, Баннер, Иконку
-  $title = 'Каталог препаратов';
+  $title = t('Products catalog');
   $title_icon = '';
   $banner_uri = 'public://images/page-banners/katalog.jpg';
 
@@ -277,7 +279,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
       $url .= '/' . strtolower(transliteration_get($cat_info['title']));
       $title = $cat_info['title'];
       if ($cat_info['icon_num']) {
-        $title_icon = '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>';
+        $title_icon = '<i class="icon icon-' . $cat_info['icon_num'] . '"></i>';
       }
       if ($cat_info['banner']['uri']) {
         $banner_uri = $cat_info['banner']['uri'];
@@ -293,10 +295,11 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   $commands[] = ajax_command_settings($setting);
 
   // изменить Заголовок страницы
-  $commands[] = ajax_command_invoke('#page-title', 'html', [$title_icon . '<h1 class="title">' . $title . '</h1>']);
+  $commands[] = ajax_command_invoke('.banner-title', 'html', [$title_icon . $title]);
 
   // заменить баннер
-  $commands[] = ajax_command_invoke('.page-banner .screen-width', 'attr', ['style', 'background-image: url(' . file_create_url($banner_uri) . ');']);
+  $commands[] = ajax_command_invoke('.page-banner .mobile', 'attr', ['srcset', image_style_url('banner_mobile', $banner_uri)]);
+  $commands[] = ajax_command_invoke('.page-banner img', 'attr', ['src', file_create_url($banner_uri)]);
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }
@@ -309,7 +312,7 @@ function sec_catalog_get_category_info($cat_id)
   $arr = [];
   $category_wr = entity_metadata_wrapper('taxonomy_term', $cat_id);
   if ($category_wr->value()) {
-    $arr['title'] = $category_wr->getIdentifier() == CAT_OTHER_TID ? 'Адъюванты и&nbsp;препараты специального назначения' : $category_wr->label();
+    $arr['title'] = $category_wr->getIdentifier() == CAT_OTHER_TID ? t('Adjuvants and special purpose products') : $category_wr->label();
     $arr['icon_num'] = $category_wr->field_icon->value();
     $arr['banner']['uri'] = $category_wr->field_image_banner->value() ? $category_wr->field_image_banner->file->value()->uri : '';
   }
@@ -521,7 +524,7 @@ function sec_catalog_get_product_info($node)
       if ($node_wr->field_prep_tare->value()) {
         $unit_short = $node_wr->field_prep_tare->field_measure_unit->value();
       }
-      $unit_apply = $product['category']['id'] == CAT_SEED_TID ? 'т' : 'га';
+      $unit_apply = $product['category']['id'] == CAT_SEED_TID ? t('t') : t('ha');
       $product['units'] = [
         'short' => $unit_short,
         'apply' => $unit_apply,
@@ -537,7 +540,7 @@ function sec_catalog_get_product_info($node)
         ];
         $conc_formatted = empty($conc) ? '' : helper_number_format($conc, 2);
         $wrap = strlen($name) > 32;
-        $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">г/' . $unit_short . '</span>' : '';
+        $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">' . t('g') . '/' . $unit_short . '</span>' : '';
         $list2[] = '<span class="' . ($wrap ? '' : 'nowrap') . '">' . $name . $suffix . '</span>';
       }
       $product['components'] = [
@@ -658,7 +661,7 @@ function sec_catalog_get_product_reglaments_info($product_id)
 
     // иначе вывести "Десикация"
     if (!$weed_groups && !$pest_classes && !$hobjects && $product_info['category']['id'] == CAT_DESIC_TID) {
-      $pest_classes[] = 'Десикация';
+      $pest_classes[] = t('Desiccation');
     }
 
     $prep_spends = [];

@@ -3,7 +3,7 @@
 ?>
 <div class="block-prep-pvp">
   <div class="section-title">
-    <div>Последние опыты</div>
+    <div><?php print t('Recent experiences'); ?></div>
     <div class="underline"></div>
     <div class="more-all"><?php print $more_link; ?></div>
   </div>

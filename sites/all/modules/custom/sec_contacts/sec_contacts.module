@@ -19,13 +19,13 @@ function sec_contacts_menu()
 function sec_contacts_preprocess_page(&$vars)
 {
   if (arg(0) == 'kontakty') {
-
     // вывод Заголовка в виде баннера
-    $vars['is_title_as_banner'] = true;
-    $img_url = 'public://images/page-banners/contacts.jpg';
-    $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
-    $vars['title_background'] = $img_url;
-    $vars['title'] = 'Контакты';
+    $vars['is_banner_on'] = true;
+    $vars['is_title_on'] = false;
+    $img_uri = 'public://images/page-banners/contacts.jpg';
+    $vars['banner_url'] = file_create_url($img_uri);
+    $vars['banner_mobile_url'] = image_style_url('banner_mobile', $img_uri);
+    $vars['banner_title'] = t('Contacts');
   }
 }
 
@@ -59,7 +59,7 @@ function sec_contacts_page()
     $content .= 'Контактов не найдено.';
   }
 
-  return  '<div id="contacts" class="contacts view">' .
+  return  '<div id="contacts" class="company-contacts view">' .
             '<div class="contacts-content">' .
               $content .
             '</div>' .

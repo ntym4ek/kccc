@@ -34,56 +34,45 @@ function cbtheme_preprocess_html(&$vars)
  */
 function cbtheme_preprocess_page(&$vars)
 {
-  // todo плохое решение, планшет Смирнова не определяет
-  $vars['is_mobile'] = (stripos($_SERVER["HTTP_USER_AGENT"], "mobile")!== false);
+  // ширина экрана, до которой выводится мобильная версия баннера
+  $vars['banner_break'] = 767;
 
   // можно отключить шапку
-  $vars['is_header_off'] = false;
+  $vars['is_header_on'] = true;
 
   // можно отключить заголовок
-  $vars['is_title_off'] = false;
+  $vars['is_title_on'] = true;
 
   // выводить ли заголовок в виде широкого баннера
-  $vars['is_title_as_banner'] = false;
-  // пример вывода в виде баннера
-//  if (!empty($vars["node"]->field_image_banner)) {
-//    $vars['title_background'] = file_create_url($vars["node"]->field_image_banner['und'][0]['uri']);
-//  } else {
-    //  $img_url = 'public://images/categories/plant1.jpg';
-    //  $img_url = $is_mobile ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
-    //  $vars['title_background'] = $img_url;
-//  }
-
-//  $vars['title_prefix'] = [
-//    '#markup' => '<div class="page-title-logo"><img src="/sites/default/files/images/logo/logo_kccc_black.png" alt="' . $GLOBALS['base_url'] .'"></div>'
-//  ];
-//  $vars['title_suffix'] = [
-//    '#markup' => '<div class="page-title-description"><h3>Мы работаем,<br>чтобы обеспечить мир современной,<br>экологически безопасной и&nbsp;эффективной химией</h3></div>'
-//  ];
+  $vars['is_banner_on'] = false;
 
   // сменить шаблон страницы на пустой
   //  if (arg(0) == 'card') {
   //    $vars['theme_hook_suggestions'][] = 'page__empty';
   //  }
 
+
   // вывод баннера, если в папке page-banners есть изображение с именем, аналогичным пути
-  $img_uri = '';
-  $paths = [$_GET['q']];
+  $banner_uri = '';
+  $paths = [str_replace('/', '--', $_GET['q'])];
   $paths[] = drupal_get_path_alias($_GET['q']);
   foreach($paths as $path) {
     foreach(['jpg', 'png'] as $ext) {
+
       $uri = 'public://images/page-banners/' . arg(0, $path) . '.' . $ext;
       if (file_exists($uri)) {
-        $img_uri = $uri;
+        $banner_uri = $uri;
         break;
       }
     }
   }
-
-  if ($img_uri) {
-    $vars['is_title_as_banner'] = true;
-    $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_uri) : file_create_url($img_uri);
-    $vars['title_background'] = $img_url;
+  if ($banner_uri) {
+    $vars['is_banner_on'] = true;
+    $vars['banner_title_prefix'] = '';
+    $vars['banner_title'] = drupal_get_title();
+    $vars['banner_title_suffix'] = '';
+    $vars['banner_url'] = file_create_url($banner_uri);
+    $vars['banner_mobile_url'] = image_style_url('banner_mobile', $banner_uri);
   }
 
   // вывод многоуровневого меню
@@ -108,7 +97,6 @@ function cbtheme_preprocess_page(&$vars)
   else {
     $vars['secondary_nav'] = FALSE;
   }
-
 }
 
 
@@ -236,7 +224,7 @@ function cbtheme_preprocess_button(&$vars)
         $vars["element"]['#attributes']['class'][] = 'btn-danger';
         if (strpos($vars["element"]["#id"], 'file') !== FALSE) {
           $vars["element"]["#value"] = 'x';
-          $vars["element"]['#attributes']['class'][] = 'btn-icon';
+          $vars["element"]['#attributes']['class'][] = 'btn-with-icon';
         }
       }
       elseif (strpos($vars["element"]["#id"], 'submit') !== FALSE) {
@@ -252,7 +240,9 @@ function cbtheme_preprocess_button(&$vars)
 function cbtheme_preprocess_mimemail_message(&$vars)
 {
   // переменные для шаблона письма
-  $vars['logo']   = $GLOBALS['base_url'] . '/sites/all/themes/cbtheme/images/logo/logo_mail.png';
+  // logo для писем (берём лого из текущей темы, если существует)
+  $path = path_to_theme() . '/images/logo/logo_mail.png';
+  $vars['logo_mail'] = file_exists($path) ? file_create_url($path) : theme_get_setting('logo');
   $site_name  = (theme_get_setting('toggle_name') ? filter_xss_admin(variable_get('site_name', 'Drupal')) : '');
   $vars['site_name'] = $site_name;
   // подпись на языке письма

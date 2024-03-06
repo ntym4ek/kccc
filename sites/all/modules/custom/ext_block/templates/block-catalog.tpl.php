@@ -3,7 +3,7 @@
 <div class="block-catalog">
   <div class="screen-width">
     <div class="section-title invert">
-      <div>Вся продукция</div>
+      <div><?php print t('All products'); ?></div>
       <div class="underline"></div>
     </div>
 

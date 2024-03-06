@@ -7,7 +7,7 @@
       <img src="<?php print $image['teaser']; ?>" alt="<?php print $title; ?>">
     </div>
     <div class="product-info">
-      <div class="title"><h3><?php print $label; ?></h3></div>
+      <div class="title"><?php print $label; ?></div>
       <div class="components"><?php print $components['formatted']; ?></div>
       <div class="summary"><?php print $summary; ?></div>
     </div>

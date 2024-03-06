@@ -8,7 +8,7 @@ define('YANDEX_API_KEY', 'c1e4b070-a5e4-4a15-bc6e-ce64711bdf52');
 function sec_branches_menu()
 {
   $items['filialy'] = [
-    'title' => 'Филиалы',
+    'title' => t('Branches'),
     'page callback' => 'sec_branches_page',
     'access arguments' => ['access content'],
     'type' => MENU_CALLBACK,
@@ -20,7 +20,8 @@ function sec_branches_menu()
 function sec_branches_preprocess_page(&$vars)
 {
   if (arg(0) == 'filialy') {
-    $vars['title'] = 'Контакты';
+    $vars['banner_title'] = t('Contacts');
+    $vars['is_title_on'] = false;
 
     drupal_add_js('https://api-maps.yandex.ru/2.1/?apikey=' . YANDEX_API_KEY . '&lang=ru_RU');
     drupal_add_js(drupal_get_path('module', 'sec_branches') . '/js/sec_branches.js');
@@ -30,8 +31,6 @@ function sec_branches_preprocess_page(&$vars)
 
 function sec_branches_page()
 {
-  $content = '';
-
   // контакт в зависимости от гео
   $iso_code = 'RU-KIR';
   $contacts = sec_branches_get_branches();
@@ -70,15 +69,15 @@ function sec_branches_page()
   }
 
   return  '<div id="branches" class="branches">' .
-            '<div class="h4">ООО Торговый Дом «Кирово-Чепецкая Химическая компания»</div>' .
+            '<div class="h4">' . t('Trading House «Kirovo-Chepetsk Chemical Company» LLC') . '</div>' .
             '<div class="branch">' .
-              '<div class="title"><a href="#" id="RU-KIR0">613048, Кировская обл., г. Кирово-Чепецк, ул.Производственная, 6</a></div>' .
+              '<div class="title"><a href="#" id="RU-KIR0">' . t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya str., 6') . '</a></div>' .
               '<div class="phones"><a href="tel:+' . ext_user_normalize_phone(variable_get('phone_reception', '')) . '">' . ext_user_format_phone(variable_get('phone_reception', '')) . '</a>, <a href="mailto:' . variable_get('email_reception', '') . '">' . variable_get('email_reception', '') . '</a></div>' .
-              '<div class=""><p>ОГРН 1084312000750&nbsp;&nbsp;ИНН 4312138026</p></div>' .
-              (empty($company_card_url) ? '' : '<div class="links"><a href="' . $company_card_url . '" download>Скачать реквизиты</a></div>') .
+              '<div class=""><p>' . t('OGRN') . ' 1084312000750&nbsp;&nbsp;' . t('INN') . ' 4312138026</p></div>' .
+              (empty($company_card_url) ? '' : '<div class="links"><a href="' . $company_card_url . '" download>' . t('Download details') . '</a></div>') .
             '</div>' .
             '<div id="map" class="map"></div>' .
-            '<div class="h4">Филиалы в других регионах<div class="notice">Кликните по адресу, чтобы открыть его на карте</div></div>' .
+            '<div class="h4">' . t('Branches in other regions') . '<div class="notice">' . t('Click on the address to open it on the map') . '</div></div>' .
             '<div id="list" class="list">' . $branches_html . '</div>' .
           '</div>';
 }

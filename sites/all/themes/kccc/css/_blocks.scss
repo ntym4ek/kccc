@@ -1,5 +1,4 @@
-@import "../../../../themes/kccc/css/includes";
-
+@import "variables"; // чтобы переменные не подсвечивались
 
 .block-front-banner {
   .swiper-slide {
@@ -65,7 +64,7 @@
       }
     }
     .text {
-      margin-right: 1rem; padding: 2rem 24rem 4rem 1rem;
+      margin-right: 1rem; padding: 1rem 20rem 2rem 1rem;
     }
   }
 }
@@ -74,10 +73,10 @@
   .card-product-v .text { padding: 1rem 0; }
 
   .carousel-products {
-    padding-top: 1rem;
-    .swiper { padding: 1rem 2rem; } // чтобы тени карточек не попадали под границы
+    .swiper { padding: 1rem 1rem 0; } // чтобы тени карточек не попадали под границы
+    .swiper-slide { height: auto; }
 
-    @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+    @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
       @include screen-width();
     }
   }
@@ -95,6 +94,7 @@
 }
 
 #block-ext-block-custom-block-catalog { margin-bottom: 0; }
+
 .block-catalog {
   .screen-width {
     background: $well-bkg-clr;
@@ -105,7 +105,7 @@
   .text {
     display: flex; align-items: center;
     border-bottom: 1px solid $gray-dark;
-    font-size: $font-size-h3;
+    font-size: $font-size-h2;
     margin: 1rem 0; padding: 7px 0;
     width: 20rem;
     .index { color: $gray-dark; }
@@ -126,7 +126,7 @@
 
 .block-video-about {
   .b2 {
-    font-size: $font-size-h4; font-weight: 400;
+    font-size: $font-size-large; font-weight: 400;
     padding: 2rem 0;
   }
   .b3 {
@@ -136,9 +136,7 @@
 }
 
 .block-contacts {
-  .content {
-    padding-top: 2rem;
-  }
+  .content { padding-top: 2rem; }
   .b {
     height: 100%;
     padding: 1rem 0;
@@ -147,6 +145,7 @@
     border-bottom: 1px solid $divider-clr;
     text-align: center;
     height: 100%;
+    padding-top: 1rem;
     i.icon {
       color: $brand-color; font-size: 3rem;
       border-color: $brand-color;
@@ -213,10 +212,13 @@
     margin-bottom: 2rem;
   }
   .title { padding-bottom: .5rem; }
-  .text { padding: 0 1rem; }
+  .text {
+    display: flex; align-content: center; flex-wrap: wrap;
+    padding: 0 1rem;
+  }
   .media i.icon { color: $brand-color; font-size: 4rem; }
   .b1 {
-    background-image: url(../images/plants.jpg); background-size: cover; background-position: right center;
+    background-image: url(../../../modules/custom/ext_block/images/plants.jpg); background-size: cover; background-position: right center;
     position: relative;
     height: 100%;
     min-height: 15rem;
@@ -228,7 +230,7 @@
     .media i.icon { font-size: 5rem; }
   }
   @media #{$laptop} {
-    .infos { padding-left: 4rem; }
+    .infos { padding-left: 3rem; }
   }
 }
 
@@ -252,8 +254,7 @@
       margin-top: 4rem; margin-bottom: 2rem;
       padding: 0;
     }
-    .b1 { padding: 1rem 8rem 1rem 1rem; }
-    //.b2 { margin: -3rem 0; }
+    .b1 { padding: 1rem 4rem 1rem 0; }
   }
 }
 
@@ -340,7 +341,7 @@
     color: #fff;
   }
   .section-title {
-    color: #fff;
+    color: #fff; text-transform: uppercase;
     padding-bottom: 1rem!important;
     .underline { background: #fff; }
   }
@@ -388,9 +389,9 @@
 }
 
 .block-about {
-  font-size: $font-size-large;
+  font-size: $font-size-small;
   .b1 {
-    background-image: url(../images/about.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/about.jpg); background-size: cover; background-position: center center;
     height: 100%;
     min-height: 230px;
   }
@@ -448,8 +449,7 @@
   @media #{$laptop} {
     .net { padding: 1rem 0; }
     .btn.btn-underline {
-      padding-left: 5rem; padding-right: 5rem;
-      width: 450px;
+      width: 500px;
     }
   }
 }
@@ -486,7 +486,7 @@
   position: relative;
   a { color: inherit; }
   .img {
-    background-image: url(../images/reviews.jpg); background-size: cover; background-position: center;
+    background-image: url(../../../modules/custom/ext_block/images/reviews.jpg); background-size: cover; background-position: center;
     height: 300px;
     margin: 0 -2rem;
     overflow: hidden;
@@ -508,7 +508,7 @@
   }
   .c3 {
     left: -8rem; z-index: 3;
-    background-image: url(../images/reviews_1.jpg); background-size: cover; background-position: center;
+    background-image: url(../../../modules/custom/ext_block/images/reviews_1.jpg); background-size: cover; background-position: center;
   }
   .title {
     background: $brand-color;
@@ -560,9 +560,12 @@
     img {
       display: block;
       min-width: 100%;
+      object-fit: cover;
+      height: 100%;
     }
   }
   .text {
+    font-size: $font-size-small;
     flex: auto;
     background: $well-bkg-clr;
     padding: 2rem;
@@ -650,7 +653,7 @@
     margin-top: 0;
     .swiper { padding: 0 2rem; }
     .swiper-slide { height: initial; }
-    @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+    @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
       @include screen-width();
     }
   }
@@ -690,7 +693,6 @@
     .carousel.outer-pagination.top-pagination {
       > .swiper-pagination {
         .swiper-pagination-bullet {
-          font-size: $font-size-large;
           b { font-weight: 700; }
         }
       }
@@ -699,9 +701,7 @@
 }
 
 .block-features {
-  .section-title {
-    margin-bottom: 2rem;
-  }
+  .section-title { margin-bottom: 2rem; }
   .row.first { margin-bottom: 2rem; }
   .b1 { position: relative; }
   .box {
@@ -714,25 +714,25 @@
     position: absolute; top: 6rem; left: 2rem;
   }
   .b2 {
-    background-image: url(../images/features_1.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/features_1.jpg); background-size: cover; background-position: center center;
     height: 100%;
     min-height: 230px;
     margin-bottom: 2rem;
   }
   .b3 .image {
-    background-image: url(../images/features_2.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/features_2.jpg); background-size: cover; background-position: center center;
     min-height: 230px;
   }
   .b4 .image {
-    background-image: url(../images/features_3.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/features_3.jpg); background-size: cover; background-position: center center;
     min-height: 230px;
   }
   .b5 .image {
-    background-image: url(../images/features_4.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/features_4.jpg); background-size: cover; background-position: center center;
     min-height: 230px;
   }
   .b6 .image {
-    background-image: url(../images/features_5.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/features_5.jpg); background-size: cover; background-position: center center;
     min-height: 230px;
   }
   .text { padding: 2rem 0; }
@@ -740,7 +740,6 @@
 
   @media #{$tablet} {
     .box {
-      font-size: $font-size-large;
       position: absolute; top: 4rem; z-index: 1;
       width: 28rem; height: 19rem;
     }
@@ -752,7 +751,7 @@
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
   .content {
-    background-image: url(../images/calc.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/calc.jpg); background-size: cover; background-position: center center;
     display: flex; flex-direction: column; align-items: center;
     text-align: center;
     padding: 2rem;
@@ -781,7 +780,7 @@
 
 .block-contact-us {
   .content {
-    background-image: url(../images/ask.jpg); background-size: cover; background-position: center center;
+    background-image: url(../../../modules/custom/ext_block/images/ask.jpg); background-size: cover; background-position: center center;
     display: flex; flex-direction: column; align-items: center;
     font-size: $font-size-h4; text-align: center;
     padding: 2rem;
@@ -809,10 +808,11 @@
     background: $well-bkg-clr;
   }
   .container { position: relative;}
-
+  .swiper-slide { height: auto; }
   .news {
     background: #fff;
     margin: 0 1rem;
+    height: 100%;
   }
   a { color: inherit; text-decoration: none; }
   .img img {

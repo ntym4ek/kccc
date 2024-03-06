@@ -3,7 +3,7 @@
 
 <div class="block-more-info">
   <div class="section-title">
-    <div>Дополнительная информация</div>
+    <div><?php print t('Additional information'); ?></div>
     <div class="underline"></div>
   </div>
 
@@ -15,8 +15,8 @@
             <div class="info">
               <div class="img"><img src="/sites/all/modules/custom/ext_block/images/more_1.jpg" alt=""></div>
               <div class="text">
-                <div class="title h3">Миссия</div>
-                <div class="description">Обеспечивая качественными средствами защиты растений, мы оказываем содействие экономическому развитию и&nbsp;благосостоянию сельхозпроизводителей, что ведет к&nbsp;положительным изменениям в&nbsp;технологиях сельского хозяйства, а&nbsp;это в&nbsp;свою очередь позволяет предлагать людям самые качественные продукты питания и&nbsp;в&nbsp;необходимых количествах, что является высшей целью Компании.</div>
+                <div class="title h3"><?php print t('Mission'); ?></div>
+                <div class="description"><?php print t('By providing high-quality plant protection products, we promote economic development and the well-being of agricultural producers, which leads to positive changes in agricultural technologies, and this in turn allows us to offer people the highest quality food andthe required quantities, which is the highest goal of the Company.'); ?></div>
               </div>
             </div>
           </div>
@@ -24,13 +24,13 @@
             <div class="info">
               <div class="img"><img src="/sites/all/modules/custom/ext_block/images/more_2.jpg" alt=""></div>
               <div class="text">
-                <div class="title h3">Задачи</div>
+                <div class="title h3"><?php print t('Tasks'); ?></div>
                 <div class="description">
-                  Не отступая от&nbsp;миссии Компании, мы ставим перед собой и&nbsp;выполняем следующие задачи:
+                  <?php print t('Without departing from the Company\'s mission, we set ourselves and carry out the following tasks'); ?>:
                   <ul>
-                    <li>создавать и сохранять в России продукцию ХСЗР высшего качества;</li>
-                    <li>обеспечивать клиентов комплексной линейкой препаратов и&nbsp;полным спектром услуг;</li>
-                    <li>идти в&nbsp;ногу со&nbsp;временем, предлагая современные высокотехнологичные препараты.</li>
+                    <li><?php print t('to create and preserve in Russia the products of the highest quality'); ?>;</li>
+                    <li><?php print t('to provide customers with a comprehensive line of products and a full range of services'); ?>;</li>
+                    <li><?php print t('keep up with the times by offering modern high-tech products'); ?>.</li>
                   </ul>
                 </div>
               </div>
@@ -40,17 +40,17 @@
             <div class="info">
               <div class="img"><img src="/sites/all/modules/custom/ext_block/images/more_3.jpg" alt=""></div>
               <div class="text">
-                <div class="title h3">Принципы работы</div>
+                <div class="title h3"><?php print t('Principles of operation'); ?></div>
                 <div class="description">
-                  Наши основные обязательства заключены в&nbsp;общих принципах корпоративной ответственности. В&nbsp;нашей работе и&nbsp;действиях мы&nbsp;руководствуемся едиными правилами:
+                  <?php print t('Our main obligations are embodied in the general principles of corporate responsibility. In our work and actions, we are guided by the same rules'); ?>:
                   <ul>
-                    <li>постоянное совершенствование технологий;</li>
-                    <li>развитие дочерних структур предприятия;</li>
-                    <li>обучение персонала;</li>
-                    <li>контроль качества;</li>
-                    <li>охрана окружающей среды;</li>
-                    <li>верность традициям;</li>
-                    <li>честность и открытость.</li>
+                    <li><?php print t('continuous improvement of technology'); ?>;</li>
+                    <li><?php print t('development of the company\'s subsidiaries'); ?>;</li>
+                    <li><?php print t('staff training'); ?>;</li>
+                    <li><?php print t('quality control'); ?>;</li>
+                    <li><?php print t('environmental protection'); ?>;</li>
+                    <li><?php print t('loyalty to traditions'); ?>;</li>
+                    <li><?php print t('honesty and openness'); ?>.</li>
                   </ul>
                 </div>
               </div>
@@ -60,11 +60,11 @@
             <div class="info">
               <div class="img"><img src="/sites/all/modules/custom/ext_block/images/more_4.jpg" alt=""></div>
               <div class="text">
-                <div class="title h3">Команда</div>
+                <div class="title h3"><?php print t('Team'); ?></div>
                 <div class="description">
-                  <p>Сегодня это большая и&nbsp;дружная команда, руководствующаяся едиными целями.</p>
-                  <p>Профессионализм сотрудников находится в&nbsp;приоритете руководства, поэтому постоянные семинары, тренинги, обучения с&nbsp;повышением квалификации, являются неотъемлемыми составляющими кадровой политики предприятия.</p>
-                  <p>Команда региональных представителей, также в&nbsp;первую очередь ориентирована на&nbsp;клиента, она не&nbsp;только помогает в&nbsp;выборе необходимой системы защиты, но и&nbsp;оказывает технологическое сопровождение.</p>
+                  <p><?php print t('Today it is a large and friendly team, guided by common goals.'); ?></p>
+                  <p><?php print t('The professionalism of employees is in the priority of management, therefore, constant seminars, trainings, training with advanced training are integral components of the personnel policy of the enterprise.'); ?></p>
+                  <p><?php print t('The team of regional representatives is also primarily focused on the client, it not only helps in choosing the necessary protection system, but also provides technological support.'); ?></p>
                 </div>
               </div>
             </div>
@@ -73,11 +73,11 @@
             <div class="info">
               <div class="img"><img src="/sites/all/modules/custom/ext_block/images/more_5.jpg" alt=""></div>
               <div class="text">
-                <div class="title h3">Бренд</div>
+                <div class="title h3"><?php print t('Brand'); ?></div>
                 <div class="description">
-                  <p>Отличительной частью бренда является логотип Компании.</p>
-                  <p>Логотип «Кирово-Чепецкая Химическая Компания» выражает индивидуальность и&nbsp;фирменный стиль. Графический элемент (знак) в&nbsp;виде бензольного кольца, снизу которого находятся стилизованные листья растения, отождествляет собой тандем химии и природы.</p>
-                  <p>Эта главная идея, красной линией проходящая в каждом нашем действии, отображена в миссии компании.</p>
+                  <p><?php print t('A distinctive part of the brand is the Company logo.'); ?></p>
+                  <p><?php print t('The logo of Kirovo-Chepetsk Chemical Company expresses individuality and corporate identity. The graphic element (sign) in the form of a benzene ring, with stylized plant leaves at the bottom, identifies the tandem of chemistry and nature.'); ?></p>
+                  <p><?php print t('This main idea, which runs through our every action like a red line, is reflected in the company\'s mission.'); ?></p>
                 </div>
               </div>
             </div>

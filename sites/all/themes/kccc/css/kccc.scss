@@ -5,6 +5,11 @@
 // стили Базовой темы
 @import "../../cbtheme/css/styles";
 
+// вынесенные в отдельные файлы стили
+@import "swiper";
+@import "blocks";
+@import "pages";
+
 :root {
   --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
@@ -13,10 +18,6 @@
 }
 
 html {
-  @media #{$smartphone} { font-size: 14px; }
-  @media #{$tablet}     { font-size: 14.5px; }
-  //@media #{$laptop}     { font-size: 16px; }
-  //@media #{$desktop}    { font-size: 16px; }
 }
 
 // иконочный шрифт
@@ -112,13 +113,14 @@ a { color: $brand-color; }
   .menu {
     font-size: $font-size-large;
     &.level-1 > li {
-      margin: 0 1rem;
+      margin: 0 .5rem;
       > a {
         color: #fff; font-weight: 500;
         padding: .8rem 1rem .8rem 0;
       }
     }
   }
+  .sub-menu > li.leaf:not(.last) a { border-bottom: 1px solid $gray-lightest; }
 
   @media #{$tablet} {
     .branding {
@@ -129,8 +131,8 @@ a { color: $brand-color; }
   @media #{$laptop} {
     height: 90px;
     .branding {
-      font-size: 1rem;
-      padding: 15px 30px 15px 1rem;
+      font-size: .8rem; line-height: 1;
+      padding: 15px 30px 15px 15px;
       width: 360px;
       .logo { flex: 0 0 55px; }
     }
@@ -240,43 +242,45 @@ a { color: $brand-color; }
 
 .page-highlighted {
   position: relative;
-  .page-banner .screen-width { height: 16rem; }
-  .page-title {
-    display: flex; align-items: center;
-    margin-bottom: 2rem;
-    .page-title-logo {
-      margin-right: 1rem;
-      i.icon { font-size: 4rem; }
-    }
-    h1 {
-      font-size: $font-size-h3; text-transform: uppercase;
-      margin-bottom: 0;
-    }
-  }
   .page-context-menu .screen-width { background-color: #383838; }
 
-  @media #{$tablet} {
-    .page-banner .screen-width { height: 20rem; }
-    .page-title {
-      .page-title-logo i.icon { font-size: 6rem; }
-      h1 {
-        font-size: $font-size-h2;
-        max-width: 31rem;
-      }
-    }
-  }
   @media #{$laptop} {
-    .page-banner .screen-width { height: 24rem; }
-    .page-title h1 { max-width: 43rem; }
     .search {
-      position: absolute; top: 160px; right: 0; z-index: 9;
-      max-width: 250px;
+      position: absolute; top: 156px; right: 0; z-index: 9;
+      max-width: 330px;
     }
   }
 }
 
-.footer {
-  color: $text-color;
+.page-banner {
+  .screen-width { height: 220px; }
+
+  .banner-title-wrapper {
+    color: #fff;
+    display: flex; align-items: flex-end;
+    height: 100%; max-width: 58%;
+    padding-bottom: 2rem;
+  }
+  .banner-title {
+    display: flex; align-items: center;
+    font-size: 2rem; text-transform: uppercase;
+  }
+  i.icon {
+    font-size: 3rem;
+    margin-right: 1rem;
+  }
+
+  @media #{$pad} {
+    .screen-width { height: 300px; }
+    i.icon { font-size: 5rem; }
+  }
+  @media #{$laptop} {
+    .screen-width { height: 350px; }
+  }
+}
+
+.page-footer {
+  color: $text-color; font-size: $font-size-small;
   a { color: inherit; }
   .b {
     display:flex; flex-direction: column;
@@ -285,6 +289,7 @@ a { color: $brand-color; }
 
   .branding {
     display: flex; align-items: center;
+    font-size: .8em;
     height: 90px;
     padding: 1rem 0; margin-right: -1rem;
     .logo {
@@ -331,6 +336,7 @@ a { color: $brand-color; }
         margin-top: 0.5rem;
       }
       i.icon {
+        font-size: $font-size-h3;
         &.icon-rounded { border-width: 2px; }
       }
     }
@@ -344,11 +350,11 @@ a { color: $brand-color; }
   }
 
   @media #{$tablet} {
-    .branding { font-size: .7rem; }
+    //.branding { font-size: .7rem; }
     .legal-name { font-size: $font-size-small; }
   }
   @media #{$laptop} {
-    .branding { font-size: .85rem; }
+    //.branding { font-size: .85rem; }
   }
 }
 
@@ -452,7 +458,7 @@ ul.action-links {
     margin-bottom: .5rem; padding: 0;
     a {
       color: $text-color;
-      background: $gray-lighter;
+      background: $gray-lightest;
       display: block;
       padding: .6rem 1rem;
       transition: all 200ms;
@@ -464,6 +470,7 @@ ul.action-links {
 }
 
 .page-highlighted .menu-block-wrapper {
+  font-size: $font-size-small;
   position: relative;
   &:after {
     content: '';
@@ -482,11 +489,11 @@ ul.action-links {
     scrollbar-width: none; // mozilla ff
     li {
       list-style: none;
-      padding: .7rem 0;
+      padding: .5rem 0;
       a {
         display: block;
         border-left: 3px solid #bbb;
-        color: #bbb; font-size: $font-size-large; font-weight: 700;
+        color: #bbb; font-weight: 700;
         padding: .3rem 1rem; margin-right: 4rem;
         transition: all 200ms;
       }
@@ -521,17 +528,17 @@ ul.action-links {
   .card {
     border-radius: 5px;
     color: $text-color;
-    margin-bottom: 1rem;
-    &.card-contact { margin-bottom: 2rem; }
+    &.card-contact { margin-bottom: 1.5rem; }
   }
+  .card.card-contact { padding: .5rem; }
+  .card.card-product-h { padding: 1rem 0; }
 
   &.view-admin-views-user {
     .views-table { width: 100%; }
   }
 
   @media #{$laptop} {
-    .view-filters { margin-bottom: 2rem; }
-    .card { padding: .5rem; }
+    .view-filters { margin-bottom: 1.5rem; }
 
     .node-teaser,
     .card {
@@ -540,9 +547,6 @@ ul.action-links {
         box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
         transform: translateY(-2px);
       }
-    }
-    .card {
-      margin-bottom: 2rem;
     }
   }
 }
@@ -577,20 +581,13 @@ ul.action-links {
 .page-content,
 .page-right {
   .view {
-    .view-content {
-      @include row();
-    }
+    .view-content { @include row(); }
 
     // таблица со списком контента
-    .vbo-views-form {
-      @include col('xs', 12);
-    }
+    .vbo-views-form { @include col('xs', 12); }
 
     .view-row,
-    .views-row {
-      //@include col('xs', 12);   // проставлено в Представлениях
-      margin-bottom: 1rem;
-    }
+    .views-row { margin-bottom: 1rem; }
   }
 }
 
@@ -598,9 +595,7 @@ ul.action-links {
   @media #{$laptop} {
     .view {
       .view-row,
-      .views-row {
-        margin-bottom: 2rem;
-      }
+      .views-row { margin-bottom: 1.5rem; }
     }
   }
 }
@@ -649,14 +644,10 @@ ul.action-links {
 
 .card-product-h {
   display: flex; flex-wrap: wrap;
-  padding: 1em 0;
   a { color: inherit; }
   .title {
-    margin: .5em 0 1em;
-    h3 {
-      font-size: 1.875em; font-weight: 700;
-      margin: 0;
-    }
+    font-size: $font-size-h3; font-weight: 700;
+    margin-bottom: .5em;
   }
   .image {
     flex: 100%;
@@ -664,33 +655,23 @@ ul.action-links {
   }
   .product-info { flex: 100%; }
   .components {
-    color: $text-light; font-weight: 700;
+    color: $text-light; font-size: $font-size-small; font-weight: 700;
     margin-bottom: 1em;
   }
 
-  @media #{$tablet} {
+  @media #{$pad} {
     flex-wrap: nowrap;
-    .title {
-      margin: .5em 0;
-      h3 { font-size: 1.25em; }
-    }
     .image {
-      flex: 0 0 30%;
+      flex: 0 0 27%;
       text-align: left;
     }
-    .product-info { flex: 0 0 70%; }
-    .components {
-      font-size: .875em; font-weight: 500;
-    }
+    .product-info { flex: auto; }
+    .components { font-weight: 500; }
   }
   @media #{$laptop} {
-    .title {
-      margin: .5em 0 1em;
-      h3 { font-size: 1.875em; }
-    }
     .product-info { padding: 0 1em; }
     .components {
-      font-size: 1em; font-weight: 700;
+      font-weight: 700;
       margin-bottom: 1em;
     }
   }
@@ -698,6 +679,7 @@ ul.action-links {
 
 .card-contact {
   display: flex;
+  font-size: $font-size-small;
   .image {
     flex: 0 0 90px;
     img { display: block; }
@@ -705,7 +687,7 @@ ul.action-links {
   .contact-info { padding: 0 0 0 1rem; }
   .direction { margin-bottom: 1rem; }
   .name {
-    font-size: $font-size-large; font-weight: 700;
+    font-size: $font-size-base; font-weight: 700;
     margin: .2rem 0;
   }
   .phones {
@@ -723,14 +705,14 @@ ul.action-links {
   }
   @media #{$laptop} {
     .image { flex: 0 0 140px; }
-    .contact-info { padding: 0 4rem 0 2rem; }
+    .contact-info { padding: 0 2rem 0 1rem; }
     .name {
       font-size: $font-size-h4;
       margin: .5rem 0;
     }
     .phones,
     .email {
-      font-size: $font-size-h4;
+      //font-size: $font-size-h4;
       margin-top: .5rem;
     }
 
@@ -847,7 +829,7 @@ ul.action-links {
     padding: .5rem 1rem;
   }
   .title {
-    font-size: $font-size-h4; font-weight: 700;
+    font-weight: 700;
     padding: 1rem;
   }
   a { color: inherit; }
@@ -856,7 +838,7 @@ ul.action-links {
   // тизер в сайдбаре
   .page-right & {
     .title {
-      font-size: $font-size-large; font-weight: 500; text-align: center;
+      font-size: $font-size-small; font-weight: 500; text-align: center;
       padding: 1rem .5rem;
     }
   }
@@ -926,7 +908,7 @@ ul.action-links {
 .node-full .node-text,
 .node-full blockquote,
 .cke_editable {
-  font-size: $font-size-large; line-height: 1.4;
+  line-height: 1.4;
 }
 .cke_editable { padding: 0 1rem; }
 
@@ -950,7 +932,7 @@ ul.action-links {
     .specification {
       background: $well-bkg-clr;
       border-radius: 5px;
-      font-size: $font-size-h4; font-weight: 500;
+      font-weight: 500;
       padding: 1.5rem 2rem;
       i.icon { font-size: 2em; }
     }
@@ -973,18 +955,17 @@ ul.action-links {
       .top { text-align: left; }
       .title { font-size: $font-size-h3; font-weight: 300; }
       .summary { font-weight: 500; }
-      .specification { font-size: $font-size-base; }
       .actions { text-align: left; }
     }
     @media #{$laptop} {
       margin-bottom: 4rem;
       .image { padding-right: 4rem; }
       .title {
-        font-size: 3.5rem;
+        font-size: $font-size-h1;
         padding-bottom: 2rem;
       }
       .specification {
-        font-size: $font-size-h4; font-weight: 700;
+        font-weight: 700;
         i.icon { font-size: 3em; }
       }
       .components .icon,
@@ -998,7 +979,8 @@ ul.action-links {
     .advantage {
       box-shadow: 1px 1px 10px #ccc;
       color: $text-light; text-align: center;
-      padding: 1rem 1.5rem; margin-top: 1rem;
+      padding: 1rem 1.5rem; margin-bottom: 1rem;
+      .media { display: flex; justify-content: center; }
       i.icon {
         color: $brand-color; font-size: 8rem;
       }
@@ -1012,10 +994,15 @@ ul.action-links {
       }
     }
 
+    @media #{$pad} {
+      .advantage {
+        height: 100%;
+        margin-bottom: 0;
+      }
+    }
     @media #{$tablet} {
       margin-bottom: 4rem;
       .advantage {
-        height: 100%;
         i.icon { font-size: 5rem; }
       }
     }
@@ -1023,7 +1010,7 @@ ul.action-links {
       .advantage {
         padding: 2rem;
         i.icon { font-size: 8rem; }
-        .text { font-size: $font-size-h4; font-weight: 700; }
+        .text { font-weight: 700; }
       }
     }
   }
@@ -1066,7 +1053,7 @@ ul.action-links {
           flex: 0 0 5rem; height: 5rem;
           i.icon { font-size: 4rem; }
         }
-        .text { font-size: $font-size-h4; font-weight: 700; }
+        .text { font-weight: 700; }
       }
     }
   }
@@ -1075,7 +1062,7 @@ ul.action-links {
     margin-bottom: 2rem;
     .carousel-reglaments {
       .swiper { padding: 0 2rem 0 1rem; }
-      @media #{$phone-only}, #{$smartphone-only}, #{$tablet-only} {
+      @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
         @include screen-width();
       }
     }
@@ -1115,11 +1102,8 @@ ul.action-links {
         text-align: center;
         height: 100%;
         margin-bottom: 0;
-        .media {
-          margin-right: 1rem;
-        }
+        .media { margin-right: 1rem; }
       }
-      //.text { padding-top: 0; }
     }
     @media #{$laptop} {
       .text { padding: 2rem; }
@@ -1139,7 +1123,6 @@ ul.action-links {
         font-size: 3rem;
       }
       .title { font-size: $font-size-large; font-weight: 700; }
-      .text { font-size: $font-size-large; }
       p { margin-bottom: 0; }
     }
     @media #{$tablet} {
@@ -1243,7 +1226,7 @@ ul.action-links {
 .webform-client-form-14,
 .webform-client-form-15 {
   .form-actions { text-align: center; }
-  .block-attention { .actions a { max-width: 215px; }}
+  .block-attention .actions a { max-width: 275px; }
 
   @media #{$tablet} {
     .form-actions { text-align: left; }
@@ -1297,7 +1280,7 @@ ul.action-links {
 }
 
 .form-item-fz152-agreement {
-  color: $text-light; font-size: $font-size-small;
+  color: $text-light; font-size: .8em;
   a { color: inherit; text-decoration: underline; }
 }
 
@@ -1432,7 +1415,7 @@ ul.action-links {
 }
 
 .section-title {
-  color: $brand-color; font-size: $font-size-h3; font-weight: 700; text-align: center;
+  color: $brand-color; font-size: $font-size-h3; font-weight: 700; text-align: center; text-transform: uppercase;
   padding: 1rem 0 2rem;
   position: relative;
 
@@ -1449,7 +1432,7 @@ ul.action-links {
   }
 
   .more-all {
-    color: $brand-color; font-size: $font-size-large; font-weight: 500; text-align: center;
+    color: $brand-color; font-size: $font-size-base; font-weight: 500; text-align: center; text-transform: none;
   }
 
 
@@ -1485,8 +1468,8 @@ ul.action-links {
 
 
 // --- Оформление разделов (без отдельных css файлов) ------------------------------------------------------------------
-.contacts,
-.experts {
+.company-contacts,
+.company-experts {
   margin-bottom: 2rem;
   @media #{$laptop} {
     margin-bottom: 4rem;
@@ -1633,7 +1616,7 @@ ul.action-links {
     }
   }
   .date {
-    background: $gray-lighter;
+    background: $gray-lightest;
     color: $gray-dark; font-weight: 500;
     padding: .5rem;
   }
@@ -1641,10 +1624,10 @@ ul.action-links {
     font-size: $font-size-large; font-weight: 700;
   }
   .comment {
-    color: $text-light;
+    color: $text-light; font-size: $font-size-small;
     span {
       display: block;
-      color: $text-color;
+      color: $text-color; font-size: $font-size-base;
     }
     a {
       color: inherit;
@@ -1676,7 +1659,7 @@ ul.action-links {
         content: "";
         width: 21px; height: 42px;
         clip-path: polygon(0 0, 1px 0, 100% 50%, 1px 100%, 0 100%);
-        background-color: $gray-lighter;
+        background-color: $gray-lightest;
         position: absolute; top: 0; right: -20px;
       }
     }

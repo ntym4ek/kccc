@@ -39,18 +39,6 @@ function page_40x_theme()
 }
 
 /**
- * Implements hook_preprocess_page().
- */
-function page_40x_preprocess_page(&$vars)
-{
-  $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
-  if (drupal_match_path($path, 'page-40*')) {
-    drupal_add_css(drupal_get_path('module', 'page_40x') . '/css/page_40x.css');
-  }
-}
-
-
-/**
  * MENU_CALLBACK for /r4032login
  *
  * Redirect anonymous users from 403 Access Denied pages to the /user/login page

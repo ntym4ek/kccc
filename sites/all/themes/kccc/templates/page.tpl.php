@@ -23,7 +23,7 @@
   </div>
 
   <div class="page">
-    <?php if (empty($is_header_off)): ?>
+    <?php if ($is_header_on): ?>
     <header class="header">
       <div class="header-wr">
         <div class="container">
@@ -34,7 +34,7 @@
                   <div class="ru"><a href="/">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
                   <div class="en"><a href="/">Kirovo-Chepetsk Chemical Company</a></div>
                 </div>
-                <div class="logo"><a href="/"><img src="/sites/default/files/images/logo/logo_t.png" alt="Кирово-Чепецкая Химическая&nbsp;Компания" /></a></div>
+                <div class="logo"><a href="/"><img src="/sites/default/files/images/logo/logo_t.png" alt="<?php print t('TH «Kirovo-Chepetsk Chemical Company» LLC'); ?>" /></a></div>
               </div>
             </div>
             <div class="col col-2 full-height col-no-gutter">
@@ -64,10 +64,10 @@
     </header>
     <?php endif; ?>
 
-    <div class="main">
+    <div class="page-content">
       <div class="container">
 
-        <?php if ($page['highlighted'] || $is_title_as_banner): ?>
+        <?php if ($page['highlighted'] || $is_banner_on): ?>
         <div class="page-highlighted">
 
           <?php if (isset($search_form)): ?>
@@ -80,17 +80,24 @@
             <?php print render($page['highlighted']); ?>
           <?php endif; ?>
 
-          <?php if ($is_title_as_banner): ?>
+          <?php if ($is_banner_on): ?>
           <div class="page-banner">
-            <div class="screen-width"<?php print (!empty($title_background) ? ' style="background-image: url(' . $title_background . ');"' : ''); ?>>
+            <div class="screen-width">
+              <div class="image">
+                <picture>
+                  <?php if (!empty($banner_mobile_url)): ?><source class="mobile" srcset="<?php print $banner_mobile_url; ?>" media="(max-width: <?php print $banner_break; ?>px)"><?php endif; ?>
+                  <img src="<?php print $banner_url; ?>" alt="<?php print $banner_title ?? t('Banner'); ?>">
+                </picture>
+              </div>
+
               <div class="container full-height">
-                <div id="page-title" class="page-title">
-                  <?php print render($title_prefix); ?>
-                  <?php if ($title): ?><h1 class="title"><?php print $title; ?></h1><?php endif; ?>
-                  <?php print render($title_suffix); ?>
+                <div class="banner-title-wrapper">
+                  <?php if (!empty($banner_title_prefix)): ?><div class="banner-prefix"><?php print $banner_title_prefix; ?></div><?php endif; ?>
+                  <?php if ($banner_title): ?><div class="banner-title"><?php print $banner_title; ?></div><?php endif; ?>
+                  <?php if (!empty($banner_title_suffix)): ?><div class="banner-suffix"><?php print $banner_title_suffix; ?></div><?php endif; ?>
                 </div>
               </div>
-            </div>
+              </div>
           </div>
 
           <?php if ($page['header']): ?>
@@ -130,12 +137,12 @@
           <div class="col-xs-12 col-lg-9">
           <?php endif; ?>
 
-            <div class="page-content">
+            <div class="page-main">
               <?php if (isset($tabs)): ?><?php print render($tabs); ?><?php endif; ?>
               <?php print $messages; ?>
               <?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
 
-              <?php if (empty($is_title_as_banner) && $title): ?>
+              <?php if ($is_title_on && $title): ?>
                 <div class="page-title">
                   <?php print render($title_prefix); ?>
                   <?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
@@ -162,13 +169,15 @@
         </div>
         <?php endif; ?>
 
-        <div class="page-bottom">
-          <?php print render($page['page_bottom']); ?>
-        </div>
+        <?php if (!empty($page['downlighted'])): ?>
+          <div class="page-downlighted">
+            <?php print render($page['downlighted']); ?>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
 
-    <div class="footer">
+    <div class="page-footer">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-4 col-lg-3">
@@ -181,7 +190,7 @@
                 </div>
               </div>
               <div class="legal-name">
-                ООО&nbsp;Торговый&nbsp;Дом «Кирово-Чепецкая Химическая&nbsp;Компания»
+                <?php print t('TH «Kirovo-Chepetsk Chemical Company» LLC'); ?>
               </div>
               <?php if (!empty($phone_reception)): ?>
               <div class="phone">
@@ -200,31 +209,31 @@
             <div class="row">
               <div class="col-xs-12 col-md-6">
                 <div class="menu about">
-                  <div class="title">О компании</div>
+                  <div class="title"><?php print t('About us'); ?></div>
                   <ul>
-                    <li><a href="/o-kompanii">Общая информация</a></li>
-                    <li><a href="/otzyvy">Отзывы</a></li>
+                    <li><a href="/o-kompanii"><?php print t('Information', [], ['context' => 'menu']); ?></a></li>
+                    <li><a href="/otzyvy"><?php print t('Reviews'); ?></a></li>
                     <?php if (isset($price_list_url)): ?>
-                      <li><a id="pricelist" href="<?php print $price_list_url; ?>" title="Скачать прайс-лист" download>Прайс-лист</a></li>
+                      <li><a id="pricelist" href="<?php print $price_list_url; ?>" title="<?php print t('Download price-list'); ?>" download><?php print t('Price-list'); ?></a></li>
                     <?php endif;?>
                     <?php if (isset($catalog_url)): ?>
-                      <li><a id="catalog_pdf" href="<?php print $catalog_url; ?>" title="Скачать каталог" download>Каталог на <?php print date('Y'); ?> год</a></li>
+                      <li><a id="catalog_pdf" href="<?php print $catalog_url; ?>" title="<?php print t('Download catalog'); ?>" download><?php print t('Catalog for'); ?> <?php print date('Y'); ?> <?php print t('year'); ?></a></li>
                     <?php endif;?>
                   </ul>
                 </div>
               </div>
               <div class="col-xs-12 col-md-6">
                 <div class="menu contacts">
-                  <div class="title">Контакты</div>
+                  <div class="title"><?php print t('Contacts'); ?></div>
                   <ul>
-                    <li><a href="/kontakty">Центральный офис</a></li>
-                    <li><a href="/predstaviteli">Региональные представители</a></li>
-                    <li><a href="/filialy">Как нас найти</a></li>
+                    <li><a href="/kontakty"><?php print t('Central office'); ?></a></li>
+                    <li><a href="/predstaviteli"><?php print t('Regional representatives'); ?></a></li>
+                    <li><a href="/filialy"><?php print t('Find us'); ?></a></li>
                     <li class="socials">
-                      <a href="https://vk.com/public147827276" rel="nofollow" target="_blank" title="ВКонтакте"><i class="icon icon-rounded icon-068 hover-raise"></i></a>
-                      <a href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="Одноклассники"><i class="icon icon-rounded icon-090 hover-raise"></i></a>
+                      <a href="https://vk.com/public147827276" rel="nofollow" target="_blank" title="<?php print t('VK'); ?>"><i class="icon icon-rounded icon-068 hover-raise"></i></a>
+                      <a href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="<?php print t('OK'); ?>"><i class="icon icon-rounded icon-090 hover-raise"></i></a>
                       <a href="https://youtube.com/@kccc_td" rel="nofollow" target="_blank" title="YouTube"><i class="icon icon-rounded icon-069 hover-raise"></i></a>
-                      <a href="https://dzen.ru/td_kccc" rel="nofollow" target="_blank" title="Дзен"><i class="icon icon-rounded icon-070 hover-raise"></i></a>
+                      <a href="https://dzen.ru/td_kccc" rel="nofollow" target="_blank" title="<?php print t('Yandex Dzen'); ?>"><i class="icon icon-rounded icon-070 hover-raise"></i></a>
                       <a href="https://t.me/tdkccc" rel="nofollow" target="_blank" title="Telegram"><i class="icon icon-rounded icon-091 hover-raise"></i></a>
                     </li>
                   </ul>
@@ -235,8 +244,8 @@
 
           <div class="col-xs-12 col-md-6 hide-md show-lg col-md-offset-3 col-lg-3 col-lg-offset-0">
             <div class="subscribe">
-              <div class="title">Подпишитесь на&nbsp;нашу&nbsp;рассылку</div>
-              <p>Новинки, скидки, предложения!</p>
+              <div class="title"><?php print t('Subscribe our mail list'); ?></div>
+              <p><?php print t('New products, discounts, offers!'); ?></p>
               <?php print render($subscribe_form); ?>
             </div>
           </div>

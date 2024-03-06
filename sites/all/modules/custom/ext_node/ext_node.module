@@ -34,23 +34,25 @@ function ext_node_preprocess_page(&$vars)
       // Сформировать Баннер в шапке
       $title_bkg_uri = NULL;
 
-      if (in_array($vars['node']->type, ['agenda', 'article'])) { $vars['title'] = 'События'; }
-      if ($vars['node']->type == 'program')                     { $vars['title'] = 'Портфель продуктов для&nbsp;защиты культур'; }
-      if ($vars['node']->type == 'review')                      { $vars['title'] = 'Отзывы'; }
-      if ($vars['node']->type == 'job')                         { $vars['title'] = 'Работа у нас'; }
-      if ($vars['node']->type == 'culture')                     { $vars['title'] = 'Культурные растения'; }
-      if ($vars['node']->type == 'disease')                     { $vars['title'] = 'Болезни культур'; }
-      if ($vars['node']->type == 'pest')                        { $vars['title'] = 'Вредители культур'; }
-      if ($vars['node']->type == 'weed')                        { $vars['title'] = 'Сорные растения'; }
-      if ($vars['node']->type == 'season')                      { $vars['title'] = 'Препараты в поле'; }
-      if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['title'] = 'Публикации'; }
+      $vars['is_title_on'] = false;
+      if (in_array($vars['node']->type, ['agenda', 'article'])) { $vars['banner_title'] = t('Events'); }
+      if ($vars['node']->type == 'program')                     { $vars['banner_title'] = t('Product portfolio for crop protection'); }
+      if ($vars['node']->type == 'review')                      { $vars['banner_title'] = t('Reviews'); }
+      if ($vars['node']->type == 'job')                         { $vars['banner_title'] = t('Job'); }
+      if ($vars['node']->type == 'culture')                     { $vars['banner_title'] = t('Cultivated plants'); }
+      if ($vars['node']->type == 'disease')                     { $vars['banner_title'] = t('Diseases of crops'); }
+      if ($vars['node']->type == 'pest')                        { $vars['banner_title'] = t('Crop pests'); }
+      if ($vars['node']->type == 'weed')                        { $vars['banner_title'] = t('Weeds'); }
+      if ($vars['node']->type == 'season')                      { $vars['banner_title'] = t('Products in the fields'); }
+      if ($vars['node']->type == 'page')                        { $vars['banner_title'] = drupal_get_title(); }
+      if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['banner_title'] = t('Publications'); }
 
       // -- Препараты
       if ($vars["node"]->type == 'preparation') {
         if ($cat_info = sec_catalog_get_category_info($vars["node"]->field_prep_category["und"][0]["tid"])) {
-          $vars['title'] = $cat_info['title'];
+          $vars['banner_title'] = $cat_info['title'];
           if ($cat_info['icon_num']) {
-            $vars['title_prefix'] = ['#markup' => '<div class="page-title-logo"><i class="icon icon-' . $cat_info['icon_num'] . '"></i></div>'];
+            $vars['banner_title'] = '<i class="icon icon-' . $cat_info['icon_num'] . '"></i>' . $vars['banner_title'];
           }
           if ($cat_info['banner']['uri']) {
             $title_bkg_uri = $cat_info['banner']['uri'];
@@ -65,14 +67,15 @@ function ext_node_preprocess_page(&$vars)
         // Для вебформ:
         // изменить Заголовок на баннере
         //  - Жалобы и Предложения, Центр идей
-        if (in_array($vars["node"]->nid, [14, 15]))             { $vars['title'] = 'Обратная связь';  }
+        if (in_array($vars["node"]->nid, [14, 15]))             { $vars['banner_title'] = t('Feedback');  }
         //  - Кадровый резерв
-        if ($vars["node"]->nid == 23)                           { $vars['title'] = 'Работа у нас';  }
+        if ($vars["node"]->nid == 23)                           { $vars['banner_title'] = t('Job');  }
       }
 
       if ($title_bkg_uri) {
-        $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);
-        $vars['is_title_as_banner'] = TRUE;
+        $vars['banner_url'] = file_create_url($title_bkg_uri);
+        $vars['banner_mobile_url'] = image_style_url('banner_mobile', $title_bkg_uri);
+        $vars['is_banner_on'] = true;
       }
     }
   }
@@ -271,9 +274,9 @@ function ext_node_preprocess_node(&$vars)
         if ($view->total_rows) {
           $vars['media_video_block'] = $view->render();
           if ($view->total_rows > 2) {
-            $vars['media_video_more_link'] = '<a href="/video?preparation=' . $node->nid . '">Показать все ></a>';
+            $vars['media_video_more_link'] = '<a href="/video?preparation=' . $node->nid . '">' . t('Show all') . ' ></a>';
           } else {
-            $vars['media_video_more_link'] = '<a href="/video">Показать другие ></a>';
+            $vars['media_video_more_link'] = '<a href="/video">' . t('Show others') . ' ></a>';
           }
         }
 
@@ -286,10 +289,10 @@ function ext_node_preprocess_node(&$vars)
         if ($view->total_rows) {
           $vars['media_blog_block'] = $view->render();
           if ($view->total_rows > 2) {
-            $vars['media_blog_more_link'] = '<a href="/blog?preparation=' . $node->nid . '">Показать все ></a>';
+            $vars['media_blog_more_link'] = '<a href="/blog?preparation=' . $node->nid . '">' . t('Show all') . ' ></a>';
           }
           else {
-            $vars['media_blog_more_link'] = '<a href="/blog">Показать другие ></a>';
+            $vars['media_blog_more_link'] = '<a href="/blog">' . t('Show others') . ' ></a>';
           }
         }
       }

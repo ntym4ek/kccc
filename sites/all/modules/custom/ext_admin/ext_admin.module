@@ -184,11 +184,11 @@ function ext_admin_preprocess_page(&$vars)
     }
 
     if ($title_bkg_uri) {
-      $vars['title_background'] = $vars['is_mobile'] ? image_style_url('banner_mobile', $title_bkg_uri) : file_create_url($title_bkg_uri);
-      $vars['is_title_as_banner'] = TRUE;
+      $vars['banner_url'] = file_create_url($title_bkg_uri);
+      $vars['banner_mobile_url'] = image_style_url('banner_mobile', $title_bkg_uri);
+      $vars['is_banner_on'] = TRUE;
     }
   }
-
 }
 
 function ext_admin_execute_form($form, $form_state)

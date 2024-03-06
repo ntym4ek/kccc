@@ -15,12 +15,12 @@
   <div class="row">
     <div class="col-xs-12 col-md-8">
       <div class="b2">
-        Мы&nbsp;являемся российским производителем эффективных химических средств защиты растений и&nbsp;жидких минеральных удобрений для всего цикла сельскохозяйственного производства с&nbsp;момента обработки семян и&nbsp;до&nbsp;сбора урожая.
+        <?php print t('We are a russian manufacturer of effective chemical plant protection products and liquid mineral fertilizers for the entire cycle of agricultural production from the moment of seed treatment to harvest.'); ?>
       </div>
     </div>
     <div class="col-xs-12 col-md-4">
       <div class="b3">
-        <a href="/o-kompanii" class="btn btn-brand btn-large btn-wide btn-underline">Узнать больше</a>
+        <a href="/o-kompanii" class="btn btn-brand btn-wide btn-underline"><?php print t('Get more'); ?></a>
       </div>
     </div>
   </div>

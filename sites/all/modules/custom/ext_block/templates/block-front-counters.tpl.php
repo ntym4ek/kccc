@@ -4,16 +4,16 @@
 
   <div class="screen-width row-1">
     <div class="section-title">
-      <div>О компании</div>
+      <div><?php print t('About company'); ?></div>
       <div class="underline"></div>
     </div>
 
 
     <div class="container">
       <div class="description">
-        Торговый Дом “Кирово-Чепецкая Химическая Компания” входит в структуру производственного холдинга <a href="https://kccc.group" target="_blank">KCCC GROUP</a>, созданного в 1997 году и основанного на принципах качества и инноваций по международным стандартам.
+        <?php print t('The Kirovo-Chepetsk Chemical Company Trading House is part of the structure of the production holding <a href="https://kccc.group " target="_blank">KCCC GROUP</a>, established in 1997 and based on the principles of quality and innovation according to international standards.'); ?>
         <br><br>
-        <a href="https://kccc.group" target="_blank">KCCC GROUP</a> это:
+        <a href="https://kccc.group" target="_blank">KCCC GROUP</a> <?php print t('is'); ?>:
       </div>
     </div>
   </div>
@@ -25,25 +25,26 @@
           <div class="col-xs-12 col-md-3">
             <div class="counter">
               <span>130</span>
-              <p>более 130 тыс. тонн в год производственная мощность</p>
+<!--              <p>более 130 тыс. тонн в&nbsp;год&nbsp;производственная мощность</p>-->
+              <p><?php print t('more than 130 thousand tons per year production capacity'); ?></p>
             </div>
           </div>
           <div class="col-xs-12 col-md-3">
             <div class="counter">
               <span>750</span>
-              <p>сотрудников работает в холдинге</p>
+              <p><?php print t('employees working in the holding'); ?></p>
             </div>
           </div>
           <div class="col-xs-12 col-md-3">
             <div class="counter">
               <span>40</span>
-              <p>гектаров производственных и складских площадей</p>
+              <p><?php print t('hectares of production and warehouse space'); ?></p>
             </div>
           </div>
           <div class="col-xs-12 col-md-3">
             <div class="counter">
               <span>27</span>
-              <p>более 27 лет на рынке производителей средств защиты растений</p>
+              <p><?php print t('more than 27 years in the market of manufacturers of plant protection products'); ?></p>
             </div>
           </div>
         </div>

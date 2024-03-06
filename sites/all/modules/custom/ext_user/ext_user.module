@@ -107,22 +107,22 @@ function ext_user_preprocess_page(&$vars)
 
       if (!empty($user_info['staff'])) {
         // вывод Заголовка в виде баннера
-        $vars['is_title_as_banner'] = TRUE;
-        $img_url = 'public://images/page-banners/predstaviteli.jpg';
-        $img_url = $vars['is_mobile'] ? image_style_url('banner_mobile', $img_url) : file_create_url($img_url);
-        $vars['title_background'] = $img_url;
-        $vars['title'] = 'Сотрудники';
+        $vars['is_banner_on'] = true;
+        $img_uri = 'public://images/page-banners/predstaviteli.jpg';
+        $vars['banner_url'] = file_create_url($img_uri);
+        $vars['banner_mobile_url'] = image_style_url('banner_mobile', $img_uri);
+        $vars['banner_title'] = 'Сотрудники';
       }
     }
 
     if (arg(2) == 'edit') {
       $vars['title'] = 'Смена пароля';
-      if (arg(3) == 'main') $vars['title'] = 'Настройки профиля';
+      if (arg(3) == 'main') $vars['title'] = t('Profile settings');
     }
 
     if (user_own_account()) {
       $breadcrumbs[] = l('', NULL);
-      $breadcrumbs[] = l(t('Аккаунт пользователя'), NULL);
+      $breadcrumbs[] = l(t('User account'), NULL);
       drupal_set_breadcrumb($breadcrumbs);
     }
 
@@ -174,7 +174,7 @@ function ext_user_form_user_pass_alter(&$form, &$form_state)
     $form['name']['#title'] = t('E-Mail');
     $form["mail"]["#markup"] = t('The recovery link will be sent to E-Mail above.');
     $form["actions"]["submit"]['#value'] = t('Submit');
-    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-full-wide'];
+    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-full-wide'];
 
     array_unshift($form['#submit'], 'ext_user_user_pass_submit');
   }
@@ -206,7 +206,7 @@ function ext_user_form_user_login_alter(&$form, &$form_state)
   unset($form['pass']['#description']);
 
   $form["actions"]["submit"]['#value'] = t('Submit');
-  $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-full-wide'];
+  $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-full-wide'];
 
   // обработчики
   $form['name']['#element_validate'][] = 'ext_user_login_name_validate';
@@ -240,7 +240,7 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     // изменить вид полей
     $form['account']['mail']['#title'] = 'E-Mail';
     unset($form['account']['mail']['#description']);
-    $form['account']['pass']['#title'] = 'Пароль';
+    $form['account']['pass']['#title'] = t('Password');
     $form['account']['pass']['#type'] = 'textfield';
     unset($form['account']['pass']['#description']);
 
@@ -248,7 +248,7 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
 
     // менять название кнопки нельзя, (user.admin.inc строка 27 привязана к дефолтному названию)
     //    $form["actions"]["submit"]['#value'] = t('Submit');
-    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-large', 'btn-wide'];
+    $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-wide'];
 
     $form["account"]["notify"]["#access"] = false;
     $form["account"]["status"]["#access"] = false;
@@ -341,8 +341,8 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
         if ($form["account"]["current_pass"]["#access"]) {
           $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
           $form['account']['current_pass']['#suffix'] = '</div>';
-          $form['account']['current_pass']['#title'] = 'Текущий пароль';
-          $form["account"]["current_pass"]["#description"] = 'Для смены пароля необходимо ввести старый пароль.';
+          $form['account']['current_pass']['#title'] = t('Current password');
+          $form["account"]["current_pass"]["#description"] = t('To change the password, you must enter the old password.');
           $form["account"]["current_pass"]["#type"] = 'textfield';
           $form["account"]["current_pass"]["#weight"] = -4;
           $form['account']['pass']['#prefix'] = '<div class="col-xs-12 col-md-6">';
@@ -575,7 +575,7 @@ function ext_user_get_user_info($user = null)
           }
         }
 
-        $company = 'ООО ТД Кирово-Чепецкая Химическая Компания';
+        $company = t('TH «KCCC» LLC');
 
         // вес должности в зависимости от весов отдела и должности
         $weight = 1000;
@@ -598,7 +598,7 @@ function ext_user_get_user_info($user = null)
           $query->condition('type', 'blog');
           $result = $query->execute()->fetchField();
           $counts['blog'] = [
-            'title' => 'Блог',
+            'title' => t('Blog'),
             'amount' => $result,
 //            'url' => $result ? '/blog/user/' . $account->uid : '',
             'url' => '/blog',
@@ -610,7 +610,7 @@ function ext_user_get_user_info($user = null)
           $query->condition('type', 'review');
           $result = $query->execute()->fetchField();
           $counts['reviews'] = [
-            'title' => 'Отзывы',
+            'title' => t('Reviews'),
             'amount' => $result,
 //            'url' => $result ? '/otzyvy/user/' . $account->uid : '',
             'url' => '/otzyvy',
@@ -624,7 +624,7 @@ function ext_user_get_user_info($user = null)
           //    $query->condition('n.uid', $account->uid);
           //    if ($result = $query->execute()->fetchField()) {//
           $counts['pvp'] = [
-            'title' => 'Препараты в поле',
+            'title' => t('Products in the fields'),
             'amount' => $result,
             'url' => $result ? '/' : '',
             ];
@@ -697,9 +697,9 @@ function ext_user_get_dumb_user_info()
 {
   $photo_uri = 'public://images/default/no_photo.png';
   return [
-    'label' => 'Региональный представитель',
+    'label' => t('Regional representative'),
     'main' => [
-      'name_full' => 'Региональный представитель',
+      'name_full' => t('Regional representative'),
       'photo' => [
         'uri'     => $photo_uri,
         'url'     => file_create_url($photo_uri),
@@ -707,7 +707,7 @@ function ext_user_get_dumb_user_info()
       ]
     ],
     'staff' => [
-      'manage' => 'ООО ТД «КЧХК»',
+      'manage' => t('TH «KCCC» LLC'),
       'hide_contact' => 1,
     ],
     'url' => 'predstaviteli',

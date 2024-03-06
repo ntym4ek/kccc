@@ -140,7 +140,7 @@ function kccc_file_link($vars)
 
   // добавить кнопку на скачивание
   if (!empty($file->display)) {
-    $output .= '<div class="file-download"><a href="' . $url . '" class="btn btn-brand" download>Скачать</a></div>';
+    $output .= '<div class="file-download"><a href="' . $url . '" class="btn btn-brand btn-wide" download>' . t('Download') . '</a></div>';
   }
   $output .= '</div>';
 

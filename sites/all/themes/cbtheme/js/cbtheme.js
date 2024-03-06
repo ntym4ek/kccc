@@ -1,3 +1,5 @@
+const menuHide = 1024; // ширина экрана (обычно lg), начиная с которой убираем мобильное меню
+
 (function ($) {
   Drupal.behaviors.cbtheme = {
     attach: function (context, settings) {
@@ -8,7 +10,7 @@
         e.preventDefault();
       });
 
-      // --- Мобильное меню --------------------------------------------------------
+      // --- Мобильное меню ----------------------------------------------------
       function showMobileNav() {
         $("body").data("nav-mobile-opened", true).addClass("nav-mobile-opened");
       }
@@ -23,7 +25,17 @@
         }
       }
 
-      // -- Аккордеон
+      // --- Плавный скролл к якорям -------------------------------------------
+      $(document).on('click', 'a[href^="#"]', function (event) {
+        event.preventDefault();
+        this.blur();
+
+        $('html, body').animate({
+          scrollTop: $($.attr(this, 'href')).offset().top
+        }, 500);
+      });
+
+      // -- Аккордеон ----------------------------------------------------------
       class Accordion {
         constructor(target, config) {
           this._el = typeof target === "string" ? document.querySelector(target) : target;
@@ -114,19 +126,25 @@
       );
 
 
-      // -- блоки с подкатом
+      // -- Блоки с подкатом ---------------------------------------------------
         // Высота элемента в закрытом состоянии задаётся атрибутом data-closed-height.
         // Обёрнуто в timeout, так как иначе неверно определяет высоту контейнеров
+      // Параметры, которые можно задать в атрибутах data-:
+      // - closed-height высота блока в закрытом состоянии (0)
+      // - more-text - текст на кнопке открытия блока (unfold)
+      // - less-text - текст на кнопке закрытия блока (fold)
+      // - body-click - открывать ли блок по клику на самом блоке (false)
       setTimeout(() => {
         $(".readmore").each((i, el) => {
         var collEl = $(el);
         const fullHeight = collEl.height();
         const closedHeight = collEl.data("closed-height") ?? 0;
+        const moreText = collEl.data("more-text") ?? Drupal.t("unfold");
+        const lessText = collEl.data("less-text") ?? Drupal.t("fold");
+        const bodyClick = collEl.data("body-click") ?? false;
         // если высота с текстом больше заданной,
         // то скрыть подкатом лишнее и добавить ссылку для открытия
         if (fullHeight > closedHeight) {
-          const moreText = "развернуть";
-          const lessText = "cвернуть";
           const duration = 250;
           collEl.addClass("closed").css("height", closedHeight);
           collEl.after("<div class='more'>" + moreText + "</div>");
@@ -136,7 +154,7 @@
             collEl.animate({"height": fullHeight}, {duration: duration }, "linear");
             collEl.addClass("open").removeClass("closed");
             collLink.text(lessText).addClass("open").removeClass("closed");
-            collEl.unbind("click", openMore).bind("click", closeMore);
+            if (bodyClick) collEl.unbind("click", openMore).bind("click", closeMore);
             collLink.unbind("click", openMore).bind("click", closeMore);
           };
 
@@ -144,19 +162,21 @@
             collEl.animate({"height": closedHeight}, {duration: duration }, "linear");
             collEl.addClass("closed").removeClass("open");
             collLink.text(moreText).addClass("closed").removeClass("open");
-            collEl.unbind("click").bind("click", openMore);
+            if (bodyClick) collEl.unbind("click").bind("click", openMore);
             collLink.unbind("click").bind("click", openMore);
           };
 
-          collEl.bind("click", openMore);
+          if (bodyClick) collEl.bind("click", openMore);
           collLink.bind("click", openMore);
         }
       });
       }, 100);
 
-      // если < 1280, то выводится боковое меню
+
+      // -- Мобильное боковое меню ---------------------------------------------
+        // если < menuHide, то вывести боковое меню
         // повесить обработчик свайпа
-      if ($(window).width() < 1280) {
+      if ($(window).width() < menuHide) {
         // клик по иконке Меню
         $(".nav-mobile-label").on("click", (e) => {
           toggleMobileNav();
@@ -184,7 +204,7 @@
         });
       }
 
-      // -- Аккордеон пунктов в мобильном меню
+      // -- Аккордеон пунктов в мобильном меню ---------------------------------
       new Accordion(document.querySelector(".nav-mobile .main-menu"), {
         alwaysOpen: false,
         linkSelector: ".expanded > a",
@@ -196,6 +216,27 @@
         boxSelector: ".expanded .sub-menu",
       });
 
+      // -- Кнопка Поделиться --------------------------------------------------
+      $(".share .share-btn").click((e) => {
+        $(e.target).closest(".share").toggleClass("open");
+      });
+
+      // -- Кнопка Печать ------------------------------------------------------
+      $("#print-btn").on("click", function() {
+        window.print();
+      });
+
+      // -- Кнопка Вернуться к началу страницы ---------------------------------
+      $(window).scroll(function () {
+        if ($(this).scrollTop() > 400) {
+          $('#back-to-top').fadeIn();
+        } else {
+          $('#back-to-top').fadeOut();
+        }
+      });
+      $("#back-to-top").click(function() {
+        $("html, body").animate({ scrollTop: 0 }, 500);
+      });
     }
   };
 })(jQuery);

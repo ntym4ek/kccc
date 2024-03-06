@@ -47,8 +47,24 @@ function theme_custom_pager($vars)
 function ext_views_preprocess_page(&$vars)
 {
   if ($GLOBALS['theme'] == 'kccc') {
-    if (in_array(arg(0), ['blog', 'video']))         { $vars['title'] = 'Публикации'; }
-    if (in_array(arg(0), ['novosti', 'afisha']))     { $vars['title'] = 'События'; }
+    if (in_array(arg(0), ['blog', 'video']))         {
+      $vars['banner_title'] = t('Publications');
+      $vars['is_title_on'] = false;
+    }
+    if (in_array(arg(0), ['novosti', 'afisha']))     {
+      $vars['banner_title'] = t('Events');
+      $vars['is_title_on'] = false;
+    }
+    if (arg(0) == 'programmy-zashchity') {
+      $vars['banner_title'] = t('Product portfolio for crop protection');
+      $vars['is_title_on'] = false;
+    }
+    if (arg(0) == 'spravochniki') {
+      $vars['banner_title'] = t('Handbooks');
+    }
+    if (in_array(arg(0), ['otzyvy', 'vakansii', 'preparaty-v-pole']))     {
+      $vars['is_title_on'] = false;
+    }
   }
 }
 
@@ -59,7 +75,12 @@ function ext_views_preprocess_views_view_unformatted(&$vars)
 {
   if ($vars['view']->name == 'search') {
     // скорректировать заголовок группы
-    $arr = ['Препараты в поле' => 'Примеры применения препаратов', 'Отзыв' => 'Отзывы', 'Блог' => 'Блоги', 'Справочник | Сорное растение' => 'Справочник сорных растений', 'Препарат' => 'Препараты',
+//    $arr = ['Препараты в поле' => 'Примеры применения препаратов', 'Отзыв' => 'Отзывы', 'Блог' => 'Блоги', 'Справочник | Сорное растение' => 'Справочник сорных растений', 'Препарат' => 'Препараты',
+//      'Программа защиты' => 'Программы защиты', 'Вакансия' => 'Вакансии', 'Справочник | Культура' => 'Справочник культур',
+//      'Справочник | Болезнь культуры' => 'Справочник болезней культур', 'Справочник | Вредитель культуры' => 'Справочник вредителей культур', 'Новость' => 'Новости',
+//      '' => ''];
+    $arr = [t('Products in the fields') => t('Demonstration tests in the fields'), t('Review') => t('Reviews'), t('Blog') => t('Blogs'),
+      'Справочник | Сорное растение' => 'Справочник сорных растений', t('Product') => t('Products'),
       'Программа защиты' => 'Программы защиты', 'Вакансия' => 'Вакансии', 'Справочник | Культура' => 'Справочник культур',
       'Справочник | Болезнь культуры' => 'Справочник болезней культур', 'Справочник | Вредитель культуры' => 'Справочник вредителей культур', 'Новость' => 'Новости',
       '' => ''];
@@ -96,14 +117,12 @@ function ext_views_get_view_exposed_form($view_name, $display_id = 'page')
           $view->destroy();
           return $rendered_form;
         }
-
       }
-
     }
     $view->destroy();
   }
 
-  drupal_set_message('Something gone wrong', 'error');
+  drupal_set_message(t('Something went wrong'), 'error');
   return '';
 }
 

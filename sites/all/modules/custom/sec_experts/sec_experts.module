@@ -19,7 +19,8 @@ function sec_experts_menu()
 function sec_experts_preprocess_page(&$vars)
 {
   if (arg(0) == 'eksperty') {
-    $vars['title'] = 'Контакты';
+    $vars['banner_title'] = t('Contacts');
+    $vars['is_title_on'] = false;
   }
 }
 
@@ -53,7 +54,7 @@ function sec_experts_page()
     $content .= 'Контактов не найдено.';
   }
 
-  return  '<div id="experts" class="experts view">' .
+  return  '<div id="experts" class="company-experts view">' .
             '<div class="experts-content">' .
               $content .
             '</div>' .
