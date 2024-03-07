@@ -106,11 +106,11 @@
       <?php print drupal_render($content); ?>
 
       <div class="field field-todo">
-        <div class="field-label">Ваши действия:</div>
+        <div class="field-label"><?php print t('Instructions'); ?>:</div>
         <div class="field-item">
           <ul>
-            <li>Отправить отклик</li>
-            <li>Дождаться звонка с приглашением на собеседование от сотрудников нашей кадровой службы</li>
+            <li><?php print t('Send a response'); ?></li>
+            <li><?php print t('Wait for a call with an invitation to an interview from our HR staff'); ?></li>
           </ul>
         </div>
       </div>
@@ -127,10 +127,10 @@
     <?php print drupal_render($job_webform); ?>
 
     <div class="block-attention">
-      <div class="h4">ВНИМАНИЕ!</div>
-      <p>Если вакансия вам не&nbsp;подходит – отправьте своё резюме в&nbsp;наш кадровый резерв. Возможно специалист вашей квалификации скоро нам потребуется.</p>
+      <div class="h4"><?php print t('Attention'); ?>!</div>
+      <p><?php print t('If the vacancy does not suit you, send your VC to our personnel reserve. We may need a specialist of your qualifications soon.'); ?></p>
       <div class="actions">
-        <a href="/rezerv" class="btn btn-brand btn-large btn-wide btn-underline">Кадровый резерв</a>
+        <a href="/rezerv" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Personnel reserve'); ?></a>
       </div>
     </div>
 

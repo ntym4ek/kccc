@@ -9,7 +9,7 @@
     <div class="text">
       <div class="title"><?php print $label; ?></div>
       <div class="components"><?php print $components['formatted']; ?></div>
-      <div class="more btn btn-brand btn-full-wide">Подробнее</div>
+      <div class="more btn btn-brand btn-full-wide"><?php print t('Read more'); ?></div>
     </div>
   </a>
 </div>

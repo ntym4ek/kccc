@@ -114,7 +114,8 @@ ul.menu {                             // обнулить system.menu.css сти
   background: $menu-mobile-btn-bkg; border-radius: 2px;
   display: block;
   color: $menu-mobile-btn-color; font-size: $menu-mobile-btn-size;
-  width: $menu-mobile-btn-size; height: $menu-mobile-btn-size;
+  //width: $menu-mobile-btn-size;       ширина, вроде как, только мешает
+  height: $menu-mobile-btn-size;
   //position: absolute; top: 0; left: 0; z-index: 10;
   transition: all 200ms ease-in;
   overflow: hidden;

@@ -18,7 +18,12 @@
           <div><a href="https://kccc.group" target="_blank" title="KCCC GROUP">KCCC GROUP</a></div>
         </div>
       </div>
-      <?php if ($secondary_nav): print $secondary_nav; endif; ?>
+      <div>
+        <?php if (!empty($language_link_mobile)): ?>
+        <div class="language-switch menu-mobile-link"><?php print $language_link_mobile; ?></div>
+        <?php endif; ?>
+        <?php if ($secondary_nav): print $secondary_nav; endif; ?>
+      </div>
     </div>
   </div>
 
@@ -259,5 +264,6 @@
       </div>
   </div>
 
+    <div id="back-to-top"><i>top</i></div>
 </div>
 

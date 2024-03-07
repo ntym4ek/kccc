@@ -49,10 +49,22 @@
     .more { margin-top: 4rem; }
   }
 
+  @media #{$pad} {
+    .container { padding: 0 1rem; }
+    .text-wr {
+      margin-top: 180px;
+      h2 {
+        font-size: 50px;
+        margin: 2rem 0;
+      }
+    }
+    .text { padding: 2rem 3rem; }
+  }
   @media #{$tablet} {
     .text-wr {
-      h2 { font-size: $font-size-h2; }
+      margin-top: 205px;
     }
+    .text { margin-right: 4rem; padding-right: 20rem; }
   }
   @media #{$laptop} {
     .swiper-slide { height: 750px; }
@@ -60,14 +72,12 @@
       margin-top: 220px;
       h2 {
         font-size: 60px;
-        margin: 3rem 0;
       }
     }
-    .text {
-      margin-right: 1rem; padding: 1rem 20rem 2rem 1rem;
-    }
+    .text { margin-right: 1rem; padding-left: 1rem; }
   }
 }
+
 
 .block-new-products {
   .card-product-v .text { padding: 1rem 0; }
@@ -93,7 +103,9 @@
   }
 }
 
+
 #block-ext-block-custom-block-catalog { margin-bottom: 0; }
+
 
 .block-catalog {
   .screen-width {
@@ -145,7 +157,7 @@
     border-bottom: 1px solid $divider-clr;
     text-align: center;
     height: 100%;
-    padding-top: 1rem;
+    padding: 1rem;
     i.icon {
       color: $brand-color; font-size: 3rem;
       border-color: $brand-color;
@@ -666,11 +678,10 @@
     .img { flex: 0 0 40%; }
     .text {
       align-items: center;
-      font-size: $font-size-large;
-      padding: 2rem 3rem;
+      padding: 1rem 2rem;
     }
     .milestone {
-      width: 100px;
+      width: 140px;
       &:first-child:before { border-color: transparent; }
     }
 
@@ -684,12 +695,14 @@
     }
   }
   @media #{$laptop} {
-    .milestone { width: 140px; }
     .info {
       padding-left: 0; padding-right: 0;
       width: 968px;
     }
-
+    .text {
+      font-size: $font-size-large;
+      padding: 2rem 3rem;
+    }
     .carousel.outer-pagination.top-pagination {
       > .swiper-pagination {
         .swiper-pagination-bullet {

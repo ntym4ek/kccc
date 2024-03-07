@@ -66,14 +66,11 @@ a { color: $brand-color; }
 
   .branding {
     background-color: $brand-color;
-    color: #fff; font-size: .8rem; text-align: center;
+    color: #fff; font-size: .8em; text-align: center;
     display: flex; align-items: center;
-    height: 100%; width: 270px;                     // определяет ширину брендовой части меню
+    height: 100%; width: 230px;                     // определяет ширину брендовой части меню
     padding: 15px;
     a { color: inherit; }
-    .brand {
-      padding-left: 0;
-    }
     .logo {
       flex: 0 0 41px;
       height: 100%;
@@ -84,7 +81,7 @@ a { color: $brand-color; }
     }
     .brand {
       display: flex; flex-direction: column; justify-content: center;
-      padding: 0 1em;
+      padding-right: 1em;
       .ru {
         font-size: 1.3em; font-weight: 700;
         margin: 0 0 .3em;
@@ -93,57 +90,66 @@ a { color: $brand-color; }
     }
   }
   .menu-bkg {
-    display: grid; justify-content: flex-end;
+    display: grid; justify-content: flex-end; align-items: center;
     background: rgba(27, 30, 40, 0.4);
     height: 100%;
     position: relative;
-  }
-  .menu-wr {
-    display: flex; align-items: center;
-    height: 100%;
     padding-right: 1rem;
+  }
+  .language-switch a { color: #fff; font-weight: 500; }
+
+  @media #{$smart} {
+    font-size: 14px;
+    .branding {
+      width: 270px;
+    }
+  }
+  @media #{$pad} {
+    font-size: 14px;
+    .branding {
+      width: 300px;
+      padding: 15px;
+      .logo { flex: 0 0 46px; }
+    }
+  }
+  @media #{$tablet} {
+    font-size: 16px;
+    .menu-wr {
+      display: flex; align-items: center;
+      height: 100%;
+    }
     .global {
       flex: 0 0 auto;
-      padding: 0 2rem;
+      padding: 0 1rem;
       a { color: #fff; }
     }
     .primary-menu { flex: 1 0 auto; }
     .secondary-menu { flex: 0 0 auto; }
-    .icon-user { width: 1rem; }
-  }
-  .menu {
-    &.level-1 > li {
-      margin: 0 .5rem;
+    .menu.level-1 > li {
       > a {
         color: #fff; font-weight: 500;
         padding: .8rem 1rem .8rem 0;
       }
     }
-  }
-  .sub-menu > li.leaf:not(.last) a { border-bottom: 1px solid $gray-lightest; }
-  .language-switch a { color: #fff; font-weight: 500; }
-
-  @media #{$tablet} {
-    .branding {
-      width: 300px;
-      padding: 15px 30px;
+    .sub-menu {
+      border-left: 5px solid $brand-color;
+      min-width: 230px;
+      > li.leaf:not(.last) a { border-bottom: 1px solid $gray-lightest; }
     }
+    .menu-bkg { justify-content: normal; }
   }
   @media #{$laptop} {
+    font-size: 1rem;
     height: 90px;
     .branding {
       font-size: .8rem; line-height: 1;
       padding: 15px 30px 15px 15px;
       width: 360px;
+      .brand { padding-left: 1rem; }
       .logo { flex: 0 0 55px; }
     }
-    .menu {
-      .sub-menu {
-        border-left: 5px solid $brand-color;
-        min-width: 230px;
-      }
-    }
-    .menu-bkg { justify-content: normal; }
+    .global { padding: 0 2rem; }
+    .menu.level-1 > li { margin: 0 .5rem; }
   }
 }
 
@@ -244,11 +250,14 @@ a { color: $brand-color; }
   position: relative;
   .page-context-menu .screen-width { background-color: #383838; }
 
-  @media #{$laptop} {
+  @media #{$tablet} {
     .search {
-      position: absolute; top: 156px; right: 0; z-index: 9;
+      position: absolute; top: 146px; right: 0; z-index: 9;
       max-width: 330px;
     }
+  }
+  @media #{$laptop} {
+    .search { top: 156px; }
   }
 }
 
@@ -346,15 +355,22 @@ a { color: $brand-color; }
     .title {
       font-size: $font-size-h5; font-weight: 700; text-transform: uppercase;
     }
+    .form-text { max-width: 250px; }
     .btn { padding: 0 .5rem; }
   }
 
   @media #{$tablet} {
-    //.branding { font-size: .7rem; }
     .legal-name { font-size: $font-size-small; }
+    .branding {
+      font-size: .65em;
+      height: 80px;
+    }
   }
   @media #{$laptop} {
-    //.branding { font-size: .85rem; }
+    .branding {
+      font-size: .8em;
+      height: 90px;
+    }
   }
 }
 
@@ -632,7 +648,7 @@ ul.action-links {
     > div { flex: 0 0 100%; }
   }
   .title {
-    color: $brand-color; font-size: $font-size-h4; font-weight: 700;
+    color: $brand-color; font-size: $font-size-h4; font-weight: 500;
   }
   .components {
     font-size: $font-size-small;
@@ -646,7 +662,7 @@ ul.action-links {
   display: flex; flex-wrap: wrap;
   a { color: inherit; }
   .title {
-    font-size: $font-size-h3; font-weight: 700;
+    font-size: $font-size-h3; font-weight: 500;
     margin-bottom: .5em;
   }
   .image {
@@ -1464,6 +1480,26 @@ ul.action-links {
   vertical-align: top;
   //display: inline-block; убрано при корректировке в карточках товара
   //margin-top: 0.2em;
+}
+
+#back-to-top {
+  background: #fff;
+  border-radius: 50px;
+  border: .5rem solid #43B02A85;
+  i {
+    color: #fff; font-size: 1rem; font-style: normal; text-transform: uppercase;
+    background: $brand-color;
+    display: flex; justify-content: center; align-items: center;
+    width: 3rem; height: 3rem;
+    border-radius: 100px;
+  }
+
+  @media #{$pad} {
+    i {
+      font-size: .7rem;
+      width: 2rem; height: 2rem;
+    }
+  }
 }
 
 

@@ -118,7 +118,7 @@
               </div>
             </div>
             <div class="actions">
-              <a href="/predstaviteli" class="btn btn-brand btn-huge btn-wide">Купить</a>
+              <a href="/predstaviteli" class="btn btn-brand btn-huge btn-wide"><?php print t('Buy'); ?></a>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@
   <?php if ($product_info['advantages']): ?>
   <div class="product-advantages">
     <div class="section-title">
-      <div>Основные преимущества</div>
+      <div><?php print t('Main advantages'); ?></div>
       <div class="underline "></div>
     </div>
 
@@ -150,7 +150,7 @@
   <div class="product-specs">
     <div class="screen-width">
       <div class="section-title invert category-bkg">
-        <div>Характеристики</div>
+        <div><?php print t('Description', [], ['context' => 'product']); ?></div>
         <div class="underline"></div>
       </div>
 
@@ -172,7 +172,7 @@
   <?php if ($product_info['reglaments_cards']): ?>
   <div class="product-reglaments">
     <div class="section-title category-clr">
-      <div>Регламенты применения</div>
+      <div><?php print t('Application regulations'); ?></div>
       <div class="underline category-bkg"></div>
     </div>
 
@@ -212,7 +212,7 @@
   <div class="product-how-it-works">
     <div class="screen-width">
       <div class="section-title invert">
-        <div>Действие препарата</div>
+        <div><?php print t('How it works'); ?></div>
         <div class="underline"></div>
       </div>
     </div>
@@ -242,7 +242,7 @@
   <div class="product-instructions">
     <div class="screen-width">
       <div class="section-title invert category-bkg">
-        <div>Особенности применения</div>
+        <div><?php print t('Application features'); ?></div>
         <div class="underline"></div>
       </div>
     </div>
@@ -286,7 +286,6 @@
     <?php if (empty($media_video_block) && empty($media_blog_block)): ?>
       <div class="message">
         <?php print t('There are no associated media materials for this product.'); ?>
-<!--        Для данного препарата нет связанных медиаматериалов.-->
       </div>
     <?php endif; ?>
     <?php if (!empty($media_video_block)): ?>
@@ -319,7 +318,6 @@
     <?php if (empty($content['field_files'])): ?>
       <div class="message">
         <?php print t('There are no files for this product.'); ?>
-<!--        Для данного препарата нет файлов.-->
       </div>
     <?php else: ?>
       <div class="files">

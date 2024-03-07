@@ -21,7 +21,7 @@ function kccc_preprocess_page(&$vars)
   $path = drupal_is_front_page() ? '<front>' : $_GET['q'];
   if ($links = language_negotiation_get_switch_links('language', $path)) {
     $lang = $GLOBALS["language"]->language == 'ru' ? 'en' : 'ru';
-    $vars['language_link'] = l(($lang == 'ru' ? 'RU' : 'EN'), $links->links[$lang]['href'], $links->links[$lang] + ['html' => TRUE]);
+    $vars['language_link'] = l('<i class="icon icon-123"></i>', $links->links[$lang]['href'], $links->links[$lang] + ['html' => TRUE]);
     $vars['language_link_mobile'] = l($lang == 'en' ? 'English' : 'Русский', $links->links[$lang]['href'], $links->links[$lang]);
   }
 

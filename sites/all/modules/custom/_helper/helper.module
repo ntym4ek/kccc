@@ -180,3 +180,36 @@ function helper_get_query_from_filters($path, $filters)
 
   return $query;
 }
+
+/**
+ * Вернуть массив информации о термине таксономии
+ */
+function helper_get_term_info($term)
+{
+  $term_info = [];
+  $term_wr = entity_metadata_wrapper('taxonomy_term', $term);
+  if ($term_wr->value()) {
+    $voc = taxonomy_vocabulary_load($term_wr->value()->vid);
+    $term_info = [
+      'id' => $term_wr->getIdentifier(),
+      'label' => $term_wr->label(),
+      'description' => $term_wr->description->value(),
+      'voc' => [
+        'id' => $voc->vid,
+        'name' => $voc->machine_name,
+      ],
+      'path' => drupal_get_path_alias('taxonomy/term/' . $term_wr->getIdentifier()),
+    ];
+
+    // todo по списку полей добавить значения в массив
+    if ($fields = field_info_instances('taxonomy_term', $voc->machine_name)) {
+      foreach ($fields as $name => $field) {
+        if (!in_array($name, ['name_field', 'description_field'])) {
+          $term_info[$name] = $term_wr->{$name}->value();
+        }
+      }
+    }
+  }
+
+  return $term_info;
+}

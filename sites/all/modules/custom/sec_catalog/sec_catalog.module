@@ -212,7 +212,7 @@ function sec_catalog_filters_form($form, &$form_state)
     ],
   ];
 
-  $cmp_options = [0 => 'Все'];
+  $cmp_options = [0 => t('All')];
   foreach ($filters['component']['options'] as $id => $label) {
     $cmp_options[$id] = $label;
   }
@@ -229,7 +229,7 @@ function sec_catalog_filters_form($form, &$form_state)
     ],
   ];
 
-  $cultures_options = [0 => 'Все'];
+  $cultures_options = [0 => t('All')];
   foreach ($filters['culture']['options'] as $id => $label) {
     $cultures_options[$id] = $label;
   }
@@ -761,12 +761,9 @@ function sec_catalog_get_categories()
   $categories = [];
   if ($terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('preparation_categories')->vid, 0, null, true)) {
     foreach($terms as $term) {
-      $categories[$term->tid] = [
-        'id' => $term->tid,
-        'label' => $term->name,
-        'icon_num' => $term->field_icon["und"][0]["value"],
-        'path' => sec_catalog_taxonomy_term_uri($term)['path'],
-      ];
+      $term_info = helper_get_term_info($term);
+      $categories[$term->tid] = $term_info;
+      $categories[$term->tid]['path'] = sec_catalog_taxonomy_term_uri($term)['path'];
     }
   }
 
