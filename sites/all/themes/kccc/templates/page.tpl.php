@@ -53,6 +53,11 @@
                     <div class="secondary-menu">
                       <?php if ($secondary_nav): print $secondary_nav; endif; ?>
                     </div>
+                    <?php if (!empty($language_link)): ?>
+                    <div class="language-switch">
+                      <?php print $language_link; ?>
+                    </div>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>

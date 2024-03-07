@@ -29,7 +29,7 @@ function ext_form_search_form($form, $form_state)
 {
   $form['k'] = [
     '#type' => 'textfield',
-    '#attributes' => ['placeholder' => 'поиск'],
+    '#attributes' => ['placeholder' => t('search')],
     '#prefix' => '<div class="form-item input-group">'
   ];
   $form['submit'] = [
@@ -58,7 +58,6 @@ function ext_form_form_alter(&$form, &$form_state, $form_id)
   if (strpos($form_id, 'webform_client_form') === 0) {
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-brand';
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-wide';
-//    $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-large';
   }
 }
 

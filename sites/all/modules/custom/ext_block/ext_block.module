@@ -291,12 +291,10 @@ function ext_block_get_front_banner_slides()
   $banners = [];
   if ($terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('slider_front_banners')->vid, 0, null, true)) {
     foreach($terms as $term) {
-      if (module_exists('i18n_taxonomy')) {
-        $term = i18n_taxonomy_localize_terms($term);
-      }
+      $term_wr = entity_metadata_wrapper('taxonomy_term', $term);
       $banners[] = [
-        'title' => $term->name,
-        'description' => $term->description,
+        'title' => $term_wr->label(),
+        'description' => $term_wr->description->value(),
         'img' => file_create_url($term->field_image["und"][0]["uri"]),
         'path' => url($term->field_text["und"][0]["value"]),
       ];

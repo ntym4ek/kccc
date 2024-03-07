@@ -17,6 +17,15 @@ function kccc_preprocess_page(&$vars)
     ], 'description');
   }
 
+  // -- Переключатель языка
+  $path = drupal_is_front_page() ? '<front>' : $_GET['q'];
+  if ($links = language_negotiation_get_switch_links('language', $path)) {
+    $lang = $GLOBALS["language"]->language == 'ru' ? 'en' : 'ru';
+    $vars['language_link'] = l(($lang == 'ru' ? 'RU' : 'EN'), $links->links[$lang]['href'], $links->links[$lang] + ['html' => TRUE]);
+    $vars['language_link_mobile'] = l($lang == 'en' ? 'English' : 'Русский', $links->links[$lang]['href'], $links->links[$lang]);
+  }
+
+
   // -- Форма поиска в шапке
   if ($_GET['q'] != 'poisk') {
     $vars['search_form'] = drupal_get_form('ext_form_search_form');
