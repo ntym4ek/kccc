@@ -151,7 +151,7 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
         'label' => $pvp_wr->label(),
         'region' => $pvp_wr->field_region->label(),
         'culture' => $pvp_wr->field_culture->label(),
-        'path' => drupal_get_path_alias('node/' . $pvp_wr->getIdentifier()),
+        'path' => url('node/' . $pvp_wr->getIdentifier()),
         'comment' => t('Before treatment'),
       ];
 

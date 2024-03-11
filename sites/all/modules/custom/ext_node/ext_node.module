@@ -35,17 +35,31 @@ function ext_node_preprocess_page(&$vars)
       $title_bkg_uri = NULL;
 
       $vars['is_title_on'] = false;
-      if (in_array($vars['node']->type, ['agenda', 'article'])) { $vars['banner_title'] = t('Events'); }
-      if ($vars['node']->type == 'program')                     { $vars['banner_title'] = t('Product portfolio for crop protection'); }
-      if ($vars['node']->type == 'review')                      { $vars['banner_title'] = t('Reviews'); }
-      if ($vars['node']->type == 'job')                         { $vars['banner_title'] = t('Job'); }
-      if ($vars['node']->type == 'culture')                     { $vars['banner_title'] = t('Cultivated plants'); }
-      if ($vars['node']->type == 'disease')                     { $vars['banner_title'] = t('Diseases of crops'); }
-      if ($vars['node']->type == 'pest')                        { $vars['banner_title'] = t('Crop pests'); }
-      if ($vars['node']->type == 'weed')                        { $vars['banner_title'] = t('Weeds'); }
-      if ($vars['node']->type == 'season')                      { $vars['banner_title'] = t('Products in the fields'); }
+      if ($vars['node']->type == 'agenda')                      { $vars['banner_title'] = t('Events');
+                                                                  $title_bkg_uri = 'public://images/page-banners/afisha.jpg'; }
+      if ($vars['node']->type == 'article')                     { $vars['banner_title'] = t('Events');
+                                                                  $title_bkg_uri = 'public://images/page-banners/novosti.jpg'; }
+      if ($vars['node']->type == 'program')                     { $vars['banner_title'] = t('Product portfolio for crop protection');
+                                                                  $title_bkg_uri = 'public://images/page-banners/programmy-zashchity.jpg'; }
+      if ($vars['node']->type == 'review')                      { $vars['banner_title'] = t('Reviews');
+                                                                  $title_bkg_uri = 'public://images/page-banners/otzyvy.jpg'; }
+      if ($vars['node']->type == 'job')                         { $vars['banner_title'] = t('Careers');
+                                                                  $title_bkg_uri = 'public://images/page-banners/vakansii.jpg'; }
+      if ($vars['node']->type == 'culture')                     { $vars['banner_title'] = t('Cultivated plants');
+                                                                  $title_bkg_uri = 'public://images/page-banners/spravochniki.jpg'; }
+      if ($vars['node']->type == 'disease')                     { $vars['banner_title'] = t('Diseases of crops');
+                                                                  $title_bkg_uri = 'public://images/page-banners/spravochniki.jpg'; }
+      if ($vars['node']->type == 'pest')                        { $vars['banner_title'] = t('Crop pests');
+                                                                  $title_bkg_uri = 'public://images/page-banners/spravochniki.jpg'; }
+      if ($vars['node']->type == 'weed')                        { $vars['banner_title'] = t('Weeds');
+                                                                  $title_bkg_uri = 'public://images/page-banners/spravochniki.jpg'; }
+      if ($vars['node']->type == 'season')                      { $vars['banner_title'] = t('Products in the fields');
+                                                                  $title_bkg_uri = 'public://images/page-banners/preparaty-v-pole.jpg'; }
+      if ($vars['node']->type == 'blog')                        { $vars['banner_title'] = t('Publications');
+                                                                  $title_bkg_uri = 'public://images/page-banners/afisha.jpg'; }
+      if ($vars['node']->type == 'video')                       { $vars['banner_title'] = t('Publications');
+                                                                  $title_bkg_uri = 'public://images/page-banners/novosti.jpg'; }
       if ($vars['node']->type == 'page')                        { $vars['banner_title'] = drupal_get_title(); }
-      if (in_array($vars['node']->type, ['blog', 'video']))     { $vars['banner_title'] = t('Publications'); }
 
       // -- Препараты
       if ($vars["node"]->type == 'preparation') {
@@ -69,7 +83,7 @@ function ext_node_preprocess_page(&$vars)
         //  - Жалобы и Предложения, Центр идей
         if (in_array($vars["node"]->nid, [14, 15]))             { $vars['banner_title'] = t('Feedback');  }
         //  - Кадровый резерв
-        if ($vars["node"]->nid == 23)                           { $vars['banner_title'] = t('Job');  }
+        if ($vars["node"]->nid == 23)                           { $vars['banner_title'] = t('Careers');  }
       }
 
       if ($title_bkg_uri) {
@@ -146,6 +160,15 @@ function ext_node_preprocess_node(&$vars)
   if (in_array($node->type, ['weed', 'disease', 'pest', 'culture'])) {
     $vars['date'] = '';
     $vars['stats'] = '';
+
+    if ($vars['view_mode'] == 'full') {
+      // задать шаблон для страницы справочников
+      $node_type_suggestion_key = array_search('node__' . $vars['type'], $vars['theme_hook_suggestions']);
+      if ($node_type_suggestion_key !== FALSE) {
+        array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + 1, 0, ['node__handbook__full']);
+      }
+      $vars["classes_array"][] = 'node-handbook';
+    }
   }
 
   // -- Тип Видео

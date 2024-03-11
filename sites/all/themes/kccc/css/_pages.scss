@@ -68,3 +68,12 @@
     }
   }
 }
+
+.company-contacts,
+.company-experts {
+  margin-bottom: 2rem;
+
+  @media #{$laptop} {
+    margin-bottom: 4rem;
+  }
+}

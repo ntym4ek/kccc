@@ -3,8 +3,8 @@
 function sec_contacts_menu()
 {
   $items['kontakty'] = array(
-    'title' => 'Центральный офис',
-    'description' => 'Контакты центрального офиса',
+    'title' => 'Main office',
+    'description' => t('Main office contacts'),
     'page callback' => 'sec_contacts_page',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,

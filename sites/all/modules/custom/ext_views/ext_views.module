@@ -62,6 +62,9 @@ function ext_views_preprocess_page(&$vars)
     if (arg(0) == 'spravochniki') {
       $vars['banner_title'] = t('Handbooks');
     }
+    if (arg(0) == 'vakansii') {
+      $vars['banner_title'] = t('Careers');
+    }
     if (in_array(arg(0), ['otzyvy', 'vakansii', 'preparaty-v-pole']))     {
       $vars['is_title_on'] = false;
     }

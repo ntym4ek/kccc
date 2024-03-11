@@ -198,7 +198,7 @@ function kccc_webform_managed_file($variables)
   else {
     $element['upload']['#prefix'] = '<div class="input-group"><div class="input-group-btn"><div class="btn btn-brand btn-file">+';
     $element['upload']['#suffix'] = '</div></div>';
-    $element['upload_button']['#prefix'] = '<input class="form-text" type="text" readonly=""><div class="input-group-btn">';
+    $element['upload_button']['#prefix'] = '<input class="form-text" type="text" size="10" readonly=""><div class="input-group-btn">';
     $element['upload_button']['#suffix'] = '</div></div>';
   }
   drupal_add_js('
@@ -298,15 +298,6 @@ function kccc_image_widget($vars)
   $output .= '</div>';
 
   return $output;
-}
-
-/**
- * Implements hook_form_alter().
- */
-function kccc_form_alter(&$form, &$form_state, $form_id)
-{
-  if ($form_id == 'webform_client_form_23') {
-  }
 }
 
 

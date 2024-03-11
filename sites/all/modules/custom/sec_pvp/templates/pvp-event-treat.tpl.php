@@ -17,7 +17,7 @@
                           '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
                         '</a>' .
                       '</div>' .
-                      '<div class="image-note"><span>Фото ' . ++$i . ' из ' . count($event['photos']) . '.</span> ' . $item['note'] . '</div>' .
+                      '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['photos']) . '.</span> ' . $item['note'] . '</div>' .
                     '</div>';
             } ?>
           </div>

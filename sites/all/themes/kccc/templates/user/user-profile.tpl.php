@@ -15,7 +15,7 @@
         <div class="col-xs-12 col-md-3">
           <div class="profile-left">
             <div class="image">
-              <img src="<?php print $user_info["main"]["photo"]["url"]; ?>" alt="Фото пользователя" />
+              <img src="<?php print $user_info["main"]["photo"]["url"]; ?>" alt="<?php print t('User photo'); ?>" />
             </div>
           </div>
         </div>
@@ -44,14 +44,14 @@
             <div class="profile-info">
               <?php if (!empty($user_info['staff']['regions']['formatted'])): ?>
               <div class="row">
-                <div class="col-xs-12 col-md-3"><div class="label">Регион</div></div>
+                <div class="col-xs-12 col-md-3"><div class="label"><?php print t('Region', [], ['context' => 'representative']); ?></div></div>
                 <div class="col-xs-12 col-md-9"><div class="field"><?php print $user_info['staff']['regions']['formatted']; ?></div></div>
               </div>
               <?php endif; ?>
 
               <?php if (!empty($user_info['staff']['phones'])): ?>
               <div class="row">
-                <div class="col-xs-12 col-md-3"><div class="label">Телефон</div></div>
+                <div class="col-xs-12 col-md-3"><div class="label"><?php print t('Phone'); ?></div></div>
                 <div class="col-xs-12 col-md-9">
                   <div class="field">
                     <?php foreach ($user_info['staff']['phones'] as $phone): ?>
@@ -79,7 +79,7 @@
         <div class="col-xs-12 col-md-6 col-md-offset-3 col-lg-3 col-lg-offset-0">
           <div class="profile-qr">
             <div class="image">
-              <img src="<?php print $user_info["staff"]["qr_url"]; ?>" alt="Контакт представителя KCCC" />
+              <img src="<?php print $user_info["staff"]["qr_url"]; ?>" alt="<?php print t('KCCC employee'); ?>" />
             </div>
             <p class="text-muted text-center"><?php print t('Scan to add contact.'); ?></p>
           </div>

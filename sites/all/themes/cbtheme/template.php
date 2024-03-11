@@ -217,9 +217,9 @@ function cbtheme_preprocess_button(&$vars)
   if (!in_array('btn', $vars["element"]['#attributes']['class'])) {
     $vars["element"]['#attributes']['class'][] = 'btn';
     if (isset($vars["element"]["#id"])) {
-      if (strpos($vars["element"]["#id"], 'file') !== FALSE || strpos($vars["element"]["#id"], 'image') !== FALSE || strpos($vars["element"]["#id"], 'upload') !== FALSE) {
-        $vars["element"]['#attributes']['class'][] = 'btn-small';
-      }
+//      if (strpos($vars["element"]["#id"], 'file') !== FALSE || strpos($vars["element"]["#id"], 'image') !== FALSE || strpos($vars["element"]["#id"], 'upload') !== FALSE) {
+//        $vars["element"]['#attributes']['class'][] = 'btn-small';
+//      }
       if (strpos($vars["element"]["#id"], 'delete') !== FALSE || strpos($vars["element"]["#id"], 'remove') !== FALSE) {
         $vars["element"]['#attributes']['class'][] = 'btn-danger';
         if (strpos($vars["element"]["#id"], 'file') !== FALSE) {

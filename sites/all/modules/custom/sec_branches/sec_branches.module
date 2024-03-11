@@ -8,7 +8,7 @@ define('YANDEX_API_KEY', 'c1e4b070-a5e4-4a15-bc6e-ce64711bdf52');
 function sec_branches_menu()
 {
   $items['filialy'] = [
-    'title' => t('Branches'),
+    'title' => 'Branch offices',
     'page callback' => 'sec_branches_page',
     'access arguments' => ['access content'],
     'type' => MENU_CALLBACK,

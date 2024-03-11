@@ -150,6 +150,7 @@ function ext_node_replacements_list()
   $query->condition('n.type', 'preparation');
   $query->leftJoin('field_data_field_prep_formulation', 'pf', 'pf.entity_id = n.nid');
   $query->leftJoin('field_data_field_acronym', 'fa', 'fa.entity_id = pf.field_prep_formulation_tid');
+  $query->condition('fa.bundle', 'preparation_formulations');
   $query->addField('fa', 'field_acronym_value', 'formulation');
 
   if ($products = $query->execute()->fetchAllAssoc('nid')) {

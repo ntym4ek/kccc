@@ -98,7 +98,7 @@ form,
   .form-item label { display: inline-block; }
 }
 .form-managed-file {
-  display: flex;
+  //display: flex;  // открывается не на всю ширину
   .image-preview {
     flex: 0 0 120px;
     padding-bottom: 0;
@@ -121,6 +121,7 @@ form,
     input { border-top-right-radius: initial; border-bottom-right-radius: initial; }
   }
   .form-item:not(:first-child) .form-text,
+  .form-text { flex: auto; }
   .form-text:not(:first-child) {
     border-left: none;
   }

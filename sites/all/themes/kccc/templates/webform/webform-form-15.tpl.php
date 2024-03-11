@@ -37,16 +37,16 @@
     </div>
     <div class="col-sm-12 col-md-5 col-lg-4 col-lg-offset-2 last-md">
       <div class="block-attention">
-        <div class="h4">ВНИМАНИЕ!</div>
-        <p>Если вы&nbsp;хотите оставить предложение анонимно, то&nbsp;воспользуйтесь разделом «Жалобы и&nbsp;предложения»</p>
+        <div class="h4"><?php print t('Attention'); ?>!</div>
+        <p><?php print t('If you want to leave a suggestion anonymously, then use the «Complaints and suggestions» section'); ?></p>
         <div class="actions">
-          <a href="/predlozheniya" class="btn btn-brand btn-wide btn-underline">Жалобы и&nbsp;предложения</a>
+          <a href="<?php print url('node/14'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Complaints and&nbsp;suggestions'); ?></a>
         </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-7 col-lg-6">
       <div class="form-content">
-        <div class="intro">Постоянно развиваясь, мы&nbsp;всегда открыты новым идеям. <p>Сообщите о&nbsp;своих предложениях и&nbsp;пожеланиях по&nbsp;улучшению работы и мы обязательно их рассмотрим.</p></div>
+        <div class="intro"><?php print t('Constantly developing, we are always open to new ideas. <p>Tell us about your suggestions and suggestions for improving the work and we will definitely consider them.</p>'); ?></div>
         <?php
           // Print out the main part of the form.
           // Feel free to break this up and move the pieces within the array.

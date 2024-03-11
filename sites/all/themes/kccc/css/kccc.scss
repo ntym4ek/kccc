@@ -133,7 +133,7 @@ a { color: $brand-color; }
     }
     .sub-menu {
       border-left: 5px solid $brand-color;
-      min-width: 230px;
+      min-width: 260px;
       > li.leaf:not(.last) a { border-bottom: 1px solid $gray-lightest; }
     }
     .menu-bkg { justify-content: normal; }
@@ -687,7 +687,7 @@ ul.action-links {
   @media #{$laptop} {
     .product-info { padding: 0 1em; }
     .components {
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 1em;
     }
   }
@@ -786,7 +786,7 @@ ul.action-links {
     i { color: $brand-color; font-size: 5rem; }
   }
   .cultures {
-    text-align: center;
+    font-weight: 600; text-align: center;
     padding: 0 2rem; margin-bottom: 1rem;
   }
   .hobjects {
@@ -798,7 +798,7 @@ ul.action-links {
     }
   }
   .b {
-    text-align: center;
+    font-size: $font-size-small; text-align: center;
     margin-bottom: 1.2rem;
   }
   .title {
@@ -867,6 +867,7 @@ ul.action-links {
     font-size: $font-size-h3; font-weight: 700;
     padding-bottom: 2rem;
   }
+  .node-row { margin-bottom: 1rem; }
   .author {
     padding-bottom: 2rem;
   }
@@ -914,6 +915,7 @@ ul.action-links {
     .node-images .image {
       min-height: 250px;
     }
+    .node-row { margin-bottom: 3rem; }
   }
   @media #{$laptop} {
     margin-bottom: 4rem;
@@ -928,6 +930,22 @@ ul.action-links {
 }
 .cke_editable { padding: 0 1rem; }
 
+
+.node-handbook {
+  .node-title {
+    font-size: $font-size-h2; font-weight: 300;
+    padding-bottom: 1rem;
+  }
+  .title-latin {
+    color: $text-muted;
+  }
+
+  @media #{$laptop} {
+    .node-title {
+      font-size: $font-size-h1;
+    }
+  }
+}
 
 .node-preparation {
   .product-intro {
@@ -949,7 +967,7 @@ ul.action-links {
       background: $well-bkg-clr;
       border-radius: 5px;
       font-weight: 500;
-      padding: 1.5rem 2rem;
+      padding: 2rem;
       i.icon { font-size: 2em; }
     }
     .components,
@@ -981,8 +999,8 @@ ul.action-links {
         padding-bottom: 2rem;
       }
       .specification {
-        font-weight: 700;
-        i.icon { font-size: 3em; }
+        font-weight: 600;
+        i.icon { font-size: 2.5em; }
       }
       .components .icon,
       .formulation .icon { flex: 0 0 40px; }
@@ -994,7 +1012,7 @@ ul.action-links {
     margin-bottom: 2rem;
     .advantage {
       box-shadow: 1px 1px 10px #ccc;
-      color: $text-light; text-align: center;
+      text-align: center;
       padding: 1rem 1.5rem; margin-bottom: 1rem;
       .media { display: flex; justify-content: center; }
       i.icon {
@@ -1026,7 +1044,7 @@ ul.action-links {
       .advantage {
         padding: 2rem;
         i.icon { font-size: 8rem; }
-        .text { font-weight: 700; }
+        .text { font-weight: 600; }
       }
     }
   }
@@ -1215,7 +1233,7 @@ ul.action-links {
 
 
 
-// --- Формы ----------------------------------------------------------------------------
+// --- Формы и поля ---------------------------------------------------------------------------
 .block-webform {
   box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
   border-radius: 5px;
@@ -1420,6 +1438,69 @@ ul.action-links {
   }
 }
 
+.field {
+  .field-label {
+    color: $brand-color; font-weight: 600;
+    margin-bottom: 10px;
+
+    &:before {
+      content: "";
+      display: block;
+      background: $text-muted;
+      margin: 1rem 0;
+      width: 5rem; height: 2px;
+    }
+  }
+}
+
+.field-type-file {
+  .field-item {
+    margin-bottom: 2rem;
+    .file {
+      display: flex;
+      .file-img {
+        display: flex; align-items: center;
+        margin-right: .5rem; margin-left: -9px;
+        i.icon { color: $brand-color; font-size: 3.4rem; }
+      }
+      .file-info {
+        flex: 0 1 600px;
+        margin-top: 5px;
+        a {
+          color: $text-color; font-weight: 600;
+          &:hover { text-decoration: underline; }
+        }
+        span {
+          display: flex; align-items: center;
+          color: $text-muted; font-size: $font-size-small;
+          margin-top: 4px;
+        }
+      }
+      .file-download {
+        //display: flex; align-items: center;
+        //padding-top: 3px;
+      }
+    }
+  }
+}
+
+.form-managed-file {
+  line-height: 1;
+  .input-group { flex: auto; }
+  .file-img { margin-bottom: -4px; }
+  .file-widget-data,
+  .form-group,
+  .file {
+    display: flex; align-items: center;
+  }
+  .file-img { margin-right: 5px; }
+  .form-group { margin-right: 2rem; }
+  .file { margin-right: 1rem; }
+  .btn { margin: 0; }
+  .badge { color: $text-light; }
+  &.file-widget { align-items: center; } // выровнять добавление файлов в админке
+}
+
 // --- Элементы оформления -------------------------------------------------------------
 .underline {
   background: $brand-color;
@@ -1486,78 +1567,17 @@ ul.action-links {
   background: #fff;
   border-radius: 50px;
   border: .5rem solid #43B02A85;
-  i {
-    color: #fff; font-size: 1rem; font-style: normal; text-transform: uppercase;
-    background: $brand-color;
-    display: flex; justify-content: center; align-items: center;
-    width: 3rem; height: 3rem;
-    border-radius: 100px;
+  .icon {
+    color: $brand-color; font-size: 3rem;
   }
 
   @media #{$pad} {
-    i {
-      font-size: .7rem;
-      width: 2rem; height: 2rem;
-    }
+    .icon { font-size: 2rem; }
   }
 }
 
 
-// --- Оформление разделов (без отдельных css файлов) ------------------------------------------------------------------
-.company-contacts,
-.company-experts {
-  margin-bottom: 2rem;
-  @media #{$laptop} {
-    margin-bottom: 4rem;
-  }
-}
 
-.field-type-file {
-  .field-item {
-    margin-bottom: 2rem;
-    .file {
-      display: flex;
-      .file-img {
-        display: flex; align-items: center;
-        margin-right: .5rem; margin-left: -9px;
-        i.icon { color: $brand-color; font-size: 3.4rem; }
-      }
-      .file-info {
-        flex: 0 1 600px;
-        a {
-          color: $text-color; font-weight: 700;
-          &:hover { text-decoration: underline; }
-        }
-        span {
-          display: flex; align-items: center;
-          color: $text-muted; font-size: $font-size-small;
-          margin-top: 4px;
-        }
-      }
-      .file-download {
-      //display: flex; align-items: center;
-        //padding-top: 3px;
-      }
-    }
-  }
-}
-
-.form-managed-file {
-  line-height: 1;
-  .input-group { flex: auto; }
-  .file-img { margin-bottom: -4px; }
-  .file-widget-data,
-  .form-group,
-  .file {
-    display: flex; align-items: center;
-  }
-  .file-img { margin-right: 5px; }
-  .form-group { margin-right: 2rem; }
-  .file { margin-right: 1rem; }
-  .btn { margin: 0; }
-  .badge { color: $text-light; }
-  &.file-widget { align-items: center; } // выровнять добавление файлов в админке
-}
 
 // --- профиль пользователя
 .profile {
@@ -1657,17 +1677,14 @@ ul.action-links {
     padding: .5rem;
   }
   .region {
-    font-size: $font-size-large; font-weight: 700;
+    color: $text-color; font-weight: 700;
   }
+  .culture { color: $text-color; }
   .comment {
     color: $text-light; font-size: $font-size-small;
     span {
       display: block;
       color: $text-color; font-size: $font-size-base;
-    }
-    a {
-      color: inherit;
-      &:hover { text-decoration: underline; }
     }
   }
   .image img { display: block; }
@@ -1686,8 +1703,9 @@ ul.action-links {
     > div { margin-bottom: 1rem; }
     a { color: inherit; }
     .event-title {
-      color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center;
-      padding: .8rem; margin: 0 35px 1rem 2rem;
+      color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      display: flex; justify-content: center; align-items: center;
+      margin: 0 35px 1rem 2rem;
       height: 42px;
       // стрелка справа
       position: relative;
@@ -1701,7 +1719,7 @@ ul.action-links {
     }
     .date { text-align: center; }
     .header {
-      font-size: $font-size-large; font-weight: 700; text-align: center;
+      font-weight: 700; text-align: center;
       margin: 2rem 0 1rem;
     }
     .list {
@@ -1725,12 +1743,17 @@ ul.action-links {
       &::after { background: $brand-orange; }
     }
     .preparation {
-      font-size: 11px;
-      margin: 0 .8rem; // отступ для тени от hover-raise
+      margin: 1rem .8rem; // отступ для тени от hover-raise
+      padding: .5rem 0;
       .image { flex: 0 0 27%; }
       .product-info {
         flex: 0 0 73%;
         padding: 0 .5em;
+      }
+      .title { font-size: $font-size-large; }
+      .prep-spend {
+        font-size: $font-size-small;
+        span { font-size: $font-size-base; }
       }
     }
     .prep-spend,

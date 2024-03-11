@@ -3,8 +3,8 @@
 function sec_experts_menu()
 {
   $items['eksperty'] = array(
-    'title' => 'Агрономическая служба',
-    'description' => 'Контакты агроэкспертов',
+    'title' => 'Agronomic service',
+    'description' => t('Agronomic service contacts'),
     'page callback' => 'sec_experts_page',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,

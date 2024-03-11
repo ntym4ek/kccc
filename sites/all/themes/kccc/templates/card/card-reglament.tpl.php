@@ -10,7 +10,7 @@
       <?php endif; ?>
     </div>
 
-    <div class="cultures h4">
+    <div class="cultures">
       <?php print $card['cultures']['formatted']; ?>
     </div>
 

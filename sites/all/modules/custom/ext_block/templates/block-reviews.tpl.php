@@ -2,7 +2,7 @@
 ?>
 
 <div class="block-reviews">
-  <a href="/otzyvy">
+  <a href="<?php print url('otzyvy'); ?>">
     <div class="img"></div>
     <div class="c1"></div>
     <div class="c2"></div>

@@ -119,7 +119,7 @@
                       '<div class="image">' .
                         drupal_render($image) .
                       '</div>' .
-                      '<div class="image-note"><span>Фото ' . ++$key . ' из ' . count($images) . '.</span> ' . $image['#item']['title'] . '</div>' .
+                      '<div class="image-note"><span>' . t('Photo') . ' ' . ++$key . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($images) . '.</span> ' . $image['#item']['title'] . '</div>' .
                     '</div>';
           } ?>
         </div>

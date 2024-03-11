@@ -37,17 +37,17 @@
     </div>
     <div class="col-sm-12 col-md-5 col-lg-4 col-lg-offset-2 last-md">
       <div class="block-attention">
-        <div class="h4">ВНИМАНИЕ!</div>
-        <p>Это форма отправки сообщения без&nbsp;идентификации пользователя и&nbsp;обратной связи.</p>
-        <p>Если вы&nbsp;хотите получить ответ на&nbsp;своё обращение, воспользуйтесь «Центром идей».</p>
+        <div class="h4"><?php print t('Attention'); ?>!</div>
+        <p><?php print t('This is a form of sending a message without user identification and feedback.'); ?></p>
+        <p><?php print t('If you want to get an answer to your request, use the «Ideas Center».'); ?></p>
         <div class="actions">
-          <a href="/ideya" class="btn btn-brand btn-wide btn-underline">Центр идей</a>
+          <a href="<?php print url('node/15'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Ideas Center'); ?></a>
         </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-7 col-lg-6">
       <div class="form-content">
-        <div class="intro">Сообщите о&nbsp;своих пожеланиях или замечаниях&nbsp;– заполните форму ниже.</div>
+        <div class="intro"><?php print t('Tell us about your wishes or comments – fill out the form below.'); ?></div>
         <?php
           // Print out the main part of the form.
           // Feel free to break this up and move the pieces within the array.

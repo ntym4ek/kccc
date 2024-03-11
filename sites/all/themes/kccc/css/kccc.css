@@ -1633,18 +1633,16 @@ form .ajax-progress,
   .filter-wrapper .form-item label {
     display: inline-block; }
 
-.form-managed-file {
-  display: flex; }
-  .form-managed-file .image-preview {
-    flex: 0 0 120px;
-    padding-bottom: 0; }
-  .form-managed-file .image-widget-data,
-  .form-managed-file .file-widget-data {
-    float: initial; }
-  .form-managed-file .image-widget-data .form-group {
-    display: none; }
-  .form-managed-file .form-item {
-    margin-bottom: 0; }
+.form-managed-file .image-preview {
+  flex: 0 0 120px;
+  padding-bottom: 0; }
+.form-managed-file .image-widget-data,
+.form-managed-file .file-widget-data {
+  float: initial; }
+.form-managed-file .image-widget-data .form-group {
+  display: none; }
+.form-managed-file .form-item {
+  margin-bottom: 0; }
 
 .form-items-inline {
   display: flex;
@@ -1660,6 +1658,8 @@ form .ajax-progress,
       border-top-right-radius: initial;
       border-bottom-right-radius: initial; }
   .input-group .form-item:not(:first-child) .form-text,
+  .input-group .form-text {
+    flex: auto; }
   .input-group .form-text:not(:first-child) {
     border-left: none; }
   .input-group .form-item:not(:last-child) .form-text,
@@ -2234,7 +2234,7 @@ ul.menu {
 .block-app .section {
   display: flex;
   align-items: center;
-  font-weight: 700;
+  font-weight: 600;
   padding: 1rem 0; }
   .block-app .section .pointer {
     flex: 0 0 2em;
@@ -2876,6 +2876,14 @@ ul.menu {
           box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
           transform: translateY(-2px); } }
 
+.company-contacts,
+.company-experts {
+  margin-bottom: 2rem; }
+  @media only screen and (min-width: 1366px) {
+    .company-contacts,
+    .company-experts {
+      margin-bottom: 4rem; } }
+
 :root {
   --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
@@ -3004,7 +3012,7 @@ a {
         padding: .8rem 1rem .8rem 0; }
       .page > .header .sub-menu {
         border-left: 5px solid #43B02A;
-        min-width: 230px; }
+        min-width: 260px; }
         .page > .header .sub-menu > li.leaf:not(.last) a {
           border-bottom: 1px solid #E9E9E9; }
       .page > .header .menu-bkg {
@@ -3567,7 +3575,7 @@ ul.action-links {
     .card-product-h .product-info {
       padding: 0 1em; }
     .card-product-h .components {
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 1em; } }
 
 .card-contact {
@@ -3664,6 +3672,7 @@ ul.action-links {
       color: #43B02A;
       font-size: 5rem; }
   .card-reglament .cultures {
+    font-weight: 600;
     text-align: center;
     padding: 0 2rem;
     margin-bottom: 1rem; }
@@ -3678,6 +3687,7 @@ ul.action-links {
       .card-reglament .hobjects a:hover {
         text-decoration: underline; }
   .card-reglament .b {
+    font-size: 0.889rem;
     text-align: center;
     margin-bottom: 1.2rem; }
   .card-reglament .title {
@@ -3735,6 +3745,8 @@ ul.action-links {
     font-size: 1.333rem;
     font-weight: 700;
     padding-bottom: 2rem; }
+  .node-full .node-row {
+    margin-bottom: 1rem; }
   .node-full .author {
     padding-bottom: 2rem; }
   .node-full > .node-info {
@@ -3782,7 +3794,9 @@ ul.action-links {
       margin-bottom: 0; }
   @media only screen and (min-width: 1024px) {
     .node-full .node-images .image {
-      min-height: 250px; } }
+      min-height: 250px; }
+    .node-full .node-row {
+      margin-bottom: 3rem; } }
   @media only screen and (min-width: 1366px) {
     .node-full {
       margin-bottom: 4rem; }
@@ -3797,6 +3811,16 @@ ul.action-links {
 
 .cke_editable {
   padding: 0 1rem; }
+
+.node-handbook .node-title {
+  font-size: 1.667rem;
+  font-weight: 300;
+  padding-bottom: 1rem; }
+.node-handbook .title-latin {
+  color: #ccc; }
+@media only screen and (min-width: 1366px) {
+  .node-handbook .node-title {
+    font-size: 2.5rem; } }
 
 .node-preparation .product-intro {
   margin-bottom: 2rem; }
@@ -3818,7 +3842,7 @@ ul.action-links {
     background: #f1f1f1;
     border-radius: 5px;
     font-weight: 500;
-    padding: 1.5rem 2rem; }
+    padding: 2rem; }
     .node-preparation .product-intro .specification i.icon {
       font-size: 2em; }
   .node-preparation .product-intro .components,
@@ -3855,9 +3879,9 @@ ul.action-links {
         font-size: 2.5rem;
         padding-bottom: 2rem; }
       .node-preparation .product-intro .specification {
-        font-weight: 700; }
+        font-weight: 600; }
         .node-preparation .product-intro .specification i.icon {
-          font-size: 3em; }
+          font-size: 2.5em; }
       .node-preparation .product-intro .components .icon,
       .node-preparation .product-intro .formulation .icon {
         flex: 0 0 40px; }
@@ -3867,7 +3891,6 @@ ul.action-links {
   margin-bottom: 2rem; }
   .node-preparation .product-advantages .advantage {
     box-shadow: 1px 1px 10px #ccc;
-    color: #7D7C7C;
     text-align: center;
     padding: 1rem 1.5rem;
     margin-bottom: 1rem; }
@@ -3898,7 +3921,7 @@ ul.action-links {
       .node-preparation .product-advantages .advantage i.icon {
         font-size: 8rem; }
       .node-preparation .product-advantages .advantage .text {
-        font-weight: 700; } }
+        font-weight: 600; } }
 .node-preparation .product-specs {
   margin-bottom: 2rem; }
   .node-preparation .product-specs .screen-width {
@@ -4368,6 +4391,69 @@ ul.action-links {
     .field-type-datestamp .date-form-element-content .form-type-date-popup .description {
       display: none; }
 
+.field .field-label {
+  color: #43B02A;
+  font-weight: 600;
+  margin-bottom: 10px; }
+  .field .field-label:before {
+    content: "";
+    display: block;
+    background: #ccc;
+    margin: 1rem 0;
+    width: 5rem;
+    height: 2px; }
+
+.field-type-file .field-item {
+  margin-bottom: 2rem; }
+  .field-type-file .field-item .file {
+    display: flex; }
+    .field-type-file .field-item .file .file-img {
+      display: flex;
+      align-items: center;
+      margin-right: .5rem;
+      margin-left: -9px; }
+      .field-type-file .field-item .file .file-img i.icon {
+        color: #43B02A;
+        font-size: 3.4rem; }
+    .field-type-file .field-item .file .file-info {
+      flex: 0 1 600px;
+      margin-top: 5px; }
+      .field-type-file .field-item .file .file-info a {
+        color: #000;
+        font-weight: 600; }
+        .field-type-file .field-item .file .file-info a:hover {
+          text-decoration: underline; }
+      .field-type-file .field-item .file .file-info span {
+        display: flex;
+        align-items: center;
+        color: #ccc;
+        font-size: 0.889rem;
+        margin-top: 4px; }
+
+.form-managed-file {
+  line-height: 1; }
+  .form-managed-file .input-group {
+    flex: auto; }
+  .form-managed-file .file-img {
+    margin-bottom: -4px; }
+  .form-managed-file .file-widget-data,
+  .form-managed-file .form-group,
+  .form-managed-file .file {
+    display: flex;
+    align-items: center; }
+  .form-managed-file .file-img {
+    margin-right: 5px; }
+  .form-managed-file .form-group {
+    margin-right: 2rem; }
+  .form-managed-file .file {
+    margin-right: 1rem; }
+  .form-managed-file .btn {
+    margin: 0; }
+  .form-managed-file .badge {
+    color: #7D7C7C; }
+  .form-managed-file.file-widget {
+    align-items: center; }
+
 .underline {
   background: #43B02A;
   width: 8em;
@@ -4432,81 +4518,12 @@ ul.action-links {
   background: #fff;
   border-radius: 50px;
   border: .5rem solid #43B02A85; }
-  #back-to-top i {
-    color: #fff;
-    font-size: 1rem;
-    font-style: normal;
-    text-transform: uppercase;
-    background: #43B02A;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 100px; }
+  #back-to-top .icon {
+    color: #43B02A;
+    font-size: 3rem; }
   @media only screen and (min-width: 768px) {
-    #back-to-top i {
-      font-size: .7rem;
-      width: 2rem;
-      height: 2rem; } }
-
-.company-contacts,
-.company-experts {
-  margin-bottom: 2rem; }
-  @media only screen and (min-width: 1366px) {
-    .company-contacts,
-    .company-experts {
-      margin-bottom: 4rem; } }
-
-.field-type-file .field-item {
-  margin-bottom: 2rem; }
-  .field-type-file .field-item .file {
-    display: flex; }
-    .field-type-file .field-item .file .file-img {
-      display: flex;
-      align-items: center;
-      margin-right: .5rem;
-      margin-left: -9px; }
-      .field-type-file .field-item .file .file-img i.icon {
-        color: #43B02A;
-        font-size: 3.4rem; }
-    .field-type-file .field-item .file .file-info {
-      flex: 0 1 600px; }
-      .field-type-file .field-item .file .file-info a {
-        color: #000;
-        font-weight: 700; }
-        .field-type-file .field-item .file .file-info a:hover {
-          text-decoration: underline; }
-      .field-type-file .field-item .file .file-info span {
-        display: flex;
-        align-items: center;
-        color: #ccc;
-        font-size: 0.889rem;
-        margin-top: 4px; }
-
-.form-managed-file {
-  line-height: 1; }
-  .form-managed-file .input-group {
-    flex: auto; }
-  .form-managed-file .file-img {
-    margin-bottom: -4px; }
-  .form-managed-file .file-widget-data,
-  .form-managed-file .form-group,
-  .form-managed-file .file {
-    display: flex;
-    align-items: center; }
-  .form-managed-file .file-img {
-    margin-right: 5px; }
-  .form-managed-file .form-group {
-    margin-right: 2rem; }
-  .form-managed-file .file {
-    margin-right: 1rem; }
-  .form-managed-file .btn {
-    margin: 0; }
-  .form-managed-file .badge {
-    color: #7D7C7C; }
-  .form-managed-file.file-widget {
-    align-items: center; }
+    #back-to-top .icon {
+      font-size: 2rem; } }
 
 .profile {
   margin: 0 0 2rem; }
@@ -4599,8 +4616,10 @@ ul.action-links {
     font-weight: 500;
     padding: .5rem; }
   .pvp-teaser .region {
-    font-size: 1.222rem;
+    color: #000;
     font-weight: 700; }
+  .pvp-teaser .culture {
+    color: #000; }
   .pvp-teaser .comment {
     color: #7D7C7C;
     font-size: 0.889rem; }
@@ -4608,10 +4627,6 @@ ul.action-links {
       display: block;
       color: #000;
       font-size: 1rem; }
-    .pvp-teaser .comment a {
-      color: inherit; }
-      .pvp-teaser .comment a:hover {
-        text-decoration: underline; }
   .pvp-teaser .image img {
     display: block; }
 
@@ -4636,8 +4651,9 @@ ul.action-links {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-align: center;
-    padding: .8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 0 35px 1rem 2rem;
     height: 42px;
     position: relative; }
@@ -4656,7 +4672,6 @@ ul.action-links {
     text-align: center; }
   .node-season .pvp-event-check .header,
   .node-season .pvp-event-treat .header {
-    font-size: 1.222rem;
     font-weight: 700;
     text-align: center;
     margin: 2rem 0 1rem; }
@@ -4682,13 +4697,19 @@ ul.action-links {
   .node-season .pvp-event-treat .event-title::after {
     background: #FBBA00; }
 .node-season .pvp-event-treat .preparation {
-  font-size: 11px;
-  margin: 0 .8rem; }
+  margin: 1rem .8rem;
+  padding: .5rem 0; }
   .node-season .pvp-event-treat .preparation .image {
     flex: 0 0 27%; }
   .node-season .pvp-event-treat .preparation .product-info {
     flex: 0 0 73%;
     padding: 0 .5em; }
+  .node-season .pvp-event-treat .preparation .title {
+    font-size: 1.222rem; }
+  .node-season .pvp-event-treat .preparation .prep-spend {
+    font-size: 0.889rem; }
+    .node-season .pvp-event-treat .preparation .prep-spend span {
+      font-size: 1rem; }
 .node-season .pvp-event-treat .prep-spend,
 .node-season .pvp-event-treat .mix-spend {
   font-size: 1rem; }

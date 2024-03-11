@@ -3,8 +3,8 @@
 function sec_sellers_menu()
 {
   $items['predstaviteli'] = array(
-    'title' => 'Representatives',
-    'description' => 'Региональные представители',
+    'title' => 'Regional representatives',
+    'description' => t('Regional representatives contacts'),
     'page callback' => 'sec_sellers_page',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
@@ -120,7 +120,7 @@ function sec_sellers_filters_form($from, &$form_state)
 
   $form['filters']['area'] = [
     '#type' => 'select',
-    '#title' => 'Округ',
+    '#title' => t('Area'),
     '#options' => $reg_options,
     '#default_value' => $filters_set['areas']['current_id'] ?? null,
     '#ajax' => array(

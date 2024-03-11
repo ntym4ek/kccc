@@ -264,8 +264,6 @@ function ext_user_form_user_register_form_alter(&$form, &$form_state)
     // если пользователя редактирует Маркетинг
     if (user_has_role(MARKETING_RID)) {
       if (isset($form["fz152_agreement"])) $form["fz152_agreement"]["#access"] = false;
-      // поле со старым ID только для менеджера
-      $form["field_text"]["#access"] = true;
     }
     // пользователь сам регистрируется
     else {
@@ -328,7 +326,6 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form["locale"]["#access"] = false;
       $form["mimemail"]["#access"] = false;
       $form["account"]["name"]["#access"] = false;
-      $form["field_text"]["#access"] = false;
 
       // изменить вид полей
       $form['account']['mail']['#title'] = 'E-Mail';
@@ -683,7 +680,7 @@ function ext_user_get_user_info($user = null)
         ]
       ],
       'staff' => $staff,
-      'url' => '/' . drupal_get_path_alias('user/' . $account->uid)
+      'url' => url('user/' . $account->uid)
     ];
   }
 

@@ -195,7 +195,7 @@ function ext_admin_execute_form($form, $form_state)
 {
 //  $function = 'ext_admin_func_nodes_process';
 //  $function = 'ext_admin_func_preparations_import';
-  $function = 'ext_admin_func_pvp_import';
+//  $function = 'ext_admin_func_terms_process';
 
   $form['message'] = array(
     '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
@@ -211,11 +211,11 @@ function ext_admin_execute_form($form, $form_state)
     '#value' => $function,
   );
 
-  $form['file'] = array(
-    '#type' => 'file',
-    '#title' => 'Файл',
-    '#description' => 'Выберите файл',
-  );
+//  $form['file'] = array(
+//    '#type' => 'file',
+//    '#title' => 'Файл',
+//    '#description' => 'Выберите файл',
+//  );
 
   $form['run'] = [
     '#type' => 'submit',
@@ -264,6 +264,40 @@ function ext_admin_process_item($data)
   if (function_exists($data['func'])) {
     $data['func']($data['item']);
   }
+}
+
+/**
+ * -- обработка: добавление англ наименования ДВ -----------------------------
+ */
+function ext_admin_func_terms_process()
+{
+  $terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('preparation_components')->vid, 0, null, true);
+
+  foreach($terms as $term) {
+    if (isset($term->translations->data["und"])) {
+      $term->language = 'ru';
+      $term->name_language = 'ru';
+      $term->translations->original = 'ru';
+      $term->name_field["ru"][0]["value"] = $term->name_field["und"][0]["value"];
+      if (empty($term->field_name_latin["und"][0]["value"])) {
+        $term->name_field["en"][0]["value"] = $term->name_field["und"][0]["value"];
+        drupal_set_message($term->name_field["und"][0]["value"]);
+      } else {
+        $term->name_field["en"][0]["value"] = $term->field_name_latin["und"][0]["value"];
+      }
+      unset($term->name_field["und"]);
+      $term->translations->data["en"] = $term->translations->data["und"];
+      $term->translations->data["en"]["language"] = 'en';
+      $term->translations->data["en"]["source"] = 'ru';
+      $term->translations->data["ru"] = $term->translations->data["und"];
+      $term->translations->data["ru"]["language"] = 'ru';
+      $term->translations->data["ru"]["source"] = '';
+      unset($term->translations->data["und"]);
+      taxonomy_term_save($term);
+    }
+  }
+
+  return true;
 }
 
 /**
@@ -725,8 +759,8 @@ function ext_admin_func_pvp_process($pvp_item)
         }
 
         $season_wr->title = $pvp_item['season'] . ' ' . $pvp_item['year'] . '. ' .
-          $season_wr->field_culture->label() . ($pvp_item['culture']['note'] ? ' (' . $pvp_item['culture']['note'] . ')' : '') . '. ' .
-          $season_wr->field_region->label();
+        $season_wr->field_culture->label() . ($pvp_item['culture']['note'] ? ' (' . $pvp_item['culture']['note'] . ')' : '') . '. ' .
+        $season_wr->field_region->label();
         $season_wr->field_text = $pvp_item['id']; // сохранить старый ID
 
         $season_wr->save();

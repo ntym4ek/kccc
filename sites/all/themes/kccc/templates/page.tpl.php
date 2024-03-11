@@ -4,7 +4,7 @@
 
   <div class="nav-mobile">
     <div class="branding">
-      <div class="logo"><a href="/"><img src="<?php print $logo; ?>" /></a></div>
+      <div class="logo"><a href="<?php print url('<front>'); ?>"><img src="<?php print $logo; ?>" /></a></div>
     </div>
     <?php if (isset($search_form_mobile)): ?>
       <div class="search hide-lg">
@@ -36,10 +36,10 @@
             <div class="col col-1 full-height col-no-gutter">
               <div class="branding">
                 <div class="brand">
-                  <div class="ru"><a href="/">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
-                  <div class="en"><a href="/">Kirovo-Chepetsk Chemical Company</a></div>
+                  <div class="ru"><a href="<?php print url('<front>'); ?>">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
+                  <div class="en"><a href="<?php print url('<front>'); ?>">Kirovo-Chepetsk Chemical Company</a></div>
                 </div>
-                <div class="logo"><a href="/"><img src="/sites/default/files/images/logo/logo_t.png" alt="<?php print t('TH «Kirovo-Chepetsk Chemical Company» LLC'); ?>" /></a></div>
+                <div class="logo"><a href="<?php print url('<front>'); ?>"><img src="/sites/default/files/images/logo/logo_t.png" alt="<?php print t('TH «Kirovo-Chepetsk Chemical Company» LLC'); ?>" /></a></div>
               </div>
             </div>
             <div class="col col-2 full-height col-no-gutter">
@@ -193,10 +193,10 @@
           <div class="col-xs-12 col-md-4 col-lg-3">
             <div class="b">
               <div class="branding">
-                <div class="logo"><a href="/"><img src="<?php print $logo; ?>" alt="" /></a></div>
+                <div class="logo"><a href="<?php print url('<front>'); ?>"><img src="<?php print $logo; ?>" alt="" /></a></div>
                 <div class="brand">
-                  <div class="ru"><a href="/">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
-                  <div class="en"><a href="/">Kirovo-Chepetsk Chemical Company</a></div>
+                  <div class="ru"><a href="<?php print url('<front>'); ?>">Кирово-Чепецкая Химическая&nbsp;Компания</a></div>
+                  <div class="en"><a href="<?php print url('<front>'); ?>">Kirovo-Chepetsk Chemical Company</a></div>
                 </div>
               </div>
               <div class="legal-name">
@@ -221,8 +221,8 @@
                 <div class="menu about">
                   <div class="title"><?php print t('About us'); ?></div>
                   <ul>
-                    <li><a href="/o-kompanii"><?php print t('Information', [], ['context' => 'menu']); ?></a></li>
-                    <li><a href="/otzyvy"><?php print t('Reviews'); ?></a></li>
+                    <li><a href="<?php print url('node/7'); ?>"><?php print t('Information', [], ['context' => 'menu']); ?></a></li>
+                    <li><a href="<?php print url('otzyvy'); ?>"><?php print t('Reviews'); ?></a></li>
                     <?php if (isset($price_list_url)): ?>
                       <li><a id="pricelist" href="<?php print $price_list_url; ?>" title="<?php print t('Download price-list'); ?>" download><?php print t('Price-list'); ?></a></li>
                     <?php endif;?>
@@ -236,9 +236,9 @@
                 <div class="menu contacts">
                   <div class="title"><?php print t('Contacts'); ?></div>
                   <ul>
-                    <li><a href="/kontakty"><?php print t('Central office'); ?></a></li>
-                    <li><a href="/predstaviteli"><?php print t('Regional representatives'); ?></a></li>
-                    <li><a href="/filialy"><?php print t('Find us'); ?></a></li>
+                    <li><a href="<?php print url('kontakty'); ?>"><?php print t('Main office'); ?></a></li>
+                    <li><a href="<?php print url('predstaviteli'); ?>"><?php print t('Regional representatives'); ?></a></li>
+                    <li><a href="<?php print url('filialy'); ?>"><?php print t('Find us'); ?></a></li>
                     <li class="socials">
                       <a href="https://vk.com/public147827276" rel="nofollow" target="_blank" title="<?php print t('VK'); ?>"><i class="icon icon-rounded icon-068 hover-raise"></i></a>
                       <a href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="<?php print t('OK'); ?>"><i class="icon icon-rounded icon-090 hover-raise"></i></a>
@@ -264,6 +264,6 @@
       </div>
   </div>
 
-    <div id="back-to-top"><i>top</i></div>
+  <div id="back-to-top"><i class="icon icon-124"></i></div>
 </div>
 

@@ -37,16 +37,16 @@
     </div>
     <div class="col-sm-12 col-md-4 col-md-offset-2 last-md">
       <div class="block-attention">
-        <div class="h4">ВНИМАНИЕ!</div>
-        <p>Возможно, у нас уже есть вакансия по Вашей специальности. Проверить можно в разделе «Вакансии»</p>
+        <div class="h4"><?php print t('Attention'); ?>!</div>
+        <p><?php print t('Perhaps we already have a vacancy in your specialty. You can check it in the «Vacancies» section'); ?></p>
         <div class="actions">
-          <a href="/vakansii" class="btn btn-brand btn-wide btn-underline">Вакансии</a>
+          <a href="/vakansii" class="btn btn-brand btn-wide btn-underline"><?php print t('Vacancies'); ?></a>
         </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-6">
       <div class="form-content">
-        <div class="intro">Если не&nbsp;нашли на&nbsp;сайте необходимую вакансию, отправьте своё резюме в&nbsp;наш кадровый резерв.<p>Возможно специалист Вашей квалификации нам скоро потребуется.</p></div>
+        <div class="intro"><?php print t('If you have not found the necessary vacancy on the website, send your resume to our personnel reserve.<p>We may need a specialist of your qualifications soon.</p>'); ?></div>
         <?php
           // Print out the main part of the form.
           // Feel free to break this up and move the pieces within the array.

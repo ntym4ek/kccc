@@ -80,61 +80,66 @@
  * @ingroup themeable
  */
 ?>
-<div class="row">
-  <div class="col-xs-12 col-md-8">
+<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
-    <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
-
-      <?php if ($title): ?>
-      <div class="node-title">
-        <?php print $title; ?>
-      </div>
-      <?php endif; ?>
-
-      <?php if (!empty($date) || !empty($stats)): ?>
-      <div class="node-info">
-        <div class="date"><?php print $date; ?></div>
-        <?php if (!empty($stats['totalcount'])): ?>
-        <div class="stats">
-          <div class="media"><i class="icon icon-099"></i></div>
-          <div class="text"><?php print $stats['totalcount']; ?></div>
+  <div class="node-row">
+    <div class="row">
+      <div class="col-xs-12 col-md-4">
+        <div class="image">
+          <?php print drupal_render($images[0]); ?>
         </div>
+
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <?php if ($title): ?>
+          <div class="node-title">
+            <?php print $title; ?>
+          </div>
         <?php endif; ?>
-      </div>
-      <?php endif; ?>
 
-      <?php print drupal_render($content); ?>
+        <?php if (!empty($content["field_title_latin"])): ?>
+          <div class="title-latin">
+            <?php print drupal_render($content["field_title_latin"]); ?>
+          </div>
+        <?php endif; ?>
 
-      <div class="field field-todo">
-        <div class="field-label"><?php print t('Instructions'); ?>:</div>
-        <div class="field-item">
-          <ul>
-            <li><?php print t('Send a response'); ?></li>
-            <li><?php print t('Wait for a call with an invitation to an interview from our HR staff'); ?></li>
-          </ul>
-        </div>
-      </div>
+        <?php if (!empty($body[0]["safe_summary"])): ?>
+          <div class="node-summary">
+            <?php print $body[0]["safe_summary"]; ?>
+          </div>
+        <?php endif; ?>
 
-      <div class="field field-contact">
-        <div class="field-item">
-          <?php print $job_contact; ?>
-        </div>
-      </div>
+        <?php if (!empty($field_text[0]['value'])): ?>
+          <?php print drupal_render($content['field_text']); ?>
+        <?php endif; ?>
 
-    </div>
-  </div>
-  <div class="col-xs-12 col-md-4">
-    <?php print drupal_render($job_webform); ?>
-
-    <div class="block-attention">
-      <div class="h4"><?php print t('Attention'); ?>!</div>
-      <p><?php print t('If the vacancy does not suit you, send your VC to our personnel reserve. We may need a specialist of your qualifications soon.'); ?></p>
-      <div class="actions">
-        <a href="<?php print url('node/23'); ?>" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Personnel reserve'); ?></a>
       </div>
     </div>
-
   </div>
+
+  <?php if (!empty($measures)): ?>
+  <div class="screen-width">
+    <div class="section-title">
+      <div><?php print t('Treat measures'); ?></div>
+      <div class="underline"></div>
+    </div>
+  </div>
+  <?php endif; ?>
+
+  <?php if (!empty($body[0]["safe_value"])): ?>
+  <?php hide($content['body']); ?>
+  <div class="screen-width">
+    <div class="section-title invert">
+      <div><?php print t('Description'); ?></div>
+      <div class="underline"></div>
+    </div>
+  </div>
+
+  <div class="node-text">
+    <?php print $body[0]["safe_value"]; ?>
+  </div>
+  <?php endif; ?>
+
+  <?php print drupal_render($content); ?>
+
 </div>
-
-
