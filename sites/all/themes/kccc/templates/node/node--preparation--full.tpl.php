@@ -183,7 +183,7 @@
 
           <?php foreach($product_info['reglaments_cards'] as $card): ?>
           <div class="swiper-slide">
-            <?php print $card?>
+            <?php print $card; ?>
           </div>
           <?php endforeach; ?>
 

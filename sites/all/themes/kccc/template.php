@@ -76,9 +76,13 @@ function kccc_theme()
       'variables' => [],
       'template' => 'templates/card/card-contact',
     ],
-    'card_reglament' => [
+    'card_decor' => [
       'variables' => [],
-      'template' => 'templates/card/card-reglament',
+      'template' => 'templates/card/card-decor',
+    ],
+    'content_reglament' => [
+      'variables' => [],
+      'template' => 'templates/card/content-reglament',
     ],
   ];
 }

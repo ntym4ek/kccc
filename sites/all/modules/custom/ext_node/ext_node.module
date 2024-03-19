@@ -123,6 +123,7 @@ function ext_node_preprocess_node(&$vars)
   }
   $vars['images'] = $images;
 
+  hide($vars["content"]["field_image"]);
 
   // -- Статистика
   $vars['date'] = date('d.m.Y', $node->created);
@@ -168,6 +169,17 @@ function ext_node_preprocess_node(&$vars)
         array_splice($vars['theme_hook_suggestions'], $node_type_suggestion_key + 1, 0, ['node__handbook__full']);
       }
       $vars["classes_array"][] = 'node-handbook';
+
+      // Меры борьбы
+      $vars['measures'] = [];
+      if (!empty($vars['content']['field_hb_measure_agro'])) {
+        $vars['measures']['agro'] = theme('card_decor', ['icon' => '046', 'title' => t('Agricultural'), 'content' => drupal_render($vars['content']['field_hb_measure_agro'])]);
+        hide($vars['content']['field_hb_measure_agro']);
+      }
+      if (!empty($node->field_hb_measure_chem['und'][0]['value'])) {
+        $vars['measures']['chem'] = theme('card_decor', ['icon' => '047', 'title' => t('Chemical'), 'content' => drupal_render($vars['content']['field_hb_measure_chem'])]);
+        hide($vars['content']['field_hb_measure_chem']);
+      }
     }
   }
 
@@ -223,7 +235,8 @@ function ext_node_preprocess_node(&$vars)
         $cultures = $hobjects = [];
         if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
           foreach ($product_regs as $reg) {
-            $reglaments_cards[] = theme('card_reglament', ['card' => $reg]);
+            $content = theme('content_reglament', ['card' => $reg]);
+            $reglaments_cards[] = theme('card_decor', ['icon' => $reg['icon_num'], 'title' => $reg['cultures']['formatted'], 'content' => $content]);
             $cultures = array_merge($cultures, array_values($reg['cultures']['list']));
 
             foreach ($reg['hobjects']['weed_groups'] as $wg) {
@@ -370,9 +383,18 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
     $form["options"]["sticky"]["#access"] = false;
 
     // изменить формат поля Body на редактор по умолчанию
-    if (isset($form["body"]["und"][0]["#type"]) && $form["body"]["und"][0]["#type"] == 'text_format' && !$form["body"]["und"][0]["#format"]) {
-      $form["body"]["und"][0]["#format"] = 'filtered_html';
+    if (isset($form["body"])) {
+      $lang = $form["body"]["#language"];
+      if ($form["body"][$lang][0]["#type"] == 'text_format' && !$form["body"][$lang][0]["#format"]) {
+        $form["body"][$lang][0]["#format"] = 'filtered_html';
+      }
     }
+//    if (isset($form['field_hb_classification'])) {
+//      $lang = $form["field_hb_classification"]["#language"];
+//      if ($form["body"]["und"][0]["#type"] == 'text_format' && !$form["body"]["und"][0]["#format"]) {
+//        $form["body"]["und"][0]["#format"] = 'filtered_html';
+//      }
+//    }
 
     // предварительная обработка текстов
     require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');

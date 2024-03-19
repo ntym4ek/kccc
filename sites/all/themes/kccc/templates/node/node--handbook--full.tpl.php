@@ -85,7 +85,7 @@
   <div class="node-row">
     <div class="row">
       <div class="col-xs-12 col-md-4">
-        <div class="image">
+        <div class="image hover-raise">
           <?php print drupal_render($images[0]); ?>
         </div>
 
@@ -105,23 +105,51 @@
 
         <?php if (!empty($body[0]["safe_summary"])): ?>
           <div class="node-summary">
-            <?php print $body[0]["safe_summary"]; ?>
+            <?php print strip_tags($body[0]["safe_summary"]); ?>
           </div>
+        <?php endif; ?>
+
+        <?php if (!empty($field_hb_classification[0]['value'])): ?>
+          <?php print drupal_render($content['field_hb_classification']); ?>
         <?php endif; ?>
 
         <?php if (!empty($field_text[0]['value'])): ?>
           <?php print drupal_render($content['field_text']); ?>
         <?php endif; ?>
 
+        <?php if (!empty($field_classificator_flora[0])): ?>
+          <?php print drupal_render($content['field_classificator_flora']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($field_cultures[0])): ?>
+          <?php print drupal_render($content['field_cultures']); ?>
+        <?php endif; ?>
+
       </div>
     </div>
   </div>
 
-  <?php if (!empty($measures)): ?>
-  <div class="screen-width">
-    <div class="section-title">
-      <div><?php print t('Treat measures'); ?></div>
-      <div class="underline"></div>
+  <?php if ($measures): ?>
+  <div class="node-row">
+    <div class="screen-width">
+      <div class="section-title">
+        <div><?php print t('Treat measures'); ?></div>
+        <div class="underline"></div>
+      </div>
+    </div>
+
+    <div class="row center-xs">
+      <?php if (!empty($measures['agro'])): ?>
+      <div class="col-xs-12 col-md-6">
+        <?php print $measures['agro']; ?>
+      </div>
+      <?php endif; ?>
+
+      <?php if (!empty($measures['chem'])): ?>
+      <div class="col-xs-12 col-md-6">
+        <?php print $measures['chem']; ?>
+      </div>
+      <?php endif; ?>
     </div>
   </div>
   <?php endif; ?>

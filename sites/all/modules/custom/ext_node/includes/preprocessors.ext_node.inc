@@ -5,26 +5,43 @@
  */
 function ext_node_prepare_content_to_save(&$node)
 {
-  foreach($node->body as $lang => $body) {
-    $text = $body[0]['value'];
+  if (!empty($node->body)) {
+    foreach ($node->body as $lang => $body) {
+      $text = $body[0]['value'];
 
-    // убираем кавычки, чтобы проще было обрабатывать
-    // типограф позже вернёт
-    $text = str_replace(['«', '»'], '"', $text);
+      // убираем кавычки, чтобы проще было обрабатывать
+      // типограф позже вернёт
+      $text = str_replace(['«', '»'], '"', $text);
 
-    // декодируем спецсимволы &;
-    $text = html_entity_decode($text);
+      // декодируем спецсимволы &;
+      $text = html_entity_decode($text);
+      $text = str_replace(' ', ' ', $text);
 
-    // убрать все ссылки (с исключениями)
-    $text = ext_node_remove_all_links($text);
-    // проставить внутренние ссылки
-    $text = ext_node_place_internal_links($text);
+      // убрать все ссылки (с исключениями)
+      $text = ext_node_remove_all_links($text);
+      // проставить внутренние ссылки
+      $text = ext_node_place_internal_links($text);
 
-    $node->body[$lang][0]['value'] = $text;
-
-    // запрос к типографу, причёсываем текст
-    if ($text = ext_node_text_typograph_request($text)) {
       $node->body[$lang][0]['value'] = $text;
+
+      // запрос к типографу, причёсываем текст
+      if ($text = ext_node_text_typograph_request($text)) {
+        $node->body[$lang][0]['value'] = $text;
+      }
+    }
+  }
+
+  if (!empty($node->field_hb_measure_chem)) {
+    foreach ($node->field_hb_measure_chem as $lang => &$field) {
+      if (!empty($field[0]['value'])) {
+        $text = $field[0]['value'];
+        $text = html_entity_decode($text);
+        $text = str_replace(' ', ' ', $text);
+        $text = ext_node_remove_all_links($text);
+        $text = ext_node_place_internal_links($text);
+
+        $field[0]['value'] = $text;
+      }
     }
   }
 }

@@ -3638,24 +3638,28 @@ ul.action-links {
     .card-handbook {
       margin-bottom: 2rem; } }
 
-.card-reglament {
-  padding: 0 2rem;
-  min-height: 350px; }
-  .card-reglament .content {
+.card-decor {
+  padding: 0 2rem; }
+  .card-decor .content {
     background: #f1f1f1;
     border-radius: 20px;
+    text-align: center;
     margin: 30px 0 0 30px;
     padding: 1rem;
     position: relative; }
-  .card-reglament .decor-line {
+    .card-decor .content ul {
+      text-align: left; }
+  .card-decor .decor-line {
     position: absolute;
     top: 0;
     left: -30px;
     width: 30px;
-    height: 280px;
+    height: 40%;
+    max-height: 250px;
+    min-height: 150px;
     background: #43B02A;
     border-bottom-left-radius: 25px; }
-  .card-reglament .decor-circle {
+  .card-decor .decor-circle {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -3668,44 +3672,25 @@ ul.action-links {
     border-radius: 60px;
     width: 80px;
     height: 80px; }
-    .card-reglament .decor-circle i {
+    .card-decor .decor-circle i {
       color: #43B02A;
       font-size: 5rem; }
-  .card-reglament .cultures {
+  .card-decor .title {
     font-weight: 600;
     text-align: center;
     padding: 0 2rem;
     margin-bottom: 1rem; }
-  .card-reglament .hobjects {
-    font-size: 0.889rem;
-    text-align: center;
-    padding: 0 2rem;
-    margin-bottom: 1rem;
-    min-height: 50px; }
-    .card-reglament .hobjects a {
-      color: inherit; }
-      .card-reglament .hobjects a:hover {
-        text-decoration: underline; }
-  .card-reglament .b {
-    font-size: 0.889rem;
-    text-align: center;
-    margin-bottom: 1.2rem; }
-  .card-reglament .title {
-    font-size: 0.889rem;
-    margin-bottom: 5px; }
-  .card-reglament .text {
-    font-size: 1.222rem;
-    font-weight: 500; }
   @media only screen and (min-width: 1024px) {
-    .card-reglament {
+    .card-decor {
       padding-right: 0; }
-      .card-reglament .content {
+      .card-decor .content {
         margin: 40px 0 0 80px;
-        padding: 1rem 2rem; }
-      .card-reglament .decor-line {
+        padding: 1rem 2rem;
+        min-height: 250px; }
+      .card-decor .decor-line {
         left: -40px;
         width: 40px; }
-      .card-reglament .decor-circle {
+      .card-decor .decor-circle {
         left: -80px;
         width: 120px;
         height: 120px; } }
@@ -3818,6 +3803,15 @@ ul.action-links {
   padding-bottom: 1rem; }
 .node-handbook .title-latin {
   color: #ccc; }
+.node-handbook .image {
+  height: 100%; }
+  .node-handbook .image img {
+    height: 100%;
+    object-fit: cover; }
+.node-handbook .field-name-field-cultures a {
+  color: inherit; }
+  .node-handbook .field-name-field-cultures a:hover {
+    text-decoration: underline; }
 @media only screen and (min-width: 1366px) {
   .node-handbook .node-title {
     font-size: 2.5rem; } }
@@ -3978,6 +3972,26 @@ ul.action-links {
       position: relative;
       margin-left: calc(-50vw + 50%);
       margin-right: calc(-50vw + 50%); } }
+  .node-preparation .product-reglaments .card-decor .hobjects {
+    font-size: 0.889rem;
+    text-align: center;
+    padding: 0 2rem;
+    margin-bottom: 1rem;
+    min-height: 50px; }
+    .node-preparation .product-reglaments .card-decor .hobjects a {
+      color: inherit; }
+      .node-preparation .product-reglaments .card-decor .hobjects a:hover {
+        text-decoration: underline; }
+  .node-preparation .product-reglaments .card-decor .b {
+    font-size: 0.889rem;
+    text-align: center;
+    margin-bottom: 1.2rem; }
+  .node-preparation .product-reglaments .card-decor .label {
+    font-size: 0.889rem;
+    margin-bottom: 5px; }
+  .node-preparation .product-reglaments .card-decor .text {
+    font-size: 1.222rem;
+    font-weight: 500; }
   @media only screen and (min-width: 1024px) {
     .node-preparation .product-reglaments {
       margin-bottom: 4rem; } }
@@ -4399,7 +4413,7 @@ ul.action-links {
     content: "";
     display: block;
     background: #ccc;
-    margin: 1rem 0;
+    margin-bottom: 10px;
     width: 5rem;
     height: 2px; }
 
