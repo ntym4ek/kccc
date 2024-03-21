@@ -766,7 +766,7 @@ function sec_catalog_get_reglament_info($regl_id)
       $end = [
         'id' => $regl_wr->field_reg_treat_end->getIdentifier(),
         'label' => $regl_wr->field_reg_treat_end->label(),
-        'weight' => $regl_wr->field_reg_treat_start->weight->value(),
+        'weight' => $regl_wr->field_reg_treat_end->weight->value(),
       ];
     }
 

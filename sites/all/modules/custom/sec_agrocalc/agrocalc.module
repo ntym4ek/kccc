@@ -3,13 +3,14 @@
 include 'includes/calc.agrocalc.module';
 
 const VOCAB_GROW_CLASSIFICATION = 12;
+const VOCAB_REGIONS = 8;
 
 /**
  * Implements hook_menu().
  */
 function agrocalc_menu()
 {
-  $items['agro-calculator'] = array(
+  $items['agrocalc'] = array(
     'title' => t('Agro Calculator'),
     'description' => t('Agro Calculator'),
     'page callback' => 'drupal_get_form',
@@ -22,13 +23,13 @@ function agrocalc_menu()
 }
 
 /**
- * --------------------------------- Создание собственной библиотеки --------------------------------------------------
  * Implements hook_libraries_info().
  * https://www.drupal.org/docs/7/modules/libraries-api-7x/using-libraries-api-2x-as-a-module-developer
  * For defining external libraries.
  */
 function agrocalc_libraries_info()
 {
+  // Библиотека со слайдером диапазона
   // A very simple library. No changing APIs (hence, no versions), no variants.
   // Expected to be extracted into 'sites/all/libraries/ion'.
   $libraries['ionrange'] = array(
@@ -55,6 +56,10 @@ function agrocalc_libraries_info()
 function agrocalc_theme()
 {
   return [
+    'agrocalc_form' => [
+      'render element' => 'form',
+      'template' => 'templates/program-form',
+    ],
     'protection_program' => array(
       'variables' => array('program' => NULL),
       'template' => 'templates/protection-program',
@@ -68,28 +73,20 @@ function agrocalc_form($from, &$form_state)
     '#prefix' => '<div id="agrocalc-form-wrapper">',
     '#suffix' => '</div>',
     '#attributes' => ['class' => ['agrocalc-form']],
-    'field' => [
+    'intro' => ['#markup' => t('<p>You need to enter the parameters of your field, then specify the problems that are present on it and click the "Calculate" button.</p>' .
+                                      '<p>The protection program we have proposed can be adjusted with switches and sent to a representative for the region.</p>' .
+                                      '<p>You will be contacted with an offer of an individual program and prices.</p>')],
+    'params' => [
+      '#type' => 'container',
+      'field' => [
         '#type' => 'fieldset',
-        '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>' . '<img class="help1 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-down" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/1.png" alt="Помощь" />',
+        '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>',
+      ],
     ],
-    'problem' => [
-        '#type' => 'fieldset',
-        '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>' . '<img class="help2 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/2.png"  alt="Помощь"/>'
-    ],
-    'addon' => ['#type' => 'fieldset', '#title' => t('Additional')],
     'actions' => [
-        '#type' => 'container',
-        '#attributes' => array('class' => array('form-actions')),
-        'help' => [
-            '#markup' => '<img class="help3 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" data-a-effect="slide-right" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/3.png" alt="Помощь"/>'
-            ]
+      '#type' => 'container',
+      '#attributes' => array('class' => array('form-actions')),
     ],
-    '#attached' => [
-        'js' => [
-            drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
-            drupal_get_path('module', 'agrocalc') . '/js/accounting.js'
-        ],
-    ]
   ];
 
   // ion range slider library
@@ -97,7 +94,7 @@ function agrocalc_form($from, &$form_state)
     $form['#attached']['libraries_load'][] = array('ionrange');
   }
 
-  // дефолтные переменные
+  // Дефолтные переменные ------------------------------------------------------
   $culture_id = empty($form_state['input']['culture']) ? '' : $form_state['input']['culture'];
   $phase_id = empty($form_state['input']['phase']) ? '' : $form_state['input']['phase'];
   $area = empty($form_state['input']['area']) ? '100' : $form_state['input']['area'];
@@ -119,6 +116,20 @@ function agrocalc_form($from, &$form_state)
   $fert = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
 
 
+  // Кнопка  -------------------------------------------------------------------
+  $form['actions']['calc'] = [
+    '#type' => 'button',
+    '#value' => t('Calculate'),
+    '#name' => 'calc',
+    '#attributes' => ['class' => ['btn-brand', 'btn-wide']],
+    '#disabled' => $culture_id ? FALSE : TRUE,
+    '#suffix' => '</div>',
+    '#ajax' => [
+      'callback' => 'agrocalc_form_refresh',
+      'wrapper' => 'agrocalc-form-wrapper',
+    ],
+  ];
+
   // список Культур, для которых есть Регламенты -------------------------------
   $query = db_select('node', 'n');
   $query->condition('n.type', 'culture');
@@ -132,7 +143,7 @@ function agrocalc_form($from, &$form_state)
   $results = $query->execute()->fetchAllKeyed();
 
   $options = ['' => t('Choose option')] + $results;
-  $form['field']['culture'] = array(
+  $form['params']['field']['culture'] = array(
     '#type' => 'select',
     '#title' => t('Culture'),
     '#options' => $options,
@@ -143,15 +154,8 @@ function agrocalc_form($from, &$form_state)
     ),
   );
 
-  // Площадь посева --------------------------------------------------------------------------------------------------
-  $form['field']['area'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Area, he'),
-    '#disabled' => $culture_id ? false : true,
-    '#default_value' => $area,
-  );
 
-  // список Фаз, для которых есть Регламенты по Культуре ---------------------
+  // список Фаз, для которых есть Регламенты по Культуре -----------------------
   if ($culture_id) {
     $query = db_select('taxonomy_term_data', 't');
     $query->condition('t.vid', VOCAB_GROW_CLASSIFICATION);
@@ -166,7 +170,7 @@ function agrocalc_form($from, &$form_state)
     $results = $query->execute()->fetchAllKeyed();
   }
   $options = ['all' => t('All phases')] + $results;
-  $form['field']['phase'] = array(
+  $form['params']['field']['phase'] = array(
     '#type' => 'select',
     '#title' => t('Culture phase'),
     '#options' => $options,
@@ -174,184 +178,215 @@ function agrocalc_form($from, &$form_state)
     '#default_value' => $phase_id,
   );
 
-  // Норма высева ----------------------------------------------------------------------------------------------------
-  $form['field']['seed'] = array(
+  // Площадь посева ------------------------------------------------------------
+  $form['params']['field']['area'] = array(
     '#type' => 'textfield',
-    '#title' => t('Seeding rate, kg/he'),
+    '#title' => t('Area, he'),
+    '#disabled' => $culture_id ? false : true,
+    '#default_value' => $area,
+  );
+
+  // Норма высева --------------------------------------------------------------
+  $form['params']['field']['seed'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Seed ratio, kg/he'),
     '#disabled' => $culture_id ? false : true,
     '#default_value' => $seed,
   );
 
-  // список всех Сорняков --------------------------------------------------------------------------------------------
-  $query = db_select('node', 'n');
-  $query->condition('n.type', 'weed');
-  $query->condition('n.status', 1);
-  $query->fields('n', array('nid', 'title'));
-  $query->orderBy('n.title');
-  $results = $query->execute()->fetchAllKeyed();
+  if ($culture_id) {
+    $form['params']['problem'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>'
+    ];
+    $form['params']['addon'] = ['#type' => 'fieldset', '#title' => t('Additional')];
+    $form['#attached'] = [
+      'js' => [
+        drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
+        drupal_get_path('module', 'agrocalc') . '/js/accounting.js'
+      ],
+    ];
 
-  $options = $results;
-  $form['problem']['weeds'] = array(
-    '#type' => 'select',
-    '#title' => t('Weeds'),
-    '#options' => $options,
-    '#chosen' => true,
-    '#attributes' => ['class' => ['chosen-select']],
-    '#multiple' => true,
-    '#default_value' => $weed_ids,
-    '#disabled' => $culture_id ? false : true,
-  );
 
-    // todo список Вредителей по Культуре -----------------------------------------------------------------------------------
-  $query = db_select('node', 'n');
-  $query->condition('n.status', 1);
-  $query->condition('n.type', 'pest');
-  $query->condition('n.status', 1);
-  $query->fields('n', array('nid', 'title'));
-  $query->orderBy('n.title');
-  $results = $query->execute()->fetchAllKeyed();
+    // список всех Сорняков ------------------------------------------------------
+    $query = db_select('node', 'n');
+    $query->condition('n.type', 'weed');
+    $query->condition('n.status', 1);
+    $query->fields('n', ['nid', 'title']);
+    $query->orderBy('n.title');
+    $results = $query->execute()->fetchAllKeyed();
 
-  $options = $results;
-  $form['problem']['pests'] = array(
-    '#type' => 'select',
-    '#title' => t('Pests'),
-    '#options' => $options,
-    '#chosen' => true,
-    '#attributes' => ['class' => ['chosen-select']],
-    '#multiple' => true,
-    '#default_value' => $pest_ids,
-    '#disabled' => $culture_id ? false : true,
-  );
+    $options = $results;
+    $form['params']['problem']['weeds'] = [
+      '#type' => 'select',
+      '#title' => t('Weeds'),
+      '#options' => $options,
+      '#chosen' => TRUE,
+      '#attributes' => ['class' => ['chosen-select']],
+      '#multiple' => TRUE,
+      '#default_value' => $weed_ids,
+      '#disabled' => $culture_id ? FALSE : TRUE,
+    ];
 
-  // todo список Болезней по Культуре -------------------------------------------------------------------------------------
-  $query = db_select('node', 'n');
-  $query->condition('n.status', 1);
-  $query->condition('n.type', 'disease');
-  $query->condition('n.status', 1);
-  $query->fields('n', array('nid', 'title'));
-  $query->orderBy('n.title');
-  $results = $query->execute()->fetchAllKeyed();
+    // todo список Вредителей по Культуре ----------------------------------------
+    $query = db_select('node', 'n');
+    $query->condition('n.status', 1);
+    $query->condition('n.type', 'pest');
+    $query->condition('n.status', 1);
+    $query->fields('n', ['nid', 'title']);
+    $query->orderBy('n.title');
+    $results = $query->execute()->fetchAllKeyed();
 
-  $options = $results;
-  $form['problem']['diseases'] = array(
-    '#type' => 'select',
-    '#title' => t('Diseases'),
-    '#options' => $options,
-    '#chosen' => true,
-    '#attributes' => ['class' => ['chosen-select']],
-    '#multiple' => true,
-    '#default_value' => $disease_ids,
-    '#disabled' => $culture_id ? false : true,
-  );
+    $options = $results;
+    $form['params']['problem']['pests'] = [
+      '#type' => 'select',
+      '#title' => t('Pests'),
+      '#options' => $options,
+      '#chosen' => TRUE,
+      '#attributes' => ['class' => ['chosen-select']],
+      '#multiple' => TRUE,
+      '#default_value' => $pest_ids,
+      '#disabled' => $culture_id ? FALSE : TRUE,
+    ];
 
-  // Дополнительные опции ------------------------------------------------------
-  $form['addon']['desic'] = array(
+    // todo список Болезней по Культуре ------------------------------------------
+    $query = db_select('node', 'n');
+    $query->condition('n.status', 1);
+    $query->condition('n.type', 'disease');
+    $query->condition('n.status', 1);
+    $query->fields('n', ['nid', 'title']);
+    $query->orderBy('n.title');
+    $results = $query->execute()->fetchAllKeyed();
+
+    $options = $results;
+    $form['params']['problem']['diseases'] = [
+      '#type' => 'select',
+      '#title' => t('Diseases'),
+      '#options' => $options,
+      '#chosen' => TRUE,
+      '#attributes' => ['class' => ['chosen-select']],
+      '#multiple' => TRUE,
+      '#default_value' => $disease_ids,
+      '#disabled' => $culture_id ? FALSE : TRUE,
+    ];
+
+    // Дополнительные опции ------------------------------------------------------
+    $form['params']['addon']['desic'] = [
       '#type' => 'checkbox',
       '#title' => t('Add desiccants'),
-      '#disabled' => $culture_id ? false : true,
+      '#disabled' => $culture_id ? FALSE : TRUE,
       '#default_value' => $desic,
-  );
-  $form['addon']['fert'] = array(
+    ];
+    $form['params']['addon']['fert'] = [
       '#type' => 'checkbox',
       '#title' => t('Add fertilizers'),
-      '#disabled' => $culture_id ? false : true,
+      '#disabled' => $culture_id ? FALSE : TRUE,
       '#default_value' => $fert,
-  );
+    ];
 
-  // Кнопка  -------------------------------------------------------------------
-  $form['actions']['calc'] = array(
-      '#type' => 'button',
-      '#value' => t('Calculate'),
-      '#name' => 'calc',
-      '#attributes' => ['class' => ['btn-brand', 'btn-wide']],
-      '#disabled' => $culture_id ? false : true,
-      '#suffix' => '</div>',
-      '#ajax' => array(
-          'callback' => 'agrocalc_form_refresh',
-          'wrapper' => 'agrocalc-form-wrapper',
-      ),
-  );
 
-  /**
-   * $parameters['culture_id'] - список культур из программы или явно заданная культура
-   * $parameters['phase_id'] - фильтр по фазе культуры
-   * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
-   * $parameters['desiccants'] - добавить десиканты
-   * $parameters['fertilizers'] - добавить удобрения
-   */
-  if ($culture_id && (!isset($form_state['triggering_element']) || $form_state['triggering_element']['#name'] != 'culture')) {
+    /**
+     * $parameters['culture_id'] - список культур из программы или явно заданная культура
+     * $parameters['phase_id'] - фильтр по фазе культуры
+     * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
+     * $parameters['desiccants'] - добавить десиканты
+     * $parameters['fertilizers'] - добавить удобрения
+     */
+    if ((!isset($form_state['triggering_element']) || $form_state['triggering_element']['#name'] != 'culture')) {
       $program = _reglaments_get_protection_system([
-          'culture_id' => $culture_id,
-          'phase_id' => $phase_id,
-          'area' => $area,
-          'seeding' => $seed,
-          'weeds_arr' => $weed_ids,
-          'pests_arr' => $pest_ids,
-          'diseases_arr' => $disease_ids,
-          'desiccants' => $desic,
-          'fertilizers' => $fert,
+        'culture_id' => $culture_id,
+        'phase_id' => $phase_id,
+        'area' => $area,
+        'seeding' => $seed,
+        'weeds_arr' => $weed_ids,
+        'pests_arr' => $pest_ids,
+        'diseases_arr' => $disease_ids,
+        'desiccants' => $desic,
+        'fertilizers' => $fert,
       ]);
 
       if (!empty($form_state['values']['states'])) {
-          $program = _set_program_states($program, $form_state['values']['states']);
+        $program = _set_program_states($program, $form_state['values']['states']);
       }
       $form_state['storage']['program'] = $program;
 
-      $form['program']    = ['#markup' => theme('protection_program', ['program' => $program])];
+      //  вывести список препаратов
+      $content = '';
+      if ($program) {
+        foreach ($program as $nid => $item) {
+          $product_info = sec_catalog_get_product_info($nid);
+          $content .= '<div class="view-row col-xs-12 col-md-6">';
+          $content .=   theme('card_product_h', $product_info);
+          $content .= '</div>';
+        }
+      }
+      else {
+        $content .= '<div class="view-empty">';
+        $content .=   t('No products were found, try changing the filters.');
+        $content .= '</div>';
+      }
+
+      $view = [
+        'id' => 'program',
+        'classes' => 'view view-program',
+        'content' => $content,
+      ];
+
+      $form['program'] = ['#markup' => theme('custom_view', ['view' => $view])];
 
       $form['request'] = [
-          '#type' => 'fieldset',
-          '#prefix' => '<div id="request" class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 do-not-print">',
+        '#type' => 'fieldset',
+        '#prefix' => '<div id="request" class="request">',
       ];
       $form['request']['intro'] = [
-          '#markup' => '<div class="col-sm-12"><h3>'. t('Get detailed calculation'). '</h3><p class="font-small">' . t('Choose your region, fill phone or E-Mail fields.<br />Our representative will make individual program for you and send it to E-Mail or contact you by phone.') . '</p></div>',
+        '#markup' => '<div class="col-sm-12"><h3>' . t('Get detailed calculation') . '</h3><p class="font-small">' . t('Choose your region, fill phone or E-Mail fields.<br />Our representative will make individual program for you and send it to E-Mail or contact you by phone.') . '</p></div>',
       ];
 
       $query = db_select('taxonomy_term_data', 't');
-      $query->condition('t.vid', 29); // словарь 'regions'
+      $query->condition('t.vid', VOCAB_REGIONS);
       $query->innerJoin('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
       $query->condition('h.parent', 0);
-      $query->fields('t', array('tid', 'name'));
+      $query->fields('t', ['tid', 'name']);
       $regions = $query->execute()->fetchAllKeyed();
 
       $form['request']['region'] = [
-          '#type' => 'select',
-          '#title' => t('Region') . '<img class="help8 hidden-xs" data-onscreen="true" data-animate="true" data-a-delay=".5s" src="/' . drupal_get_path('module', 'agrocalc') . '/images/help/8.png" alt="Помощь" />',
-          '#options' => $regions,
+        '#type' => 'select',
+        '#title' => t('Region', [], ['context' => 'representative']),
+        '#options' => $regions,
       ];
       $form['request']['phone'] = [
-          '#type' => 'textfield',
-          '#title' => t('Phone'),
+        '#type' => 'textfield',
+        '#title' => t('Phone'),
       ];
       $form['request']['name'] = [
-          '#type' => 'textfield',
-          '#title' => t('Name'),
+        '#type' => 'textfield',
+        '#title' => t('Name'),
       ];
       $form['request']['email'] = [
-          '#type' => 'textfield',
-          '#title' => t('E-Mail'),
+        '#type' => 'textfield',
+        '#title' => t('E-Mail'),
       ];
       $form['actions1'] = [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['form-actions']],
-          '#suffix' => '</div>',
+        '#type' => 'container',
+        '#attributes' => ['class' => ['form-actions']],
+        '#suffix' => '</div>',
       ];
-      $form['actions1']['submit'] = array(
-          '#type' => 'submit',
-          '#value' => t('Get'),
-          '#name' => 'send',
-          '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
-          '#prefix' => '<div class="form-submit-wrapper">',
-          '#suffix' => '</div>',
-          '#submit' => ['agrocalc_form_submit'],
-      );
+      $form['actions1']['submit'] = [
+        '#type' => 'submit',
+        '#value' => t('Get'),
+        '#name' => 'send',
+        '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
+        '#prefix' => '<div class="form-submit-wrapper">',
+        '#suffix' => '</div>',
+        '#submit' => ['agrocalc_form_submit'],
+      ];
       $form['actions1']['fz152_agreement'] = [
         '#name' => 'fz152-agreement',
         '#type' => 'item',
         '#markup' => variable_get_value('fz152_checkbox_title'),
       ];
+    }
   }
-
 
   return $form;
 }
@@ -439,17 +474,7 @@ function agrocalc_form_submit($form, &$form_state)
  */
 function agrocalc_preprocess_page(&$vars)
 {
-    // установить для страницы параметры шапки
-    if ($_GET['q'] == 'agro-calculator') {
-        $image = '/' . drupal_get_path('module', 'agrocalc') . '/images/header_image.jpg';
-
-        $vars['header'] = array(
-            'image' => $image,
-            'category_title' => '',
-            'title' => t('Agro Calculator'),
-            'subtitle' => t('Here we will help to make protection program for your main culture and calculate preliminary cost of necessary preparations. You need to enter the parameters of your field, then identify the problems that are present in the field and press the "Calculate" button. The proposed protection program you can also adjust by sliding switches.'),
-            'print' => true,
-        );
-        $vars['wrapper_off'] = true;
-    }
+  if ($_GET['q'] == 'agrocalc') {
+    $vars['is_title_on'] = false;
+  }
 }

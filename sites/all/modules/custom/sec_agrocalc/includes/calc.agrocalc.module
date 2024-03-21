@@ -49,15 +49,17 @@ function _reglaments_get_protection_system($params)
     // todo найти все Регламенты, подходящие под заданные параметры ------------
     $regls = [];
     $query = db_select('field_data_field_cultures', 'fc');
-    $query->addField('fc', 'entity_id');
+    $query->addField('fc', 'entity_id', 'rid');
     $query->condition('fc.bundle', 'field_prep_reglaments');
     $query->condition('fc.field_cultures_target_id', $params['culture_id']);
+    $query->innerJoin('field_data_field_prep_reglaments', 'fr', 'fr.field_prep_reglaments_value = fc.entity_id');
+    $query->addField('fr', 'entity_id', 'nid');
 
     // если заданы Вредные объекты
       // для конкретных ВО можно проверить сразу по всем
     $ho_arr = array_merge($params['diseases_arr'], $params['weeds_arr'], $params['pests_arr']);
     if ($ho_arr) {
-      $query->leftJoin('field_data_field_hobjects', 'fh', 'fh.entity_id = fc.entity_id');
+      $query->innerJoin('field_data_field_hobjects', 'fh', 'fh.entity_id = fc.entity_id');
       $query->condition('fh.field_hobjects_target_id', array_values($ho_arr), 'IN');
     }
 
@@ -69,17 +71,16 @@ function _reglaments_get_protection_system($params)
     //  то же самое для Вредителей
     if ($params['pests_arr']) {}
 
-    if ($result = $query->execute()->fetchCol()) {
-      foreach ($result as $regl_id) {
-        $regls[$regl_id] = sec_catalog_get_reglament_info($regl_id);
+    if ($result = $query->execute()->fetchAll()) {
+      foreach ($result as $item) {
+        $regls[$item->nid][$item->rid] = sec_catalog_get_reglament_info($item->rid);
       }
     }
 
     // todo
-
   }
 
-  return $program;
+  return $regls;
 }
 
 

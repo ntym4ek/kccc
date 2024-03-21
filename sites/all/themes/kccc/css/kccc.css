@@ -1469,8 +1469,7 @@ fieldset {
     opacity: 0;
     outline: none;
     cursor: inherit; }
-.btn.btn-disabled,
-.btn [disabled] {
+.btn.btn-disabled, .btn[disabled] {
   opacity: .5;
   cursor: default;
   pointer-events: none; }
@@ -2887,19 +2886,21 @@ ul.menu {
       margin-bottom: 4rem; } }
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
-#agrocalc-form-wrapper > div {
-  margin-left: 8.3333333333%;
-  flex-basis: 83.3333333333%;
-  max-width: 83.3333333333%;
-  padding: 0 1rem; }
-  @media only screen and (min-width: 768px) {
-    #agrocalc-form-wrapper > div {
-      margin-left: 16.6666666667%; } }
-  @media only screen and (min-width: 768px) {
-    #agrocalc-form-wrapper > div {
-      flex-basis: 66.6666666667%;
-      max-width: 66.6666666667%;
-      padding: 0 1rem; } }
+#agrocalc-form-wrapper {
+  margin-bottom: 2rem; }
+  #agrocalc-form-wrapper > div {
+    margin-left: 8.3333333333%;
+    flex-basis: 83.3333333333%;
+    max-width: 83.3333333333%;
+    padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      #agrocalc-form-wrapper > div {
+        margin-left: 16.6666666667%; } }
+    @media only screen and (min-width: 768px) {
+      #agrocalc-form-wrapper > div {
+        flex-basis: 66.6666666667%;
+        max-width: 66.6666666667%;
+        padding: 0 1rem; } }
 
 .agrocalc-form fieldset .fieldset-wrapper {
   margin: 0 -1rem;
@@ -2910,61 +2911,63 @@ ul.menu {
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 1320px; }
-.agrocalc-form .form-item-culture,
-.agrocalc-form .form-item-phase,
-.agrocalc-form .form-item-area,
-.agrocalc-form .form-item-seed,
-.agrocalc-form .form-item-weeds,
-.agrocalc-form .form-item-pests,
-.agrocalc-form .form-item-fert,
-.agrocalc-form .form-item-desic,
-.agrocalc-form .form-item-region,
-.agrocalc-form .form-item-phone,
-.agrocalc-form .form-item-email,
-.agrocalc-form .form-item-name,
-.agrocalc-form .form-item-diseases {
+.agrocalc-form .form-item-culture {
   flex-basis: 50%;
   max-width: 50%;
   padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-culture {
+      flex-basis: 41.6666666667%;
+      max-width: 41.6666666667%;
+      padding: 0 1rem; } }
+.agrocalc-form .form-item-phase {
+  flex-basis: 50%;
+  max-width: 50%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-phase {
+      flex-basis: 25%;
+      max-width: 25%;
+      padding: 0 1rem; } }
+.agrocalc-form .form-item-area,
+.agrocalc-form .form-item-seed {
+  flex-basis: 16.6666666667%;
+  max-width: 16.6666666667%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-weeds,
+.agrocalc-form .form-item-pests,
+.agrocalc-form .form-item-diseases {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+  flex-basis: 33.3333333333%;
+  max-width: 33.3333333333%;
+  padding: 0 1rem; }
 .agrocalc-form .form-item-desic,
 .agrocalc-form .form-item-fert {
-  text-transform: uppercase; }
+  flex-basis: 25%;
+  max-width: 25%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-region,
+.agrocalc-form .form-item-phone,
+.agrocalc-form .form-item-email,
+.agrocalc-form .form-item-name {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-region,
+    .agrocalc-form .form-item-phone,
+    .agrocalc-form .form-item-email,
+    .agrocalc-form .form-item-name {
+      flex-basis: 50%;
+      max-width: 50%;
+      padding: 0 1rem; } }
 .agrocalc-form .help-block {
   margin: 0; }
-.agrocalc-form .form-actions {
-  position: relative; }
-.agrocalc-form [data-animate=true] {
-  position: absolute;
-  z-index: 100;
-  display: none; }
-  .agrocalc-form [data-animate=true].animate-processed {
-    display: block; }
-  .agrocalc-form [data-animate=true].animate-processed.accepted {
-    display: none; }
-.agrocalc-form .help1 {
-  top: -85px;
-  left: -150px; }
-.agrocalc-form .help2 {
-  top: 160px;
-  left: 210px; }
-.agrocalc-form .help3 {
-  top: -60px;
-  right: 180px; }
-.agrocalc-form .help4 {
-  right: 0;
-  top: 125px; }
-.agrocalc-form .help5 {
-  top: 30px;
-  right: -20px; }
-.agrocalc-form .help6 {
-  bottom: -70px;
-  right: 30px; }
-.agrocalc-form .help7 {
-  top: -5px;
-  left: -35px; }
-.agrocalc-form .help8 {
-  top: -140px;
-  left: 325px; }
+@media only screen and (min-width: 1024px) {
+  .agrocalc-form {
+    margin-bottom: 4rem; } }
 
 :root {
   --swiper-navigation-size: 60px;
@@ -4596,7 +4599,7 @@ ul.action-links {
   .section-title .underline {
     width: 4em;
     height: 3px;
-    margin: 0.5rem auto; }
+    margin: 0.5rem auto 0; }
   .section-title.invert {
     background: #43B02A;
     color: #fff;

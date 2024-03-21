@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Implements hook_enable().
+ */
+function agrocalc_enable()
+{
+  // прописать Url Alias для разных языков
+  $path_ru = [
+    'source' => 'agrocalc',
+    'alias' => 'agro-kalkulator',
+    'language' => 'ru',
+  ];
+  path_save($path_ru);
+
+  $path_en = [
+    'source' => 'agrocalc',
+    'alias' => 'agro-calculator',
+    'language' => 'en',
+  ];
+  path_save($path_en);
+}
+
+/**
+ * Implements hook_disable().
+ */
+function agrocalc_disable()
+{
+  path_delete(array('source' => 'agrocalc', 'language' => 'ru'));
+  path_delete(array('source' => 'agrocalc', 'language' => 'en'));
+}

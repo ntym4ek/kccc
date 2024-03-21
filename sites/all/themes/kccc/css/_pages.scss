@@ -80,6 +80,7 @@
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
 #agrocalc-form-wrapper {
+  margin-bottom: 2rem;
   > div {
     @include col-offset('xs', 1);
     @include col('xs', 10);
@@ -91,40 +92,42 @@
   fieldset .fieldset-wrapper {
     @include row();
   }
-  .form-item-culture,
-  .form-item-phase,
+  .form-item-culture {
+    @include col('xs', 6);
+    @include col('md', 5);
+  }
+  .form-item-phase {
+    @include col('xs', 6);
+    @include col('md', 3);
+  }
+
   .form-item-area,
-  .form-item-seed,
+  .form-item-seed {
+    @include col('xs', 2);
+  }
+
   .form-item-weeds,
   .form-item-pests,
-  .form-item-fert,
-  .form-item-desic,
-  .form-item-region,
-  .form-item-phone,
-  .form-item-email,
-  .form-item-name,
   .form-item-diseases {
-    @include col('xs', 6);
+    @include col('xs', 12);
+    @include col('xs', 4);
   }
   .form-item-desic,
   .form-item-fert {
-    text-transform: uppercase;
+    @include col('xs', 3);
   }
-  .help-block { margin: 0; }
-  .form-actions { position: relative; }
 
-  [data-animate=true] {
-    position: absolute; z-index: 100;
-    display: none;
-    &.animate-processed { display: block; }
-    &.animate-processed.accepted { display: none; }
+  .form-item-region,
+  .form-item-phone,
+  .form-item-email,
+  .form-item-name {
+    @include col('xs', 12);
+    @include col('md', 6);
   }
-  .help1 { top: -85px; left: -150px; }
-  .help2 { top: 160px; left: 210px; }
-  .help3 { top: -60px; right: 180px; }
-  .help4 { right: 0; top: 125px; }
-  .help5 { top: 30px; right: -20px; }
-  .help6 { bottom: -70px; right: 30px; }
-  .help7 { top: -5px; left: -35px; }
-  .help8 { top: -140px; left: 325px; }
+
+  .help-block { margin: 0; }
+
+  @media #{$tablet} {
+    margin-bottom: 4rem;
+  }
 }
