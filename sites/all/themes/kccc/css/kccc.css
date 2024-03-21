@@ -2886,88 +2886,97 @@ ul.menu {
       margin-bottom: 4rem; } }
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
-#agrocalc-form-wrapper {
+#agrocalc-form-wrapper > div {
+  margin-left: 8.3333333333%;
+  flex-basis: 83.3333333333%;
+  max-width: 83.3333333333%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      margin-left: 16.6666666667%; } }
+  @media only screen and (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      flex-basis: 66.6666666667%;
+      max-width: 66.6666666667%;
+      padding: 0 1rem; } }
+
+.agrocalc-form {
   margin-bottom: 2rem; }
-  #agrocalc-form-wrapper > div {
-    margin-left: 8.3333333333%;
-    flex-basis: 83.3333333333%;
-    max-width: 83.3333333333%;
+  .agrocalc-form .params,
+  .agrocalc-form .request {
+    margin: 0 -1rem;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 1320px; }
+  .agrocalc-form .form-item-culture {
+    flex-basis: 50%;
+    max-width: 50%;
     padding: 0 1rem; }
     @media only screen and (min-width: 768px) {
-      #agrocalc-form-wrapper > div {
-        margin-left: 16.6666666667%; } }
-    @media only screen and (min-width: 768px) {
-      #agrocalc-form-wrapper > div {
-        flex-basis: 66.6666666667%;
-        max-width: 66.6666666667%;
+      .agrocalc-form .form-item-culture {
+        flex-basis: 41.6666666667%;
+        max-width: 41.6666666667%;
         padding: 0 1rem; } }
-
-.agrocalc-form fieldset .fieldset-wrapper {
-  margin: 0 -1rem;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: row;
-  flex-wrap: wrap;
-  max-width: 1320px; }
-.agrocalc-form .form-item-culture {
-  flex-basis: 50%;
-  max-width: 50%;
-  padding: 0 1rem; }
-  @media only screen and (min-width: 768px) {
-    .agrocalc-form .form-item-culture {
-      flex-basis: 41.6666666667%;
-      max-width: 41.6666666667%;
-      padding: 0 1rem; } }
-.agrocalc-form .form-item-phase {
-  flex-basis: 50%;
-  max-width: 50%;
-  padding: 0 1rem; }
-  @media only screen and (min-width: 768px) {
-    .agrocalc-form .form-item-phase {
-      flex-basis: 25%;
-      max-width: 25%;
-      padding: 0 1rem; } }
-.agrocalc-form .form-item-area,
-.agrocalc-form .form-item-seed {
-  flex-basis: 16.6666666667%;
-  max-width: 16.6666666667%;
-  padding: 0 1rem; }
-.agrocalc-form .form-item-weeds,
-.agrocalc-form .form-item-pests,
-.agrocalc-form .form-item-diseases {
-  flex-basis: 100%;
-  max-width: 100%;
-  padding: 0 1rem;
-  flex-basis: 33.3333333333%;
-  max-width: 33.3333333333%;
-  padding: 0 1rem; }
-.agrocalc-form .form-item-desic,
-.agrocalc-form .form-item-fert {
-  flex-basis: 25%;
-  max-width: 25%;
-  padding: 0 1rem; }
-.agrocalc-form .form-item-region,
-.agrocalc-form .form-item-phone,
-.agrocalc-form .form-item-email,
-.agrocalc-form .form-item-name {
-  flex-basis: 100%;
-  max-width: 100%;
-  padding: 0 1rem; }
-  @media only screen and (min-width: 768px) {
-    .agrocalc-form .form-item-region,
-    .agrocalc-form .form-item-phone,
-    .agrocalc-form .form-item-email,
-    .agrocalc-form .form-item-name {
-      flex-basis: 50%;
-      max-width: 50%;
-      padding: 0 1rem; } }
-.agrocalc-form .help-block {
-  margin: 0; }
-@media only screen and (min-width: 1024px) {
-  .agrocalc-form {
-    margin-bottom: 4rem; } }
+  .agrocalc-form .form-item-phase {
+    flex-basis: 50%;
+    max-width: 50%;
+    padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .agrocalc-form .form-item-phase {
+        flex-basis: 25%;
+        max-width: 25%;
+        padding: 0 1rem; } }
+  .agrocalc-form .form-item-area,
+  .agrocalc-form .form-item-seed {
+    flex-basis: 16.6666666667%;
+    max-width: 16.6666666667%;
+    padding: 0 1rem; }
+  .agrocalc-form .form-item-weeds,
+  .agrocalc-form .form-item-pests,
+  .agrocalc-form .form-item-diseases {
+    flex-basis: 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+    flex-basis: 33.3333333333%;
+    max-width: 33.3333333333%;
+    padding: 0 1rem; }
+  .agrocalc-form .form-item-desic,
+  .agrocalc-form .form-item-fert {
+    flex-basis: 25%;
+    max-width: 25%;
+    padding: 0 1rem; }
+  .agrocalc-form .form-item-region,
+  .agrocalc-form .form-item-phone,
+  .agrocalc-form .form-item-email,
+  .agrocalc-form .form-item-name {
+    flex-basis: 100%;
+    max-width: 100%;
+    padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .agrocalc-form .form-item-region,
+      .agrocalc-form .form-item-phone,
+      .agrocalc-form .form-item-email,
+      .agrocalc-form .form-item-name {
+        flex-basis: 50%;
+        max-width: 50%;
+        padding: 0 1rem; } }
+    @media only screen and (min-width: 1024px) {
+      .agrocalc-form .form-item-region,
+      .agrocalc-form .form-item-phone,
+      .agrocalc-form .form-item-email,
+      .agrocalc-form .form-item-name {
+        flex-basis: 25%;
+        max-width: 25%;
+        padding: 0 1rem; } }
+  .agrocalc-form .help-block {
+    margin: 0; }
+  @media only screen and (min-width: 1024px) {
+    .agrocalc-form {
+      margin-bottom: 4rem; } }
 
 :root {
   --swiper-navigation-size: 60px;
@@ -4632,9 +4641,6 @@ ul.action-links {
     width: 9rem;
     height: 10px;
     margin: 2rem 0; }
-  @media only screen and (min-width: 1366px) {
-    .intro:after {
-      margin-bottom: 4rem; } }
 
 .tm {
   font-size: .9em;

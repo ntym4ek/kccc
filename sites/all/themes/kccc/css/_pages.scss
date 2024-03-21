@@ -80,7 +80,6 @@
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
 #agrocalc-form-wrapper {
-  margin-bottom: 2rem;
   > div {
     @include col-offset('xs', 1);
     @include col('xs', 10);
@@ -88,10 +87,12 @@
     @include col('md', 8);
   }
 }
+
 .agrocalc-form {
-  fieldset .fieldset-wrapper {
-    @include row();
-  }
+  margin-bottom: 2rem;
+
+  .params,
+  .request { @include row(); }
   .form-item-culture {
     @include col('xs', 6);
     @include col('md', 5);
@@ -123,6 +124,7 @@
   .form-item-name {
     @include col('xs', 12);
     @include col('md', 6);
+    @include col('lg', 3);
   }
 
   .help-block { margin: 0; }

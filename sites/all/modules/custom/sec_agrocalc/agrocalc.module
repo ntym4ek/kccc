@@ -73,20 +73,11 @@ function agrocalc_form($from, &$form_state)
     '#prefix' => '<div id="agrocalc-form-wrapper">',
     '#suffix' => '</div>',
     '#attributes' => ['class' => ['agrocalc-form']],
-    'intro' => ['#markup' => t('<p>You need to enter the parameters of your field, then specify the problems that are present on it and click the "Calculate" button.</p>' .
-                                      '<p>The protection program we have proposed can be adjusted with switches and sent to a representative for the region.</p>' .
-                                      '<p>You will be contacted with an offer of an individual program and prices.</p>')],
     'params' => [
       '#type' => 'container',
-      'field' => [
-        '#type' => 'fieldset',
-        '#title' => t('Culture') . '<i> ' . t('and field parameters') . '</i>',
-      ],
+      'field' => ['#type' => 'container', '#attributes' => ['class' => ['params']]],
     ],
-    'actions' => [
-      '#type' => 'container',
-      '#attributes' => array('class' => array('form-actions')),
-    ],
+    'actions' => ['#type' => 'container', '#attributes' => ['class' => ['form-actions']]],
   ];
 
   // ion range slider library
@@ -115,20 +106,6 @@ function agrocalc_form($from, &$form_state)
   $desic = empty($form_state['values']['desic']) ? '' : $form_state['values']['desic'];
   $fert = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
 
-
-  // Кнопка  -------------------------------------------------------------------
-  $form['actions']['calc'] = [
-    '#type' => 'button',
-    '#value' => t('Calculate'),
-    '#name' => 'calc',
-    '#attributes' => ['class' => ['btn-brand', 'btn-wide']],
-    '#disabled' => $culture_id ? FALSE : TRUE,
-    '#suffix' => '</div>',
-    '#ajax' => [
-      'callback' => 'agrocalc_form_refresh',
-      'wrapper' => 'agrocalc-form-wrapper',
-    ],
-  ];
 
   // список Культур, для которых есть Регламенты -------------------------------
   $query = db_select('node', 'n');
@@ -195,11 +172,8 @@ function agrocalc_form($from, &$form_state)
   );
 
   if ($culture_id) {
-    $form['params']['problem'] = [
-      '#type' => 'fieldset',
-      '#title' => t('Problems') . '<i>, ' . t('at field') . '</i>'
-    ];
-    $form['params']['addon'] = ['#type' => 'fieldset', '#title' => t('Additional')];
+    $form['params']['problem'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
+    $form['params']['addon'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
     $form['#attached'] = [
       'js' => [
         drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
@@ -273,13 +247,13 @@ function agrocalc_form($from, &$form_state)
     // Дополнительные опции ------------------------------------------------------
     $form['params']['addon']['desic'] = [
       '#type' => 'checkbox',
-      '#title' => t('Add desiccants'),
+      '#title' => t('desiccants'),
       '#disabled' => $culture_id ? FALSE : TRUE,
       '#default_value' => $desic,
     ];
     $form['params']['addon']['fert'] = [
       '#type' => 'checkbox',
-      '#title' => t('Add fertilizers'),
+      '#title' => t('fertilizers'),
       '#disabled' => $culture_id ? FALSE : TRUE,
       '#default_value' => $fert,
     ];
@@ -334,13 +308,7 @@ function agrocalc_form($from, &$form_state)
 
       $form['program'] = ['#markup' => theme('custom_view', ['view' => $view])];
 
-      $form['request'] = [
-        '#type' => 'fieldset',
-        '#prefix' => '<div id="request" class="request">',
-      ];
-      $form['request']['intro'] = [
-        '#markup' => '<div class="col-sm-12"><h3>' . t('Get detailed calculation') . '</h3><p class="font-small">' . t('Choose your region, fill phone or E-Mail fields.<br />Our representative will make individual program for you and send it to E-Mail or contact you by phone.') . '</p></div>',
-      ];
+      $form['request'] = ['#type' => 'container', '#attributes' => ['id' => 'request', 'class' => ['request']]];
 
       $query = db_select('taxonomy_term_data', 't');
       $query->condition('t.vid', VOCAB_REGIONS);
@@ -354,13 +322,13 @@ function agrocalc_form($from, &$form_state)
         '#title' => t('Region', [], ['context' => 'representative']),
         '#options' => $regions,
       ];
+      $form['request']['name'] = [
+        '#type' => 'textfield',
+        '#title' => t('Name', [], ['context' => 'user']),
+      ];
       $form['request']['phone'] = [
         '#type' => 'textfield',
         '#title' => t('Phone'),
-      ];
-      $form['request']['name'] = [
-        '#type' => 'textfield',
-        '#title' => t('Name'),
       ];
       $form['request']['email'] = [
         '#type' => 'textfield',
@@ -369,24 +337,34 @@ function agrocalc_form($from, &$form_state)
       $form['actions1'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['form-actions']],
-        '#suffix' => '</div>',
-      ];
-      $form['actions1']['submit'] = [
-        '#type' => 'submit',
-        '#value' => t('Get'),
-        '#name' => 'send',
-        '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
-        '#prefix' => '<div class="form-submit-wrapper">',
-        '#suffix' => '</div>',
-        '#submit' => ['agrocalc_form_submit'],
       ];
       $form['actions1']['fz152_agreement'] = [
         '#name' => 'fz152-agreement',
         '#type' => 'item',
         '#markup' => variable_get_value('fz152_checkbox_title'),
       ];
+      $form['actions1']['submit'] = [
+        '#type' => 'submit',
+        '#value' => t('Get'),
+        '#name' => 'send',
+        '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
+        '#submit' => ['agrocalc_form_submit'],
+      ];
     }
   }
+
+  // кнопка Рассчитать ---------------------------------------------------------
+  $form['actions']['calc'] = [
+    '#type' => 'button',
+    '#value' => isset($form['program']) ? t('Recalculate') : t('Calculate'),
+    '#name' => 'calc',
+    '#attributes' => ['class' => ['btn-brand', 'btn-wide']],
+    '#disabled' => $culture_id ? FALSE : TRUE,
+    '#ajax' => [
+      'callback' => 'agrocalc_form_refresh',
+      'wrapper' => 'agrocalc-form-wrapper',
+    ],
+  ];
 
   return $form;
 }

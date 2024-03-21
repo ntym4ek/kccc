@@ -650,7 +650,7 @@ function sec_catalog_get_product_reglaments_info($product_id)
     $regl['prep_spends']['formatted'] = $prep_spends_f;
 
     // оформить расход рабочей жидкости
-    $mix_spend_f = $regl['mix_spend']['from'] == $regl['mix_spend']['to'] ? $regl['mix_spend']['to'] : ($regl['mix_spend']['from'] . '-' . $regl['mix_spend']['to']);
+    $mix_spend_f = $regl['mix_spend']['raw']['from'] == $regl['mix_spend']['raw']['to'] ? $regl['mix_spend']['raw']['to'] : ($regl['mix_spend']['raw']['from'] . '-' . $regl['mix_spend']['raw']['to']);
     $mix_spend_f .= ' ' . t('l', [], ['context' => 'units']) . '/' . $product_info['units']['apply'];
     $regl['mix_spend']['formatted'] = $mix_spend_f;
 
