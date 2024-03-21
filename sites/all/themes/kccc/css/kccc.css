@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
 .row {
   margin: 0 -1rem;
@@ -1468,8 +1469,7 @@ fieldset {
     opacity: 0;
     outline: none;
     cursor: inherit; }
-.btn.btn-disabled,
-.btn [disabled] {
+.btn.btn-disabled, .btn[disabled] {
   opacity: .5;
   cursor: default;
   pointer-events: none; }
@@ -1557,7 +1557,8 @@ fieldset {
   .field-type-text-with-summary.form-disabled .form-select {
     background-color: #E9E9E9;
     cursor: default;
-    pointer-events: none; }
+    pointer-events: none;
+    opacity: .5; }
   .form-item .form-button-disabled,
   .field-type-text-long .form-button-disabled,
   .field-type-text-with-summary .form-button-disabled {
@@ -2883,6 +2884,90 @@ ul.menu {
     .company-contacts,
     .company-experts {
       margin-bottom: 4rem; } }
+
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper {
+  margin-bottom: 2rem; }
+  #agrocalc-form-wrapper > div {
+    margin-left: 8.3333333333%;
+    flex-basis: 83.3333333333%;
+    max-width: 83.3333333333%;
+    padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      #agrocalc-form-wrapper > div {
+        margin-left: 16.6666666667%; } }
+    @media only screen and (min-width: 768px) {
+      #agrocalc-form-wrapper > div {
+        flex-basis: 66.6666666667%;
+        max-width: 66.6666666667%;
+        padding: 0 1rem; } }
+
+.agrocalc-form fieldset .fieldset-wrapper {
+  margin: 0 -1rem;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 1320px; }
+.agrocalc-form .form-item-culture {
+  flex-basis: 50%;
+  max-width: 50%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-culture {
+      flex-basis: 41.6666666667%;
+      max-width: 41.6666666667%;
+      padding: 0 1rem; } }
+.agrocalc-form .form-item-phase {
+  flex-basis: 50%;
+  max-width: 50%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-phase {
+      flex-basis: 25%;
+      max-width: 25%;
+      padding: 0 1rem; } }
+.agrocalc-form .form-item-area,
+.agrocalc-form .form-item-seed {
+  flex-basis: 16.6666666667%;
+  max-width: 16.6666666667%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-weeds,
+.agrocalc-form .form-item-pests,
+.agrocalc-form .form-item-diseases {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+  flex-basis: 33.3333333333%;
+  max-width: 33.3333333333%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-desic,
+.agrocalc-form .form-item-fert {
+  flex-basis: 25%;
+  max-width: 25%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-region,
+.agrocalc-form .form-item-phone,
+.agrocalc-form .form-item-email,
+.agrocalc-form .form-item-name {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .agrocalc-form .form-item-region,
+    .agrocalc-form .form-item-phone,
+    .agrocalc-form .form-item-email,
+    .agrocalc-form .form-item-name {
+      flex-basis: 50%;
+      max-width: 50%;
+      padding: 0 1rem; } }
+.agrocalc-form .help-block {
+  margin: 0; }
+@media only screen and (min-width: 1024px) {
+  .agrocalc-form {
+    margin-bottom: 4rem; } }
 
 :root {
   --swiper-navigation-size: 60px;
@@ -4468,6 +4553,33 @@ ul.action-links {
   .form-managed-file.file-widget {
     align-items: center; }
 
+.chosen-select.chosen-container-multi {
+  border: none;
+  padding: 0; }
+  .chosen-select.chosen-container-multi .chosen-choices {
+    background-image: none;
+    padding: 0 1em;
+    min-height: 100%; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-field,
+    .chosen-select.chosen-container-multi .chosen-choices li.search-choice {
+      background-image: none;
+      line-height: 1.3em; }
+      .chosen-select.chosen-container-multi .chosen-choices li.search-field a,
+      .chosen-select.chosen-container-multi .chosen-choices li.search-choice a {
+        font-size: initial;
+        top: .55em;
+        right: .45em; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-choice {
+      padding-left: .8em;
+      padding-right: 1.5em; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-field {
+      padding-top: .5em; }
+      .chosen-select.chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+        color: #000;
+        font-family: inherit; }
+    .form-item.form-disabled .chosen-select.chosen-container-multi .chosen-choices {
+      background-color: #E9E9E9; }
+
 .underline {
   background: #43B02A;
   width: 8em;
@@ -4487,7 +4599,7 @@ ul.action-links {
   .section-title .underline {
     width: 4em;
     height: 3px;
-    margin: 0.5rem auto; }
+    margin: 0.5rem auto 0; }
   .section-title.invert {
     background: #43B02A;
     color: #fff;

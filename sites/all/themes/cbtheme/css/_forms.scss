@@ -37,6 +37,7 @@
     .form-select {
       background-color: $gray-lightest;
       cursor: default; pointer-events: none;
+      opacity: .5;
     }
   }
   .form-button-disabled {

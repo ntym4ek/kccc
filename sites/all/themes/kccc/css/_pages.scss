@@ -77,3 +77,57 @@
     margin-bottom: 4rem;
   }
 }
+
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper {
+  margin-bottom: 2rem;
+  > div {
+    @include col-offset('xs', 1);
+    @include col('xs', 10);
+    @include col-offset('md', 2);
+    @include col('md', 8);
+  }
+}
+.agrocalc-form {
+  fieldset .fieldset-wrapper {
+    @include row();
+  }
+  .form-item-culture {
+    @include col('xs', 6);
+    @include col('md', 5);
+  }
+  .form-item-phase {
+    @include col('xs', 6);
+    @include col('md', 3);
+  }
+
+  .form-item-area,
+  .form-item-seed {
+    @include col('xs', 2);
+  }
+
+  .form-item-weeds,
+  .form-item-pests,
+  .form-item-diseases {
+    @include col('xs', 12);
+    @include col('xs', 4);
+  }
+  .form-item-desic,
+  .form-item-fert {
+    @include col('xs', 3);
+  }
+
+  .form-item-region,
+  .form-item-phone,
+  .form-item-email,
+  .form-item-name {
+    @include col('xs', 12);
+    @include col('md', 6);
+  }
+
+  .help-block { margin: 0; }
+
+  @media #{$tablet} {
+    margin-bottom: 4rem;
+  }
+}

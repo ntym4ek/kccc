@@ -1520,6 +1520,35 @@ ul.action-links {
   &.file-widget { align-items: center; } // выровнять добавление файлов в админке
 }
 
+.chosen-select.chosen-container-multi {
+  border: none;
+  padding: 0;
+  .chosen-choices {
+    background-image: none;
+    padding: 0 1em;
+    min-height: 100%;
+    li.search-field,
+    li.search-choice {
+      background-image: none;
+      line-height: 1.3em;
+      a {
+        font-size: initial;
+        top: .55em; right: .45em;
+      }
+    }
+    li.search-choice { padding-left: .8em; padding-right: 1.5em; }
+    li.search-field {
+      padding-top: .5em;
+      input[type="text"] {
+        color: $text-color; font-family: inherit;
+      }
+    }
+
+    .form-item.form-disabled & { background-color: #E9E9E9; }
+  }
+}
+
+
 // --- Элементы оформления -------------------------------------------------------------
 .underline {
   background: $brand-color;
@@ -1537,7 +1566,7 @@ ul.action-links {
 
   .underline {
     width: 4em; height: 3px;
-    margin: 0.5rem auto;
+    margin: 0.5rem auto 0;
   }
 
   &.invert {
