@@ -529,7 +529,7 @@ function sec_catalog_get_product_info($node)
       if ($node_wr->field_prep_tare->value()) {
         $unit_short = $node_wr->field_prep_tare->field_unit->language($GLOBALS['language']->language)->field_acronym->value();
       }
-      $unit_apply = $product['category']['id'] == CAT_SEED_TID ? t('t') : t('ha');
+      $unit_apply = $product['category']['id'] == CAT_SEED_TID ? t('t', [], ['context' => 'units']) : t('he', [], ['context' => 'units']);
       $product['units'] = [
         'short' => $unit_short,
         'apply' => $unit_apply,
@@ -546,7 +546,7 @@ function sec_catalog_get_product_info($node)
           ];
           $conc_formatted = empty($conc) ? '' : helper_number_format($conc, 2);
           $wrap = strlen($name) > 32;
-          $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">' . t('g') . '/' . $unit_short . '</span>' : '';
+          $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">' . t('g', [], ['context' => 'units']) . '/' . $unit_short . '</span>' : '';
           $list2[] = '<span class="' . ($wrap ? '' : 'nowrap') . '">' . $name . $suffix . '</span>';
         }
       }
@@ -651,7 +651,7 @@ function sec_catalog_get_product_reglaments_info($product_id)
 
     // оформить расход рабочей жидкости
     $mix_spend_f = $regl['mix_spend']['from'] == $regl['mix_spend']['to'] ? $regl['mix_spend']['to'] : ($regl['mix_spend']['from'] . '-' . $regl['mix_spend']['to']);
-    $mix_spend_f .= ' ' . t('l') . '/' . $product_info['units']['apply'];
+    $mix_spend_f .= ' ' . t('l', [], ['context' => 'units']) . '/' . $product_info['units']['apply'];
     $regl['mix_spend']['formatted'] = $mix_spend_f;
 
     // если категория не определена, вывести "Десикация"
