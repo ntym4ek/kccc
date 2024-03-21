@@ -77,3 +77,54 @@
     margin-bottom: 4rem;
   }
 }
+
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper {
+  > div {
+    @include col-offset('xs', 1);
+    @include col('xs', 10);
+    @include col-offset('md', 2);
+    @include col('md', 8);
+  }
+}
+.agrocalc-form {
+  fieldset .fieldset-wrapper {
+    @include row();
+  }
+  .form-item-culture,
+  .form-item-phase,
+  .form-item-area,
+  .form-item-seed,
+  .form-item-weeds,
+  .form-item-pests,
+  .form-item-fert,
+  .form-item-desic,
+  .form-item-region,
+  .form-item-phone,
+  .form-item-email,
+  .form-item-name,
+  .form-item-diseases {
+    @include col('xs', 6);
+  }
+  .form-item-desic,
+  .form-item-fert {
+    text-transform: uppercase;
+  }
+  .help-block { margin: 0; }
+  .form-actions { position: relative; }
+
+  [data-animate=true] {
+    position: absolute; z-index: 100;
+    display: none;
+    &.animate-processed { display: block; }
+    &.animate-processed.accepted { display: none; }
+  }
+  .help1 { top: -85px; left: -150px; }
+  .help2 { top: 160px; left: 210px; }
+  .help3 { top: -60px; right: 180px; }
+  .help4 { right: 0; top: 125px; }
+  .help5 { top: 30px; right: -20px; }
+  .help6 { bottom: -70px; right: 30px; }
+  .help7 { top: -5px; left: -35px; }
+  .help8 { top: -140px; left: 325px; }
+}

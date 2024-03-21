@@ -624,152 +624,191 @@ function sec_catalog_get_product_info($node)
  */
 function sec_catalog_get_product_reglaments_info($product_id)
 {
-  $regs = [];
+  $regls = [];
 
   $product_wr = entity_metadata_wrapper('node', $product_id);
   $product_info = sec_catalog_get_product_info($product_id);
 
   // данные
   foreach ($product_wr->field_prep_reglaments->getIterator() as $regl_wr) {
-    $icon_num = '';
-    $cultures = [];
-    if ($regl_wr->value()) {
-      foreach ($regl_wr->field_cultures->getIterator() as $culture_wr) {
-        if ($culture_wr->value()) {
-          $cultures[$culture_wr->getIdentifier()] = $culture_wr->label();
-          // определить иконку регламента из класса культуры
-          if (!$icon_num) {
-            $icon_num = sec_catalog_get_culture_class_icon($culture_wr->getIdentifier());
-          }
-        }
-      }
+    $regl = sec_catalog_get_reglament_info($regl_wr->getIdentifier());
 
-      $cultures_note = $regl_wr->field_cultures_note->value();
-
-
-      // иконка для "некультурных" регламентов
-      if (!$icon_num) {
-        $icon_num = $product_info['category']['icon_num'];
-      }
-
-      $weed_groups = [];
-      foreach ($regl_wr->field_reg_weed_groups->getIterator() as $weed_group_wr) {
-        $lifes = [];
-        foreach ($weed_group_wr->field_reg_weed_lifes->getIterator() as $weed_life_wr) $lifes[$weed_life_wr->value()] = $weed_life_wr->label();
-        $classes = [];
-        foreach ($weed_group_wr->field_reg_weed_classes->getIterator() as $weed_class_wr) $classes[$weed_class_wr->getIdentifier()] = $weed_class_wr->label();
-
-        $weed_groups[] = [
-          'lifes' => $lifes,
-          'classes' => $classes,
-        ];
-      }
-
-      $pest_classes = [];
-      foreach ($regl_wr->field_reg_pest_classes->getIterator() as $pest_class_wr) $pest_classes[$pest_class_wr->getIdentifier()] = $pest_class_wr->label();
-
-      $hobjects = [];
-      foreach ($regl_wr->field_hobjects->getIterator() as $hobject_wr) {
-        $hobjects[$hobject_wr->getIdentifier()] = [
-          'type' => $hobject_wr->type->value(),
-          'name' => $hobject_wr->label(),
-        ];
-      }
-      $hobjects_note = $regl_wr->field_hobjects_note->value();
-
-      // иначе вывести "Десикация"
-      if (!$weed_groups && !$pest_classes && !$hobjects && $product_info['category']['id'] == CAT_DESIC_TID) {
-        $pest_classes[] = t('Desiccation');
-      }
-
-      $prep_spends = [];
-      foreach ($regl_wr->field_reg_prep_spends->getIterator() as $prep_spend_wr) {
-        $prep_spends[] = $prep_spend_wr->value();
-      }
-
-      $mix_spend = $regl_wr->field_reg_mix_spend->value();
-      $ratio = $regl_wr->field_reg_ratio->value();
-      $wait = $regl_wr->field_reg_wait->value();
-
-
-      // форматирование
-      if ($cultures) {
-        $cultures_f = implode(', ', array_values($cultures));
-        if ($cultures_note) $cultures_f .= ' (' . $cultures_note . ')';
-      } else {
-        $cultures_f = $cultures_note;
-      }
-      $cultures_f = drupal_ucfirst(drupal_strtolower($cultures_f));
-
-      $hobjects_arr = [];
-      if ($weed_groups) {
-        foreach ($weed_groups as $wg) {
-          $hobjects_arr[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
-        }
-      }
-      if ($pest_classes) {
-        $hobjects_arr[] = implode(', ', $pest_classes);
-      }
-      if ($hobjects) {
-        foreach ($hobjects as $hi => $ho) {
-          $hobjects_arr[] = l($ho['name'], drupal_get_path_alias('node/' . $hi));
-        }
-      }
-      if ($hobjects_arr) {
-        $hobjects_f = implode(', ', array_values($hobjects_arr));
-        if ($hobjects_note) $hobjects_f .= ' (' . $hobjects_note . ')';
-      } else {
-        $hobjects_f = $hobjects_note;
-      }
-      $hobjects_f = drupal_ucfirst(drupal_strtolower($hobjects_f));
-
-      $prep_spends_f = '';
-      foreach ($prep_spends as $ps) {
-        $ps['from'] = helper_number_format($ps['from'], 2);
-        $ps['to']   = helper_number_format($ps['to'], 2);
-        $psj = $ps['from'] == $ps['to'] ? $ps['to'] : $ps['from'] . '-' . $ps['to'];
-        $prep_spends_f .= $prep_spends_f ? ' + ' . $psj : $psj;
-      }
-      $prep_spends_f .= ' ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'];
-
-      $mix_spend_f = $mix_spend['from'] == $mix_spend['to'] ? $mix_spend['to'] : ($mix_spend['from'] . '-' . $mix_spend['to']);
-
-      $regs[$regl_wr->getIdentifier()] = [
-        'icon_num' => $icon_num,
-        'cultures' => [
-          'list' => $cultures,
-          'note' => $cultures_note,
-          'formatted' => $cultures_f,
-        ],
-        'hobjects' => [
-          'weed_groups' => $weed_groups,
-          'pest_classes' => $pest_classes,
-          'list' => $hobjects,
-          'note' => $hobjects_note,
-          'formatted' => $hobjects_f,
-        ],
-        'prep_spends' => [
-          'list' => $prep_spends,
-          'formatted' => $prep_spends_f,
-        ],
-        'mix_spend' => [
-          'raw' => $mix_spend,
-          'formatted' => $mix_spend_f . ' л/' . $product_info['units']['apply'],
-        ],
-        'wait' => [
-          'raw' => $wait,
-          'formatted' => is_numeric($wait) ? format_plural($wait, '@count day', '@count days') : $wait,
-        ],
-        'ratio' => [
-          'raw' => $ratio,
-          'formatted' => ($ratio['from'] == $ratio['to'] ? $ratio['to'] : $ratio['from'] . '-' . $ratio['to']),
-        ],
-        'description' => $regl_wr->field_reg_description->value(),
-      ];
+    // иконка для "некультурных" регламентов
+    if (!$regl['icon_num']) {
+      $regl['icon_num'] = $product_info['category']['icon_num'];
     }
+
+    // оформить расход препарата
+    $prep_spends_f = '';
+    foreach ($regl['prep_spends']['list'] as $ps) {
+      $ps['from'] = helper_number_format($ps['from'], 2);
+      $ps['to'] = helper_number_format($ps['to'], 2);
+      $psj = $ps['from'] == $ps['to'] ? $ps['to'] : $ps['from'] . '-' . $ps['to'];
+      $prep_spends_f .= $prep_spends_f ? ' + ' . $psj : $psj;
+    }
+    $prep_spends_f .= ' ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'];
+    $regl['prep_spends']['formatted'] = $prep_spends_f;
+
+    // оформить расход рабочей жидкости
+    $mix_spend_f = $regl['mix_spend']['from'] == $regl['mix_spend']['to'] ? $regl['mix_spend']['to'] : ($regl['mix_spend']['from'] . '-' . $regl['mix_spend']['to']);
+    $mix_spend_f .= ' ' . t('l') . '/' . $product_info['units']['apply'];
+    $regl['mix_spend']['formatted'] = $mix_spend_f;
+
+    // если категория не определена, вывести "Десикация"
+    if (!$regl['hobjects']['weed_groups'] && !$regl['hobjects']['pest_classes'] && !$regl['hobjects']['list'] && $product_info['category']['id'] == CAT_DESIC_TID) {
+      $regl['hobjects']['pest_classes'][] = t('Desiccation');
+    }
+
+    $regls[] = $regl;
   }
 
-  return $regs;
+  return $regls;
+}
+
+/**
+ * Вернуть массив с данными Регламента
+ */
+function sec_catalog_get_reglament_info($regl_id)
+{
+  $regl_wr = entity_metadata_wrapper('field_collection_item', $regl_id);
+
+  $regl = [];
+  if ($regl_wr->value()) {
+    $icon_num = '';
+    $cultures = [];
+    foreach ($regl_wr->field_cultures->getIterator() as $culture_wr) {
+      if ($culture_wr->value()) {
+        $cultures[$culture_wr->getIdentifier()] = $culture_wr->label();
+        // определить иконку регламента из класса культуры
+        if (!$icon_num) {
+          $icon_num = sec_catalog_get_culture_class_icon($culture_wr->getIdentifier());
+        }
+      }
+    }
+
+    $cultures_note = $regl_wr->field_cultures_note->value();
+
+    $weed_groups = [];
+    foreach ($regl_wr->field_reg_weed_groups->getIterator() as $weed_group_wr) {
+      $lifes = [];
+      foreach ($weed_group_wr->field_reg_weed_lifes->getIterator() as $weed_life_wr) $lifes[$weed_life_wr->value()] = $weed_life_wr->label();
+      $classes = [];
+      foreach ($weed_group_wr->field_reg_weed_classes->getIterator() as $weed_class_wr) $classes[$weed_class_wr->getIdentifier()] = $weed_class_wr->label();
+
+      $weed_groups[] = [
+        'lifes' => $lifes,
+        'classes' => $classes,
+      ];
+    }
+
+    $pest_classes = [];
+    foreach ($regl_wr->field_reg_pest_classes->getIterator() as $pest_class_wr) $pest_classes[$pest_class_wr->getIdentifier()] = $pest_class_wr->label();
+
+    $hobjects = [];
+    foreach ($regl_wr->field_hobjects->getIterator() as $hobject_wr) {
+      $hobjects[$hobject_wr->getIdentifier()] = [
+        'type' => $hobject_wr->type->value(),
+        'name' => $hobject_wr->label(),
+      ];
+    }
+    $hobjects_note = $regl_wr->field_hobjects_note->value();
+
+    $prep_spends = [];
+    foreach ($regl_wr->field_reg_prep_spends->getIterator() as $prep_spend_wr) {
+      $prep_spends[] = $prep_spend_wr->value();
+    }
+
+    $mix_spend = $regl_wr->field_reg_mix_spend->value();
+    $ratio = $regl_wr->field_reg_ratio->value();
+    $wait = $regl_wr->field_reg_wait->value();
+
+
+    // форматирование
+    if ($cultures) {
+      $cultures_f = implode(', ', array_values($cultures));
+      if ($cultures_note) $cultures_f .= ' (' . $cultures_note . ')';
+    } else {
+      $cultures_f = $cultures_note;
+    }
+    $cultures_f = drupal_ucfirst(drupal_strtolower($cultures_f));
+
+    $hobjects_arr = [];
+    if ($weed_groups) {
+      foreach ($weed_groups as $wg) {
+        $hobjects_arr[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
+      }
+    }
+    if ($pest_classes) {
+      $hobjects_arr[] = implode(', ', $pest_classes);
+    }
+    if ($hobjects) {
+      foreach ($hobjects as $hi => $ho) {
+        $hobjects_arr[] = l($ho['name'], 'node/' . $hi);
+      }
+    }
+    if ($hobjects_arr) {
+      $hobjects_f = implode(', ', array_values($hobjects_arr));
+      if ($hobjects_note) $hobjects_f .= ' (' . $hobjects_note . ')';
+    } else {
+      $hobjects_f = $hobjects_note;
+    }
+    $hobjects_f = drupal_ucfirst(drupal_strtolower($hobjects_f));
+
+    // период применения
+    if ($regl_wr->field_reg_treat_start->value()) {
+      $start = [
+        'id' => $regl_wr->field_reg_treat_start->getIdentifier(),
+        'label' => $regl_wr->field_reg_treat_start->label(),
+        'weight' => $regl_wr->field_reg_treat_start->weight->value(),
+      ];
+    }
+    if ($regl_wr->field_reg_treat_end->value()) {
+      $end = [
+        'id' => $regl_wr->field_reg_treat_end->getIdentifier(),
+        'label' => $regl_wr->field_reg_treat_end->label(),
+        'weight' => $regl_wr->field_reg_treat_start->weight->value(),
+      ];
+    }
+
+
+    $regl = [
+      'id' => $regl_wr->getIdentifier(),
+      'icon_num' => $icon_num,
+      'cultures' => [
+        'list' => $cultures,
+        'note' => $cultures_note,
+        'formatted' => $cultures_f,
+      ],
+      'hobjects' => [
+        'weed_groups' => $weed_groups,
+        'pest_classes' => $pest_classes,
+        'list' => $hobjects,
+        'note' => $hobjects_note,
+        'formatted' => $hobjects_f,
+      ],
+      'prep_spends' => [
+        'list' => $prep_spends,
+      ],
+      'mix_spend' => [
+        'raw' => $mix_spend,
+      ],
+      'wait' => [
+        'raw' => $wait,
+        'formatted' => is_numeric($wait) ? format_plural($wait, '@count day', '@count days') : $wait,
+      ],
+      'ratio' => [
+        'raw' => $ratio,
+        'formatted' => ($ratio['from'] == $ratio['to'] ? $ratio['to'] : $ratio['from'] . '-' . $ratio['to']),
+      ],
+      'description' => $regl_wr->field_reg_description->value(),
+      'period' => [
+        'start' => $start ?? [],
+        'end' => $end ?? [],
+      ],
+    ];
+  }
+
+  return $regl;
 }
 
 /**

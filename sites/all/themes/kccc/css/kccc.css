@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
 .row {
   margin: 0 -1rem;
@@ -1557,7 +1558,8 @@ fieldset {
   .field-type-text-with-summary.form-disabled .form-select {
     background-color: #E9E9E9;
     cursor: default;
-    pointer-events: none; }
+    pointer-events: none;
+    opacity: .5; }
   .form-item .form-button-disabled,
   .field-type-text-long .form-button-disabled,
   .field-type-text-with-summary .form-button-disabled {
@@ -2883,6 +2885,86 @@ ul.menu {
     .company-contacts,
     .company-experts {
       margin-bottom: 4rem; } }
+
+/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
+#agrocalc-form-wrapper > div {
+  margin-left: 8.3333333333%;
+  flex-basis: 83.3333333333%;
+  max-width: 83.3333333333%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      margin-left: 16.6666666667%; } }
+  @media only screen and (min-width: 768px) {
+    #agrocalc-form-wrapper > div {
+      flex-basis: 66.6666666667%;
+      max-width: 66.6666666667%;
+      padding: 0 1rem; } }
+
+.agrocalc-form fieldset .fieldset-wrapper {
+  margin: 0 -1rem;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 1320px; }
+.agrocalc-form .form-item-culture,
+.agrocalc-form .form-item-phase,
+.agrocalc-form .form-item-area,
+.agrocalc-form .form-item-seed,
+.agrocalc-form .form-item-weeds,
+.agrocalc-form .form-item-pests,
+.agrocalc-form .form-item-fert,
+.agrocalc-form .form-item-desic,
+.agrocalc-form .form-item-region,
+.agrocalc-form .form-item-phone,
+.agrocalc-form .form-item-email,
+.agrocalc-form .form-item-name,
+.agrocalc-form .form-item-diseases {
+  flex-basis: 50%;
+  max-width: 50%;
+  padding: 0 1rem; }
+.agrocalc-form .form-item-desic,
+.agrocalc-form .form-item-fert {
+  text-transform: uppercase; }
+.agrocalc-form .help-block {
+  margin: 0; }
+.agrocalc-form .form-actions {
+  position: relative; }
+.agrocalc-form [data-animate=true] {
+  position: absolute;
+  z-index: 100;
+  display: none; }
+  .agrocalc-form [data-animate=true].animate-processed {
+    display: block; }
+  .agrocalc-form [data-animate=true].animate-processed.accepted {
+    display: none; }
+.agrocalc-form .help1 {
+  top: -85px;
+  left: -150px; }
+.agrocalc-form .help2 {
+  top: 160px;
+  left: 210px; }
+.agrocalc-form .help3 {
+  top: -60px;
+  right: 180px; }
+.agrocalc-form .help4 {
+  right: 0;
+  top: 125px; }
+.agrocalc-form .help5 {
+  top: 30px;
+  right: -20px; }
+.agrocalc-form .help6 {
+  bottom: -70px;
+  right: 30px; }
+.agrocalc-form .help7 {
+  top: -5px;
+  left: -35px; }
+.agrocalc-form .help8 {
+  top: -140px;
+  left: 325px; }
 
 :root {
   --swiper-navigation-size: 60px;
@@ -4467,6 +4549,33 @@ ul.action-links {
     color: #7D7C7C; }
   .form-managed-file.file-widget {
     align-items: center; }
+
+.chosen-select.chosen-container-multi {
+  border: none;
+  padding: 0; }
+  .chosen-select.chosen-container-multi .chosen-choices {
+    background-image: none;
+    padding: 0 1em;
+    min-height: 100%; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-field,
+    .chosen-select.chosen-container-multi .chosen-choices li.search-choice {
+      background-image: none;
+      line-height: 1.3em; }
+      .chosen-select.chosen-container-multi .chosen-choices li.search-field a,
+      .chosen-select.chosen-container-multi .chosen-choices li.search-choice a {
+        font-size: initial;
+        top: .55em;
+        right: .45em; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-choice {
+      padding-left: .8em;
+      padding-right: 1.5em; }
+    .chosen-select.chosen-container-multi .chosen-choices li.search-field {
+      padding-top: .5em; }
+      .chosen-select.chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+        color: #000;
+        font-family: inherit; }
+    .form-item.form-disabled .chosen-select.chosen-container-multi .chosen-choices {
+      background-color: #E9E9E9; }
 
 .underline {
   background: #43B02A;
