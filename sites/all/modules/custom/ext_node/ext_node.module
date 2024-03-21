@@ -34,7 +34,6 @@ function ext_node_preprocess_page(&$vars)
       // Сформировать Баннер в шапке
       $title_bkg_uri = NULL;
 
-      $vars['is_title_on'] = false;
       if ($vars['node']->type == 'agenda')                      { $vars['banner_title'] = t('Events');
                                                                   $title_bkg_uri = 'public://images/page-banners/afisha.jpg'; }
       if ($vars['node']->type == 'article')                     { $vars['banner_title'] = t('Events');
@@ -90,6 +89,7 @@ function ext_node_preprocess_page(&$vars)
         $vars['banner_url'] = file_create_url($title_bkg_uri);
         $vars['banner_mobile_url'] = image_style_url('banner_mobile', $title_bkg_uri);
         $vars['is_banner_on'] = true;
+        $vars['is_title_on'] = false;
       }
     }
   }
