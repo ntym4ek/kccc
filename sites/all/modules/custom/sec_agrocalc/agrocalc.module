@@ -86,7 +86,7 @@ function agrocalc_form($from, &$form_state)
   }
 
   // Дефолтные переменные ------------------------------------------------------
-  $culture_id = empty($form_state['input']['culture']) ? 154 : $form_state['input']['culture'];
+  $culture_id = empty($form_state['input']['culture']) ? 156 : $form_state['input']['culture'];
   $phase_id = empty($form_state['input']['phase']) ? '' : $form_state['input']['phase'];
   $area = empty($form_state['input']['area']) ? '100' : $form_state['input']['area'];
   $seed = empty($form_state['input']['seed']) ? '100' : $form_state['input']['seed'];

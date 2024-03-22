@@ -117,10 +117,6 @@
           <?php print drupal_render($content['field_text']); ?>
         <?php endif; ?>
 
-        <?php if (!empty($field_classificator_flora[0])): ?>
-          <?php print drupal_render($content['field_classificator_flora']); ?>
-        <?php endif; ?>
-
         <?php if (!empty($field_cultures[0])): ?>
           <?php print drupal_render($content['field_cultures']); ?>
         <?php endif; ?>

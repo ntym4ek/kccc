@@ -88,10 +88,9 @@ function _reglaments_get_protection_system($params)
             $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[$prep['cat']], $prep['cat']);
           }
 
-          if ($show_full_program
-              || $hobjects
-              || ($params['desiccants'] && $prep['cat'] == CAT_DESIC_TID)
-              || ($params['fertilizers'] && $prep['cat'] == CAT_FERT_TID))
+          if (($show_full_program || $hobjects)
+              && ($prep['cat'] != CAT_DESIC_TID || $params['desiccants'])
+              && ($prep['cat'] != CAT_FERT_TID || $params['fertilizers']))
           {
             if (!isset($preps_w_regls[$prep_id])) {
               $preps_w_regls[$prep_id] = [
