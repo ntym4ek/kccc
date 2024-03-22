@@ -600,7 +600,8 @@ ul.action-links {
     .view-content { @include row(); }
 
     // таблица со списком контента
-    .vbo-views-form { @include col('xs', 12); }
+    .vbo-views-form,
+    .view-empty { @include col('xs', 12); }
 
     .view-row,
     .views-row { margin-bottom: 1rem; }

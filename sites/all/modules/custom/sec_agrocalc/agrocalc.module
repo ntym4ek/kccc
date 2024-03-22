@@ -82,11 +82,11 @@ function agrocalc_form($from, &$form_state)
 
   // ion range slider library
   if (module_exists('libraries') && libraries_detect('ionrange')) {
-    $form['#attached']['libraries_load'][] = array('ionrange');
+    $form['#attached']['libraries_load'][] = ['ionrange'];
   }
 
   // Дефолтные переменные ------------------------------------------------------
-  $culture_id = empty($form_state['input']['culture']) ? '' : $form_state['input']['culture'];
+  $culture_id = empty($form_state['input']['culture']) ? 154 : $form_state['input']['culture'];
   $phase_id = empty($form_state['input']['phase']) ? '' : $form_state['input']['phase'];
   $area = empty($form_state['input']['area']) ? '100' : $form_state['input']['area'];
   $seed = empty($form_state['input']['seed']) ? '100' : $form_state['input']['seed'];
@@ -100,9 +100,9 @@ function agrocalc_form($from, &$form_state)
       unset($form_state['input']['pests']); unset($form_state['values']['pests']);
       unset($form_state['input']['disease']); unset($form_state['values']['disease']);
   }
-  $weed_ids = empty($form_state['values']['weeds']) ? '' : $form_state['values']['weeds'];
-  $pest_ids = empty($form_state['values']['pests']) ? '' : $form_state['values']['pests'];
-  $disease_ids = empty($form_state['values']['diseases']) ? '' : $form_state['values']['diseases'];
+  $weed_ids = empty($form_state['values']['weeds']) ? [] : array_values($form_state['values']['weeds']);
+  $pest_ids = empty($form_state['values']['pests']) ? [] : array_values($form_state['values']['pests']);
+  $disease_ids = empty($form_state['values']['diseases']) ? [] : array_values($form_state['values']['diseases']);
   $desic = empty($form_state['values']['desic']) ? '' : $form_state['values']['desic'];
   $fert = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
 
@@ -174,11 +174,9 @@ function agrocalc_form($from, &$form_state)
   if ($culture_id) {
     $form['params']['problem'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
     $form['params']['addon'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
-    $form['#attached'] = [
-      'js' => [
-        drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
-        drupal_get_path('module', 'agrocalc') . '/js/accounting.js'
-      ],
+    $form['#attached']['js'] = [
+      drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
+      drupal_get_path('module', 'agrocalc') . '/js/accounting.js'
     ];
 
 
@@ -272,9 +270,9 @@ function agrocalc_form($from, &$form_state)
         'phase_id' => $phase_id,
         'area' => $area,
         'seeding' => $seed,
-        'weeds_arr' => $weed_ids,
-        'pests_arr' => $pest_ids,
-        'diseases_arr' => $disease_ids,
+        'weeds' => $weed_ids,
+        'pests' => $pest_ids,
+        'diseases' => $disease_ids,
         'desiccants' => $desic,
         'fertilizers' => $fert,
       ]);
@@ -287,10 +285,9 @@ function agrocalc_form($from, &$form_state)
       //  вывести список препаратов
       $content = '';
       if ($program) {
-        foreach ($program as $nid => $item) {
-          $product_info = sec_catalog_get_product_info($nid);
+        foreach ($program['preps'] as $nid => $prep) {
           $content .= '<div class="view-row col-xs-12 col-md-6">';
-          $content .=   theme('card_product_h', $product_info);
+          $content .=   theme('card_product_h', $prep['info']);
           $content .= '</div>';
         }
       }

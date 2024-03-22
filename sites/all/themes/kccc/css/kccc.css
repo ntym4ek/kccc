@@ -3577,7 +3577,9 @@ ul.action-links {
   flex-wrap: wrap;
   max-width: 1320px; }
 .page-content .view .vbo-views-form,
-.page-right .view .vbo-views-form {
+.page-content .view .view-empty,
+.page-right .view .vbo-views-form,
+.page-right .view .view-empty {
   flex-basis: 100%;
   max-width: 100%;
   padding: 0 1rem; }

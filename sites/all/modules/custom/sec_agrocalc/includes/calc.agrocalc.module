@@ -5,7 +5,7 @@
  * в зависимости от заданных параметров:
  * $parameters['program_id'] или $parameters['culture_id'] - список культур из программы или явно заданная культура
  * $parameters['phase_id'] - фильтр по фазе культуры
- * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
+ * $parameters['weeds'], $parameters['pests'], $parameters['diseases'] - фильтр по вредным объектам
  * $parameters['desiccants'] - добавить десиканты
  * $parameters['fertilizers'] - добавить удобрения
  *
@@ -16,6 +16,9 @@ function _reglaments_get_protection_system($params)
 {
   $program = [];
   if (!empty($params['phase_id']) && !is_numeric($params['phase_id'])) unset($params['phase_id']);
+
+  // если ВО не заданы, показать всю программу
+  $show_full_program = empty($params['weeds']) && empty($params['pests']) && empty($params['diseases']);
 
   $program_id = $program_wr = null;
 
@@ -40,47 +43,79 @@ function _reglaments_get_protection_system($params)
       'seeding' => empty($params['seeding']) ? '' : $params['seeding'],
     ];
 
-    // todo программа защиты, состоящая из Препаратов,
-    //   отсортированных по этапам применения.
-    //   Пересекающиеся Регламенты препарата объединены.
-    //   А если регламенты не пересекаются?
-    $program['stages'] = [];
+    //  программа защиты из Препаратов, со списком регламентов, подходящих заданным условиям
+    // todo
+    //  Cортировка по этапам применения.
+    //  Объединение пересекающихся Регламентов.
+    $program['preps'] = [];
 
-    // todo найти все Регламенты, подходящие под заданные параметры ------------
-    $regls = [];
+    // найти все Регламенты для Культуры с привязкой в Препарату и Категории ---
+    $preps_w_regls_temp = [];
     $query = db_select('field_data_field_cultures', 'fc');
     $query->addField('fc', 'entity_id', 'rid');
     $query->condition('fc.bundle', 'field_prep_reglaments');
     $query->condition('fc.field_cultures_target_id', $params['culture_id']);
     $query->innerJoin('field_data_field_prep_reglaments', 'fr', 'fr.field_prep_reglaments_value = fc.entity_id');
     $query->addField('fr', 'entity_id', 'nid');
-
-    // если заданы Вредные объекты
-      // для конкретных ВО можно проверить сразу по всем
-    $ho_arr = array_merge($params['diseases_arr'], $params['weeds_arr'], $params['pests_arr']);
-    if ($ho_arr) {
-      $query->innerJoin('field_data_field_hobjects', 'fh', 'fh.entity_id = fc.entity_id');
-      $query->condition('fh.field_hobjects_target_id', array_values($ho_arr), 'IN');
-    }
-
-    // todo
-    //  для Сорняков определить положение в Классификаторе
-    //  так как в Регламентах задана и Классификация и отдельные Сорняки
-    if ($params['weeds_arr']) {}
-    // todo
-    //  то же самое для Вредителей
-    if ($params['pests_arr']) {}
-
+    $query->innerJoin('field_data_field_prep_category', 'fpc', 'fpc.entity_id = fr.entity_id');
+    $query->addField('fpc', 'field_prep_category_tid', 'tid');
     if ($result = $query->execute()->fetchAll()) {
+      // сформировать массив Препаратов с Регламентами и Категорией
       foreach ($result as $item) {
-        $regls[$item->nid][$item->rid] = sec_catalog_get_reglament_info($item->rid);
+        $preps_w_regls_temp[$item->nid]['cat'] = $item->tid;
+        $preps_w_regls_temp[$item->nid]['regls'][] = $item->rid;
       }
-    }
 
-    // todo
+      // массив со всеми ВО
+      $hobjects_all = [
+        CAT_HERB_TID    => $params['weeds'],
+        CAT_INSECT_TID  => $params['pests'],
+        CAT_SEED_TID    => $params['diseases'],
+        CAT_FUNG_TID    => $params['diseases'],
+      ];
+      // массив с ВО, для которых нет решений,
+      // будем вычёркивать ВО для которых есть
+      $hobjects_missing = $hobjects_all;
+
+      //  проверить Регламенты на соответствие заданным ВО
+      //  о определить список этих ВО
+      $preps_w_regls = [];
+      foreach ($preps_w_regls_temp as $prep_id => $prep) {
+        foreach ($prep['regls'] as $regl_id) {
+          // определить для каких ВО подходит Регламент
+          $hobjects = [];
+          if (!empty($hobjects_all[$prep['cat']])) {
+            $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[$prep['cat']], $prep['cat']);
+          }
+
+          if ($show_full_program
+              || $hobjects
+              || ($params['desiccants'] && $prep['cat'] == CAT_DESIC_TID)
+              || ($params['fertilizers'] && $prep['cat'] == CAT_FERT_TID))
+          {
+            if (!isset($preps_w_regls[$prep_id])) {
+              $preps_w_regls[$prep_id] = [
+                'info' => sec_catalog_get_product_info($prep_id),
+                'regls' => [],
+              ];
+            }
+            $preps_w_regls[$prep_id]['regls'][$regl_id] = [
+              'info' => sec_catalog_get_reglament_info($regl_id),
+              'hobjects' => $hobjects,
+            ];
+
+            if ($hobjects) {
+              $hobjects_missing[$prep['cat']] = array_diff($hobjects_missing[$prep['cat']], $hobjects);
+            }
+          }
+        }
+      }
+
+      $program['preps'] = $preps_w_regls;
+    }
   }
 
-  return $regls;
+  return $program;
 }
 
 
@@ -511,74 +546,77 @@ function _set_program_states($program, $states)
  */
 function _get_stages_ordered($stages)
 {
-    $result = [];
-    foreach($stages as $key=>$stage) {
-        $result[$key] = $stage->tid;
-    }
+  $result = [];
+  foreach($stages as $key=>$stage) {
+    $result[$key] = $stage->tid;
+  }
 
-    return $result;
+  return $result;
 }
 
 /**
- * вернуть массив этапов роста культуры в последовательном порядке
+ * Вернуть из заданного списка Вредных объектов те,
+ * для которых подходит указанный Регламент.
+ * Заданы конкретные ВО, а в Регламенте могут быть заданы группы и отдельные ВО.
  */
-function _check_reglament_fits_hobjects($reglament_id, $hobject_ids, $type)
+function _check_reglament_fits_hobjects($regl_id, $hobject_ids, $type)
 {
-    $reglament_wr = entity_metadata_wrapper('field_collection_item', $reglament_id);
+  $regl_wr = entity_metadata_wrapper('field_collection_item', $regl_id);
 
-    // проверка видов
-    $hobjects = array_intersect($reglament_wr->field_pd_a_hobjects->raw(), $hobject_ids);
+  // проверка заданных в Регламенте конкретных ВО
+  $hobjects = array_intersect($regl_wr->field_hobjects->raw(), $hobject_ids);
 
-    switch ($type) {
-        case CAT_HERB_TID:
-            // получить список родительских категорий регламента
-            $weeds_reglament_groups_arr = [];
-            foreach($reglament_wr->field_pd_a_weeds_groups as $key_g => $weeds_group_wr) {
-                foreach($weeds_group_wr->field_pd_a_wg_class as $weeds_class_wr) {
-                    $weeds_reglament_groups_arr[$key_g]['tree'][] = $weeds_class_wr->getIdentifier();
-                }
-                foreach($weeds_group_wr->field_pd_a_wg_life_time as $weeds_life_time_wr) {
-                    $weeds_reglament_groups_arr[$key_g]['time'][] = $weeds_life_time_wr->getIdentifier();
-                }
+  // проверка по заданным в Регламенте группам ВО
+  switch ($type) {
+    case CAT_HERB_TID:
+      // получить список родительских категорий регламента
+      $weed_groups_arr = [];
+      foreach($regl_wr->field_reg_weed_groups as $key_g => $weed_group_wr) {
+        foreach($weed_group_wr->field_reg_weed_classes as $weed_class_wr) {
+          $weed_groups_arr[$key_g]['tree'][] = $weed_class_wr->getIdentifier();
+        }
+        foreach($weed_group_wr->field_reg_weed_lifes as $weed_life_wr) {
+          $weed_groups_arr[$key_g]['time'][] = $weed_life_wr->value();
+        }
+      }
+      // проверка объекта на вхождение в полученный массив
+      foreach($hobject_ids as $hobject_id) {
+        $weed_wr = entity_metadata_wrapper('node', $hobject_id);
+        foreach($weed_groups_arr as $weed_group) {
+          // проверить лайфтайм
+          if (isset($weed_group['time']) && in_array($weed_wr->field_hb_weed_life->value(), $weed_group['time']) || !isset($weed_group['time'])) {
+            $weed_parent_groups = taxonomy_get_parents_all($weed_wr->field_classificator_flora->getIdentifier());
+            // проверить иерархию
+            foreach ($weed_parent_groups as $weed_parent_group) {
+              if (in_array($weed_parent_group->tid, $weed_group['tree'])) $hobjects[] = $hobject_id;
             }
-            // проверка объекта на вхождение в полученный массив
-            foreach($hobject_ids as $hobject_id) {
-                $weed_wr = entity_metadata_wrapper('node', $hobject_id);
-                foreach($weeds_reglament_groups_arr as $weeds_reglament_group) {
-                    // проверить лайфтайм
-                    if (isset($weeds_reglament_group['time']) && in_array($weed_wr->field_weed_life_time->getIdentifier(), $weeds_reglament_group['time']) || !isset($weeds_reglament_group['time'])) {
-                        $weed_parent_groups = taxonomy_get_parents_all($weed_wr->field_weed_kind->getIdentifier());
-                        // проверить иерархию
-                        foreach ($weed_parent_groups as $weed_parent_group) {
-                            if (in_array($weed_parent_group->tid, $weeds_reglament_group['tree'])) $hobjects[] = $hobject_id;
-                        }
-                    }
-                }
-            }
+          }
+        }
+      }
 
-            break;
+      break;
 
-        case CAT_INSECT_TID:
-            // получить список родительских категорий регламента
-            $pests_reglament_groups_arr = [];
-            foreach($reglament_wr->field_pd_a_pests_groups as $pests_group_wr) {
-                $pests_reglament_groups_arr[] = $pests_group_wr->getIdentifier();
-            }
-            // проверка категорий
-            foreach($hobject_ids as $hobject_id) {
-                $pest_wr = entity_metadata_wrapper('node', $hobject_id);
-                $pest_parent_groups = taxonomy_get_parents_all($pest_wr->field_pest_classificator->getIdentifier());
-                foreach($pest_parent_groups as $pest_parent_group) {
-                    if (in_array($pest_parent_group->tid, $pests_reglament_groups_arr)) $hobjects[] = $hobject_id;
-                }
-            }
+    case CAT_INSECT_TID:
+      // получить список родительских категорий регламента
+      $pest_groups_arr = [];
+      foreach($regl_wr->field_reg_pest_classes as $pest_group_wr) {
+        $pest_groups_arr[] = $pest_group_wr->getIdentifier();
+      }
+      // проверка категорий
+      foreach($hobject_ids as $hobject_id) {
+        $pest_wr = entity_metadata_wrapper('node', $hobject_id);
+        $pest_parent_groups = taxonomy_get_parents_all($pest_wr->field_classificator_fauna->getIdentifier());
+        foreach($pest_parent_groups as $pest_parent_group) {
+          if (in_array($pest_parent_group->tid, $pest_groups_arr)) $hobjects[] = $hobject_id;
+        }
+      }
 
-            break;
-    }
+      break;
+  }
 
-    $hobjects = array_unique($hobjects);
+  $hobjects = array_unique($hobjects);
 
-    return $hobjects;
+  return $hobjects;
 }
 
 /**

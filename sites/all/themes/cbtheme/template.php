@@ -68,6 +68,7 @@ function cbtheme_preprocess_page(&$vars)
   }
   if ($banner_uri) {
     $vars['is_banner_on'] = true;
+    $vars['is_title_on'] = false;
     $vars['banner_title_prefix'] = '';
     $vars['banner_title'] = drupal_get_title();
     $vars['banner_title_suffix'] = '';
