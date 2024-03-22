@@ -159,9 +159,10 @@ function sec_sellers_get_regions($level = 'regions', $parent = null, $include_si
   if ($terms = taxonomy_get_tree(taxonomy_vocabulary_machine_name_load('regions')->vid, 0, null, true)) {
     foreach($terms as $term) {
       if ((($include_siblings && $term->depth <= $depth) || (!$include_siblings && $term->depth == $depth)) && (!$parent || in_array($parent, $term->parents))) {
+        $term_wr = entity_metadata_wrapper('taxonomy_term', $term);
         $regions[] = [
           'id' => $term->tid,
-          'label' => $term->name,
+          'label' => $term_wr->label(),
         ];
       }
     }

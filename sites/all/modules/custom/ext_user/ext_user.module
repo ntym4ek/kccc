@@ -111,7 +111,7 @@ function ext_user_preprocess_page(&$vars)
         $img_uri = 'public://images/page-banners/predstaviteli.jpg';
         $vars['banner_url'] = file_create_url($img_uri);
         $vars['banner_mobile_url'] = image_style_url('banner_mobile', $img_uri);
-        $vars['banner_title'] = 'Сотрудники';
+        $vars['banner_title'] = t('Employees');
       }
     }
 
@@ -412,6 +412,10 @@ function ext_user_username_alter(&$name, $account)
     if ($fio = $dbr->execute()->fetchAll()) {
       $fio = reset($fio);
       $result = $fio->name . ($fio->surname ? ' ' . $fio->surname : '');
+      // транслитерация для не RU языков
+      if ($GLOBALS['language']->language != 'ru') {
+        $result = transliteration_get($result);
+      }
     }
   }
 
@@ -504,6 +508,12 @@ function ext_user_get_user_info($user = null)
         $surname = $main_wr->field_user_surname->value();
         $name = $main_wr->field_user_name->value();
         $name2 = $main_wr->field_user_name2->value();
+
+        if ($GLOBALS['language']->language != 'ru') {
+          $surname = transliteration_get($surname);
+          $name = transliteration_get($name);
+          $name2 = transliteration_get($name2);
+        }
         $name_full = $surname . ' ' . $name . ($name2 ? '&nbsp;' . $name2 : '');
 
         $email = $account->mail;
