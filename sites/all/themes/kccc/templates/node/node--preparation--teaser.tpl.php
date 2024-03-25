@@ -81,4 +81,4 @@
  */
 
 $product_info = sec_catalog_get_product_info($node);
-print theme('card_product_h', $product_info);
+print theme('card_product_h', ['product' => $product_info]);

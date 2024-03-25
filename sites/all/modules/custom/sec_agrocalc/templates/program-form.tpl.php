@@ -29,7 +29,7 @@
 
   <?php if (!empty($form['program'])): ?>
   <div class="program-wrapper">
-    <h3>Препараты для защиты культуры</h3>
+    <h3><?php print t('Preparations for the protection of culture'); ?></h3>
     <?php print drupal_render($form['program']); ?>
   </div>
   <?php endif; ?>

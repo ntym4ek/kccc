@@ -40,7 +40,7 @@ function _reglaments_get_protection_system($params)
       'phase' => $phase_name,
       'pdf' => !$program_id || !$program_wr->field_file_attachments->value() ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
       'area' => empty($params['area']) ? '' : $params['area'],
-      'seeding' => empty($params['seeding']) ? '' : $params['seeding'],
+      'seed' => empty($params['seed']) ? '' : $params['seed'],
     ];
 
     //  программа защиты из Препаратов, со списком регламентов, подходящих заданным условиям
@@ -78,7 +78,7 @@ function _reglaments_get_protection_system($params)
       $hobjects_missing = $hobjects_all;
 
       //  проверить Регламенты на соответствие заданным ВО
-      //  о определить список этих ВО
+      //  и определить список этих ВО
       $preps_w_regls = [];
       foreach ($preps_w_regls_temp as $prep_id => $prep) {
         foreach ($prep['regls'] as $regl_id) {
@@ -92,17 +92,21 @@ function _reglaments_get_protection_system($params)
               && ($prep['cat'] != CAT_DESIC_TID || $params['desiccants'])
               && ($prep['cat'] != CAT_FERT_TID || $params['fertilizers']))
           {
+            $product_info = sec_catalog_get_product_info($prep_id);
             if (!isset($preps_w_regls[$prep_id])) {
               $preps_w_regls[$prep_id] = [
-                'info' => sec_catalog_get_product_info($prep_id),
+                'info' => $product_info,
                 'regls' => [],
               ];
             }
+            $regl = sec_catalog_get_reglament_info($regl_id);
+            $regl = sec_catalog_get_reglament_info_formatted($regl, $product_info, ['area' => $params['area'], 'seed' => $params['seed']]);
             $preps_w_regls[$prep_id]['regls'][$regl_id] = [
-              'info' => sec_catalog_get_reglament_info($regl_id),
-              'hobjects' => $hobjects,
+              'info' => $regl,
+              'hobjects' => _get_entities_info($hobjects)
             ];
 
+            // убрать ВО, для которых есть регламент из массива не найденных
             if ($hobjects) {
               $hobjects_missing[$prep['cat']] = array_diff($hobjects_missing[$prep['cat']], $hobjects);
             }
@@ -111,12 +115,41 @@ function _reglaments_get_protection_system($params)
       }
 
       $program['preps'] = $preps_w_regls;
+      $ho_missing = [];
+      foreach($hobjects_missing as $category) {
+        $ho_missing += $category;
+      }
+      $program['hobjects_missing'] = _get_entities_info(array_values($ho_missing));
     }
   }
 
   return $program;
 }
 
+/**
+ * Вернуть по списку ID массив сущностей с ID и Наименованием
+ * и форматированую строку списка
+ */
+function _get_entities_info($entities)
+{
+  if (empty($entities)) return [];
+
+  $entities_list = $entities_arr = [];
+  foreach ($entities as $hid) {
+    $ho_wr = entity_metadata_wrapper('node', $hid);
+    $entities_list[$hid] = [
+      'id' => $ho_wr->getIdentifier(),
+      'label' => $ho_wr->label(),
+    ];
+    $entities_arr[] = $ho_wr->label();
+  }
+  $entities_formatted = implode(', ', $entities_arr);
+
+  return [
+    'list' => $entities_list,
+    'formatted' => drupal_ucfirst(drupal_strtolower($entities_formatted)),
+  ];
+}
 
 /**
  * составляем программу защиты для заданной культуры или списка культур
@@ -184,7 +217,7 @@ function _reglaments_get_protection_system2($params)
           'phase'       => $phase_name,
           'pdf'         => !$program_id || !$program_wr->field_file_attachments->value() ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
           'area'        => empty($params['area']) ? '' : $params['area'],
-          'seeding'     => empty($params['seeding']) ? '' : $params['seeding'],
+          'seed'     => empty($params['seed']) ? '' : $params['seed'],
         );
 
         // иконка

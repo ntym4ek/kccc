@@ -638,10 +638,7 @@ ul.action-links {
     position: absolute; top: .5rem; right: .5rem;
     width: 3rem;
   }
-  i.icon {
-    font-size: 3rem;
-  }
-  a { color: inherit; }
+  i.icon { font-size: 3rem; }
   .text {
     display: flex; flex-direction: column;
     padding: 1rem;
@@ -652,7 +649,7 @@ ul.action-links {
     color: $brand-color; font-size: $font-size-h4; font-weight: 500;
   }
   .components {
-    font-size: $font-size-small;
+    color: $text-color; font-size: $font-size-small;
     margin: 1rem 0;
     .nowrap { white-space: normal; }
   }
@@ -661,6 +658,15 @@ ul.action-links {
 
 .card-product-h {
   display: flex; flex-wrap: wrap;
+  .product {
+    flex: 50%;
+    display: flex; flex-wrap: wrap;
+  }
+  .addon {
+    flex: 50%;
+    text-align: center;
+    .item { margin-bottom: .5rem; }
+  }
   a { color: inherit; }
   .title {
     font-size: $font-size-h3; font-weight: 500;
@@ -670,23 +676,23 @@ ul.action-links {
     flex: 100%;
     text-align: center;
   }
-  .product-info { flex: 100%; }
+  .info { flex: 100%; }
   .components {
     color: $text-light; font-size: $font-size-small; font-weight: 700;
     margin-bottom: 1em;
   }
 
   @media #{$pad} {
-    flex-wrap: nowrap;
+    .product { flex-wrap: nowrap; }
     .image {
       flex: 0 0 27%;
       text-align: left;
     }
-    .product-info { flex: auto; }
+    .info { flex: auto; }
     .components { font-weight: 500; }
   }
   @media #{$laptop} {
-    .product-info { padding: 0 1em; }
+    .info { padding: 0 1em; }
     .components {
       font-weight: 600;
       margin-bottom: 1em;
@@ -1109,7 +1115,7 @@ ul.action-links {
           &:hover { text-decoration: underline; }
         }
       }
-      .b {
+      .spec {
         font-size: $font-size-small; text-align: center;
         margin-bottom: 1.2rem;
       }

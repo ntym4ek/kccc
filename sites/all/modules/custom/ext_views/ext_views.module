@@ -18,7 +18,7 @@ function ext_views_theme()
 {
   return [
     'custom_view'    => [
-      'variables' => ['view' => null],
+      'variables' => ['view' => null, 'empty' => null],
       'template' => 'templates/custom-view',
     ],
     'custom_pager'    => [

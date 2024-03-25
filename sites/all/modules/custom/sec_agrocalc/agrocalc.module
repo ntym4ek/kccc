@@ -23,34 +23,6 @@ function agrocalc_menu()
 }
 
 /**
- * Implements hook_libraries_info().
- * https://www.drupal.org/docs/7/modules/libraries-api-7x/using-libraries-api-2x-as-a-module-developer
- * For defining external libraries.
- */
-function agrocalc_libraries_info()
-{
-  // Библиотека со слайдером диапазона
-  // A very simple library. No changing APIs (hence, no versions), no variants.
-  // Expected to be extracted into 'sites/all/libraries/ion'.
-  $libraries['ionrange'] = array(
-    'name' => 'Ion Range Library',
-    'vendor url' => 'http://bootstraptema.ru/stuff/snippets_bootstrap/elements/ion_range_slider_bootstrap/33-1-0-2636',
-    'download url' => 'http://bootstraptema.ru/stuff/snippets_bootstrap/elements/ion_range_slider_bootstrap/33-1-0-2636',
-    'version arguments' => array(
-      'file' => 'ion.rangeSlider.js',
-      'pattern' => '@// version ([\d\.]+) B@',
-      'lines' => 2,
-    ),
-    'files' => array(
-      'js' => array('ion.rangeSlider.js'), //this can be a path to the file location like array('lib/simple.js')
-      'css' => array('ion.rangeSlider.css', 'ion.rangeSlider.skin.css'),
-    ),
-  );
-
-  return $libraries;
-}
-
-/**
  * Implements hook_theme().
  */
 function agrocalc_theme()
@@ -80,15 +52,10 @@ function agrocalc_form($from, &$form_state)
     'actions' => ['#type' => 'container', '#attributes' => ['class' => ['form-actions']]],
   ];
 
-  // ion range slider library
-  if (module_exists('libraries') && libraries_detect('ionrange')) {
-    $form['#attached']['libraries_load'][] = ['ionrange'];
-  }
-
   // Дефолтные переменные ------------------------------------------------------
-  $culture_id = empty($form_state['input']['culture']) ? 156 : $form_state['input']['culture'];
+  $culture_id = empty($form_state['input']['culture']) ? '156' : $form_state['input']['culture'];
   $phase_id = empty($form_state['input']['phase']) ? '' : $form_state['input']['phase'];
-  $area = empty($form_state['input']['area']) ? '100' : $form_state['input']['area'];
+  $area = empty($form_state['input']['area']) ? '1000' : $form_state['input']['area'];
   $seed = empty($form_state['input']['seed']) ? '100' : $form_state['input']['seed'];
   if ($area && !$seed) {
       $seed = 100;
@@ -98,13 +65,13 @@ function agrocalc_form($from, &$form_state)
   if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'culture') {
       unset($form_state['input']['weeds']); unset($form_state['values']['weeds']);
       unset($form_state['input']['pests']); unset($form_state['values']['pests']);
-      unset($form_state['input']['disease']); unset($form_state['values']['disease']);
+      unset($form_state['input']['diseases']); unset($form_state['values']['diseases']);
   }
-  $weed_ids = empty($form_state['values']['weeds']) ? [] : array_values($form_state['values']['weeds']);
-  $pest_ids = empty($form_state['values']['pests']) ? [] : array_values($form_state['values']['pests']);
-  $disease_ids = empty($form_state['values']['diseases']) ? [] : array_values($form_state['values']['diseases']);
-  $desic = empty($form_state['values']['desic']) ? '' : $form_state['values']['desic'];
-  $fert = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
+  $weed_ids     = empty($form_state['values']['weeds']) ? [] : array_values($form_state['values']['weeds']);
+  $pest_ids     = empty($form_state['values']['pests']) ? [] : array_values($form_state['values']['pests']);
+  $disease_ids  = empty($form_state['values']['diseases']) ? [] : array_values($form_state['values']['diseases']);
+  $desic        = empty($form_state['values']['desic']) ? '' : $form_state['values']['desic'];
+  $fert         = empty($form_state['values']['fert']) ? '' : $form_state['values']['fert'];
 
 
   // список Культур, для которых есть Регламенты -------------------------------
@@ -176,7 +143,8 @@ function agrocalc_form($from, &$form_state)
     $form['params']['addon'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
     $form['#attached']['js'] = [
       drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
-      drupal_get_path('module', 'agrocalc') . '/js/accounting.js'
+      'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js',
+      'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js'
     ];
 
 
@@ -269,7 +237,7 @@ function agrocalc_form($from, &$form_state)
         'culture_id' => $culture_id,
         'phase_id' => $phase_id,
         'area' => $area,
-        'seeding' => $seed,
+        'seed' => $seed,
         'weeds' => $weed_ids,
         'pests' => $pest_ids,
         'diseases' => $disease_ids,
@@ -284,27 +252,31 @@ function agrocalc_form($from, &$form_state)
 
       //  вывести список препаратов
       $content = '';
-      if ($program) {
-        foreach ($program['preps'] as $nid => $prep) {
-          $content .= '<div class="view-row col-xs-12 col-md-6">';
-          $content .=   theme('card_product_h', $prep['info']);
-          $content .= '</div>';
+      if ($program['preps'] || $program['hobjects_missing']) {
+        if ($program['preps']) {
+          foreach ($program['preps'] as $nid => $prep) {
+            $content .= '<div class="view-row col-xs-12">';
+            $content .=   theme('card_product_h', ['product' => $prep['info'], 'addon' => $prep['regls'], 'inline_link' => true]);
+            $content .= '</div>';
+          }
         }
-      }
-      else {
-        $content .= '<div class="view-empty">';
-        $content .=   t('No products were found, try changing the filters.');
-        $content .= '</div>';
+        // добавляем сообщение под результатом расчёта
+        if ($program['hobjects_missing']) {
+          $content .= '<div class="view-empty"><p>' . t('Our calculator could not find preparations for next harmful objects: @hobjects. But you can still send the request to our experts and they will help you to get protection system.', ['@hobjects' => $program['hobjects_missing']['formatted']]) . '</p></div>';
+        }
+      } else {
+        $content .= '<div class="view-empty"><p>' . t('No products were found, try changing the filters.') . '</p></div>';
       }
 
+      // выводим программу
       $view = [
         'id' => 'program',
         'classes' => 'view view-program',
         'content' => $content,
       ];
-
       $form['program'] = ['#markup' => theme('custom_view', ['view' => $view])];
 
+      // форма отправки запроса
       $form['request'] = ['#type' => 'container', '#attributes' => ['id' => 'request', 'class' => ['request']]];
 
       $query = db_select('taxonomy_term_data', 't');

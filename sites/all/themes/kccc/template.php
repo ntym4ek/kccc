@@ -65,11 +65,11 @@ function kccc_theme()
 {
   return [
     'card_product_v' => [
-      'variables' => [],
+      'variables' => ['product' => null],
       'template' => 'templates/card/card-product-v',
     ],
     'card_product_h' => [
-      'variables' => [],
+      'variables' => ['product' => null, 'addon' => null, 'inline_link' => true],
       'template' => 'templates/card/card-product-h',
     ],
     'card_contact' => [

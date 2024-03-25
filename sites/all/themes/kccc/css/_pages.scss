@@ -79,24 +79,19 @@
 }
 
 /* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
-#agrocalc-form-wrapper {
-  > div {
-    @include col-offset('xs', 1);
-    @include col('xs', 10);
-    @include col-offset('md', 2);
-    @include col('md', 8);
-  }
-}
-
-.agrocalc-form {
+.agrocalc {
   margin-bottom: 2rem;
 
   .params,
-  .request { @include row(); }
+  .request {
+    @include row();
+  }
+
   .form-item-culture {
     @include col('xs', 6);
     @include col('md', 5);
   }
+
   .form-item-phase {
     @include col('xs', 6);
     @include col('md', 3);
@@ -113,6 +108,7 @@
     @include col('xs', 12);
     @include col('xs', 4);
   }
+
   .form-item-desic,
   .form-item-fert {
     @include col('xs', 3);
@@ -127,7 +123,43 @@
     @include col('lg', 3);
   }
 
-  .help-block { margin: 0; }
+  .help-block {
+    margin: 0;
+  }
+
+  .program-wrapper {
+    .card-product-h {
+      // секция регламента
+      .hobjects {
+        font-weight: 600;
+        margin: .5rem 0;
+      }
+      .period {
+        color: $text-muted; font-size: $font-size-small;
+        margin-bottom: .5rem;
+      }
+      .specs {
+        display: flex; justify-content: space-around;
+      }
+      .spec {
+        font-size: $font-size-small;  text-align: center;
+        margin-bottom: 1rem;
+        .label {
+          font-size: $font-size-small;
+          margin-bottom: 5px;
+        }
+        .text { font-size: $font-size-large; font-weight: 500;}
+      }
+      .spec.description {
+        padding-top: 1rem;
+        a { border-bottom: 1px dashed $text-color; }
+        .tooltip { display: none; }
+      }
+    }
+    .view-row:not(:last-child) .card-product-h {
+      border-bottom: 1px solid $text-muted;
+    }
+  }
 
   @media #{$tablet} {
     margin-bottom: 4rem;

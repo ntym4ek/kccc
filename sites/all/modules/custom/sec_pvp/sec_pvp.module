@@ -396,7 +396,7 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
         'components' => $product_info['components'],
         'summary' => $summary,
       ];
-      $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', $card);
+      $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', ['product' => $card]);
     }
 
     $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? t('Tank mix') : t('Product');
