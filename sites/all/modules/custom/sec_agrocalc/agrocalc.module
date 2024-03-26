@@ -53,8 +53,8 @@ function agrocalc_form($from, &$form_state)
   ];
 
   // Дефолтные переменные ------------------------------------------------------
-  $culture_id = empty($form_state['input']['culture']) ? '156' : $form_state['input']['culture'];
-  $phase_id = empty($form_state['input']['phase']) ? '' : $form_state['input']['phase'];
+  $culture_id = empty($form_state['input']['culture']) ? '' : $form_state['input']['culture'];
+  $stage_id = empty($form_state['input']['stage']) ? '' : $form_state['input']['stage'];
   $area = empty($form_state['input']['area']) ? '1000' : $form_state['input']['area'];
   $seed = empty($form_state['input']['seed']) ? '100' : $form_state['input']['seed'];
   if ($area && !$seed) {
@@ -114,12 +114,12 @@ function agrocalc_form($from, &$form_state)
     $results = $query->execute()->fetchAllKeyed();
   }
   $options = ['all' => t('All phases')] + $results;
-  $form['params']['field']['phase'] = array(
+  $form['params']['field']['stage'] = array(
     '#type' => 'select',
     '#title' => t('Culture phase'),
     '#options' => $options,
     '#disabled' => $culture_id ? false : true,
-    '#default_value' => $phase_id,
+    '#default_value' => $stage_id,
   );
 
   // Площадь посева ------------------------------------------------------------
@@ -227,7 +227,7 @@ function agrocalc_form($from, &$form_state)
 
     /**
      * $parameters['culture_id'] - список культур из программы или явно заданная культура
-     * $parameters['phase_id'] - фильтр по фазе культуры
+     * $parameters['stage_id'] - фильтр по фазе культуры
      * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
      * $parameters['desiccants'] - добавить десиканты
      * $parameters['fertilizers'] - добавить удобрения
@@ -235,7 +235,7 @@ function agrocalc_form($from, &$form_state)
     if ((!isset($form_state['triggering_element']) || $form_state['triggering_element']['#name'] != 'culture')) {
       $program = _reglaments_get_protection_system([
         'culture_id' => $culture_id,
-        'phase_id' => $phase_id,
+        'stage_id' => $stage_id,
         'area' => $area,
         'seed' => $seed,
         'weeds' => $weed_ids,
@@ -245,9 +245,6 @@ function agrocalc_form($from, &$form_state)
         'fertilizers' => $fert,
       ]);
 
-      if (!empty($form_state['values']['states'])) {
-        $program = _set_program_states($program, $form_state['values']['states']);
-      }
       $form_state['storage']['program'] = $program;
 
       //  вывести список препаратов
@@ -325,7 +322,7 @@ function agrocalc_form($from, &$form_state)
   // кнопка Рассчитать ---------------------------------------------------------
   $form['actions']['calc'] = [
     '#type' => 'button',
-    '#value' => isset($form['program']) ? t('Recalculate') : t('Calculate'),
+    '#value' => t('Find a solution'),
     '#name' => 'calc',
     '#attributes' => ['class' => ['btn-brand', 'btn-wide']],
     '#disabled' => $culture_id ? FALSE : TRUE,
@@ -389,9 +386,6 @@ function agrocalc_form_validate($form, &$form_state)
 function agrocalc_form_submit($form, &$form_state)
 {
   $program = $form_state['storage']['program'];
-  if (!empty($form_state['values']['states'])) {
-    $program = _set_program_states($program, $form_state['values']['states']);
-  }
 
   $params['mail_to'] = 'manager';
   $params['data'] = [
@@ -408,7 +402,7 @@ function agrocalc_form_submit($form, &$form_state)
   // отправка письма менеджеру
   if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
     // Юле Камневой
-    drupal_mail('mailer', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $params, 'bot@kccc.ru');
+    //drupal_mail('mailer', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $params, 'bot@kccc.ru');
   }
 
   drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');

@@ -194,6 +194,7 @@ function helper_get_term_info($term)
       'id' => $term_wr->getIdentifier(),
       'label' => $term_wr->label(),
       'description' => $term_wr->description->value(),
+      'weight' => $term_wr->weight->value(),
       'voc' => [
         'id' => $voc->vid,
         'name' => $voc->machine_name,

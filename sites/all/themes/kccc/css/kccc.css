@@ -2904,17 +2904,17 @@ ul.menu {
     padding: 0 1rem; }
     @media only screen and (min-width: 768px) {
       .agrocalc .form-item-culture {
-        flex-basis: 41.6666666667%;
-        max-width: 41.6666666667%;
+        flex-basis: 33.3333333333%;
+        max-width: 33.3333333333%;
         padding: 0 1rem; } }
-  .agrocalc .form-item-phase {
+  .agrocalc .form-item-stage {
     flex-basis: 50%;
     max-width: 50%;
     padding: 0 1rem; }
     @media only screen and (min-width: 768px) {
-      .agrocalc .form-item-phase {
-        flex-basis: 25%;
-        max-width: 25%;
+      .agrocalc .form-item-stage {
+        flex-basis: 33.3333333333%;
+        max-width: 33.3333333333%;
         padding: 0 1rem; } }
   .agrocalc .form-item-area,
   .agrocalc .form-item-seed {
@@ -2983,9 +2983,13 @@ ul.menu {
   .agrocalc .program-wrapper .card-product-h .spec.description {
     padding-top: 1rem; }
     .agrocalc .program-wrapper .card-product-h .spec.description a {
-      border-bottom: 1px dashed #000; }
+      border-bottom: 1px dashed #000;
+      cursor: pointer; }
     .agrocalc .program-wrapper .card-product-h .spec.description .tooltip {
       display: none; }
+  .agrocalc .program-wrapper .card-product-h:hover {
+    box-shadow: none;
+    transform: none; }
   .agrocalc .program-wrapper .view-row:not(:last-child) .card-product-h {
     border-bottom: 1px solid #ccc; }
   @media only screen and (min-width: 1024px) {

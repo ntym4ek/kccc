@@ -89,12 +89,12 @@
 
   .form-item-culture {
     @include col('xs', 6);
-    @include col('md', 5);
+    @include col('md', 4);
   }
 
-  .form-item-phase {
+  .form-item-stage {
     @include col('xs', 6);
-    @include col('md', 3);
+    @include col('md', 4);
   }
 
   .form-item-area,
@@ -152,8 +152,15 @@
       }
       .spec.description {
         padding-top: 1rem;
-        a { border-bottom: 1px dashed $text-color; }
+        a {
+          border-bottom: 1px dashed $text-color;
+          cursor: pointer;
+        }
         .tooltip { display: none; }
+      }
+      &:hover {
+        box-shadow: none;
+        transform: none;
       }
     }
     .view-row:not(:last-child) .card-product-h {

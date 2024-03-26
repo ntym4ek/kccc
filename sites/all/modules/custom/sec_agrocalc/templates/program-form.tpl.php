@@ -5,9 +5,10 @@
   <div class="row">
     <div class="col-xs-12 col-md-8">
       <div class="intro">
-        <p><?php print t('You need to enter the parameters of your field, then specify the problems that are present on it and click the "Calculate" button.'); ?></p>
-        <p><?php print t('The protection program we have proposed can be adjusted with switches and sent to a representative for the region.'); ?></p>
-        <p><?php print t('You will be contacted with an offer of an individual program and prices.'); ?></p>
+        <p><?php print t('With the help of an «Agrocalculator», you can choose products to solve the problems of your field and culture.'); ?></p>
+        <p><?php print t('Specify the culture, characteristics of the field, harmful objects and click «Find a solution».'); ?></p>
+        <p><?php print t('An automatic algorithm will calculate the protection system and the consumption of products in accordance with the specified parameters.'); ?></p>
+        <p><?php print t('To clarify the compiled program and calculate the cost of products complex, send a request to our experts.'); ?></p>
       </div>
     </div>
   </div>
