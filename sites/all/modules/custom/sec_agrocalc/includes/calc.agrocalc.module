@@ -1,7 +1,8 @@
 <?php
 
 /**
- * составляем программу защиты для заданной культуры или списка культур
+ * Вернуть программу защиты для заданной культуры или списка культур
+ * с разбивкой по категориям Вредных объектов
  * в зависимости от заданных параметров:
  * $parameters['program_id'] или $parameters['culture_id'] - список культур из программы или явно заданная культура
  * $parameters['stage_id'] - фильтр по этапу роста культуры
@@ -48,7 +49,7 @@ function _reglaments_get_protection_system($params)
     $program['preps'] = [];
 
     // найти все Регламенты для Культуры с привязкой в Препарату и Категории ---
-    $preps_w_regls_temp = [];
+    $preps_w_regls_raw = [];
     $query = db_select('field_data_field_cultures', 'fc');
     $query->addField('fc', 'entity_id', 'rid');
     $query->condition('fc.bundle', 'field_prep_reglaments');
@@ -60,8 +61,8 @@ function _reglaments_get_protection_system($params)
     if ($result = $query->execute()->fetchAll()) {
       // сформировать массив Препаратов с Регламентами и Категорией
       foreach ($result as $item) {
-        $preps_w_regls_temp[$item->nid]['cat'] = $item->tid;
-        $preps_w_regls_temp[$item->nid]['regls'][] = $item->rid;
+        $preps_w_regls_raw[$item->nid]['cat'] = $item->tid;
+        $preps_w_regls_raw[$item->nid]['regls'][] = $item->rid;
       }
 
       // массив со всеми ВО
@@ -74,12 +75,13 @@ function _reglaments_get_protection_system($params)
       //  проверить Регламенты на соответствие заданным ВО
       //  и определить список этих ВО
       $preps_w_regls = [];
-      foreach ($preps_w_regls_temp as $prep_id => $prep) {
+      foreach ($preps_w_regls_raw as $prep_id => $prep) {
         foreach ($prep['regls'] as $regl_id) {
           // определить для каких ВО подходит Регламент
           $hobjects = [];
-          if (!empty($hobjects_all[_prep_cat_to_hobject_cat($prep['cat'])])) {
-            $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[_prep_cat_to_hobject_cat($prep['cat'])], $prep['cat']);
+          $hobject_cat = _prep_cat_to_hobject_cat($prep['cat']);
+          if (!empty($hobjects_all[$hobject_cat])) {
+            $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[$hobject_cat], $prep['cat']);
           }
 
           // определить соответствие выбранному Этапу роста, если он задан
@@ -89,22 +91,22 @@ function _reglaments_get_protection_system($params)
                 && ($prep['cat'] != CAT_FERT_TID || $params['fertilizers']))
             {
               $product_info = sec_catalog_get_product_info($prep_id);
-              if (!isset($preps_w_regls[$prep_id])) {
-                $preps_w_regls[$prep_id] = [
+              if (!isset($preps_w_regls[$hobject_cat][$prep_id])) {
+                $preps_w_regls[$hobject_cat][$prep_id] = [
                   'info' => $product_info,
                   'regls' => [],
                 ];
               }
               $regl = sec_catalog_get_reglament_info($regl_id);
               $regl = sec_catalog_get_reglament_info_formatted($regl, $product_info, ['area' => $params['area'], 'seed' => $params['seed']]);
-              $preps_w_regls[$prep_id]['regls'][$regl_id] = [
+              $preps_w_regls[$hobject_cat][$prep_id]['regls'][$regl_id] = [
                 'info' => $regl,
                 'hobjects' => _get_entities_info($hobjects)
               ];
 
               // убрать ВО, для которых есть регламент из массива не найденных
               if ($hobjects) {
-                $hobjects_missing[_prep_cat_to_hobject_cat($prep['cat'])] = array_diff($hobjects_missing[_prep_cat_to_hobject_cat($prep['cat'])], $hobjects);
+                $hobjects_missing[$hobject_cat] = array_diff($hobjects_missing[$hobject_cat], $hobjects);
               }
             }
           }
@@ -170,7 +172,7 @@ function _get_entities_info($entities)
  * для которых подходит указанный Регламент.
  * Заданы конкретные ВО, а в Регламенте могут быть заданы группы и отдельные ВО.
  */
-function _check_reglament_fits_hobjects($regl_id, $hobject_ids, $type)
+function _check_reglament_fits_hobjects($regl_id, $hobject_ids, $prep_cat)
 {
   $regl_wr = entity_metadata_wrapper('field_collection_item', $regl_id);
 
@@ -178,7 +180,7 @@ function _check_reglament_fits_hobjects($regl_id, $hobject_ids, $type)
   $hobjects = array_intersect($regl_wr->field_hobjects->raw(), $hobject_ids);
 
   // проверка по заданным в Регламенте группам ВО
-  switch ($type) {
+  switch ($prep_cat) {
     case CAT_HERB_TID:
       // получить список родительских категорий регламента
       $weed_groups_arr = [];

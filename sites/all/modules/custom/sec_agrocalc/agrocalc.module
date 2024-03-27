@@ -256,10 +256,19 @@ function agrocalc_form($from, &$form_state)
       $content = '';
       if ($program['preps'] || $program['hobjects']['missing']) {
         if ($program['preps']) {
-          foreach ($program['preps'] as $nid => $prep) {
-            $content .= '<div class="view-row col-xs-12">';
-            $content .=   theme('card_product_h', ['product' => $prep['info'], 'addon' => $prep['regls'], 'inline_link' => true]);
-            $content .= '</div>';
+          foreach ($program['preps'] as $hocatid => $hobject_cat) {
+            $hocat_title = '';
+            if ($hocatid == CAT_WEED) $hocat_title = t('for weeds');
+            if ($hocatid == CAT_DISEASE) $hocat_title = t('for diseases');
+            if ($hocatid == CAT_PEST) $hocat_title = t('for pests');
+            if ($hocat_title) {
+              $content .= '<div class="col-xs-12"><h4>' . $hocat_title . '</h4></div>';
+            }
+            foreach ($hobject_cat as $nid => $prep) {
+              $content .= '<div class="view-row col-xs-12">';
+              $content .=   theme('card_product_h', ['product' => $prep['info'], 'addon' => $prep['regls'], 'inline_link' => true]);
+              $content .= '</div>';
+            }
           }
         }
         // добавляем сообщение под результатом расчёта
