@@ -130,7 +130,7 @@
       <div class="h4"><?php print t('Attention'); ?>!</div>
       <p><?php print t('If the vacancy does not suit you, send your VC to our personnel reserve. We may need a specialist of your qualifications soon.'); ?></p>
       <div class="actions">
-        <a href="<?php print url('node/23'); ?>" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Personnel reserve'); ?></a>
+        <a href="<?php print url('node/23'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Personnel reserve'); ?></a>
       </div>
     </div>
 

@@ -41,7 +41,7 @@
         <p><?php print t('This is a form of sending a message without user identification and feedback.'); ?></p>
         <p><?php print t('If you want to get an answer to your request, use the «Ideas Center».'); ?></p>
         <div class="actions">
-          <a href="<?php print url('node/15'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Ideas Center'); ?></a>
+          <a href="<?php print url('node/15'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Ideas center'); ?></a>
         </div>
       </div>
     </div>
