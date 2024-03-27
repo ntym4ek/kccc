@@ -51,6 +51,12 @@ function agrocalc_form($from, &$form_state)
     ],
     'actions' => ['#type' => 'container', '#attributes' => ['class' => ['form-actions']]],
   ];
+  $form['#attached']['js'] = [
+    'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js',
+    'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js',
+    drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
+  ];
+
 
   // Дефолтные переменные ------------------------------------------------------
   $culture_id = empty($form_state['input']['culture']) ? '' : $form_state['input']['culture'];
@@ -141,11 +147,6 @@ function agrocalc_form($from, &$form_state)
   if ($culture_id) {
     $form['params']['problem'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
     $form['params']['addon'] = ['#type' => 'container', '#attributes' => ['class' => ['params']]];
-    $form['#attached']['js'] = [
-      drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
-      'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js',
-      'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js'
-    ];
 
 
     // список всех Сорняков ------------------------------------------------------
@@ -233,14 +234,18 @@ function agrocalc_form($from, &$form_state)
      * $parameters['fertilizers'] - добавить удобрения
      */
     if ((!isset($form_state['triggering_element']) || $form_state['triggering_element']['#name'] != 'culture')) {
+      $hobjects = [
+        CAT_WEED    => $weed_ids,
+        CAT_PEST    => $pest_ids,
+        CAT_DISEASE => $disease_ids,
+      ];
+
       $program = _reglaments_get_protection_system([
         'culture_id' => $culture_id,
         'stage_id' => $stage_id,
         'area' => $area,
         'seed' => $seed,
-        'weeds' => $weed_ids,
-        'pests' => $pest_ids,
-        'diseases' => $disease_ids,
+        'hobjects' => $hobjects,
         'desiccants' => $desic,
         'fertilizers' => $fert,
       ]);
@@ -249,7 +254,7 @@ function agrocalc_form($from, &$form_state)
 
       //  вывести список препаратов
       $content = '';
-      if ($program['preps'] || $program['hobjects_missing']) {
+      if ($program['preps'] || $program['hobjects']['missing']) {
         if ($program['preps']) {
           foreach ($program['preps'] as $nid => $prep) {
             $content .= '<div class="view-row col-xs-12">';
@@ -258,8 +263,8 @@ function agrocalc_form($from, &$form_state)
           }
         }
         // добавляем сообщение под результатом расчёта
-        if ($program['hobjects_missing']) {
-          $content .= '<div class="view-empty"><p>' . t('Our calculator could not find preparations for next harmful objects: @hobjects. But you can still send the request to our experts and they will help you to get protection system.', ['@hobjects' => $program['hobjects_missing']['formatted']]) . '</p></div>';
+        if ($program['hobjects']['missing']) {
+          $content .= '<div class="view-empty"><p>' . t('Our calculator could not find preparations for next harmful objects: @hobjects. But you can still send the request to our experts and they will help you to get protection system.', ['@hobjects' => drupal_strtolower($program['hobjects']['missing']['formatted'])]) . '</p></div>';
         }
       } else {
         $content .= '<div class="view-empty"><p>' . t('No products were found, try changing the filters.') . '</p></div>';
@@ -311,7 +316,7 @@ function agrocalc_form($from, &$form_state)
       ];
       $form['actions1']['submit'] = [
         '#type' => 'submit',
-        '#value' => t('Get'),
+        '#value' => t('Send request'),
         '#name' => 'send',
         '#attributes' => ['class' => ['btn-primary', 'btn-wide']],
         '#submit' => ['agrocalc_form_submit'],
@@ -342,45 +347,29 @@ function agrocalc_form_refresh($form, $form_state)
 
 function agrocalc_form_validate($form, &$form_state)
 {
-    // сохранить состояние переключателей
-    if (isset($form_state['input'])) {
-        $states = [];
-        foreach ($form_state['input'] as $key => $value) {
-            if ($value && strpos($key, 'switch_') === 0 && $key != 'switch_all') {
-                $keys = explode('_', $key);
-                $states['categories'][$keys[1]]['stages'][$keys[2]][$keys[3]][$keys[4]]['state'] = $value;
-                $states['categories'][$keys[1]]['cnt'] = (empty($states['categories'][$keys[1]]['cnt']) ? 0 : $states['categories'][$keys[1]]['cnt']) + 1;
-            }
-            if (strpos($key, 'range_') === 0) {
-                $keys = explode('_', $key);
-                $states['categories'][$keys[1]]['stages'][$keys[2]][$keys[3]][$keys[4]]['preparations']['items'][$keys[5]]['rate']['default'] = $value;
-            }
-        }
-        if ($states) $form_state['values']['states'] = $states;
-    }
+  if ($form_state['triggering_element']['#name'] == 'calc' && !$form_state['values']['area']) {
+    form_set_error('area', t('Set area of field'));
+  }
 
-    if ($form_state['triggering_element']['#name'] == 'calc' && !$form_state['values']['area']) {
-        form_set_error('area', t('Set area of field'));
+  if ($form_state['submitted']) {
+    if (empty($form_state['values']['region'])) {
+      form_set_error('name', t('Set your region') );
+    } else {
+      $query = db_select('taxonomy_term_data', 't');
+      $query->condition('t.tid', $form_state['values']['region']); // словарь 'regions'
+      $query->fields('t', array('name'));
+      if ($region = $query->execute()->fetchField()) $form_state['values']['region'] = $region;
     }
-
-    if ($form_state['submitted']) {
-        if (empty($form_state['values']['region'])) {
-            form_set_error('name', t('Set your region') );
-        } else {
-            $query = db_select('taxonomy_term_data', 't');
-            $query->condition('t.tid', $form_state['values']['region']); // словарь 'regions'
-            $query->fields('t', array('name'));
-            if ($region = $query->execute()->fetchField()) $form_state['values']['region'] = $region;
-        }
-      if (!valid_email_address($form_state['values']['email'])) {
-        form_set_error('email', 'Необходимо заполнить поле E-Mail');
-      }
-      if (empty($form_state['values']['phone'])) {
-        form_set_error('phone', 'Необходимо заполнить поле Телефон');
-      }
-      if (empty($form_state['values']['name'])) {
-        form_set_error('name', 'Напишите, как к Вам обращаться' );
-      }    }
+    if (!valid_email_address($form_state['values']['email'])) {
+      form_set_error('email', 'Необходимо заполнить поле E-Mail');
+    }
+    if (empty($form_state['values']['phone'])) {
+      form_set_error('phone', 'Необходимо заполнить поле Телефон');
+    }
+    if (empty($form_state['values']['name'])) {
+      form_set_error('name', 'Напишите, как к Вам обращаться' );
+    }
+  }
 }
 
 function agrocalc_form_submit($form, &$form_state)
@@ -397,12 +386,13 @@ function agrocalc_form_submit($form, &$form_state)
   ];
 
   // письмо мне
-  drupal_mail('mailer', 'agro_calculator', 'support@kccc.ru', 'RU', $params, 'bot@kccc.ru');
+  drupal_mail('ext_mail', 'agro_calculator', 'mega_comp@mail.ru', 'RU', $params, 'bot@kccc.ru');
 
-  // отправка письма менеджеру
+  // отправка письма менеджеру, в отдел продаж
   if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
-    // Юле Камневой
-    //drupal_mail('mailer', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $params, 'bot@kccc.ru');
+    if (variable_get('email_dep_sales', '')) {
+      drupal_mail('ext_mail', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $params, 'bot@kccc.ru');
+    }
   }
 
   drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');

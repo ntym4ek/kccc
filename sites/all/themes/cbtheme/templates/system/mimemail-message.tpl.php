@@ -30,7 +30,7 @@
       <table style="width: 800px; max-width: 800px;">
 
         <tr>
-          <td style="padding: 10px 10px 10px 20px; height: 70px; width: 70px; ">
+          <td style="padding: 10px 10px 10px 20px; height: 70px; ">
             <img src="<?php print $logo_mail; ?>" style="display: block; max-width: 100%; max-height: 100%;">
           </td>
           <td style="padding: 10px 0; height: 70px; vertical-align: middle; font-weight: 700; ">

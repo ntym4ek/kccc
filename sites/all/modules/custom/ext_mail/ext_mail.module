@@ -12,3 +12,53 @@ function ext_mail_mail_alter(&$message)
     watchdog('mailer', 'Отправка E-Mail.<br />Почта: %mail <br />Тема: %subject<br />Текст: %body', ['%mail' => $message['to'], '%subject' => $message['subject'], '%body' => var_export($message['body'], true)], WATCHDOG_DEBUG);
   }
 }
+
+
+/**
+ * Implements hook_mail
+ */
+function ext_mail_mail($key, &$message, $params)
+{
+  switch($key) {
+    case 'agro_calculator':
+      if ($params['mail_to'] == 'manager') {
+        $message['subject'] = 'Новая заявка на сайте в разделе АгроКалькулятор';
+        $message['body'][] = ext_mail_get_agro_calculator_mail_text($params['data']);
+      }
+      break;
+  }
+}
+
+function ext_mail_get_agro_calculator_mail_text($data, $recipient = 'manager')
+{
+  $program = $data['program'];
+  $region = $data['region'];
+  $name = $data['name'];
+  $phone = $data['phone'];
+  $email = $data['email'];
+
+  $message = '<h2>' . t('Good day!') . '</h2>';
+  $message .= 'В разделе Калькулятор сайте kccc.ru была отправлена заявка.<br />';
+  $message .= '<br />';
+  $message .= '<b>Данные пользователя</b><br />';
+  $message .= 'Регион: ' . $region . '<br />';
+  $message .= 'Имя: ' . $name . '<br />';
+  $message .= empty($phone)    ? '' : 'Телефон: ' . $phone . '<br />';
+  $message .= empty($email)    ? '' : 'E-Mail: ' . $email . '<br />';
+  $message .= '<br />';
+
+  $message .= '<b>Поле</b><br />';
+  $message .= 'Культура: ' . $program['header']['title'] . '<br />';
+  $message .= 'Фаза культуры: ' . (empty($program['header']['stage'])  ? 'не указана' : $program['header']['stage']) . '<br />';
+  $message .= empty($program['header']['area'])     ? '' : 'Площадь посева: ' . $program['header']['area'] . ' га' . '<br />';
+  $message .= empty($program['header']['seed'])     ? '' : 'Норма сева: ' . $program['header']['seed'] . ' кг/га' . '<br />';
+  $message .= '<br />';
+
+  foreach ($program['hobjects'] as $key => $hobject) {
+    if ($key == CAT_WEED && $hobject)     $message .= 'Сорняки: ' . $hobject['formatted'] . '<br />';
+    if ($key == CAT_PEST && $hobject)     $message .= 'Вредители: ' . $hobject['formatted'] . '<br />';
+    if ($key == CAT_DISEASE && $hobject)  $message .= 'Болезни: ' . $hobject['formatted'] . '<br />';
+  }
+
+  return $message;
+}

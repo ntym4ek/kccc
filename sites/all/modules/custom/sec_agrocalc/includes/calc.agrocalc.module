@@ -5,7 +5,7 @@
  * в зависимости от заданных параметров:
  * $parameters['program_id'] или $parameters['culture_id'] - список культур из программы или явно заданная культура
  * $parameters['stage_id'] - фильтр по этапу роста культуры
- * $parameters['weeds'], $parameters['pests'], $parameters['diseases'] - фильтр по вредным объектам
+ * $parameters['hobjects'] - фильтр по вредным объектам
  * $parameters['desiccants'] - добавить десиканты
  * $parameters['fertilizers'] - добавить удобрения
  *
@@ -18,7 +18,7 @@ function _reglaments_get_protection_system($params)
   if (!empty($params['stage_id']) && !is_numeric($params['stage_id'])) unset($params['stage_id']);
 
   // если ВО не заданы, показать всю программу
-  $show_full_program = empty($params['weeds']) && empty($params['pests']) && empty($params['diseases']);
+  $show_full_program = empty($params['hobjects'][CAT_WEED]) && empty($params['hobjects'][CAT_DISEASE]) && empty($params['hobjects'][CAT_PEST]);
 
   $program_id = $program_wr = null;
 
@@ -65,15 +65,11 @@ function _reglaments_get_protection_system($params)
       }
 
       // массив со всеми ВО
-      $hobjects_all = [
-        CAT_HERB_TID    => $params['weeds'],
-        CAT_INSECT_TID  => $params['pests'],
-        CAT_SEED_TID    => $params['diseases'],
-        CAT_FUNG_TID    => $params['diseases'],
-      ];
+      $hobjects_all = $params['hobjects'];
+
       // массив с ВО, для которых нет решений,
       // будем вычёркивать ВО для которых есть
-      $hobjects_missing = $hobjects_all;
+      $hobjects_missing = $params['hobjects'];
 
       //  проверить Регламенты на соответствие заданным ВО
       //  и определить список этих ВО
@@ -82,8 +78,8 @@ function _reglaments_get_protection_system($params)
         foreach ($prep['regls'] as $regl_id) {
           // определить для каких ВО подходит Регламент
           $hobjects = [];
-          if (!empty($hobjects_all[$prep['cat']])) {
-            $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[$prep['cat']], $prep['cat']);
+          if (!empty($hobjects_all[_prep_cat_to_hobject_cat($prep['cat'])])) {
+            $hobjects = _check_reglament_fits_hobjects($regl_id, $hobjects_all[_prep_cat_to_hobject_cat($prep['cat'])], $prep['cat']);
           }
 
           // определить соответствие выбранному Этапу роста, если он задан
@@ -108,7 +104,7 @@ function _reglaments_get_protection_system($params)
 
               // убрать ВО, для которых есть регламент из массива не найденных
               if ($hobjects) {
-                $hobjects_missing[$prep['cat']] = array_diff($hobjects_missing[$prep['cat']], $hobjects);
+                $hobjects_missing[_prep_cat_to_hobject_cat($prep['cat'])] = array_diff($hobjects_missing[_prep_cat_to_hobject_cat($prep['cat'])], $hobjects);
               }
             }
           }
@@ -118,13 +114,29 @@ function _reglaments_get_protection_system($params)
       $program['preps'] = $preps_w_regls;
       $ho_missing = [];
       foreach($hobjects_missing as $category) {
-        $ho_missing += $category;
+        $ho_missing = array_unique(array_merge($ho_missing, $category));
       }
-      $program['hobjects_missing'] = _get_entities_info(array_values($ho_missing));
+      $program['hobjects'][CAT_WEED]    = _get_entities_info($params['hobjects'][CAT_WEED]);
+      $program['hobjects'][CAT_DISEASE]  = _get_entities_info($params['hobjects'][CAT_DISEASE]);
+      $program['hobjects'][CAT_PEST]    = _get_entities_info($params['hobjects'][CAT_PEST]);
+      $program['hobjects']['missing']       = _get_entities_info(array_values($ho_missing));
     }
   }
 
   return $program;
+}
+
+/**
+ * Вернуть категорию ВО соответствующую категории Препарата
+ */
+function _prep_cat_to_hobject_cat($cat_id)
+{
+  if ($cat_id == CAT_HERB_TID) return CAT_WEED;
+  if ($cat_id == CAT_SEED_TID) return CAT_DISEASE;
+  if ($cat_id == CAT_FUNG_TID) return CAT_DISEASE;
+  if ($cat_id == CAT_INSECT_TID) return CAT_PEST;
+
+  return 0;
 }
 
 /**
@@ -147,6 +159,7 @@ function _get_entities_info($entities)
   $entities_formatted = implode(', ', $entities_arr);
 
   return [
+    'raw' => $entities,
     'list' => $entities_list,
     'formatted' => drupal_ucfirst(drupal_strtolower($entities_formatted)),
   ];

@@ -8,6 +8,11 @@ define('CAT_SEED_TID',    4);
 define('CAT_FERT_TID',    6);
 define('CAT_OTHER_TID',  406);
 
+// внутренний идентификатор Вредных объектов
+define('CAT_WEED',  1);
+define('CAT_DISEASE',  2);
+define('CAT_PEST',  3);
+
 /**
  * Implements hook_menu().
  */
