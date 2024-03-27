@@ -115,17 +115,18 @@
   }
 
   .form-item-region,
+  .form-item-name,
   .form-item-phone,
-  .form-item-email,
-  .form-item-name {
+  .form-item-email {
     @include col('xs', 12);
     @include col('md', 6);
+  }
+  .form-item-name,
+  .form-item-email {
     @include col('lg', 3);
   }
-
-  .help-block {
-    margin: 0;
-  }
+  .form-item-region { @include col('lg', 4); }
+  .form-item-phone  { @include col('lg', 2); }
 
   .program-wrapper {
     .card-product-h {
