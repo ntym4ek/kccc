@@ -87,6 +87,9 @@ function ext_block_block_info()
     'custom-block-prep-pvp' => [
       'info' => 'CB | Препарат | Опыт применения',
     ],
+    'custom-block-recommendations' => [
+      'info' => 'CB | Рекомендации по применению',
+    ],
   ];
 }
 
@@ -282,6 +285,10 @@ function ext_block_theme()
     'custom-block-prep-pvp' => [
       'variables' => [],
       'template' => 'templates/block-prep-pvp',
+    ],
+    'custom-block-recommendations' => [
+      'variables' => [],
+      'template' => 'templates/block-recommendations',
     ],
   ];
 }

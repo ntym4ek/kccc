@@ -464,6 +464,13 @@ a { color: $brand-color; }
     .h4 { margin-bottom: 2rem; }
   }
 }
+.block .block-row {
+  margin-bottom: 2rem;
+
+  @media #{$tablet} {
+    margin-bottom: 4rem;
+  }
+}
 
 // --- Меню ----------------------------------------------------------------------------
 ul.action-links {
@@ -1185,6 +1192,7 @@ ul.action-links {
       .title { font-size: $font-size-large; font-weight: 700; }
       p { margin-bottom: 0; }
     }
+
     @media #{$tablet} {
       margin-bottom: 4rem;
       .instructions {

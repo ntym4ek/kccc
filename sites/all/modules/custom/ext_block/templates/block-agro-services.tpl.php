@@ -3,10 +3,10 @@
 
 <div class="block-agro-services">
 
-    <div class="section-title">
-      <div><?php print t('Agro services'); ?></div>
-      <div class="underline"></div>
-    </div>
+  <div class="section-title">
+    <div><?php print t('Agro services'); ?></div>
+    <div class="underline"></div>
+  </div>
 
   <div class="content">
     <div class="service hover-raise">

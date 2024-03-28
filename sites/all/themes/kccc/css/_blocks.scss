@@ -856,3 +856,35 @@
     .view .view-row { margin-bottom: 0!important; }
   }
 }
+
+.block-recommendations {
+  .instruction {
+    display: flex;
+    padding-top: 2rem;
+    .media {
+      flex: 0 0 3rem;
+      margin-right: 1rem;
+    }
+    i.icon {
+      font-size: 3rem;
+    }
+    .title { font-size: $font-size-large; font-weight: 700; }
+    p { margin-bottom: 0; }
+  }
+  @media #{$tablet} {
+    .instructions {
+      column-count: 2;
+      column-gap: $gutter*2;
+    }
+    .instruction {
+      page-break-inside: avoid; break-inside: avoid; // содержимое не делить на разные колонки
+    }
+  }
+  @media #{$laptop} {
+    .instruction {
+      .media { margin-right: 2rem; }
+      .text { padding-right: 2rem; }
+    }
+  }
+
+}

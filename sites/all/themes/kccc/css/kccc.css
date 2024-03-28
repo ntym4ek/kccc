@@ -2809,6 +2809,32 @@ ul.menu {
   .block-prep-pvp .view .view-row {
     margin-bottom: 0 !important; } }
 
+.block-recommendations .instruction {
+  display: flex;
+  padding-top: 2rem; }
+  .block-recommendations .instruction .media {
+    flex: 0 0 3rem;
+    margin-right: 1rem; }
+  .block-recommendations .instruction i.icon {
+    font-size: 3rem; }
+  .block-recommendations .instruction .title {
+    font-size: 1.222rem;
+    font-weight: 700; }
+  .block-recommendations .instruction p {
+    margin-bottom: 0; }
+@media only screen and (min-width: 1024px) {
+  .block-recommendations .instructions {
+    column-count: 2;
+    column-gap: 2rem; }
+  .block-recommendations .instruction {
+    page-break-inside: avoid;
+    break-inside: avoid; } }
+@media only screen and (min-width: 1366px) {
+  .block-recommendations .instruction .media {
+    margin-right: 2rem; }
+  .block-recommendations .instruction .text {
+    padding-right: 2rem; } }
+
 .page40x {
   display: flex;
   flex-wrap: wrap;
@@ -3442,6 +3468,12 @@ a {
       margin-bottom: 0; }
       .block-attention .h4 {
         margin-bottom: 2rem; } }
+
+.block .block-row {
+  margin-bottom: 2rem; }
+  @media only screen and (min-width: 1024px) {
+    .block .block-row {
+      margin-bottom: 4rem; } }
 
 ul.action-links {
   display: flex;
@@ -4231,7 +4263,7 @@ ul.action-links {
   color: #F99339 !important; }
 
 .category-6 .category-clr, .category-clr-6 {
-  color: #31A34E !important; }
+  color: #203D67 !important; }
 
 .category-406 .category-clr, .category-clr-406 {
   color: #43B02A !important; }
@@ -4252,7 +4284,7 @@ ul.action-links {
   background-color: #F99339 !important; }
 
 .category-6 .category-bkg {
-  background-color: #31A34E !important; }
+  background-color: #203D67 !important; }
 
 .category-406 .category-bkg {
   background-color: #43B02A !important; }
@@ -4273,7 +4305,7 @@ ul.action-links {
   border-color: #F99339 !important; }
 
 .category-6 .category-brd {
-  border-color: #31A34E !important; }
+  border-color: #203D67 !important; }
 
 .category-406 .category-brd {
   border-color: #43B02A !important; }
