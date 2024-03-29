@@ -468,7 +468,7 @@ a { color: $brand-color; }
   margin-bottom: 2rem;
 
   @media #{$tablet} {
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
   }
 }
 
@@ -926,6 +926,7 @@ ul.action-links {
 .node-full blockquote,
 .cke_editable {
   line-height: 1.4;
+  a { font-weight: 500; }
 }
 .cke_editable { padding: 0 1rem; }
 

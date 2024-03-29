@@ -3473,7 +3473,7 @@ a {
   margin-bottom: 2rem; }
   @media only screen and (min-width: 1024px) {
     .block .block-row {
-      margin-bottom: 4rem; } }
+      margin-bottom: 3rem; } }
 
 ul.action-links {
   display: flex;
@@ -3953,6 +3953,10 @@ ul.action-links {
 .node-full blockquote,
 .cke_editable {
   line-height: 1.4; }
+  .node-full .node-text a,
+  .node-full blockquote a,
+  .cke_editable a {
+    font-weight: 500; }
 
 .cke_editable {
   padding: 0 1rem; }
