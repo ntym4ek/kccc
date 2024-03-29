@@ -107,9 +107,9 @@ a { color: $brand-color; }
   @media #{$pad} {
     font-size: 14px;
     .branding {
-      width: 300px;
+      width: 315px;
       padding: 15px;
-      .logo { flex: 0 0 46px; }
+      .logo { flex: 0 0 55px; }
     }
   }
   @media #{$tablet} {
@@ -146,7 +146,6 @@ a { color: $brand-color; }
       padding: 15px 30px 15px 15px;
       width: 360px;
       .brand { padding-left: 1rem; }
-      .logo { flex: 0 0 55px; }
     }
     .global { padding: 0 2rem; }
     .menu.level-1 > li { margin: 0 .5rem; }
@@ -764,10 +763,6 @@ ul.action-links {
     font-size: $font-size-small;
     padding-bottom: 1rem;
   }
-  .image img {
-    display: block;
-    width: 100%;
-  }
   a { color: inherit; }
 
   @media #{$tablet} {
@@ -848,7 +843,6 @@ ul.action-links {
     padding: 1rem;
   }
   a { color: inherit; }
-  .image img { display: block; }
 
   // тизер в сайдбаре
   .page-right & {
@@ -936,9 +930,7 @@ ul.action-links {
     font-size: $font-size-h2; font-weight: 300;
     padding-bottom: 1rem;
   }
-  .title-latin {
-    color: $text-muted;
-  }
+  .title-latin { color: $text-muted; }
   .image {
     height: 100%;
     img {
@@ -954,9 +946,7 @@ ul.action-links {
   }
 
   @media #{$laptop} {
-    .node-title {
-      font-size: $font-size-h1;
-    }
+    .node-title { font-size: $font-size-h1; }
   }
 }
 
@@ -1751,7 +1741,6 @@ ul.action-links {
       color: $text-color; font-size: $font-size-base;
     }
   }
-  .image img { display: block; }
 }
 
 

@@ -389,12 +389,6 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
         $form["body"][$lang][0]["#format"] = 'filtered_html';
       }
     }
-//    if (isset($form['field_hb_classification'])) {
-//      $lang = $form["field_hb_classification"]["#language"];
-//      if ($form["body"]["und"][0]["#type"] == 'text_format' && !$form["body"]["und"][0]["#format"]) {
-//        $form["body"]["und"][0]["#format"] = 'filtered_html';
-//      }
-//    }
 
     // предварительная обработка текстов
     require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');

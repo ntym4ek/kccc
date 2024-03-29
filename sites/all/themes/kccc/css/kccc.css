@@ -1330,6 +1330,8 @@ fieldset {
 
   header, .page-footer, .nav-mobile, .breadcrumb, .tabs {
     display: none !important; } }
+.btn:not(:last-child) {
+  margin-right: 1rem; }
 .btn:not(.btn-link) {
   display: inline-flex;
   justify-content: center;
@@ -3130,10 +3132,10 @@ a {
     .page > .header {
       font-size: 14px; }
       .page > .header .branding {
-        width: 300px;
+        width: 315px;
         padding: 15px; }
         .page > .header .branding .logo {
-          flex: 0 0 46px; } }
+          flex: 0 0 55px; } }
   @media only screen and (min-width: 1024px) {
     .page > .header {
       font-size: 16px; }
@@ -3172,8 +3174,6 @@ a {
         width: 360px; }
         .page > .header .branding .brand {
           padding-left: 1rem; }
-        .page > .header .branding .logo {
-          flex: 0 0 55px; }
       .page > .header .global {
         padding: 0 2rem; }
       .page > .header .menu.level-1 > li {
@@ -3789,9 +3789,6 @@ ul.action-links {
   .card-handbook .counter {
     font-size: 0.889rem;
     padding-bottom: 1rem; }
-  .card-handbook .image img {
-    display: block;
-    width: 100%; }
   .card-handbook a {
     color: inherit; }
   @media only screen and (min-width: 1024px) {
@@ -3876,8 +3873,6 @@ ul.action-links {
   padding: 1rem; }
 .node-teaser a {
   color: inherit; }
-.node-teaser .image img {
-  display: block; }
 .page-right .node-teaser .title {
   font-size: 0.889rem;
   font-weight: 500;
@@ -4829,8 +4824,6 @@ ul.action-links {
       display: block;
       color: #000;
       font-size: 1rem; }
-  .pvp-teaser .image img {
-    display: block; }
 
 .node-season .pvp-event-check,
 .node-season .pvp-event-treat {

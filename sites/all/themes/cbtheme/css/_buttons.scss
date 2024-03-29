@@ -2,6 +2,8 @@
 
 
 .btn {
+  &:not(:last-child) { margin-right: 1rem; }  // отбивка для рядом стоящих кнопок
+
   &:not(.btn-link) {
     @include btn();
   }

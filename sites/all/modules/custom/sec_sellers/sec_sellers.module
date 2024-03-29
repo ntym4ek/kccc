@@ -169,9 +169,9 @@ function sec_sellers_get_regions($level = 'regions', $parent = null, $include_si
   }
 
   // сортировка по Имени
-  usort($regions, function($a, $b) {
-    return $a['label'] <=> $b['label'];
-  });
+//  usort($regions, function($a, $b) {
+//    return $a['label'] <=> $b['label'];
+//  });
 
   return $regions;
 }

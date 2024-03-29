@@ -524,7 +524,8 @@ function ext_user_get_user_info($user = null)
       }
 
       // сотрудник
-      if (user_has_kccc_email($account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
+//      if (user_has_kccc_email($account) && $staff_pr2 = profile2_load_by_user($account, 'staff')) {
+      if ($staff_pr2 = profile2_load_by_user($account, 'staff')) {
         $staff_wr = entity_metadata_wrapper('profile2', $staff_pr2);
 
         $manage = '';
