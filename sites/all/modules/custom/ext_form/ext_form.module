@@ -55,10 +55,27 @@ function ext_form_form_alter(&$form, &$form_state, $form_id)
   // отключить HTML5 валидацию на всех формах
   $form['#attributes']['novalidate'] = '';
 
+  // оформление кнопки
   if (strpos($form_id, 'webform_client_form') === 0) {
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-brand';
     $form["actions"]["submit"]["#attributes"]["class"][] = 'btn-wide';
   }
+
+  // убрать капчу для local сервера
+  if (strpos($GLOBALS['base_url'], '.local') !== false) {
+    $form['#after_build'][] = 'ext_form_form_captcha_after_build';
+  }
+}
+
+/**
+ * An after build handler to remove captcha
+ */
+function ext_form_form_captcha_after_build($form, &$form_state)
+{
+  // ReCAPTCHA
+  if (isset($form['captcha'])) { unset($form['captcha']); }
+
+  return $form;
 }
 
 /**

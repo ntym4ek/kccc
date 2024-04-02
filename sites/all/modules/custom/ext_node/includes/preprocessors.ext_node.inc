@@ -47,7 +47,7 @@ function ext_node_prepare_content_to_save(&$node)
 }
 
 /**
- * Подготовоить текст метериала перед редактированием
+ * Подготовоить текст материала перед редактированием
  */
 function ext_node_prepare_content_to_edit(&$form)
 {

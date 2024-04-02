@@ -213,7 +213,7 @@ function sec_sellers_get_sellers_by_region()
         if ($uids = sec_sellers_get_users_at_region_list([$aid])) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
-            if ($user_info["staff"]["office"]["id"] == OFFICE_SALES_MANAGER) {
+            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_MANAGER, OFFICE_DEALER])) {
               $sellers[$did]['areas']['managers'][$uid] = $user_info;
             }
           }
@@ -227,7 +227,7 @@ function sec_sellers_get_sellers_by_region()
         if ($uids = sec_sellers_get_users_at_region_list($region_ids)) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
-            if ($user_info["staff"]["office"]["id"] == OFFICE_SALES_REPRESENTATIVE) {
+            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_REPRESENTATIVE])) {
               $sellers[$did]['areas']['sellers'][$uid] = $user_info;
             }
           }

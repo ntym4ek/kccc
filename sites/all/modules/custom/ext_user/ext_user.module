@@ -1,21 +1,22 @@
 <?php
 
-define('ADMIN_RID', 3);
-define('SALES_RID', 4);
-define('MARKETING_RID', 5);
-define('HR_RID', 6);
+const ADMIN_RID = 3;
+const SALES_RID = 4;
+const MARKETING_RID = 5;
+const HR_RID = 6;
 
 // управления
-define('DIV_SALES',                   225);
+const DIV_SALES = 225;
 
 // должности в компании
-define('OFFICE_DIRECTOR',             226);
-define('OFFICE_SALES_HEAD',           227);
-define('OFFICE_SALES_DIR_HEAD',       228);
-define('OFFICE_SALES_MANAGER',        229);
-define('OFFICE_SALES_REPRESENTATIVE', 230);
-define('OFFICE_SALES_EXPERT',         231);
-define('OFFICE_SALES_SPECIALIST',     232);
+const OFFICE_DIRECTOR = 226;
+const OFFICE_SALES_HEAD = 227;
+const OFFICE_SALES_DIR_HEAD = 228;
+const OFFICE_SALES_MANAGER = 229;
+const OFFICE_SALES_REPRESENTATIVE = 230;
+const OFFICE_SALES_EXPERT = 231;
+const OFFICE_SALES_SPECIALIST = 232;
+const OFFICE_DEALER = 879;
 
 /**
  * Implements hook_init().
@@ -25,12 +26,13 @@ function ext_user_init()
   // Ограничить просмотр профилей.
   // Оставить доступ только к профилям Сотрудников
   if (arg(0) == 'user' && is_numeric(arg(1))) {
-    if ($account = user_load(arg(1))) {
-      if (!user_own_account() && !user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID) && !user_has_kccc_email($account)) {
+    if (!user_has_role(ADMIN_RID)
+        && !user_has_role(MARKETING_RID)
+        && !ext_user_user_is_a_staff(arg(1)))   // если есть должность в компании
+      {
         drupal_not_found();
       }
     }
-  }
 }
 
 function ext_user_menu()
@@ -120,14 +122,14 @@ function ext_user_preprocess_page(&$vars)
       if (arg(3) == 'main') $vars['title'] = t('Profile settings');
     }
 
-    if (user_own_account()) {
+    if (ext_user_user_own_account()) {
       $breadcrumbs[] = l('', NULL);
       $breadcrumbs[] = l(t('User account'), NULL);
       drupal_set_breadcrumb($breadcrumbs);
     }
 
     // убрать закладки, кроме случая, когда редактор смотрит профиль другого пользователя
-    if ((!user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID)) || user_own_account())   {
+    if ((!user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID)) || ext_user_user_own_account())   {
       unset($vars['tabs']);
     }
   }
@@ -333,7 +335,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       unset($form['account']['mail']['#description']);
       $form["account"]["mail"]["#weight"] = -6;
 
-      if (user_own_account()) {
+      if (ext_user_user_own_account()) {
         // если это не форма смены пароля
         if ($form["account"]["current_pass"]["#access"]) {
           $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
@@ -372,7 +374,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
     }
 
     // показывать регионы только для отдела продаж
-    foreach ([OFFICE_SALES_DIR_HEAD, OFFICE_SALES_MANAGER, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT, OFFICE_SALES_REPRESENTATIVE] as $office) {
+    foreach ([OFFICE_SALES_DIR_HEAD, OFFICE_SALES_MANAGER, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT, OFFICE_SALES_REPRESENTATIVE, OFFICE_DEALER] as $office) {
       $form["profile_staff"]["field_regions"]["und"]['#states']['visible'][':input[name="profile_staff[field_staff_office][und]"]'][] = ['value' => $office];
     }
 
@@ -774,7 +776,7 @@ function ext_user_format_phone($phone)
   // приведение к стандарту
   $phone = ext_user_normalize_phone($phone);
   // возможен телефон с добавочным кодом и 8332
-  $phone = preg_replace('/^(\d)(8332)(\d\d)(\d\d)(\d\d)([\d]+)/', '+$1 ($2) $3-$4-$5 доб. $6', trim($phone));
+  $phone = preg_replace('/^(\d)(8332)(\d\d)(\d\d)(\d\d)([\d]+)/', '+$1 ($2) $3-$4-$5 ' . t('ext.') . ' $6', trim($phone));
   $phone = preg_replace('/^(\d)(8332)(\d\d)(\d\d)(\d\d)/', '+$1 ($2) $3-$4-$5', trim($phone));
 
   // остальные форматируем - +7 xxx xxx-xx-xx
@@ -786,7 +788,7 @@ function ext_user_format_phone($phone)
 /**
  * Проверить, просматривает ли Пользователь свой аккаунт
  */
-function user_own_account()
+function ext_user_user_own_account()
 {
   return !empty($GLOBALS['user']->uid) && $GLOBALS['user']->uid == arg(1);
 }
@@ -797,5 +799,20 @@ function user_own_account()
 function user_has_kccc_email($account)
 {
   return drupal_substr($account->mail, -8) == '@kccc.ru';
+}
+
+/**
+ * Проверить, является ли пользователь Сотрудником
+ */
+function ext_user_user_is_a_staff($account)
+{
+  $result = false;
+  if (is_numeric($account)) $account = user_load($account);
+  $user_info = ext_user_get_user_info($account->uid);
+  if (!empty($user_info["staff"]["office"]["id"])) {
+    $result = true;
+  }
+
+  return $result;
 }
 
