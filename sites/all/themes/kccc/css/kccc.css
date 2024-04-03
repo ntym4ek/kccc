@@ -4731,6 +4731,8 @@ ul.action-links {
     font-weight: 700;
     line-height: 2.2rem;
     margin-bottom: 2rem; }
+  .profile .profile-department {
+    margin-bottom: .5rem; }
   .profile .profile-role {
     font-size: 1.222rem;
     font-weight: 500;

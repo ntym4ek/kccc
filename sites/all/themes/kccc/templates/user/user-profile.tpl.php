@@ -22,6 +22,11 @@
         <div class="col-xs-12 col-md-9 col-lg-6">
           <div class="profile-right">
             <div class="profile-header">
+              <?php if (!empty($user_info["staff"]["office"]["department"])): ?>
+              <div class="profile-department">
+                <?php print $user_info["staff"]["office"]["department"]; ?>
+              </div>
+              <?php endif; ?>
               <div class="profile-role">
                 <?php print $user_info['label']; ?>
               </div>

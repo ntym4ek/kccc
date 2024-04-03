@@ -532,13 +532,14 @@ function ext_user_get_user_info($user = null)
 
         $manage = '';
 
-        $office_id = $office = $department = '';
+        $office_id = $office = $department_info = '';
         if ($staff_wr->field_staff_office->value()) {
           $office_id = $staff_wr->field_staff_office->getIdentifier();
           $office = $staff_wr->field_staff_office->label();
-          $dep_term = taxonomy_get_parents($staff_wr->field_staff_office->getIdentifier());
-          $department = reset($dep_term);
-          $manage = $department->name;
+          if ($parent_terms = taxonomy_get_parents($staff_wr->field_staff_office->getIdentifier())) {
+            $department_info = helper_get_term_info(reset($parent_terms));
+            $manage = $department_info['label'];
+          }
         }
 
         // QR код
@@ -600,7 +601,7 @@ function ext_user_get_user_info($user = null)
         // счётчики
         $counts = [];
         // todo проверка на принадлежность департаменту продаж
-        if ($department->tid == DIV_SALES) {
+        if ($department_info && $department_info['id'] == DIV_SALES) {
           // блоги
           $query = db_select('node');
           $query->addExpression('COUNT(*)');
@@ -645,7 +646,7 @@ function ext_user_get_user_info($user = null)
         $staff = [
           'office' => [
             'id' => $office_id,
-            'department' => $department->name,
+            'department' => $department_info['label'] ?? '',
             'title' => $office,
             'company' => $company,
             'weight' => $weight,
@@ -791,14 +792,6 @@ function ext_user_format_phone($phone)
 function ext_user_user_own_account()
 {
   return !empty($GLOBALS['user']->uid) && $GLOBALS['user']->uid == arg(1);
-}
-
-/**
- * Проверить, корпоративный ли email у пользователя
- */
-function user_has_kccc_email($account)
-{
-  return drupal_substr($account->mail, -8) == '@kccc.ru';
 }
 
 /**
