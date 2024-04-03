@@ -61,7 +61,7 @@
                 <div class="col-xs-12 col-md-9">
                   <div class="field">
                     <?php foreach ($user_info['staff']['phones'] as $phone): ?>
-                    <div><a href="tel:<?php print $phone['tel']; ?>" rel="nofollow"><span class="phone"><?php print $phone['formatted']; ?></span></a></div>
+                    <div><a href="tel:<?php print $phone['tel']; ?>" class="phone c0py" rel="nofollow"><?php print $phone['formatted']; ?></a></div>
                     <?php endforeach; ?>
                 </div>
                 </div>
@@ -72,7 +72,7 @@
                 <div class="col-xs-12 col-md-3"><div class="label">E-Mail</div></div>
                 <div class="col-xs-12 col-md-9">
                   <div class="field">
-                    <a href="mailto:<?php print $user_info['email']; ?>" class="email" rel="nofollow"><?php print $user_info['email']; ?></a>
+                    <a href="mailto:<?php print $user_info['email']; ?>" class="email c0py" rel="nofollow"><?php print $user_info['email']; ?></a>
                   </div>
                 </div>
               </div>

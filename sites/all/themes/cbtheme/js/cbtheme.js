@@ -226,6 +226,15 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
         window.print();
       });
 
+      // -- Кнопка Click-to-copy -----------------------------------------------
+      var options = {
+        copy: Drupal.t("Copy to clipboard"),
+        copied: Drupal.t("Copied"),
+        failed: Drupal.t("Failed to copy"),
+      };
+      // добавить кнопку для элементов с классом "c0py"
+      buildCopy(options);
+
       // -- Кнопка Вернуться к началу страницы ---------------------------------
       $(window).scroll(function () {
         if ($(this).scrollTop() > 400) {

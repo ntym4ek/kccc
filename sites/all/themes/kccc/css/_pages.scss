@@ -181,3 +181,43 @@
     margin-bottom: 4rem;
   }
 }
+
+// -- Филиалы -------------------------------------------------------------
+.branches {
+  margin-bottom: 2rem;
+  .map {
+    height: 450px; width: 100%;
+    margin-top: 2rem;
+  }
+  .h4 { margin: 2rem 0 0; }
+  .notice { margin-bottom: 1rem; }
+  a {
+    color: inherit;
+    transition: all 100ms;
+  }
+  .list {
+  }
+  .phone, .email a {
+    color: $text-light;
+    margin-top: 5px;
+  }
+
+  .branch {
+    margin-bottom: .5rem;
+    min-height: 40px;
+    .title {
+      font-weight: 500; line-height: 1.4;
+    }
+    .title a:hover, .title a:focus {
+      color: $brand-color;
+    }
+    .links {
+      margin-top: 1rem;
+      a { color: $brand-color; }
+    }
+  }
+
+  @media #{$laptop} {
+    margin-bottom: 4rem;
+  }
+}

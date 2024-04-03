@@ -25,7 +25,6 @@ function sec_branches_preprocess_page(&$vars)
 
     drupal_add_js('https://api-maps.yandex.ru/2.1/?apikey=' . YANDEX_API_KEY . '&lang=ru_RU');
     drupal_add_js(drupal_get_path('module', 'sec_branches') . '/js/sec_branches.js');
-    drupal_add_css(drupal_get_path('module', 'sec_branches') . '/css/sec_branches.css');
   }
 }
 
@@ -58,7 +57,7 @@ function sec_branches_page()
         $branches_html .= '<div class="branch"><div class="title"><a href="#branches" id="' . $iso . $index . '">' . $item['address'] . '</a></div>';
         $phones_arr = [];
         foreach ($item['phones'] as $phone) {
-          $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '">' . $phone['txt'] . '</a>';
+          $phones_arr[] =  '<a href="tel:' . $phone['raw'] . '" class="c0py">' . $phone['txt'] . '</a>';
         }
         if ($phones_arr) {
           $branches_html .= '<div class="phones">' . implode($phones_arr, ', ') . '</div>';
@@ -72,12 +71,13 @@ function sec_branches_page()
             '<div class="h4">' . t('Trading House «Kirovo-Chepetsk Chemical Company» LLC') . '</div>' .
             '<div class="branch">' .
               '<div class="title"><a href="#" id="RU-KIR0">' . t('613048, Kirov region, Kirovo-Chepetsk, Proizvodstvennaya str., 6') . '</a></div>' .
-              '<div class="phones"><a href="tel:+' . ext_user_normalize_phone(variable_get('phone_reception', '')) . '">' . ext_user_format_phone(variable_get('phone_reception', '')) . '</a>, <a href="mailto:' . variable_get('email_reception', '') . '">' . variable_get('email_reception', '') . '</a></div>' .
+              '<div class="phone"><a href="tel:+' . ext_user_normalize_phone(variable_get('phone_reception', '')) . '" class="c0py">' . ext_user_format_phone(variable_get('phone_reception', '')) . '</a></div>' .
+              '<div class="email"><a href="mailto:' . variable_get('email_reception', '') . '" class="c0py">' . variable_get('email_reception', '') . '</a></div>' .
               '<div class=""><p>' . t('OGRN') . ' 1084312000750&nbsp;&nbsp;' . t('INN') . ' 4312138026</p></div>' .
               (empty($company_card_url) ? '' : '<div class="links"><a href="' . $company_card_url . '" download>' . t('Download details') . '</a></div>') .
             '</div>' .
             '<div id="map" class="map"></div>' .
-            '<div class="h4">' . t('Branches in other regions') . '<div class="notice">' . t('Click on the address to open it on the map') . '</div></div>' .
+            '<div class="h4">' . t('Branches in other regions') . '</div><div class="notice">' . t('Click on the address to open it on the map') . '</div>' .
             '<div id="list" class="list">' . $branches_html . '</div>' .
           '</div>';
 }

@@ -31,7 +31,7 @@
       <?php
       foreach($staff['phones'] as $i => $phone) {
         if ($active) print ($i ? ', ' : '') . '<span class="phone">' . $phone['formatted'] . '</span>';
-          else print ($i ? ', ' : '') . '<a href="tel:+' . $phone['tel'] . '"><span class="phone">' . $phone['formatted'] . '</span></a>';
+          else print ($i ? ', ' : '') . '<a href="tel:+' . $phone['tel'] . '" class="phone' . ($active ? '' : ' c0py') . '">' . $phone['formatted'] . '</a>';
       }
       ?>
       </div>
@@ -39,7 +39,7 @@
         <?php if ($active): ?>
           <?php print $email; ?>
         <?php else: ?>
-          <a href="mailto:<?php print $email; ?>"><?php print $email; ?></a>
+          <a href="mailto:<?php print $email; ?>"<?php print $active ? '' : ' class="c0py"'; ?>><?php print $email; ?></a>
         <?php endif; ?>
         </div>
       <?php endif; ?>

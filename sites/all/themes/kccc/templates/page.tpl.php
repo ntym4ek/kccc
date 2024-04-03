@@ -200,12 +200,12 @@
               </div>
               <?php if (!empty($phone_reception)): ?>
               <div class="phone">
-                <a href="tel:+<?php print $phone_reception['raw']; ?>"><?php print $phone_reception['formatted']; ?></a>
+                <a href="tel:+<?php print $phone_reception['raw']; ?>" class="c0py"><?php print $phone_reception['formatted']; ?></a>
               </div>
               <?php endif;?>
               <?php if (!empty($email_reception)): ?>
               <div class="email">
-                <a href="mailto:<?php print $email_reception; ?>"><?php print $email_reception; ?></a>
+                <a href="mailto:<?php print $email_reception; ?>" class="c0py"><?php print $email_reception; ?></a>
               </div>
               <?php endif;?>
             </div>
@@ -255,7 +255,6 @@
               <?php print render($subscribe_form); ?>
             </div>
           </div>
-
         </div>
       </div>
   </div>
