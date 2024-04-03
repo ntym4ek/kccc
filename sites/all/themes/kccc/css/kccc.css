@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
 .row {
   margin: 0 -1rem;
@@ -2872,6 +2871,11 @@ ul.menu {
         flex: 1 1 50%;
         padding: 0 6rem; } }
 
+.view-search .underline {
+  height: 3px;
+  width: 4rem;
+  margin-left: 0; }
+
 .sellers {
   margin-bottom: 2rem; }
   .sellers .sellers-intro {
@@ -2913,7 +2917,6 @@ ul.menu {
     .company-experts {
       margin-bottom: 4rem; } }
 
-/* ------------------------------------------------- Калькулятор (Agrocalc) ----------------------------------------- */
 .agrocalc {
   margin-bottom: 2rem; }
   .agrocalc .params,

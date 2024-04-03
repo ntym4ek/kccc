@@ -71,8 +71,9 @@
     <noscript><div><img src="https://mc.yandex.ru/watch/11541151" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
 
-    <?php // скрипт пикселя (Татьянох) ?>
-<!--    <script type="text/javascript" src="//pixel.smr8.ru/metric/100502CC-24A2-4D8E-96D7-39B0A324C0C9" charset="UTF-8" async></script>-->
+    <?php // скрипт пикселя (Татьянох)
+    //<script type="text/javascript" src="//pixel.smr8.ru/metric/100502CC-24A2-4D8E-96D7-39B0A324C0C9" charset="UTF-8" async></script>
+    ?>
 
     <?php // отслеживание звонков через Calltouch (Татьянох) ?>
     <!-- calltouch -->
@@ -81,15 +82,17 @@
     </script>
     <!-- calltouch -->
 
-    <!-- Google Tag Manager -->
-<!--    <script>(function(w,d,s,l,i){-->
-<!--        w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});-->
-<!--        var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';-->
-<!--        j.async=true;-->
-<!--        j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;-->
-<!--        f.parentNode.insertBefore(j,f);-->
-<!--      })(window,document,'script','dataLayer','GTM-PWVNDPC');</script>-->
-    <!-- End Google Tag Manager -->
+    <?php
+//        <!-- Google Tag Manager -->
+//    <script>(function(w,d,s,l,i){
+//        w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+//        var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+//        j.async=true;
+//        j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+//        f.parentNode.insertBefore(j,f);
+//      })(window,document,'script','dataLayer','GTM-PWVNDPC');</script>
+//    <!-- End Google Tag Manager -->
+    ?>
   <?php endif;?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>

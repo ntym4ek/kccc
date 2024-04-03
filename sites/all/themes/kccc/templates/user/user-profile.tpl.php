@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="profile-name">
-            <?php print $user_info["main"]["name_short"]; ?>
+            <?php print $user_info["main"]["name_full"]; ?>
           </div>
           </div>
       </div>
@@ -44,6 +44,7 @@
               <?php endforeach; ?>
             </div>
             <?php endif; ?>
+
 
             <?php if (empty($user_info['staff']['hide_contact'])): ?>
             <div class="profile-info">

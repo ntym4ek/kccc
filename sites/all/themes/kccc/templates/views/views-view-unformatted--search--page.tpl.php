@@ -8,7 +8,10 @@
  */
 ?>
 <?php if (!empty($title)): ?>
-  <h3 class="col-xs-12"><?php print $title; ?></h3>
+  <h3 class="col-xs-12">
+    <?php print $title; ?>
+    <div class="underline"></div>
+  </h3>
 <?php endif; ?>
 <?php foreach ($rows as $id => $row): ?>
   <div<?php if ($classes_array[$id]): ?> class="<?php print $classes_array[$id]; ?>"<?php endif; ?>>

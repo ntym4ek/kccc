@@ -2,11 +2,6 @@
   Drupal.behaviors.kccc = {
     attach: function (context, settings) {
 
-      // -- Share links
-      $(".share-btn").click((e) => {
-        $(e.target).closest(".share").toggleClass("open");
-      });
-
       // -- Скролл мышкой подменю на десктопах
       $(".page-highlighted .sub-menu").mousedown(function(event) {
         let $this = $(this),
