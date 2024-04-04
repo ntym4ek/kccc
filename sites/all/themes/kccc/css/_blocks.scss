@@ -86,7 +86,7 @@
     .swiper { padding: 1rem 1rem 0; } // чтобы тени карточек не попадали под границы
     .swiper-slide { height: auto; }
 
-    @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
+    @media #{$phone-only}, #{$smart-only}, #{$pad-only}, #{$tablet-only} {
       @include screen-width();
     }
   }
@@ -529,6 +529,10 @@
     position: relative; z-index: 5;
   }
 
+  @media #{$pad} {
+    .img,
+    .title { margin: 0 -3rem; }
+  }
   @media #{$tablet} {
     .img {
       border-bottom-left-radius: 200px; border-top-left-radius: 200px;
@@ -565,7 +569,7 @@
   .info {
     display: flex; flex-direction: column;
     height: 100%;
-    padding: 0 2rem;
+    //padding: 0 2rem;
   }
   .img {
     flex: 0 0 auto;
@@ -587,6 +591,15 @@
   }
   .swiper-slide { height: initial; }
 
+  .carousel {
+    margin-top: 0;
+    .swiper-slide { height: initial; }
+
+    @media #{$phone-only}, #{$smart-only}, #{$pad-only}, #{$tablet-only} {
+      @include screen-width();
+      .swiper { padding: 0 2rem; }
+    }
+  }
   @media #{$tablet} {
     .info { padding-right: 0; }
   }
@@ -659,13 +672,15 @@
       z-index: 100;
       &:after { border-left-color: $brand-color; }
     }
+
   }
 
   .carousel.outer-pagination.top-pagination {
     margin-top: 0;
     .swiper { padding: 0 2rem; }
     .swiper-slide { height: initial; }
-    @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
+
+    @media #{$phone-only}, #{$smart-only}, #{$pad-only}, #{$tablet-only} {
       @include screen-width();
     }
   }
@@ -734,7 +749,7 @@
   }
   .b3 .image {
     background-image: url(../../../modules/custom/ext_block/images/features_2.jpg); background-size: cover; background-position: center center;
-    min-height: 230px;
+    min-height: 330px;
   }
   .b4 .image {
     background-image: url(../../../modules/custom/ext_block/images/features_3.jpg); background-size: cover; background-position: center center;
@@ -751,7 +766,7 @@
   .text { padding: 2rem 0; }
   .image { position: relative; z-index: -1; }
 
-  @media #{$tablet} {
+  @media #{$pad} {
     .box {
       position: absolute; top: 4rem; z-index: 1;
       width: 28rem; height: 19rem;

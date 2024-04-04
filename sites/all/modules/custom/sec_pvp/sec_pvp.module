@@ -65,7 +65,7 @@ function sec_pvp_get_content_filtered($filters, $pvp_per_page, $pvp_page_num = 0
   if ($pvps = sec_pvp_get_pvp_filtered($filters, $pvp_per_page, $pvp_page_num*$pvp_per_page)) {
     $content['total'] = $pvps['total'];
     foreach ($pvps['list'] as $pvp_teaser) {
-      $content['output'] .= '<div class="view-row col-xs-12 col-md-6 col-lg-3">';
+      $content['output'] .= '<div class="view-row col-xs-12 col-md-6 col-lg-4 col-xl-3">';
       $content['output'] .=   theme('pvp_teaser', ['item' => $pvp_teaser]);
       $content['output'] .= '</div>';
     }
@@ -97,6 +97,10 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
   $dbr->condition('n.status', 1);
   $dbr->condition('n.type', 'season');
   $dbr->addField('n', 'nid');
+  // фильтр по Автору
+  if ($filters['user']['current_id']) {
+    $dbr->condition('n.uid', $filters['user']['current_id']);
+  }
   // есть Контроль
   $dbr->innerJoin('field_data_field_pvp_check', 'fpc', 'fpc.entity_id = n.nid');
   if ($filters['region']['current_id']) {
@@ -408,6 +412,7 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
 function sec_pvp_get_filters_default()
 {
   return [
+    'user'        => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
     'region'      => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
     'culture'     => ['current_id' => 0, 'options' => []],  // используется как фильтр в ПвП
     'preparation' => ['current_id' => 0, 'options' => []],  // используется в блоке Опыты применения в препарате
@@ -425,9 +430,19 @@ function sec_pvp_get_filters_set()
 
     $filters = sec_pvp_get_filters_default();
 
+    // Пользователь
+    $curr_user_id = null;
+    if ($_GET['q'] == 'system/ajax' && isset($_POST["user"])) {
+      $curr_user_id = $_POST["user"];
+    }
+    elseif (isset($_GET['user']) && is_numeric($_GET['user'])) {
+      $curr_user_id = $_GET['user'];
+    }
+    $filters['user']['current_id'] = $curr_user_id;
+
     // Регионы
     $curr_reg_id = null;
-    $filters['region']['options'] = sec_pvp_get_regions();
+    $filters['region']['options'] = sec_pvp_get_regions($filters);
     if ($_GET['q'] == 'system/ajax' && isset($_POST["region"])) {
       $curr_reg_id = $_POST["region"];
     }
@@ -489,7 +504,7 @@ function sec_pvp_get_filters_set()
 /**
  * Вернуть массив с Регионами из ПвП
  */
-function sec_pvp_get_regions()
+function sec_pvp_get_regions($filters)
 {
   $regions = [];
 
@@ -501,6 +516,11 @@ function sec_pvp_get_regions()
   $dbr->condition('n.status', 1);
   $dbr->orderBy('t.name');
   $dbr->fields('t', ['tid', 'name']);
+
+  if ($filters['user']['current_id']) {
+    $dbr->condition('n.uid', $filters['user']['current_id']);
+  }
+
   if ($items = $dbr->execute()->fetchAll()) {
     foreach ($items as $item) {
       $regions[$item->tid] = $item->name;
@@ -523,6 +543,10 @@ function sec_pvp_get_filter_cultures($filters)
   $dbr->innerJoin('node', 'ns', 'ns.nid = fc.entity_id');
   $dbr->condition('ns.type', 'season');
   $dbr->condition('ns.status', 1);
+
+  if ($filters['user']['current_id']) {
+    $dbr->condition('ns.uid', $filters['user']['current_id']);
+  }
 
   if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = fc.entity_id');
@@ -554,6 +578,11 @@ function sec_pvp_get_filter_preparations($filters)
   $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.field_pvp_treat_value = fps.entity_id');
   $dbr->innerJoin('node', 'ns', 'ns.nid = ft.entity_id');
   $dbr->condition('ns.status', 1);
+
+  if ($filters['user']['current_id']) {
+    $dbr->condition('ns.uid', $filters['user']['current_id']);
+  }
+
   // если задан Регион
   if ($filters['region']['current_id']) {
     $dbr->innerJoin('field_data_field_region', 'fr', 'fr.entity_id = ft.entity_id');
@@ -597,6 +626,10 @@ function sec_pvp_get_filter_components($filters)
   $dbr->innerJoin('field_data_field_pvp_treat', 'ft', 'ft.field_pvp_treat_value = fps.entity_id');
   $dbr->innerJoin('node', 'ns', 'ns.nid = ft.entity_id');
   $dbr->condition('ns.status', 1);
+
+  if ($filters['user']['current_id']) {
+    $dbr->condition('ns.uid', $filters['user']['current_id']);
+  }
 
   // если задан Регион
   if ($filters['region']['current_id']) {
@@ -657,12 +690,17 @@ function sec_pvp_filters_form($form, &$form_state)
   // сбрасываем установленные значения фильтров формы, установим ниже с учётом сброшенных
   unset($form_state["input"]);
 
+  $form['filters']['user'] = [
+    '#type' => 'hidden',
+    '#value' => $filters['user']['current_id'],
+  ];
+
   $form['filters']['region'] = [
     '#type' => 'select',
     '#title' => t('Region'),
     '#options' => [0 => t('All')] + $filters['region']['options'],
     '#default_value' => $filters['region']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -675,7 +713,7 @@ function sec_pvp_filters_form($form, &$form_state)
     '#title' => t('Culture'),
     '#options' => [0 => t('All')] + $filters['culture']['options'],
     '#default_value' => $filters['culture']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -688,7 +726,7 @@ function sec_pvp_filters_form($form, &$form_state)
     '#title' => t('Product'),
     '#options' => [0 => t('All')] + $filters['preparation']['options'],
     '#default_value' => $filters['preparation']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -701,7 +739,7 @@ function sec_pvp_filters_form($form, &$form_state)
     '#title' => t('Component'),
     '#options' => [0 => t('All')] + $filters['component']['options'],
     '#default_value' => $filters['component']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -811,4 +849,22 @@ function sec_pvp_form_node_form_submit($form, &$form_state)
   $where = trim(str_replace('-', '', $form["field_region"]["und"]["#options"][$form_state["values"]["field_region"]["und"][0]["tid"]]));
 
   $form_state["values"]["title"] = $when . '. ' . $what . '. ' . $where;
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function sec_pvp_preprocess_page(&$vars)
+{
+  if ($_GET['q'] == 'preparaty-v-pole') {
+    if (isset($_GET['user'])) {
+      if ($user_info = ext_user_get_user_info($_GET['user'])) {
+        $vars['is_title_on'] = TRUE;
+        $title = $user_info["label"] . ' ' . $user_info["main"]["name_short"];
+        $vars['title'] = '';
+        $vars['title_suffix'] = theme('card_contact', $user_info);
+        drupal_set_title($vars['banner_title'] . '. ' . $title);
+      }
+    }
+  }
 }

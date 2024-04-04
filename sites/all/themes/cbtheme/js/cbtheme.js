@@ -4,29 +4,14 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
   Drupal.behaviors.cbtheme = {
     attach: function (context, settings) {
 
-      // --- Меню --------------------------------------------------------------
+      // --- Главное Меню ------------------------------------------------------
       $(".expanded > a").on("click", (e) => {
         // не переходить по ссылке на выпадающих меню
         e.preventDefault();
       });
 
-      // --- Мобильное меню ----------------------------------------------------
-      function showMobileNav() {
-        $("body").data("nav-mobile-opened", true).addClass("nav-mobile-opened");
-      }
-      function hideMobileNav() {
-        $("body").data("nav-mobile-opened", false).removeClass("nav-mobile-opened");
-      }
-      function toggleMobileNav() {
-        if ($("body").data("nav-mobile-opened")) {
-          hideMobileNav();
-        } else {
-          showMobileNav();
-        }
-      }
-
       // --- Плавный скролл к якорям -------------------------------------------
-      $(document).on('click', 'a[href^="#"]', function (event) {
+      $(document).on("click", 'a[href^="#"]', function (event) {
         event.preventDefault();
         this.blur();
 
@@ -176,6 +161,20 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
       // -- Мобильное боковое меню ---------------------------------------------
         // если < menuHide, то вывести боковое меню
         // повесить обработчик свайпа
+      function showMobileNav() {
+        $("body").data("nav-mobile-opened", true).addClass("nav-mobile-opened");
+      }
+      function hideMobileNav() {
+        $("body").data("nav-mobile-opened", false).removeClass("nav-mobile-opened");
+      }
+      function toggleMobileNav() {
+        if ($("body").data("nav-mobile-opened")) {
+          hideMobileNav();
+        } else {
+          showMobileNav();
+        }
+      }
+
       if ($(window).width() < menuHide) {
         // клик по иконке Меню
         $(".nav-mobile-label").on("click", (e) => {
@@ -185,13 +184,13 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
 
         $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile-label").on("swiped-right", (e) => {
           // если свайп вправо на Свайпере или блоке с классом main-menu-disabled, то не показываем меню
-          let is_swiper = $(e.target).closest(".main-menu-disabled, .swiper").length > 0;
-          if (!is_swiper) { showMobileNav(); }
+          let is_prohibited = $(e.target).closest(".mobile-menu-disabled, .swiper").length > 0;
+          if (!is_prohibited) { showMobileNav(); }
         });
         $(".nav-mobile-right .page, .nav-mobile-right .nav-mobile-label").on("swiped-left", (e) => {
           // если свайп вправо на Свайпере, то не показываем меню
-          let is_swiper = $(e.target).closest(".swiper").length > 0;
-          if (!is_swiper) { showMobileNav(); }
+          let is_prohibited = $(e.target).closest(".mobile-menu-disabled, .swiper").length > 0;
+          if (!is_prohibited) { showMobileNav(); }
         });
         $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile, .nav-mobile-left .nav-mobile-label").on("swiped-left", () => {
           hideMobileNav();
@@ -227,13 +226,15 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
       });
 
       // -- Кнопка Click-to-copy -----------------------------------------------
-      var options = {
-        copy: Drupal.t("Copy to clipboard"),
-        copied: Drupal.t("Copied"),
-        failed: Drupal.t("Failed to copy"),
-      };
-      // добавить кнопку для элементов с классом "c0py"
-      buildCopy(options);
+      $('body').once( () => {
+        var options = {
+          copy: Drupal.t("Copy to clipboard"),
+          copied: Drupal.t("Copied"),
+          failed: Drupal.t("Failed to copy"),
+        };
+        // добавить кнопку для элементов с классом "c0py"
+        buildCopy(options);
+      });
 
       // -- Кнопка Вернуться к началу страницы ---------------------------------
       $(window).scroll(function () {

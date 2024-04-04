@@ -29,6 +29,17 @@
     .swiper-button-next { text-shadow: none; }
   }
 
+  &.no-mobile-frame {
+    > .swiper { padding: 0 $page-gutter-xs; }
+
+    @media #{$pad}    { > .swiper { padding: 0 $page-gutter-md; }}
+    @media #{$tablet} { > .swiper { padding: 0 $page-gutter-lg; }}
+    @media #{$laptop} { > .swiper { padding: 0; }}
+    @media #{$phone-only}, #{$smart-only}, #{$pad-only}, #{$tablet-only} {
+      @include screen-width();
+    }
+  }
+
   @media #{$laptop} {
     &.outer-navigation > .swiper-button-prev,
     &.outer-navigation > .swiper-button-next {

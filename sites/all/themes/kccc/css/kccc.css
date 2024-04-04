@@ -942,6 +942,9 @@ h4, h5, h6 {
   width: 100%; }
   .container.full-height {
     height: 100%; }
+  @media only screen and (min-width: 360px) {
+    .container {
+      padding: 0 2rem; } }
   @media only screen and (min-width: 768px) {
     .container {
       padding: 0 3rem; } }
@@ -1047,6 +1050,9 @@ h4, h5, h6 {
     font-size: 2.5rem; }
   .page-banner .banner-title-wrapper {
     max-width: 50%; } }
+
+.page-title {
+  margin-bottom: 2rem; }
 
 ul.tabs.primary {
   font-size: .8rem;
@@ -1174,29 +1180,32 @@ ul.tabs.secondary {
 
 .profile {
   margin: 0 0 2rem; }
-  .profile .profile-left .image img {
-    width: initial; }
+  .profile .profile-left {
+    margin-bottom: 1rem; }
+    .profile .profile-left .image img {
+      width: initial; }
   .profile .profile-name {
     font-size: 1.333rem;
     font-weight: 700;
-    line-height: 2.2rem;
-    margin-bottom: 2rem; }
+    margin-bottom: 1rem; }
   .profile .profile-role {
     font-size: 1.222rem;
     font-weight: 500;
     margin-bottom: 1rem; }
   .profile .profile-counts {
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 1rem; }
     .profile .profile-counts .profile-count {
-      flex: 0 0 auto;
       border-radius: 4px;
       background-color: #43B02A;
       color: #fff;
       text-align: center;
-      margin-right: 1rem;
+      margin: 0 1rem 1rem 0;
       padding: 1rem;
       min-width: 100px; }
+      .profile .profile-counts .profile-count:last-child {
+        margin-right: 0; }
     .profile .profile-counts .count-amount {
       font-size: 1.667rem;
       font-weight: 700; }
@@ -1205,12 +1214,12 @@ ul.tabs.secondary {
   @media only screen and (min-width: 1024px) {
     .profile {
       margin-bottom: 4rem; }
+      .profile .profile-name {
+        margin-bottom: 2rem; }
       .profile .profile-role {
         margin-bottom: 2rem; }
       .profile .profile-counts {
-        margin-bottom: 2rem; }
-        .profile .profile-counts .profile-count {
-          margin-right: 2rem; } }
+        margin-bottom: 2rem; } }
 
 table {
   margin-bottom: 1rem; }
@@ -1323,9 +1332,14 @@ fieldset {
   transition: all 150ms;
   visibility: hidden;
   opacity: 0;
-  padding: 0 .4em; }
+  padding: 0.4em;
+  margin-top: -.4em;
+  cursor: pointer; }
   .ctooltip svg {
-    display: block; }
+    display: block;
+    stroke: #ccc; }
+    .ctooltip svg.c0pied {
+      stroke: #43B02A; }
   .ctooltip .ctooltiptext {
     display: inline-block;
     visibility: hidden;
@@ -1989,6 +2003,27 @@ ul.menu {
   .carousel.outer-navigation .swiper-button-prev,
   .carousel.outer-navigation .swiper-button-next {
     text-shadow: none; }
+  .slider.no-mobile-frame > .swiper,
+  .carousel.no-mobile-frame > .swiper {
+    padding: 0 2rem; }
+  @media only screen and (min-width: 768px) {
+    .slider.no-mobile-frame > .swiper,
+    .carousel.no-mobile-frame > .swiper {
+      padding: 0 3rem; } }
+  @media only screen and (min-width: 1024px) {
+    .slider.no-mobile-frame > .swiper,
+    .carousel.no-mobile-frame > .swiper {
+      padding: 0 4rem; } }
+  @media only screen and (min-width: 1366px) {
+    .slider.no-mobile-frame > .swiper,
+    .carousel.no-mobile-frame > .swiper {
+      padding: 0; } }
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
+    .slider.no-mobile-frame,
+    .carousel.no-mobile-frame {
+      position: relative;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%); } }
   @media only screen and (min-width: 1366px) {
     .slider.outer-navigation > .swiper-button-prev, .slider.outer-navigation > .swiper-button-next,
     .carousel.outer-navigation > .swiper-button-prev,
@@ -2080,7 +2115,7 @@ ul.menu {
   padding: 1rem 1rem 0; }
 .block-new-products .carousel-products .swiper-slide {
   height: auto; }
-@media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 1024px) and (max-width: 1365px) {
+@media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
   .block-new-products .carousel-products {
     position: relative;
     margin-left: calc(-50vw + 50%);
@@ -2528,6 +2563,10 @@ ul.menu {
     margin: 0 -2rem;
     position: relative;
     z-index: 5; }
+  @media only screen and (min-width: 768px) {
+    .block-reviews .img,
+    .block-reviews .title {
+      margin: 0 -3rem; } }
   @media only screen and (min-width: 1024px) {
     .block-reviews .img {
       border-bottom-left-radius: 200px;
@@ -2562,8 +2601,7 @@ ul.menu {
 .block-more-info .info {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 0 2rem; }
+  height: 100%; }
 .block-more-info .img {
   flex: 0 0 auto; }
   .block-more-info .img img {
@@ -2580,6 +2618,17 @@ ul.menu {
   margin-bottom: 1rem; }
 .block-more-info .swiper-slide {
   height: initial; }
+.block-more-info .carousel {
+  margin-top: 0; }
+  .block-more-info .carousel .swiper-slide {
+    height: initial; }
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
+    .block-more-info .carousel {
+      position: relative;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%); }
+      .block-more-info .carousel .swiper {
+        padding: 0 2rem; } }
 @media only screen and (min-width: 1024px) {
   .block-more-info .info {
     padding-right: 0; } }
@@ -2657,7 +2706,7 @@ ul.menu {
     padding: 0 2rem; }
   .block-history .carousel.outer-pagination.top-pagination .swiper-slide {
     height: initial; }
-  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 1024px) and (max-width: 1365px) {
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
     .block-history .carousel.outer-pagination.top-pagination {
       position: relative;
       margin-left: calc(-50vw + 50%);
@@ -2720,7 +2769,7 @@ ul.menu {
   background-image: url(../../../modules/custom/ext_block/images/features_2.jpg);
   background-size: cover;
   background-position: center center;
-  min-height: 230px; }
+  min-height: 330px; }
 .block-features .b4 .image {
   background-image: url(../../../modules/custom/ext_block/images/features_3.jpg);
   background-size: cover;
@@ -2741,7 +2790,7 @@ ul.menu {
 .block-features .image {
   position: relative;
   z-index: -1; }
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 768px) {
   .block-features .box {
     position: absolute;
     top: 4rem;
@@ -2917,10 +2966,38 @@ ul.menu {
         flex: 1 1 50%;
         padding: 0 6rem; } }
 
-.view-search .underline {
+.view.view-search .underline {
   height: 3px;
   width: 4rem;
   margin-left: 0; }
+.view.view-search .views-exposed-widgets .views-widget-filter-search_api_views_fulltext {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .view.view-search .views-exposed-widgets .views-widget-filter-search_api_views_fulltext {
+      flex-basis: 75%;
+      max-width: 75%;
+      padding: 0 1rem; } }
+  @media only screen and (min-width: 1366px) {
+    .view.view-search .views-exposed-widgets .views-widget-filter-search_api_views_fulltext {
+      flex-basis: 83.3333333333%;
+      max-width: 83.3333333333%;
+      padding: 0 1rem; } }
+.view.view-search .views-exposed-widgets .views-submit-button {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .view.view-search .views-exposed-widgets .views-submit-button {
+      flex-basis: 25%;
+      max-width: 25%;
+      padding: 0 1rem; } }
+  @media only screen and (min-width: 1366px) {
+    .view.view-search .views-exposed-widgets .views-submit-button {
+      flex-basis: 16.6666666667%;
+      max-width: 16.6666666667%;
+      padding: 0 1rem; } }
 
 .sellers {
   margin-bottom: 2rem; }
@@ -2965,6 +3042,8 @@ ul.menu {
 
 .agrocalc {
   margin-bottom: 2rem; }
+  .agrocalc input[type=text], .agrocalc select {
+    width: 100%; }
   .agrocalc .params,
   .agrocalc .request {
     margin: 0 -1rem;
@@ -2975,43 +3054,64 @@ ul.menu {
     flex-direction: row;
     flex-wrap: wrap;
     max-width: 1320px; }
-  .agrocalc .form-item-culture {
-    flex-basis: 50%;
-    max-width: 50%;
-    padding: 0 1rem; }
-    @media only screen and (min-width: 768px) {
-      .agrocalc .form-item-culture {
-        flex-basis: 33.3333333333%;
-        max-width: 33.3333333333%;
-        padding: 0 1rem; } }
+  .agrocalc .form-item-culture,
   .agrocalc .form-item-stage {
-    flex-basis: 50%;
-    max-width: 50%;
+    flex-basis: 100%;
+    max-width: 100%;
     padding: 0 1rem; }
     @media only screen and (min-width: 768px) {
+      .agrocalc .form-item-culture,
+      .agrocalc .form-item-stage {
+        flex-basis: 50%;
+        max-width: 50%;
+        padding: 0 1rem; } }
+    @media only screen and (min-width: 1024px) {
+      .agrocalc .form-item-culture,
       .agrocalc .form-item-stage {
         flex-basis: 33.3333333333%;
         max-width: 33.3333333333%;
         padding: 0 1rem; } }
   .agrocalc .form-item-area,
   .agrocalc .form-item-seed {
-    flex-basis: 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex-basis: 50%;
+    max-width: 50%;
     padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .agrocalc .form-item-area,
+      .agrocalc .form-item-seed {
+        flex-basis: 50%;
+        max-width: 50%;
+        padding: 0 1rem; } }
+    @media only screen and (min-width: 1024px) {
+      .agrocalc .form-item-area,
+      .agrocalc .form-item-seed {
+        flex-basis: 16.6666666667%;
+        max-width: 16.6666666667%;
+        padding: 0 1rem; } }
   .agrocalc .form-item-weeds,
   .agrocalc .form-item-pests,
   .agrocalc .form-item-diseases {
     flex-basis: 100%;
     max-width: 100%;
-    padding: 0 1rem;
-    flex-basis: 33.3333333333%;
-    max-width: 33.3333333333%;
     padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .agrocalc .form-item-weeds,
+      .agrocalc .form-item-pests,
+      .agrocalc .form-item-diseases {
+        flex-basis: 33.3333333333%;
+        max-width: 33.3333333333%;
+        padding: 0 1rem; } }
   .agrocalc .form-item-desic,
   .agrocalc .form-item-fert {
-    flex-basis: 25%;
-    max-width: 25%;
+    flex-basis: 100%;
+    max-width: 100%;
     padding: 0 1rem; }
+    @media only screen and (min-width: 768px) {
+      .agrocalc .form-item-desic,
+      .agrocalc .form-item-fert {
+        flex-basis: 25%;
+        max-width: 25%;
+        padding: 0 1rem; } }
   .agrocalc .form-item-region,
   .agrocalc .form-item-name,
   .agrocalc .form-item-phone,
@@ -3043,6 +3143,11 @@ ul.menu {
       flex-basis: 16.6666666667%;
       max-width: 16.6666666667%;
       padding: 0 1rem; } }
+  .agrocalc .program-wrapper .card-product-h .summary {
+    display: block !important;
+    padding-left: 0; }
+  .agrocalc .program-wrapper .card-product-h .info-mobile {
+    display: none !important; }
   .agrocalc .program-wrapper .card-product-h .hobjects {
     font-weight: 600;
     margin: .5rem 0; }
@@ -3070,9 +3175,6 @@ ul.menu {
       cursor: pointer; }
     .agrocalc .program-wrapper .card-product-h .spec.description .tooltip {
       display: none; }
-  .agrocalc .program-wrapper .card-product-h:hover {
-    box-shadow: none;
-    transform: none; }
   .agrocalc .program-wrapper .view-row:not(:last-child) .card-product-h {
     border-bottom: 1px solid #ccc; }
   @media only screen and (min-width: 1024px) {
@@ -3357,7 +3459,7 @@ a {
       top: 156px; } }
 
 .page-banner .screen-width {
-  height: 220px; }
+  height: 240px; }
 .page-banner .banner-title-wrapper {
   color: #fff;
   display: flex;
@@ -3395,7 +3497,8 @@ a {
     display: flex;
     align-items: center;
     font-size: .8em;
-    height: 90px;
+    height: 7.5em;
+    max-width: 23em;
     padding: 1rem 0;
     margin-right: -1rem; }
     .page-footer .branding .logo {
@@ -3454,16 +3557,14 @@ a {
       max-width: 250px; }
     .page-footer .subscribe .btn {
       padding: 0 .5rem; }
-  @media only screen and (min-width: 1024px) {
+  @media only screen and (min-width: 768px) {
     .page-footer .legal-name {
       font-size: 0.889rem; }
     .page-footer .branding {
-      font-size: .65em;
-      height: 80px; } }
+      font-size: .65em; } }
   @media only screen and (min-width: 1366px) {
     .page-footer .branding {
-      font-size: .8em;
-      height: 90px; } }
+      font-size: .8em; } }
 
 .phone {
   line-height: 1.3em;
@@ -3630,17 +3731,17 @@ ul.action-links {
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 1320px; }
-  .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+  .view .views-exposed-widgets .views-exposed-widget {
     flex-basis: 100%;
     max-width: 100%;
     padding: 0 1rem; }
     @media only screen and (min-width: 768px) {
-      .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+      .view .views-exposed-widgets .views-exposed-widget {
         flex-basis: 50%;
         max-width: 50%;
         padding: 0 1rem; } }
-    @media only screen and (min-width: 1024px) {
-      .view .views-exposed-widgets .views-exposed-widget:not(.views-submit-button) {
+    @media only screen and (min-width: 1366px) {
+      .view .views-exposed-widgets .views-exposed-widget {
         flex-basis: 25%;
         max-width: 25%;
         padding: 0 1rem; } }
@@ -3714,9 +3815,7 @@ ul.action-links {
   flex-wrap: wrap;
   max-width: 1320px; }
 .page-content .view .vbo-views-form,
-.page-content .view .view-empty,
-.page-right .view .vbo-views-form,
-.page-right .view .view-empty {
+.page-right .view .vbo-views-form {
   flex-basis: 100%;
   max-width: 100%;
   padding: 0 1rem; }
@@ -3778,11 +3877,11 @@ ul.action-links {
   display: flex;
   flex-wrap: wrap; }
   .card-product-h .product {
-    flex: 50%;
+    flex: 100%;
     display: flex;
     flex-wrap: wrap; }
   .card-product-h .addon {
-    flex: 50%;
+    flex: 100%;
     text-align: center; }
     .card-product-h .addon .item {
       margin-bottom: .5rem; }
@@ -3793,30 +3892,28 @@ ul.action-links {
     font-weight: 500;
     margin-bottom: .5em; }
   .card-product-h .image {
-    flex: 100%;
-    text-align: center; }
+    flex: 0 0 25%; }
   .card-product-h .info {
+    flex: 75%; }
+  .card-product-h .info-mobile {
     flex: 100%; }
+  .card-product-h .summary {
+    padding: .5rem 0 0 .5rem; }
   .card-product-h .components {
     color: #7D7C7C;
     font-size: 0.889rem;
-    font-weight: 700;
-    margin-bottom: 1em; }
-  @media only screen and (min-width: 768px) {
-    .card-product-h .product {
-      flex-wrap: nowrap; }
-    .card-product-h .image {
-      flex: 0 0 27%;
-      text-align: left; }
-    .card-product-h .info {
-      flex: auto; }
-    .card-product-h .components {
-      font-weight: 500; } }
+    font-weight: 600; }
   @media only screen and (min-width: 1366px) {
+    .card-product-h .summary {
+      padding: 0; }
+    .card-product-h .product {
+      flex-wrap: nowrap;
+      flex: 50%; }
+    .card-product-h .addon {
+      flex: 50%; }
     .card-product-h .info {
       padding: 0 1em; }
     .card-product-h .components {
-      font-weight: 600;
       margin-bottom: 1em; } }
 
 .card-contact {
@@ -4207,7 +4304,7 @@ ul.action-links {
   margin-bottom: 2rem; }
   .node-preparation .product-reglaments .carousel-reglaments .swiper {
     padding: 0 2rem 0 1rem; }
-  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 1024px) and (max-width: 1365px) {
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
     .node-preparation .product-reglaments .carousel-reglaments {
       position: relative;
       margin-left: calc(-50vw + 50%);
@@ -4803,57 +4900,20 @@ ul.action-links {
     #back-to-top .icon {
       font-size: 2rem; } }
 
-.profile {
-  margin: 0 0 2rem; }
-  .profile .profile-left .image img {
-    width: initial; }
-  .profile .profile-name {
-    font-size: 1.333rem;
-    font-weight: 700;
-    line-height: 2.2rem;
-    margin-bottom: 2rem; }
-  .profile .profile-department {
-    margin-bottom: .5rem; }
-  .profile .profile-role {
-    font-size: 1.222rem;
-    font-weight: 500;
-    margin-bottom: 1rem; }
-  .profile .profile-info .field {
-    font-size: 1.222rem; }
-  .profile .profile-counts {
-    display: flex;
-    margin-bottom: 1rem; }
-    .profile .profile-counts .profile-count {
-      flex: 0 0 auto;
-      border-radius: 4px;
-      background-color: #43B02A;
-      color: #fff;
-      text-align: center;
-      margin-right: 1rem;
-      padding: 1rem; }
-    .profile .profile-counts .count-amount {
-      font-size: 1.667rem;
-      font-weight: 700; }
+.profile .profile-department {
+  margin-bottom: .5rem; }
+.profile .profile-info .field {
+  font-size: 1.222rem; }
+.profile .underline {
+  height: 3px;
+  width: 4rem; }
+.profile .profile-qr {
+  padding: 2rem; }
+  .profile .profile-qr image {
+    max-width: 500px; }
+@media only screen and (min-width: 1024px) {
   .profile .underline {
-    height: 3px;
-    width: 4rem; }
-  .profile a {
-    color: inherit; }
-  .profile .profile-qr {
-    padding: 2rem; }
-    .profile .profile-qr image {
-      max-width: 500px; }
-  @media only screen and (min-width: 1024px) {
-    .profile {
-      margin-bottom: 4rem; }
-      .profile .underline {
-        margin: .5rem 0; }
-      .profile .profile-role {
-        margin-bottom: 2rem; }
-      .profile .profile-counts {
-        margin-bottom: 2rem; }
-        .profile .profile-counts .profile-count {
-          margin-right: 2rem; } }
+    margin: .5rem 0; } }
 
 [id^=user-profile-form] {
   margin-bottom: 2rem; }
@@ -4932,7 +4992,7 @@ ul.action-links {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 35px 1rem 2rem;
+    margin: 0 35px 1rem 0;
     height: 42px;
     position: relative; }
     .node-season .pvp-event-check .event-title::after,
@@ -4962,6 +5022,8 @@ ul.action-links {
       text-decoration: underline; }
   .node-season .pvp-event-check .comment,
   .node-season .pvp-event-treat .comment {
+    font-size: 0.889rem;
+    line-height: 1.3;
     padding: 0 1rem; }
     .node-season .pvp-event-check .comment p,
     .node-season .pvp-event-treat .comment p {
@@ -4975,11 +5037,13 @@ ul.action-links {
   .node-season .pvp-event-treat .event-title::after {
     background: #FBBA00; }
 .node-season .pvp-event-treat .preparation {
-  margin: 1rem .8rem;
+  margin: 1rem .5rem;
   padding: .5rem 0; }
+  .node-season .pvp-event-treat .preparation .card-product-h {
+    margin-left: -.5rem; }
   .node-season .pvp-event-treat .preparation .image {
     flex: 0 0 27%; }
-  .node-season .pvp-event-treat .preparation .product-info {
+  .node-season .pvp-event-treat .preparation .info {
     flex: 0 0 73%;
     padding: 0 .5em; }
   .node-season .pvp-event-treat .preparation .title {
@@ -4994,9 +5058,9 @@ ul.action-links {
   .node-season .pvp-event-treat .prep-spend span,
   .node-season .pvp-event-treat .mix-spend span {
     font-size: 1.2rem;
-    font-weight: 700; }
+    font-weight: 600; }
 .node-season .pvp-event-treat .mix-spend {
-  margin: 1rem 0 0 3rem; }
+  margin: 1rem 0 0 1rem; }
 @media only screen and (min-width: 1024px) {
   .node-season .pvp-event-check .event-title,
   .node-season .pvp-event-treat .event-title {

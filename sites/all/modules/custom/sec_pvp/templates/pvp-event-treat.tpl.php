@@ -2,7 +2,7 @@
 ?>
 
 <div class="pvp-event-treat">
-  <div class="event-title">Обработка</div>
+  <div class="event-title"><?php print t('Treatment', [], ['context' => 'pvp']); ?></div>
   <div class="date"><?php print $event['date_formatted']; ?></div>
 
   <div class="process">

@@ -58,7 +58,6 @@ function cbtheme_preprocess_page(&$vars)
   $paths[] = drupal_get_path_alias($_GET['q']);
   foreach($paths as $path) {
     foreach(['jpg', 'png'] as $ext) {
-
       $uri = 'public://images/page-banners/' . arg(0, $path) . '.' . $ext;
       if (file_exists($uri)) {
         $banner_uri = $uri;

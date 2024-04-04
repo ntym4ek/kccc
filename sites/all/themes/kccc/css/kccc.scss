@@ -258,7 +258,7 @@ a { color: $brand-color; }
 }
 
 .page-banner {
-  .screen-width { height: 220px; }
+  .screen-width { height: 240px; }
 
   .banner-title-wrapper {
     color: #fff;
@@ -295,7 +295,7 @@ a { color: $brand-color; }
   .branding {
     display: flex; align-items: center;
     font-size: .8em;
-    height: 90px;
+    height: 7.5em; max-width: 23em;
     padding: 1rem 0; margin-right: -1rem;
     .logo {
       flex: 0 0 auto;
@@ -355,18 +355,12 @@ a { color: $brand-color; }
     .btn { padding: 0 .5rem; }
   }
 
-  @media #{$tablet} {
+  @media #{$pad} {
     .legal-name { font-size: $font-size-small; }
-    .branding {
-      font-size: .65em;
-      height: 80px;
-    }
+    .branding { font-size: .65em; }
   }
   @media #{$laptop} {
-    .branding {
-      font-size: .8em;
-      height: 90px;
-    }
+    .branding { font-size: .8em; }
   }
 }
 
@@ -537,10 +531,11 @@ ul.action-links {
 
   .views-exposed-widgets {
     @include row();
-    .views-exposed-widget:not(.views-submit-button) {
+    //.views-exposed-widget:not(.views-submit-button) {
+    .views-exposed-widget {
       @include col('xs', 12);
       @include col('md', 6);
-      @include col('lg', 3);
+      @include col('xl', 3);
     }
   }
 
@@ -603,8 +598,10 @@ ul.action-links {
     .view-content { @include row(); }
 
     // таблица со списком контента
-    .vbo-views-form,
-    .view-empty { @include col('xs', 12); }
+    //.vbo-views-form,
+    //.view-empty { @include col('xs', 12); }
+
+    .vbo-views-form { @include col('xs', 12); }
 
     .view-row,
     .views-row { margin-bottom: 1rem; }
@@ -633,7 +630,6 @@ ul.action-links {
 }
 
 // --- Карточки ------------------------------------------------------------------------
-
 .card-product-v {
   position: relative;
   text-align: center;
@@ -662,11 +658,11 @@ ul.action-links {
 .card-product-h {
   display: flex; flex-wrap: wrap;
   .product {
-    flex: 50%;
+    flex: 100%;
     display: flex; flex-wrap: wrap;
   }
   .addon {
-    flex: 50%;
+    flex: 100%;
     text-align: center;
     .item { margin-bottom: .5rem; }
   }
@@ -675,29 +671,25 @@ ul.action-links {
     font-size: $font-size-h3; font-weight: 500;
     margin-bottom: .5em;
   }
-  .image {
-    flex: 100%;
-    text-align: center;
-  }
-  .info { flex: 100%; }
+  .image { flex: 0 0 25%; }
+  .info { flex: 75%; }
+  .info-mobile { flex: 100%; }
+  .summary { padding: .5rem 0 0 .5rem; }
   .components {
-    color: $text-light; font-size: $font-size-small; font-weight: 700;
-    margin-bottom: 1em;
+    color: $text-light; font-size: $font-size-small; font-weight: 600;
   }
 
   @media #{$pad} {
-    .product { flex-wrap: nowrap; }
-    .image {
-      flex: 0 0 27%;
-      text-align: left;
-    }
-    .info { flex: auto; }
-    .components { font-weight: 500; }
   }
   @media #{$laptop} {
+    .summary { padding: 0; }
+    .product {
+      flex-wrap: nowrap;
+      flex: 50%;
+    }
+    .addon { flex: 50%; }
     .info { padding: 0 1em; }
     .components {
-      font-weight: 600;
       margin-bottom: 1em;
     }
   }
@@ -1096,7 +1088,7 @@ ul.action-links {
     margin-bottom: 2rem;
     .carousel-reglaments {
       .swiper { padding: 0 2rem 0 1rem; }
-      @media #{$phone-only}, #{$smart-only}, #{$tablet-only} {
+      @media #{$phone-only}, #{$smart-only}, #{$pad-only}, #{$tablet-only} {
         @include screen-width();
       }
     }
@@ -1632,55 +1624,22 @@ ul.action-links {
 
 // --- профиль пользователя
 .profile {
-  margin: 0 0 2rem;
-  .profile-left .image img { width: initial; }
-  .profile-name {
-    font-size: $font-size-h3; font-weight: 700; line-height: 2.2rem;
-    margin-bottom: 2rem;
-  }
   .profile-department {
-    //font-size: $font-size-h4; font-weight: 500;
     margin-bottom: .5rem;
-  }
-  .profile-role {
-    font-size: $font-size-h4; font-weight: 500;
-    margin-bottom: 1rem;
   }
   .profile-info .field {
     font-size: $font-size-large;
   }
-  .profile-counts {
-    display: flex;
-    margin-bottom: 1rem;
-    .profile-count {
-      flex: 0 0 auto;
-      border-radius: 4px;
-      background-color: $brand-color;
-      color: #fff; text-align: center;
-      margin-right: 1rem; padding: 1rem;
-    }
-    .count-amount {
-      font-size: $font-size-h2; font-weight: 700;
-    }
-  }
   .underline {
     height: 3px; width: 4rem;
   }
-  a { color: inherit; }
-
   .profile-qr {
     padding: 2rem;
     image { max-width: 500px; }
   }
 
   @media #{$tablet} {
-    margin-bottom: 4rem;
     .underline { margin: .5rem 0; }
-    .profile-role { margin-bottom: 2rem; }
-    .profile-counts {
-      margin-bottom: 2rem;
-      .profile-count { margin-right: 2rem;  }
-    }
   }
 }
 
@@ -1759,7 +1718,7 @@ ul.action-links {
     .event-title {
       color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
       display: flex; justify-content: center; align-items: center;
-      margin: 0 35px 1rem 2rem;
+      margin: 0 35px 1rem 0;
       height: 42px;
       // стрелка справа
       position: relative;
@@ -1781,6 +1740,7 @@ ul.action-links {
       a:hover { text-decoration: underline; }
     }
     .comment {
+      font-size: $font-size-small; line-height: 1.3;
       padding: 0 1rem;
       p { margin: 0 0 .5em 0; }
     }
@@ -1797,10 +1757,11 @@ ul.action-links {
       &::after { background: $brand-orange; }
     }
     .preparation {
-      margin: 1rem .8rem; // отступ для тени от hover-raise
+      margin: 1rem .5rem; // отступ для тени от hover-raise
       padding: .5rem 0;
+      .card-product-h { margin-left: -.5rem; }
       .image { flex: 0 0 27%; }
-      .product-info {
+      .info {
         flex: 0 0 73%;
         padding: 0 .5em;
       }
@@ -1813,11 +1774,9 @@ ul.action-links {
     .prep-spend,
     .mix-spend {
       font-size: 1rem;
-      span { font-size: 1.2rem; font-weight: 700; }
+      span { font-size: 1.2rem; font-weight: 600; }
     }
-    .mix-spend {
-      margin: 1rem 0 0 3rem;
-    }
+    .mix-spend { margin: 1rem 0 0 1rem; }
   }
 
   @media #{$tablet} {

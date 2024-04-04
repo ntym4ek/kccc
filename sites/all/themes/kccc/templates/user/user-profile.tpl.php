@@ -36,7 +36,7 @@
             <div class="profile-counts">
               <?php foreach($user_info['staff']['counts'] as $count): ?>
                 <div class="profile-count" >
-                  <?php if ($count['url']): ?><a href="<?php print $count['url']; ?>" target="_blank"><?php endif; ?>
+                  <?php if ($count['url']): ?><a href="<?php print $count['url']; ?>"><?php endif; ?>
                     <div class="count-amount"><?php print $count['amount']; ?></div>
                     <div class="count-title"><?php print $count['title']; ?></div>
                     <?php if ($count['url']): ?></a><?php endif; ?>

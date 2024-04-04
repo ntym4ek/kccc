@@ -39,10 +39,23 @@
 }
 
 // -- Поиск ----------------------------------------------------------
-.view-search {
+.view.view-search {
   .underline {
     height: 3px; width: 4rem;
     margin-left: 0;
+  }
+
+  .views-exposed-widgets {
+    .views-widget-filter-search_api_views_fulltext {
+      @include col('xs', 12);
+      @include col('md', 9);
+      @include col('xl', 10);
+    }
+    .views-submit-button {
+      @include col('xs', 12);
+      @include col('md', 3);
+      @include col('xl', 2);
+    }
   }
 }
 
@@ -90,36 +103,38 @@
 .agrocalc {
   margin-bottom: 2rem;
 
+  input[type=text], select { width: 100%; }
+
   .params,
   .request {
     @include row();
   }
 
-  .form-item-culture {
-    @include col('xs', 6);
-    @include col('md', 4);
-  }
-
+  .form-item-culture,
   .form-item-stage {
-    @include col('xs', 6);
-    @include col('md', 4);
+    @include col('xs', 12);
+    @include col('md', 6);
+    @include col('lg', 4);
   }
 
   .form-item-area,
   .form-item-seed {
-    @include col('xs', 2);
+    @include col('xs', 6);
+    @include col('md', 6);
+    @include col('lg', 2);
   }
 
   .form-item-weeds,
   .form-item-pests,
   .form-item-diseases {
     @include col('xs', 12);
-    @include col('xs', 4);
+    @include col('md', 4);
   }
 
   .form-item-desic,
   .form-item-fert {
-    @include col('xs', 3);
+    @include col('xs', 12);
+    @include col('md', 3);
   }
 
   .form-item-region,
@@ -138,6 +153,11 @@
 
   .program-wrapper {
     .card-product-h {
+      .summary {
+        display: block!important;
+        padding-left: 0;
+      }
+      .info-mobile { display: none!important; }
       // секция регламента
       .hobjects {
         font-weight: 600;
@@ -167,10 +187,10 @@
         }
         .tooltip { display: none; }
       }
-      &:hover {
-        box-shadow: none;
-        transform: none;
-      }
+      //&:hover {
+      //  box-shadow: none;
+      //  transform: none;
+      //}
     }
     .view-row:not(:last-child) .card-product-h {
       border-bottom: 1px solid $text-muted;

@@ -18,7 +18,7 @@
           <p><?php print t('Striving for improvements, we introduce new technologies into our work, master new methods, and bring all the results into a single system.'); ?></p>
           <p><?php print t('Keeping up with the times, we create all the conditions for the comfortable work of our clients.'); ?></p>
         </div>
-        <div class="frame hide show-md"></div>
+        <div class="frame hide show-lg"></div>
       </div>
     </div>
     <div class="col-xs-12 col-md-9">
@@ -29,7 +29,7 @@
   </div>
 
   <div class="row">
-    <div class="col-xs-12 col-lg-6">
+    <div class="col-xs-12 col-lg-12 col-xl-6">
       <div class="b3">
         <div class="image"><div class="corner corner-bottom-right"></div></div>
         <div class="text">
@@ -43,14 +43,14 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-md-4 col-lg-2">
+    <div class="col-xs-12 col-lg-4 col-xl-2">
       <div class="b4">
         <div class="image"><div class="corner corner-bottom-right"></div></div>
         <div class="text"><?php print t('The preparations are produced on isolated production lines, which exclude contamination of the preparations with foreign active substances.'); ?>
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-md-4 col-lg-2">
+    <div class="col-xs-12 col-lg-4 col-xl-2">
       <div class="b5">
         <div class="image"><div class="corner corner-bottom-right"></div></div>
         <div class="text"><?php print t('The production of preparations of the preparative form of BP and VGR is carried out with the use of water that has undergone multi-stage preparation.'); ?><br>
@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-md-4 col-lg-2">
+    <div class="col-xs-12 col-lg-4 col-xl-2">
       <div class="b6">
         <div class="image"><div class="corner corner-bottom-right"></div></div>
         <div class="text"><?php print t('The production of all preparations of different formulations is controlled by a laboratory equipped with high-precision analytical equipment, starting from the raw materials supplied to the plant to the finished product in the warehouse.'); ?></div>

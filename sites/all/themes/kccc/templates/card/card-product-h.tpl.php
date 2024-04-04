@@ -14,6 +14,9 @@
       <div class="info">
         <div class="title"><?php if ($inline_link): ?><a href="<?php print $product['path']; ?>"><?php endif; ?><?php print $product['label']; ?><?php if ($inline_link): ?></a><?php endif; ?></div>
         <div class="components"><?php print $product['components']['formatted']; ?></div>
+        <div class="summary hide-xs show-xl"><?php print $product['summary']; ?></div>
+      </div>
+      <div class="info-mobile show-xs hide-xl">
         <div class="summary"><?php print $product['summary']; ?></div>
       </div>
     </div>

@@ -209,7 +209,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#title' => t('Category'),
     '#options' => $cat_options,
     '#default_value' => $filters['category']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -226,7 +226,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#title' => t('Component'),
     '#options' => $cmp_options,
     '#default_value' => $filters['component']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',
@@ -243,7 +243,7 @@ function sec_catalog_filters_form($form, &$form_state)
     '#title' => t('Culture'),
     '#options' => $cultures_options,
     '#default_value' => $filters['culture']['current_id'],
-    '#prefix' => '<div class="col-xs-12 col-md-6 col-lg-3">',
+    '#prefix' => '<div class="col-xs-12 col-md-6 col-xl-3">',
     '#suffix' => '</div>',
     '#ajax' => [
       'wrapper' => '',

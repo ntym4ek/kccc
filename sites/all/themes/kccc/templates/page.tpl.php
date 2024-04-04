@@ -108,7 +108,7 @@
 
           <?php if ($page['header']): ?>
           <div class="page-context-menu">
-            <div class="screen-width">
+            <div class="screen-width mobile-menu-disabled">
               <div class="container">
                 <?php print render($page['header']); ?>
               </div>
@@ -148,7 +148,7 @@
               <?php print $messages; ?>
               <?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
 
-              <?php if ($is_title_on && $title): ?>
+              <?php if ($is_title_on): ?>
                 <div class="page-title">
                   <?php print render($title_prefix); ?>
                   <?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>

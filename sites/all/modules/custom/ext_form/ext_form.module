@@ -74,6 +74,7 @@ function ext_form_form_captcha_after_build($form, &$form_state)
 {
   // ReCAPTCHA
   if (isset($form['captcha'])) { unset($form['captcha']); }
+  if (isset($form["actions"]["captcha"])) { unset($form["actions"]["captcha"]); }
 
   return $form;
 }

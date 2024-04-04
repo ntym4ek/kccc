@@ -52,22 +52,19 @@ h4, h5, h6 { margin: 1rem 0; }
 
 // --- Разметка страницы --------------------------------------------------------------
 .container {
-  padding: 0 $gutter*2;
+  padding: 0 $page-gutter-xs;
   width: 100%;
 
   &.full-height { height: 100%; }
 
-  @media #{$pad} {
-    padding: 0 $gutter*3;
-  }
+  @media #{$smart}  { padding: 0 $page-gutter-sm; }
+  @media #{$pad}    { padding: 0 $page-gutter-md; }
   @media #{$tablet} {
-    padding: 0 $gutter*4;
+    padding: 0 $page-gutter-lg;
     max-width: $content-well-max-width;
     margin: 0 auto;
   }
-  @media #{$laptop} {
-    padding: 0 $gutter;
-  }
+  @media #{$laptop} { padding: 0 $page-gutter-xl; }
 }
 
 .page {
@@ -160,6 +157,10 @@ h4, h5, h6 { margin: 1rem 0; }
 
 .page-main {
   //padding-bottom: 2rem;  // внизу может стоять блок со screen-width и background и padding оставит белую полосу
+}
+
+.page-title {
+  margin-bottom: 2rem;
 }
 
 
@@ -301,25 +302,28 @@ ul.tabs.secondary {
 // --- Пользователь -------------------------------------------------------------------
 .profile {
   margin: 0 0 2rem;
-  .profile-left .image img { width: initial; }
+  .profile-left {
+    margin-bottom: 1rem;
+    .image img { width: initial; }
+  }
   .profile-name {
-    font-size: $font-size-h3; font-weight: 700; line-height: 2.2rem;
-    margin-bottom: 2rem;
+    font-size: $font-size-h3; font-weight: 700;
+    margin-bottom: 1rem;
   }
   .profile-role {
     font-size: $font-size-h4; font-weight: 500;
     margin-bottom: 1rem;
   }
   .profile-counts {
-    display: flex;
+    display: flex; flex-wrap: wrap;
     margin-bottom: 1rem;
     .profile-count {
-      flex: 0 0 auto;
       border-radius: 4px;
       background-color: $brand-color;
       color: #fff; text-align: center;
-      margin-right: 1rem; padding: 1rem;
+      margin: 0 1rem 1rem 0; padding: 1rem;
       min-width: 100px;
+      &:last-child { margin-right: 0; }
     }
     .count-amount { font-size: $font-size-h2; font-weight: 700; }
   }
@@ -327,10 +331,10 @@ ul.tabs.secondary {
 
   @media #{$tablet} {
     margin-bottom: 4rem;
+    .profile-name { margin-bottom: 2rem; }
     .profile-role { margin-bottom: 2rem; }
     .profile-counts {
       margin-bottom: 2rem;
-      .profile-count { margin-right: 2rem;  }
     }
   }
 }
@@ -456,8 +460,13 @@ fieldset {
   position: absolute;
   transition: all 150ms;
   visibility: hidden; opacity: 0;
-  padding: 0 .4em;
-  svg { display: block; }
+  padding: 0.4em; margin-top: -.4em;
+  cursor: pointer;
+  svg {
+    display: block;
+    stroke: $text-muted;
+    &.c0pied { stroke: $brand-color; }
+  }
   .ctooltiptext {
     display: inline-block;
     visibility: hidden;

@@ -2,7 +2,7 @@
 ?>
 
 <div class="pvp-event-check">
-  <div class="event-title">Контроль</div>
+  <div class="event-title"><?php print t('Check', [], ['context' => 'pvp']); ?></div>
   <div class="date"><?php print $event['date_formatted']; ?></div>
 
   <div class="culture">
@@ -34,7 +34,7 @@
 
   <?php if (!empty($event['hobjects']['photos']) || !empty($event['hobjects']['comment']) || !empty($event['hobjects']['list_formatted'])): ?>
   <div class="hobjects">
-    <div class="header">Вредные объекты</div>
+    <div class="header"><?php print t('Harmful objects'); ?></div>
     <?php if (!empty($event['hobjects']['photos'])): ?>
     <div class="images">
       <div id="slider-hobjects-images-<?php print $event['id']; ?>" class="slider slider-hobjects-images top-pagination">

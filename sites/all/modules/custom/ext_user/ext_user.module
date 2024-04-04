@@ -600,46 +600,45 @@ function ext_user_get_user_info($user = null)
 
         // счётчики
         $counts = [];
-        // todo проверка на принадлежность департаменту продаж
+        // проверка на принадлежность департаменту продаж
         if ($department_info && $department_info['id'] == DIV_SALES) {
           // блоги
           $query = db_select('node');
           $query->addExpression('COUNT(*)');
           $query->condition('uid', $account->uid);
           $query->condition('type', 'blog');
-          $result = $query->execute()->fetchField();
-          $counts['blog'] = [
-            'title' => t('Blog'),
-            'amount' => $result,
-//            'url' => $result ? '/blog/user/' . $account->uid : '',
-            'url' => '/blog',
-          ];
+          if ($result = $query->execute()->fetchField()) {
+            $counts['blog'] = [
+              'title' => t('Blog'),
+              'amount' => $result,
+              'url' => url('blog/' . $account->uid),
+            ];
+          }
           // отзывы
           $query = db_select('node');
           $query->addExpression('COUNT(*)');
           $query->condition('uid', $account->uid);
           $query->condition('type', 'review');
-          $result = $query->execute()->fetchField();
+          if ($result = $query->execute()->fetchField()) {
           $counts['reviews'] = [
             'title' => t('Reviews'),
             'amount' => $result,
-//            'url' => $result ? '/otzyvy/user/' . $account->uid : '',
-            'url' => '/otzyvy',
+            'url' => url('otzyvy/' . $account->uid),
             ];
+          }
 
-          // todo Препараты в поле
-          $result = 0;
-          //    $query = db_select('field_data_field_f_sowing', 's');
-          //    $query->addExpression('COUNT(*)');
-          //    $query->innerJoin('node', 'n', 'n.nid = s.entity_id');
-          //    $query->condition('n.uid', $account->uid);
-          //    if ($result = $query->execute()->fetchField()) {//
-          $counts['pvp'] = [
-            'title' => t('Products in the fields'),
-            'amount' => $result,
-            'url' => $result ? '/' : '',
+          // Препараты в поле
+          $query = db_select('node');
+          $query->addExpression('COUNT(*)');
+          $query->condition('uid', $account->uid);
+          $query->condition('type', 'season');
+          if ($result = $query->execute()->fetchField()) {
+            $counts['pvp'] = [
+              'title' => t('Products in the fields'),
+              'amount' => $result,
+              'url' => url('preparaty-v-pole', ['query' => ['user' => $account->uid]]),
             ];
-          //    }
+          }
         }
 
 

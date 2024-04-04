@@ -42,7 +42,7 @@ function buildCopy(options) {
       // Add it the c0py-icon class (needed later)
       clipboardImg.classList.add("c0py-icon");
       // Apply the stroke
-      clipboardImg.style.stroke = iconStroke;
+      // clipboardImg.style.stroke = iconStroke;
       // Apply the stroke-width
       clipboardImg.style.strokeWidth = strokeWidth;
       // create a <span> that will hold the tooltip text "Copy to clipboard"
@@ -58,10 +58,10 @@ function buildCopy(options) {
       //  Save the tooltip span element so it can be used in the copyToClipboard function (to change the text to Copied! after clicking)
       const element = document.getElementsByClassName("ctooltiptext")[i];
       // Set the onclick event listener on the clipboard icon
-      document.getElementsByClassName("c0py-icon")[i].addEventListener("click", function() {copyToClipboard(text, element)}, false);
+      document.getElementsByClassName("c0py-icon")[i].addEventListener("click", function() {copyToClipboard(text, this, element)}, false);
 
       // Now the actual copy to clipboard function
-      function copyToClipboard (text, element) {
+      function copyToClipboard (text, icon, element) {
         // use the new ClipboardEvent API
         if (window.clipboardData && window.clipboardData.setData) {
           // IE specific code path to prevent textarea being shown while dialog is visible.
@@ -82,9 +82,13 @@ function buildCopy(options) {
           } finally {
             document.body.removeChild(textarea);
             element.innerHTML = copiedText;
+            icon.classList.add("c0pied");
             setTimeout(function () {
               element.innerHTML = copyText;
             }, 1000);
+            setTimeout(function () {
+              icon.classList.remove("c0pied");
+            }, 100);
           }
         }
       }

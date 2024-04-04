@@ -11,6 +11,9 @@ function ext_node_menu_alter(&$items)
   // "Удалить" в локальные задачи материала
   // http://xandeadx.ru/blog/drupal/339
   $items['node/%node/delete']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
+
+  // удалить встроенный список Блогов, чтобы выводить свой с тем же адресом
+  unset($items['blog/%user_uid_optional']);
 }
 
 /**

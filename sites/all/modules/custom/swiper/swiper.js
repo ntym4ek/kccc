@@ -122,8 +122,16 @@
 
           var slidesperview_lg = $(this).data("slidesperview-lg");
           if (slidesperview_lg) {
-            options.breakpoints[1366] = {
+            options.breakpoints[1024] = {
               slidesPerView: slidesperview_lg,
+              spaceBetween: 30,
+            };
+          }
+
+          var slidesperview_xl = $(this).data("slidesperview-xl");
+          if (slidesperview_xl) {
+            options.breakpoints[1366] = {
+              slidesPerView: slidesperview_xl,
               spaceBetween: 30,
             };
           }

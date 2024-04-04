@@ -47,9 +47,11 @@ function theme_custom_pager($vars)
 function ext_views_preprocess_page(&$vars)
 {
   if ($GLOBALS['theme'] == 'kccc') {
+    $banner_uri = '';
     if (in_array(arg(0), ['blog', 'video']))         {
-      $vars['banner_title'] = t('Publications');
       $vars['is_title_on'] = false;
+      $vars['banner_title'] = t('Publications');
+      $banner_uri = 'public://images/page-banners/blog.jpg';
     }
     if (in_array(arg(0), ['novosti', 'afisha']))     {
       $vars['banner_title'] = t('Events');
@@ -67,6 +69,23 @@ function ext_views_preprocess_page(&$vars)
     }
     if (in_array(arg(0), ['otzyvy', 'vakansii', 'preparaty-v-pole']))     {
       $vars['is_title_on'] = false;
+    }
+
+    if (in_array(arg(0), ['otzyvy', 'blog']))     {
+      if (is_numeric(arg(1))) {
+        if ($user_info = ext_user_get_user_info(arg(1))) {
+          $vars['is_title_on'] = TRUE;
+          $title = $user_info["label"] . ' ' . $user_info["main"]["name_short"];
+          $vars['title'] = '';
+          $vars['title_suffix'] = theme('card_contact', $user_info);
+          drupal_set_title($vars['banner_title'] . '. ' . $title);
+        }
+      }
+    }
+    if ($banner_uri) {
+      $vars['is_banner_on'] = true;
+      $vars['banner_url'] = file_create_url($banner_uri);
+      $vars['banner_mobile_url'] = image_style_url('banner_mobile', $banner_uri);
     }
   }
 }
@@ -93,10 +112,10 @@ function ext_views_preprocess_views_view_unformatted(&$vars)
     foreach ($vars['rows'] as $id => $result) {
       $class = 'col-xs-12 col-md-6';
       if (in_array($vars['view']->result[$id]->_entity_properties["type"], ['season', 'culture', 'weed', 'pest', 'disease', 'vacancy'])) {
-        $class = 'col-xs-12 col-md-4 col-lg-3';
+        $class = 'col-xs-12 col-md-6 col-lg-4 col-xl-3';
       }
       if (in_array($vars['view']->result[$id]->_entity_properties["type"], ['blog', 'review', 'article', 'agenda'])) {
-        $class = 'col-xs-12 col-md-4 col-lg-4';
+        $class = 'col-xs-12 col-md-6 col-xl-4';
       }
       $vars["classes_array"][$id] = $vars["classes_array"][$id] ? $vars["classes_array"][$id] . ' ' . $class : $class;
     }
