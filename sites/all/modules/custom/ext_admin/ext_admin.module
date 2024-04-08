@@ -196,6 +196,7 @@ function ext_admin_execute_form($form, $form_state)
 //  $function = 'ext_admin_func_nodes_process';
 //  $function = 'ext_admin_func_preparations_import';
 //  $function = 'ext_admin_func_terms_process';
+  $function = 'ext_admin_func_pvps_date_process';
 
   $form['message'] = array(
     '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
@@ -343,9 +344,48 @@ function ext_admin_func_node_process($nid)
       WATCHDOG_ERROR
     );
   }
-
-
 }
+
+/**
+ * -- обработка: добавление даты последнего события в ПвП ----------------------
+ */
+function ext_admin_func_pvps_date_process()
+{
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', 'season');
+  $dbr->addField('n', 'nid');
+//  $dbr->range(0, 1);
+  if ($nodes_ids = $dbr->execute()->fetchCol()) {
+    $queue = DrupalQueue::get('processing_queue');
+    foreach ($nodes_ids as $item) {
+      $queue->createItem(['func' => 'ext_admin_func_pvp_date_process', 'item' => $item]);
+    }
+    drupal_set_message('Добавлено ' . count($nodes_ids) . ' записей для обработки');
+  }
+
+  return true;
+}
+function ext_admin_func_pvp_date_process($nid)
+{
+  try {
+    // для короткого формата найти последнее событие (обработка или контроль)
+    // и записать его дату
+    if ($event = sec_pvp_get_last_pvp_event($nid)) {
+      $pvp_wr = entity_metadata_wrapper('node', $nid);
+      $pvp_wr->field_pvp_last_event_date = $event['datetime'];
+      $pvp_wr->save();
+    }
+  }
+  catch (EntityMetadataWrapperException $exc) {
+    watchdog(
+      'ext_admin',
+      'EntityMetadataWrapper exception in %function() <pre>@trace</pre>, with message %m',
+      array('%function' => __FUNCTION__, '@trace' => $exc->getTraceAsString(), '%m' => $exc->getMessage()),
+      WATCHDOG_ERROR
+    );
+  }
+}
+
 
 /**
  * -- обработка: импорт препаратов ---------------------------------------------

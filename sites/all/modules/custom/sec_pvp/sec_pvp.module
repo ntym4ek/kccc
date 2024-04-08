@@ -97,6 +97,8 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
   $dbr->condition('n.status', 1);
   $dbr->condition('n.type', 'season');
   $dbr->addField('n', 'nid');
+  // поле для сортировки по дате последнего события
+  $dbr->leftJoin('field_data_field_pvp_last_event_date', 'frled', 'frled.entity_id = n.nid');
   // фильтр по Автору
   if ($filters['user']['current_id']) {
     $dbr->condition('n.uid', $filters['user']['current_id']);
@@ -128,7 +130,7 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
   $dbr->distinct();
   $dbr_n = clone($dbr);
   if ($pvps['total'] = count($dbr->execute()->fetchAll())) {
-    $dbr_n->orderBy('n.changed', 'DESC');
+    $dbr_n->orderBy('frled.field_pvp_last_event_date_value', 'DESC');
     if ($qty) $dbr_n->range($from, $qty);
     $pvp_nids = $dbr_n->execute()->fetchCol();
 
@@ -159,7 +161,8 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
         'comment' => t('Before treatment'),
       ];
 
-      // для короткого формата найти последнее событие (обработка или контроль)
+      // для короткого формата найти последнее событие
+      // и последнюю обработку (используется в комментарии обработки и контроля)
       $event_id = $event_date = 0;
       // найти последний Контроль
       foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
@@ -210,7 +213,6 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
           }
         }
       }
-
     }
   }
 
@@ -851,6 +853,32 @@ function sec_pvp_form_node_form_submit($form, &$form_state)
   $form_state["values"]["title"] = $when . '. ' . $what . '. ' . $where;
 }
 
+
+/**
+ * Вернуть массив с последним событием ПвП
+ */
+function sec_pvp_get_last_pvp_event($pvp_id)
+{
+  $pvp_wr = entity_metadata_wrapper('node', $pvp_id);
+
+  $event_id = $event_date = 0;
+  // найти последний Контроль
+  foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
+    if ($check_wr->field_datetime->value() > $event_date) {
+      $event_date = $check_wr->field_datetime->value();
+      $event_id = $check_wr->getIdentifier();
+    }
+  // найти последнюю Обработку или Контроль
+  foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
+    if ($treat_wr->field_datetime->value() > $event_date) {
+      $event_date = $treat_wr->field_datetime->value();
+      $event_id = $treat_wr->getIdentifier();
+    }
+  }
+
+  return $event_id ? ['id' => $event_id, 'datetime' => $event_date] : false;
+}
+
 /**
  * Implements hook_preprocess_page().
  */
@@ -868,3 +896,32 @@ function sec_pvp_preprocess_page(&$vars)
     }
   }
 }
+
+/**
+ * Implements hook_node_presave()
+ */
+function sec_pvp_node_presave($node)
+{
+  if ($node->type == 'season') {
+    // обновить дату последнего события
+    $event_date = 0;
+    if (!empty($node->field_pvp_check["und"])) {
+      foreach ($node->field_pvp_check["und"] as $check) {
+        if (!empty($check['field_datetime']['und']) && $check['field_datetime']['und'][0]['value'] > $event_date) {
+          $event_date = $check['field_datetime']['und'][0]['value'];
+        }
+      }
+    }
+    if (!empty($node->field_pvp_treat["und"])) {
+      foreach ($node->field_pvp_treat["und"] as $treat) {
+        if (!empty($treat['field_datetime']['und']) && $treat['field_datetime']['und'][0]['value'] > $event_date) {
+          $event_date = $treat['field_datetime']['und'][0]['value'];
+        }
+      }
+    }
+    if ($event_date) {
+      $node->field_pvp_last_event_date['und'][0]['value'] = $event_date;
+    }
+  }
+}
+
