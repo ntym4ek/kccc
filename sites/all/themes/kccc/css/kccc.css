@@ -3475,6 +3475,8 @@ a {
 .page-banner i.icon {
   font-size: 3rem;
   margin-right: 1rem; }
+.page-katalog .page-banner .banner-title-wrapper {
+  max-width: 100%; }
 @media only screen and (min-width: 768px) {
   .page-banner .screen-width {
     height: 300px; }
@@ -3482,7 +3484,9 @@ a {
     font-size: 5rem; } }
 @media only screen and (min-width: 1366px) {
   .page-banner .screen-width {
-    height: 350px; } }
+    height: 350px; }
+  .page-katalog .page-banner .banner-title-wrapper {
+    max-width: 58%; } }
 
 .page-footer {
   color: #000;
@@ -3868,8 +3872,6 @@ ul.action-links {
     color: #000;
     font-size: 0.889rem;
     margin: 1rem 0; }
-    .card-product-v .components .nowrap {
-      white-space: normal; }
   .card-product-v .more {
     margin-top: auto; }
 

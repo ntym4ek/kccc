@@ -274,6 +274,8 @@ a { color: $brand-color; }
     font-size: 3rem;
     margin-right: 1rem;
   }
+  // очень длинный заголовок у категории Другие
+  .page-katalog & .banner-title-wrapper { max-width: 100%; }
 
   @media #{$pad} {
     .screen-width { height: 300px; }
@@ -281,6 +283,8 @@ a { color: $brand-color; }
   }
   @media #{$laptop} {
     .screen-width { height: 350px; }
+    // очень длинный заголовок у категории Другие
+    .page-katalog & .banner-title-wrapper { max-width: 58%; }
   }
 }
 
@@ -650,7 +654,7 @@ ul.action-links {
   .components {
     color: $text-color; font-size: $font-size-small;
     margin: 1rem 0;
-    .nowrap { white-space: normal; }
+    //.nowrap { white-space: normal; } приводит к разделению единиц измерения (г/л)
   }
   .more { margin-top: auto; }
 }

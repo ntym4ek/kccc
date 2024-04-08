@@ -281,7 +281,7 @@ function sec_catalog_filters_form_ajax($form, $form_state)
   if ($filters['category']['current_id']) {
     if ($cat_info = sec_catalog_get_category_info($filters['category']['current_id'])) {
       // фильтр Категории задаётся как часть пути
-      $url .= '/' . strtolower(transliteration_get($cat_info['title']));
+      $url .= '/' . strtolower(transliteration_get($cat_info['label']));
       $title = $cat_info['title'];
       if ($cat_info['icon_num']) {
         $title_icon = '<i class="icon icon-' . $cat_info['icon_num'] . '"></i>';
@@ -318,6 +318,7 @@ function sec_catalog_get_category_info($cat_id)
   $category_wr = entity_metadata_wrapper('taxonomy_term', $cat_id);
   if ($category_wr->value()) {
     $arr['title'] = $category_wr->getIdentifier() == CAT_OTHER_TID ? t('Adjuvants and special purpose products') : $category_wr->label();
+    $arr['label'] = $category_wr->label();
     $arr['icon_num'] = $category_wr->field_icon->value();
     $arr['banner']['uri'] = $category_wr->field_image_banner->value() ? $category_wr->field_image_banner->file->value()->uri : '';
   }
