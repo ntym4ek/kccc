@@ -50,6 +50,14 @@ function ext_user_menu()
     'access callback'  => 'ext_user_user_edit_access',
     'type'             => MENU_LOCAL_TASK,
   ];
+  $items['user/resend-activation-email'] = [
+    'title'            => 'Resend activation e-mail',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => ['ext_user_resend_activation_email_form'],
+    'access callback'  => TRUE,
+    'file'             => 'includes/resend_activation_email.ext_user.inc',
+    'type'             => MENU_CALLBACK,
+  ];
 
   return $items;
 }
@@ -129,7 +137,10 @@ function ext_user_preprocess_page(&$vars)
     }
 
     // убрать закладки, кроме случая, когда редактор смотрит профиль другого пользователя
-    if ((!user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID)) || ext_user_user_own_account())   {
+    if ((!user_has_role(ADMIN_RID) && !user_has_role(MARKETING_RID))
+      || ext_user_user_own_account()
+      || !is_numeric(arg(1)))
+    {
       unset($vars['tabs']);
     }
   }
@@ -171,10 +182,20 @@ function ext_user_form_user_pass_alter(&$form, &$form_state)
   if (!user_has_role(ADMIN_RID)) {
     $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
     $form['#prefix'] .=   '<h1>' . t('Password recovery') . '</h1>';
-    $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">' . t('Login') . '</a> ' . t('or') . ' <a href="/user/register">' . t('Register') . '</a></div>';
+    $form['#prefix'] .=   user_is_logged_in() ? '<div class="user-links">&nbsp;</div>' : '<div class="user-links"><a href="/user/login">' . t('Log in') . '</a> ' . t('or') . ' <a href="/user/register">' . t('Register') . '</a></div>';
     $form['#suffix'] =  '</div>';
+    // если пользователь авторизован, то пароль будет выслан на текущий email
     $form['name']['#title'] = t('E-Mail');
     $form["mail"]["#markup"] = t('The recovery link will be sent to E-Mail above.');
+    if (user_is_logged_in()) {
+      $form["name"]["#type"] = 'textfield';
+      $form["name"]["#disabled"] = true;
+      $form["mail"]["#markup"] .= '<p>' . t('If you want to recover another email, you need to <a href="' . url('user/logout') . '">Log out</a>.') . '</p>';
+    }
+    // если нет, то сменить текст подсказки
+    else {
+      $form["name"]["#default_value"] = $_GET['email'] ?? '';
+    }
     $form["actions"]["submit"]['#value'] = t('Submit');
     $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-full-wide'];
 
@@ -212,6 +233,8 @@ function ext_user_form_user_login_alter(&$form, &$form_state)
 
   // обработчики
   $form['name']['#element_validate'][] = 'ext_user_login_name_validate';
+  // в валидаторе добавим ссылку на форму отправки письма для активации
+  $form['#validate'][] = 'ext_user_form_user_login_validate';
 }
 
 /**
@@ -224,6 +247,23 @@ function ext_user_login_name_validate($form, &$form_state)
   if ($user->uid) {
     $form_state['values']['name'] = $user->name;
     return TRUE;
+  }
+
+  return FALSE;
+}
+
+
+/**
+ * user_login_form validation callback
+ */
+function ext_user_form_user_login_validate($form, &$form_state)
+{
+  if (!empty($form_state['values']['name']) && user_is_blocked($form_state['values']['name'])) {
+    $options = [];
+    if (valid_email_address($form_state["input"]["name"])) {
+      $options = ['query' => ['email' => $form_state["input"]["name"]]];
+    }
+    $_SESSION["messages"]["error"][] = t('Follow next <a href="@url">link</a> to resend activation e-mail.', ['@url' => url('user/resend-activation-email', $options)]);
   }
 
   return FALSE;
@@ -336,7 +376,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form["account"]["mail"]["#weight"] = -6;
 
       if (ext_user_user_own_account()) {
-        // если это не форма смены пароля
+        // если это не форма восстановления, а форма смены пароля
         if ($form["account"]["current_pass"]["#access"]) {
           $form['account']['current_pass']['#prefix'] = '<div class="row"><div class="col-xs-12 col-md-6">';
           $form['account']['current_pass']['#suffix'] = '</div>';
@@ -350,6 +390,11 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
         $form['account']['pass']['#title'] = 'Новый пароль';
         $form['account']['pass']['#type'] = 'textfield';
         unset($form["account"]["pass"]["#description"]);
+
+        // ссылка на Восстановление пароля для тех, кто не помнит
+        $form["account"]["recovery"] = [
+          '#markup' => '<p>' . t('If you do not remember old password, follow next <a href="' . url('user/password') . '">link</a> to set new.') . '</p>',
+        ];
 
         // не выводить статус
         $form["account"]["status"]["#access"] = false;
@@ -431,9 +476,9 @@ function ext_user_preprocess_menu_link(&$vars)
 {
   if ($GLOBALS['theme'] != 'seven') {
     if ($vars["element"]["#href"] == 'user' && user_is_logged_in() && $vars["element"]["#original_link"]["depth"] == 1) {
-      // сменить "Мой аккаунт" на Имя пользователя
-      $user_info = ext_user_get_user_info();
-      $vars["element"]["#title"] = $user_info['main']['name'];
+      // сменить "Мой аккаунт" на иконку
+      $vars["element"]["#title"] = '<i class="icon icon-109"></i>';
+      $vars["element"]['#localized_options']['html'] = TRUE;
     }
   }
 }

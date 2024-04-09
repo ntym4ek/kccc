@@ -2,3 +2,5 @@ name = Ext User
 description = Изменения в функционале пользователя
 package = Custom
 core = 7.x
+
+files[] = includes/resend_activation_email.ext_user.inc

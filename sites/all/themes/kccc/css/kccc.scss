@@ -683,8 +683,6 @@ ul.action-links {
     color: $text-light; font-size: $font-size-small; font-weight: 600;
   }
 
-  @media #{$pad} {
-  }
   @media #{$laptop} {
     .summary { padding: 0; }
     .product {
@@ -693,9 +691,7 @@ ul.action-links {
     }
     .addon { flex: 50%; }
     .info { padding: 0 1em; }
-    .components {
-      margin-bottom: 1em;
-    }
+    .components { margin-bottom: 1em; }
   }
 }
 

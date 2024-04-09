@@ -4,13 +4,13 @@ function ext_form_subscribe_form($form, $form_state)
 {
   $form['email'] = [
     '#type' => 'textfield',
-    '#disabled' => true,
+//    '#disabled' => true,
     '#attributes' => ['placeholder' => 'E-mail'],
     '#prefix' => '<div class="form-item input-group">'
   ];
   $form['submit'] = [
     '#type' => 'submit',
-    '#disabled' => true,
+//    '#disabled' => true,
     '#value' => '<i class="icon icon-083"></i>',
     '#attributes' => ['class' => ['btn', 'btn-brand']],
     '#theme_wrappers' => ['button_icon'],
@@ -24,6 +24,51 @@ function ext_form_subscribe_form($form, $form_state)
   ];
   return $form;
 }
+function ext_form_subscribe_form_validate($form, $form_state)
+{
+  if (!valid_email_address($form_state['values']['email'])) {
+    form_set_error($form_state['values']['email'], t('The entered e-mail address "@email" does not appear valid.', array('@email' => $form_state['values']['email'])));
+    return false;
+  }
+}
+function ext_form_subscribe_form_submit($form, $form_state)
+{
+  // проверить наличие Аккаунта,
+  // создать Аккаунт и профиль Main, если отсутствует
+  $query = db_select('users', 'u')
+    ->fields('u', ['uid'])
+    ->condition('u.mail', $form_state['values']['email'])
+    ->execute();
+  if ($result = $query->fetch()) {
+    $account = user_load($result->uid);
+    $profile_main = profile2_load_by_user($account, 'main');
+  } else {
+    $new_user = array(
+      'name' => user_password(), // будет заменено в hook_insert
+      'pass' => user_password(),
+      'mail' => $form_state['values']['email'],
+      'init' => $form_state['values']['email'],
+      'status' => 0,
+    );
+    $account = user_save(NULL, $new_user);
+    $profile_main = profile2_create([
+      'type' => 'main',
+      'uid' => $account->uid,
+    ]);
+  }
+
+  if ($profile_main) {
+    $profile_main->field_user_subscription_news['und'][0]['value'] = true;
+    profile2_save($profile_main);
+  }
+
+
+  // todo
+  //  нужна защита от регистрации аккаунта без подтверждения email
+
+
+}
+
 
 function ext_form_search_form($form, $form_state)
 {
@@ -131,9 +176,7 @@ function ext_form_webform_client_form_21_ajax_callback($form, $form_state)
   if (!empty($form["#submission"])) {
     $form['submitted']['complete'] = [
       '#markup' => '<div class="complete">' .
-//                      '<h4>Резюме отправлено.</h4>' .
                       '<h4>' . t('Message been sent.') . '</h4>' .
-//                      '<p>Наш сотрудник изучит его и свяжется с Вами при необходимости.</p>' .
                       '<p>' . t('Our manager will study it and contact you if necessary') . '</p>' .
                     '</div>',
     ];
@@ -166,7 +209,6 @@ function ext_form_webform_client_form_23_ajax_callback($form, $form_state)
     $form['submitted']['complete'] = [
       '#markup' => '<div class="complete">' .
                      '<h4>' . t('Message been sent.') . '</h4>' .
-//                    '<p>Как только у нас появится соответствующая вакансия, мы рассмотрим ваше резюме в числе первых.</p>' .
                     '<p>' . t('As soon as we have a suitable vacancy, we will consider your resume among the first.') . '</p>' .
                    '</div>',
     ];
