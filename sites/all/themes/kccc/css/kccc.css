@@ -3181,6 +3181,9 @@ ul.menu {
     .agrocalc {
       margin-bottom: 4rem; } }
 
+.page-admin table {
+  font-size: 0.889rem; }
+
 .branches {
   margin-bottom: 2rem; }
   .branches .map {

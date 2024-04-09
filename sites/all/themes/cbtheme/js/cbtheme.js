@@ -123,10 +123,10 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
         $(".readmore").each((i, el) => {
         var collEl = $(el);
         const fullHeight = collEl.height();
-        const closedHeight = collEl.data("closed-height") ?? 0;
-        const moreText = collEl.data("more-text") ?? Drupal.t("unfold");
-        const lessText = collEl.data("less-text") ?? Drupal.t("fold");
-        const bodyClick = collEl.data("body-click") ?? false;
+        const closedHeight = collEl.data("closed-height") ? collEl.data("closed-height") : 0;
+        const moreText = collEl.data("more-text") ? collEl.data("more-text") : Drupal.t("unfold");
+        const lessText = collEl.data("less-text") ? collEl.data("less-text") : Drupal.t("fold");
+        const bodyClick = collEl.data("body-click") ? collEl.data("body-click") : false;
         // если высота с текстом больше заданной,
         // то скрыть подкатом лишнее и добавить ссылку для открытия
         if (fullHeight > closedHeight) {

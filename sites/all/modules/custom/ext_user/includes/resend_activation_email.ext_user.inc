@@ -8,19 +8,19 @@ function ext_user_resend_activation_email_form($form, &$form_state)
   $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">' . t('Log in') . '</a> ' . t('or') . ' <a href="/user/password">' . t('Password recovery') . '</a></div>';
   $form['#suffix'] = '</div>';
 
-  $form['email'] = array(
+  $form['email'] = [
     '#type' => 'textfield',
     '#title' => t('E-Mail'),
     '#default_value' => $_GET['email'] ?? '',
     '#size' => 60,
     '#required' => TRUE,
-  );
+  ];
 
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
+  $form['actions'] = ['#type' => 'actions'];
+  $form['actions']['submit'] = [
     '#type' => 'submit',
     '#value' => t('Resend activation e-mail'),
-  );
+  ];
 
   return $form;
 }

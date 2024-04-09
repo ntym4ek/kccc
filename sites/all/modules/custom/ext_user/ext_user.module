@@ -110,19 +110,25 @@ function ext_user_module_implements_alter(&$implementations, $hook)
 function ext_user_preprocess_page(&$vars)
 {
   if (arg(0) == 'user' && $GLOBALS['theme'] != 'seven') {
-    $vars['title'] = '';
+    $vars['title'] = $banner_uri = '';
 
-    if (is_numeric(arg(1))) {
+    if (ext_user_user_own_account()) {
+      $vars['is_banner_on'] = true;
+      $banner_uri = 'public://images/page-banners/user.jpg';
+    } elseif (is_numeric(arg(1))) {
       $user_info = ext_user_get_user_info(arg(1));
-
       if (!empty($user_info['staff'])) {
         // вывод Заголовка в виде баннера
-        $vars['is_banner_on'] = true;
-        $img_uri = 'public://images/page-banners/predstaviteli.jpg';
-        $vars['banner_url'] = file_create_url($img_uri);
-        $vars['banner_mobile_url'] = image_style_url('banner_mobile', $img_uri);
+        $banner_uri = 'public://images/page-banners/predstaviteli.jpg';
         $vars['banner_title'] = t('Employees');
       }
+    }
+
+    if ($banner_uri) {
+      $vars['is_banner_on'] = true;
+      $vars['banner_url'] = file_create_url($banner_uri);
+      $vars['banner_mobile_url'] = image_style_url('banner_mobile', $banner_uri);
+      $vars['banner_title'] = t('User account');
     }
 
     if (arg(2) == 'edit') {
