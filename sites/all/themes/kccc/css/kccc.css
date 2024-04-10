@@ -963,6 +963,44 @@ h4, h5, h6 {
   min-height: 100vh;
   transition: all 200ms ease-in; }
 
+div.messages {
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  border: none;
+  box-shadow: 0 5px 10px 2px #33333333;
+  margin: 0;
+  padding: 1rem 0;
+  min-height: 60px;
+  transform: translate(0, -100%);
+  transition: all 200ms; }
+  div.messages.visible {
+    transform: translate(0, 0);
+    visibility: visible; }
+  div.messages.error, div.messages.warning, div.messages.status {
+    background-image: none; }
+  div.messages .close {
+    position: absolute;
+    right: 1rem;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center; }
+    div.messages .close span {
+      display: block;
+      cursor: pointer;
+      color: #ccc;
+      font-weight: 500;
+      padding: .1rem .5rem .5rem;
+      transition: all 200ms; }
+      div.messages .close span:hover {
+        color: #000; }
+  .admin-menu div.messages {
+    margin-top: 29px !important; }
+
 .page-header {
   display: flex;
   align-items: center;
@@ -985,10 +1023,6 @@ h4, h5, h6 {
 
 .page-content {
   flex: 1 0 auto; }
-  .page-content .messages {
-    margin: 1em 0; }
-    .page-content .messages p {
-      margin: 0; }
 
 .page-footer {
   background: #EDEDED;
@@ -3555,7 +3589,8 @@ a {
       .page-footer .menu li.socials i.icon.icon-rounded {
         border-width: 2px; }
   .page-footer .subscribe {
-    padding-top: 1rem; }
+    padding-top: 1rem;
+    position: relative; }
     .page-footer .subscribe .title {
       font-size: 1rem;
       font-weight: 700;
@@ -3564,6 +3599,9 @@ a {
       max-width: 250px; }
     .page-footer .subscribe .btn {
       padding: 0 .5rem; }
+    .page-footer .subscribe .success-message {
+      font-weight: 500;
+      line-height: 1.4; }
   @media only screen and (min-width: 768px) {
     .page-footer .legal-name {
       font-size: 0.889rem; }

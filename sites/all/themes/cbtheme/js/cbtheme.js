@@ -10,6 +10,23 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
         e.preventDefault();
       });
 
+      // --- Сообщения ---------------------------------------------------------
+      setTimeout(() => {
+        $("div.messages").addClass("visible");
+      }, 500);
+      setTimeout(() => {
+        closeMessages();
+      }, 8000);
+      $("div.messages .close").on("click", () => {
+        closeMessages();
+      });
+      function closeMessages() {
+        $("div.messages").removeClass("visible");
+        setTimeout(() => {
+          $("div.messages").remove();
+        }, 500);
+      }
+
       // --- Плавный скролл к якорям -------------------------------------------
       $(document).on("click", 'a[href^="#"]', function (event) {
         event.preventDefault();

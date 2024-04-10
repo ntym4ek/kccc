@@ -352,11 +352,13 @@ a { color: $brand-color; }
   }
   .subscribe {
     padding-top: 1rem;
+    position: relative;
     .title {
       font-size: $font-size-h5; font-weight: 700; text-transform: uppercase;
     }
     .form-text { max-width: 250px; }
     .btn { padding: 0 .5rem; }
+    .success-message { font-weight: 500; line-height: 1.4; }
   }
 
   @media #{$pad} {
