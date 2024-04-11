@@ -13,7 +13,6 @@ function ext_mail_mail_alter(&$message)
   }
 }
 
-
 /**
  * Implements hook_mail
  */
