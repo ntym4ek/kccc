@@ -11,21 +11,35 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
       });
 
       // --- Сообщения ---------------------------------------------------------
-      setTimeout(() => {
-        $("div.messages").addClass("visible");
-      }, 500);
-      setTimeout(() => {
-        closeMessages();
-      }, 8000);
-      $("div.messages .close").on("click", () => {
-        closeMessages();
-      });
       function closeMessages() {
         $("div.messages").removeClass("visible");
         setTimeout(() => {
           $("div.messages").remove();
         }, 500);
       }
+      function setTimer(ms = 8000) {
+        return setTimeout(() => {
+          closeMessages();
+        }, ms);
+      }
+
+      // если есть всплывающее окно с сообщениями, показать его через .5 сек и убрать через 8 сек.
+      // если наведён курсор, то убрать через 2 сек после смещения курсора за пределы окна
+      $("div.messages").once( () => {
+        var closeTimer = null;
+        setTimeout(() => {
+          $("div.messages").addClass("visible");
+        }, 500);
+        closeTimer = setTimer();
+        $("div.messages .close").on("click", () => {
+          closeMessages();
+        });
+        $("div.messages").mouseover(() => {
+          clearTimeout(closeTimer);
+        }).mouseleave(() => {
+          closeTimer = setTimer(1000);
+        });
+      });
 
       // --- Плавный скролл к якорям -------------------------------------------
       $(document).on("click", 'a[href^="#"]', function (event) {
@@ -79,7 +93,7 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
           elBody.style.transition = `height ${this._config.duration}ms ease`;
           elBody.classList.add("collapsing");
           el.classList.add("slidedown");
-          elBody.offsetHeight;
+          // elBody.offsetHeight;
           elBody.style.height = `${height}px`;
           window.setTimeout(() => {
             elBody.classList.remove("collapsing");
@@ -98,7 +112,7 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
             return;
           }
           elBody.style.height = `${elBody.offsetHeight}px`;
-          elBody.offsetHeight;
+          // elBody.offsetHeight;
           elBody.style.display = "block";
           elBody.style.height = 0;
           elBody.style.overflow = "hidden";
@@ -156,7 +170,9 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
             collEl.animate({"height": fullHeight}, {duration: duration }, "linear");
             collEl.addClass("open").removeClass("closed");
             collLink.text(lessText).addClass("open").removeClass("closed");
-            if (bodyClick) collEl.unbind("click", openMore).bind("click", closeMore);
+            if (bodyClick) {
+              collEl.unbind("click", openMore).bind("click", closeMore);
+            }
             collLink.unbind("click", openMore).bind("click", closeMore);
           };
 
@@ -164,11 +180,15 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
             collEl.animate({"height": closedHeight}, {duration: duration }, "linear");
             collEl.addClass("closed").removeClass("open");
             collLink.text(moreText).addClass("closed").removeClass("open");
-            if (bodyClick) collEl.unbind("click").bind("click", openMore);
+            if (bodyClick) {
+              collEl.unbind("click").bind("click", openMore);
+            }
             collLink.unbind("click").bind("click", openMore);
           };
 
-          if (bodyClick) collEl.bind("click", openMore);
+          if (bodyClick) {
+            collEl.bind("click", openMore);
+          }
           collLink.bind("click", openMore);
         }
       });
