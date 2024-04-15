@@ -40,7 +40,7 @@
         <div class="h4"><?php print t('Attention'); ?>!</div>
         <p><?php print t('Perhaps we already have a vacancy in your specialty. You can check it in the «Vacancies» section'); ?></p>
         <div class="actions">
-          <a href="/vakansii" class="btn btn-brand btn-wide btn-underline"><?php print t('Vacancies'); ?></a>
+          <a href="<?php print url('vakansii'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Vacancies'); ?></a>
         </div>
       </div>
     </div>

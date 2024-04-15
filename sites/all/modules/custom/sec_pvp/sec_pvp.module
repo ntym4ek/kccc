@@ -406,7 +406,7 @@ function sec_pvp_preprocess_pvp_event_treat(&$vars)
     }
 
     $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? t('Tank mix') : t('Product');
-    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . t('Tank mix spend') . ': <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> л/' . $treat_unit_apply . '</div>' : '';
+    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . t('Tank mix spend') . ': <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> ' . t('l', [], ['context' => 'units']) . '/' . $treat_unit_apply . '</div>' : '';
   }
 }
 

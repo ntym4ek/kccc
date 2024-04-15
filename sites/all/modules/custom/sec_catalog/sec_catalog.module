@@ -157,7 +157,7 @@ function sec_catalog_get_content_filtered($filters)
     foreach ($catalog as $category) {
       foreach ($category['products'] as $product_info) {
         $content .= '<div class="view-row col-xs-12 col-md-6">';
-        $content .=   theme('card_product_h', ['product' => $product_info]);
+        $content .=   theme('card_product_h', ['product' => $product_info, 'inline_link' => false]);
         $content .= '</div>';
       }
     }

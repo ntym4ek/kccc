@@ -118,7 +118,7 @@
               </div>
             </div>
             <div class="actions">
-              <a href="/predstaviteli" class="btn btn-brand btn-huge btn-wide"><?php print t('Buy'); ?></a>
+              <a href="<?php print url('predstaviteli'); ?>" class="btn btn-brand btn-huge btn-wide"><?php print t('Buy'); ?></a>
             </div>
           </div>
         </div>
