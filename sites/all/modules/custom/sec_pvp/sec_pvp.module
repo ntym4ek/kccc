@@ -358,7 +358,7 @@ function sec_pvp_preprocess_pvp_event_check(&$vars)
         'note' => $item['note'],
       ];
     } else {
-      $hos[] = '<a href="/' . drupal_get_path_alias('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
+      $hos[] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
     }
   }
   // список ВО без фото

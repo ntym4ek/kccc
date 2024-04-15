@@ -20,7 +20,7 @@
     </div>
     <div class="col-xs-12 col-md-4">
       <div class="b3">
-        <a href="/o-kompanii" class="btn btn-brand btn-wide btn-underline"><?php print t('Get more'); ?></a>
+        <a href="<?php print url('node/7'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Get more'); ?></a>
       </div>
     </div>
   </div>

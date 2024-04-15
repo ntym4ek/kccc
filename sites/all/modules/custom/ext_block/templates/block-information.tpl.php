@@ -9,7 +9,7 @@
 
       <div class="col-xs-12 col-md-7">
         <div class="infos">
-          <a href="/blog">
+          <a href="<?php print url('blog'); ?>">
             <div class="info">
               <div class="media"><i class="icon icon-111"></i></div>
               <div class="text">
@@ -18,7 +18,7 @@
               </div>
             </div>
           </a>
-          <a href="/novosti">
+          <a href="<?php print url('novosti'); ?>">
             <div class="info">
               <div class="media"><i class="icon icon-112"></i></div>
               <div class="text">
@@ -27,7 +27,7 @@
               </div>
             </div>
           </a>
-          <a href="/spravochniki">
+          <a href="<?php print url('spravochniki'); ?>">
             <div class="info">
               <div class="media"><i class="icon icon-113"></i></div>
               <div class="text">

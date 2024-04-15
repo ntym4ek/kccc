@@ -158,25 +158,18 @@ function ext_node_preprocess_node(&$vars)
   $stats = statistics_get($node->nid);
   $vars['stats'] = $stats ?: ['totalcount' => 0];
 
-  // -- Автор
-  if ($vars['display_submitted']) {
-    if ($vars['view_mode'] == 'full') {
-      if ($node->uid) {
-        $author_info = ext_user_get_user_info($node->uid);
-      } else {
-        $author_info = ext_user_get_dumb_user_info();
-      }
-      $vars['author'] = theme('card_contact', $author_info);
-    }
-  }
-
-
   // -- Тип Афиша
   if ($node->type == 'agenda') {
     // для Афиши вывести период
     $date_st = date('d.m.Y', $node->field_period['und'][0]['value']);
     $date_fn = date('d.m.Y', $node->field_period['und'][0]['value2']);
     $vars['date'] = $date_st == $date_fn ? $date_st : $date_st . ' - ' . $date_fn;
+  }
+
+  // -- Тип Блог
+  if ($node->type == 'blog') {
+    // флаг "не указывать авторство"
+    $vars['display_submitted'] = !$node->field_flag["und"][0]["value"];
   }
 
   // -- Тип Программа защиты
@@ -338,9 +331,9 @@ function ext_node_preprocess_node(&$vars)
         if ($view->total_rows) {
           $vars['media_video_block'] = $view->render();
           if ($view->total_rows > 2) {
-            $vars['media_video_more_link'] = '<a href="/video?preparation=' . $node->nid . '">' . t('Show all') . ' ></a>';
+            $vars['media_video_more_link'] = '<a href="' . url('video', ['query' => ['preparation' => $node->nid]]) . '">' . t('Show all') . ' ></a>';
           } else {
-            $vars['media_video_more_link'] = '<a href="/video">' . t('Show others') . ' ></a>';
+            $vars['media_video_more_link'] = '<a href="' . url('video') . '">' . t('Show others') . ' ></a>';
           }
         }
 
@@ -353,10 +346,10 @@ function ext_node_preprocess_node(&$vars)
         if ($view->total_rows) {
           $vars['media_blog_block'] = $view->render();
           if ($view->total_rows > 2) {
-            $vars['media_blog_more_link'] = '<a href="/blog?preparation=' . $node->nid . '">' . t('Show all') . ' ></a>';
+            $vars['media_blog_more_link'] = '<a href="' . url('blog', ['query' => ['preparation' => $node->nid]]) . '">' . t('Show all') . ' ></a>';
           }
           else {
-            $vars['media_blog_more_link'] = '<a href="/blog">' . t('Show others') . ' ></a>';
+            $vars['media_blog_more_link'] = '<a href="' . url('blog') . '">' . t('Show others') . ' ></a>';
           }
         }
       }
@@ -374,7 +367,17 @@ function ext_node_preprocess_node(&$vars)
     $vars['pvp_info'] = sec_pvp_get_pvp_info($node->nid);
   }
 
-
+  // -- Автор
+  if ($vars['display_submitted']) {
+    if ($vars['view_mode'] == 'full') {
+      if ($node->uid) {
+        $author_info = ext_user_get_user_info($node->uid);
+      } else {
+        $author_info = ext_user_get_dumb_user_info();
+      }
+      $vars['author'] = theme('card_contact', $author_info);
+    }
+  }
 }
 
 /**

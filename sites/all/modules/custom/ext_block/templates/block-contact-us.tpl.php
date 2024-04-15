@@ -12,7 +12,7 @@
         <div class="title"><?php print t('Still have questions?'); ?></div>
         <?php print t('Contact our competent specialists and get a free consultation.'); ?>
       </div>
-      <a href="/eksperty" class="btn btn-brand  btn-wide"><?php print t('Ask'); ?></a>
+      <a href="<?php print url('eksperty'); ?>" class="btn btn-brand  btn-wide"><?php print t('Ask'); ?></a>
     </div>
   </div>
 

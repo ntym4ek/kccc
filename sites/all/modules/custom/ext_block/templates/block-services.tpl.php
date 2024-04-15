@@ -16,9 +16,9 @@
           </div>
           <div class="col-xs-12 col-md-6">
             <div class="links">
-              <a href="/eksperty" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Online consultation with a specialist'); ?></a>
-              <a href="/preparaty-v-pole" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Demonstration tests in the field'); ?></a>
-              <a href="/programmy-zashchity" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Development of crop protection programs'); ?></a>
+              <a href="<?php print url('eksperty'); ?>" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Online consultation with a specialist'); ?></a>
+              <a href="<?php print url('preparaty-v-pole'); ?>" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Demonstration tests in the field'); ?></a>
+              <a href="<?php print url('programmy-zashchity'); ?>" class="btn btn-brand btn-large btn-wide btn-underline"><?php print t('Development of crop protection programs'); ?></a>
             </div>
           </div>
         </div>

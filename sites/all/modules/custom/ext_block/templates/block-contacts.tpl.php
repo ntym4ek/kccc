@@ -17,7 +17,7 @@
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
-              <a href="/kontakty">
+              <a href="<?php print url('kontakty'); ?>">
                 <div class="media"><i class="icon icon-109 icon-rounded"></i></div>
                 <div class="title"><?php print t('Contacts of the central office'); ?></div>
               </a>
@@ -27,7 +27,7 @@
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
-              <a href="/predstaviteli">
+              <a href="<?php print url('predstaviteli'); ?>">
                 <div class="media"><i class="icon icon-111 icon-rounded"></i></div>
                 <div class="title"><?php print t('Official representatives'); ?></div>
               </a>
@@ -37,7 +37,7 @@
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
-              <a href="/eksperty">
+              <a href="<?php print url('eksperty'); ?>">
                 <div class="media"><i class="icon icon-108 icon-rounded"></i></div>
                 <div class="title"><?php print t('Agronomic service'); ?></div>
               </a>
@@ -47,7 +47,7 @@
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
-              <a href="/filialy">
+              <a href="<?php print url('filialy'); ?>">
                 <div class="media"><i class="icon icon-107 icon-rounded"></i></div>
                 <div class="title"><?php print t('Details of TH «KCCC» LLC'); ?></div>
               </a>

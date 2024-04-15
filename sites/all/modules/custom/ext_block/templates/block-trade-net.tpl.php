@@ -16,7 +16,7 @@
         <div class="net"><span>40</span> <span><?php print t('warehouse complexes'); ?></span></div>
         <div class="net"><span>23</span> <span><?php print t('regional representative offices'); ?></span></div>
         <div class="net"><span>41</span> <span><?php print t('professional agronomist'); ?></span></div>
-        <div class="actions"><a href="/predstaviteli" class="btn btn-brand btn-wide btn-underline"><?php print t('Find a representative in&nbsp;Your region'); ?></a></div>
+        <div class="actions"><a href="<?php print url('predstaviteli'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Find a representative in&nbsp;Your region'); ?></a></div>
       </div>
     </div>
     <div class="col-xs-12 col-md-6 col-lg-7">

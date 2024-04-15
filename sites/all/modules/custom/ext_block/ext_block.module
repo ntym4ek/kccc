@@ -145,13 +145,13 @@ function ext_block_block_view($delta = '')
         $block_content = $content['output'];
       } else {
         $block_content =  '<div class="view-empty message col-xs-12">' .
-                            t('This product has no use example records, but we have by <a href="/preparaty-v-pole">others</a>.') .
+                            t('This product has no use example records, but we have by <a href="@url">others</a>.', ['@url' => url('preparaty-v-pole')]) .
                           '</div>';
       }
       if ($content['total'] > 4) {
-        $more_link = '<a href="/preparaty-v-pole?preparation=' . $nid . '">' . t('Show all') . ' ></a>';
+        $more_link = '<a href="' . url('preparaty-v-pole', ['query' => ['preparation' => $nid]]) . '">' . t('Show all') . ' ></a>';
       } else {
-        $more_link = '<a href="/preparaty-v-pole">' . t('Show others') . ' ></a>';
+        $more_link = '<a href="' . url('preparaty-v-pole') . '">' . t('Show others') . ' ></a>';
       }
 
       $block['content'] = theme($delta, ['content' => $block_content, 'more_link' => $more_link]);

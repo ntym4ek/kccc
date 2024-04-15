@@ -5,7 +5,7 @@ function ext_user_resend_activation_email_form($form, &$form_state)
   // обёртка для темизации формы
   $form['#prefix'] =  '<div class="user-auth-form-wrapper">';
   $form['#prefix'] .=   '<h1>' . t('Account activation', [], ['context' => 'account']) . '</h1>';
-  $form['#prefix'] .=   '<div class="user-links"><a href="/user/login">' . t('Log in') . '</a> ' . t('or') . ' <a href="/user/password">' . t('Password recovery') . '</a></div>';
+  $form['#prefix'] .=   '<div class="user-links"><a href="' . url('user/login') . '">' . t('Log in') . '</a> ' . t('or') . ' <a href="' . url('user/password') . '">' . t('Password recovery') . '</a></div>';
   $form['#suffix'] = '</div>';
 
   $form['email'] = [

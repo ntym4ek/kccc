@@ -10,7 +10,7 @@
           <div class="section-title">
             <div><?php print t('Latest news'); ?></div>
             <div class="underline"></div>
-            <div class="more-all"><a href="/novosti"><?php print t('Show all') .' >'; ?></a></div>
+            <div class="more-all"><a href="<?php print url('novosti'); ?>"><?php print t('Show all') .' >'; ?></a></div>
           </div>
         </div>
       </div>

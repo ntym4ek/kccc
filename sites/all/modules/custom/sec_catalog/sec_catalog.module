@@ -855,7 +855,7 @@ function sec_catalog_get_categories()
     foreach($terms as $term) {
       $term_info = helper_get_term_info($term);
       $categories[$term->tid] = $term_info;
-      $categories[$term->tid]['path'] = sec_catalog_taxonomy_term_uri($term)['path'];
+      $categories[$term->tid]['path'] = url(sec_catalog_taxonomy_term_uri($term)['path']);
     }
   }
 
