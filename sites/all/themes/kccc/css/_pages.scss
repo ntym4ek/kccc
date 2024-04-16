@@ -114,14 +114,14 @@
   .form-item-stage {
     @include col('xs', 12);
     @include col('md', 6);
-    @include col('lg', 4);
+    @include col('xl', 4);
   }
 
   .form-item-area,
   .form-item-seed {
     @include col('xs', 6);
     @include col('md', 6);
-    @include col('lg', 2);
+    @include col('xl', 2);
   }
 
   .form-item-weeds,
@@ -152,6 +152,7 @@
   .form-item-phone  { @include col('lg', 2); }
 
   .program-wrapper {
+    margin-top: 2rem;
     .card-product-h {
       .summary {
         display: block!important;
@@ -199,6 +200,7 @@
 
   @media #{$tablet} {
     margin-bottom: 4rem;
+    .program-wrapper { margin-top: 4rem; }
   }
 }
 

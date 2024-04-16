@@ -113,6 +113,7 @@ function _reglaments_get_protection_system($params)
         }
       }
 
+      ksort($preps_w_regls);
       $program['preps'] = $preps_w_regls;
       $ho_missing = [];
       foreach($hobjects_missing as $category) {
@@ -130,13 +131,16 @@ function _reglaments_get_protection_system($params)
 
 /**
  * Вернуть категорию ВО соответствующую категории Препарата
+ * (нужно по причине того, что Протравители и Фунгициды действуют на один тип ВО)
  */
 function _prep_cat_to_hobject_cat($cat_id)
 {
-  if ($cat_id == CAT_HERB_TID) return CAT_WEED;
-  if ($cat_id == CAT_SEED_TID) return CAT_DISEASE;
-  if ($cat_id == CAT_FUNG_TID) return CAT_DISEASE;
-  if ($cat_id == CAT_INSECT_TID) return CAT_PEST;
+  if ($cat_id == CAT_SEED_TID)    return CAT_DISEASE;
+  if ($cat_id == CAT_FUNG_TID)    return CAT_DISEASE;
+  if ($cat_id == CAT_HERB_TID)    return CAT_WEED;
+  if ($cat_id == CAT_INSECT_TID)  return CAT_PEST;
+  if ($cat_id == CAT_DESIC_TID)   return CAT_DESIC;
+  if ($cat_id == CAT_FERT_TID)    return CAT_FERT;
 
   return 0;
 }

@@ -801,6 +801,7 @@ function sec_pvp_form_node_form_alter(&$form, &$form_state, $form_id)
 
     // убрать поля с формы
     $form["field_text"]["#access"] = false;       // старый ID
+    $form["field_pvp_last_event_date"]["#access"] = false;
     $form["title"]["#access"] = false;
     $form["author"]["#access"] = false;
     $form["options"]["promote"]["#access"] = false;

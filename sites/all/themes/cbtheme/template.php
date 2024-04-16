@@ -218,6 +218,7 @@ function cbtheme_preprocess_button(&$vars)
 //      }
       if (strpos($vars["element"]["#id"], 'delete') !== FALSE || strpos($vars["element"]["#id"], 'remove') !== FALSE) {
         $vars["element"]['#attributes']['class'][] = 'btn-danger';
+        $vars["element"]['#attributes']['class'][] = 'btn-small';
         if (strpos($vars["element"]["#id"], 'file') !== FALSE) {
           $vars["element"]["#value"] = 'x';
           $vars["element"]['#attributes']['class'][] = 'btn-with-icon';

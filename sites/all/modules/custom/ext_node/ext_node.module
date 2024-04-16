@@ -169,7 +169,7 @@ function ext_node_preprocess_node(&$vars)
   // -- Тип Блог
   if ($node->type == 'blog') {
     // флаг "не указывать авторство"
-    $vars['display_submitted'] = !$node->field_flag["und"][0]["value"];
+    $vars['display_submitted'] = empty($node->field_flag) || !$node->field_flag["und"][0]["value"];
   }
 
   // -- Тип Программа защиты

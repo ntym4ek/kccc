@@ -115,6 +115,7 @@ function ext_user_preprocess_page(&$vars)
     if (ext_user_user_own_account()) {
       $vars['is_banner_on'] = true;
       $banner_uri = 'public://images/page-banners/user.jpg';
+      $vars['banner_title'] = t('User account');
     } elseif (is_numeric(arg(1))) {
       $user_info = ext_user_get_user_info(arg(1));
       if (!empty($user_info['staff'])) {
@@ -128,11 +129,10 @@ function ext_user_preprocess_page(&$vars)
       $vars['is_banner_on'] = true;
       $vars['banner_url'] = file_create_url($banner_uri);
       $vars['banner_mobile_url'] = image_style_url('banner_mobile', $banner_uri);
-      $vars['banner_title'] = t('User account');
     }
 
     if (arg(2) == 'edit') {
-      $vars['title'] = 'Смена пароля';
+      $vars['title'] = t('Password change');
       if (arg(3) == 'main') $vars['title'] = t('Profile settings');
     }
 
@@ -380,6 +380,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       $form['account']['mail']['#disabled'] = true;
       unset($form['account']['mail']['#description']);
       $form["account"]["mail"]["#weight"] = -6;
+      $form["actions"]["cancel"]["#value"] = t('Delete account');
 
       if (ext_user_user_own_account()) {
         // если это не форма восстановления, а форма смены пароля
@@ -393,13 +394,13 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
           $form['account']['pass']['#prefix'] = '<div class="col-xs-12 col-md-6">';
           $form['account']['pass']['#suffix'] = '</div></div>';
         }
-        $form['account']['pass']['#title'] = 'Новый пароль';
+        $form['account']['pass']['#title'] = t('New password');
         $form['account']['pass']['#type'] = 'textfield';
         unset($form["account"]["pass"]["#description"]);
 
         // ссылка на Восстановление пароля для тех, кто не помнит
         $form["account"]["recovery"] = [
-          '#markup' => '<p>' . t('If you do not remember old password, follow next <a href="' . url('user/password') . '">link</a> to set new.') . '</p>',
+          '#markup' => '<p>' . t('If you do not remember old password, follow next <a href="@url">link</a> to set new.', ['@url' =>url('user/password')]) . '</p>',
         ];
 
         // не выводить статус

@@ -12,6 +12,8 @@ define('CAT_OTHER_TID',  406);
 define('CAT_WEED',  1);
 define('CAT_DISEASE',  2);
 define('CAT_PEST',  3);
+define('CAT_DESIC',  4);
+define('CAT_FERT',  5);
 
 /**
  * Implements hook_menu().
@@ -551,7 +553,7 @@ function sec_catalog_get_product_info($node)
             'concentration' => $conc,
           ];
           $conc_formatted = empty($conc) ? '' : helper_number_format($conc, 2);
-          $wrap = strlen($name) > 32;
+          $wrap = strlen($name) > 28;
           $suffix = $conc_formatted ? ',&nbsp;' . $conc_formatted . '&nbsp;<span class="nowrap">' . t('g', [], ['context' => 'units']) . '/' . $unit_short . '</span>' : '';
           $list2[] = '<span class="' . ($wrap ? '' : 'nowrap') . '">' . $name . $suffix . '</span>';
         }

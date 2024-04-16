@@ -3,7 +3,7 @@
 
 <div id="agrocalc" class="agrocalc">
   <div class="row">
-    <div class="col-xs-12 col-md-8">
+    <div class="col-xs-12 col-xl-8">
       <div class="intro">
         <p><?php print t('With the help of an «Agrocalculator», you can choose products to solve the problems of your field and culture.'); ?></p>
         <p><?php print t('Specify the culture, characteristics of the field, harmful objects and click «Find a solution».'); ?></p>
@@ -30,7 +30,7 @@
 
   <?php if (!empty($form['program'])): ?>
   <div class="program-wrapper">
-    <h3><?php print t('Preparations for the protection of culture'); ?></h3>
+    <h3><?php print t('We can offer next preparations'); ?></h3>
     <?php print drupal_render($form['program']); ?>
   </div>
   <?php endif; ?>

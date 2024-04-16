@@ -947,10 +947,10 @@ h4, h5, h6 {
       padding: 0 2rem; } }
   @media only screen and (min-width: 768px) {
     .container {
-      padding: 0 3rem; } }
+      padding: 0 2rem; } }
   @media only screen and (min-width: 1024px) {
     .container {
-      padding: 0 4rem;
+      padding: 0 2rem;
       max-width: 1320px;
       margin: 0 auto; } }
   @media only screen and (min-width: 1366px) {
@@ -1736,16 +1736,25 @@ fieldset .fieldset-legend {
   .filter-wrapper .form-item label {
     display: inline-block; }
 
-.form-managed-file .image-preview {
-  flex: 0 0 120px;
-  padding-bottom: 0; }
-.form-managed-file .image-widget-data,
-.form-managed-file .file-widget-data {
-  float: initial; }
-.form-managed-file .image-widget-data .form-group {
-  display: none; }
-.form-managed-file .form-item {
-  margin-bottom: 0; }
+.form-managed-file {
+  display: flex;
+  flex-wrap: wrap; }
+  .form-managed-file .image-preview {
+    flex: 0 0 120px;
+    padding-bottom: 0; }
+  .form-managed-file .image-widget-data,
+  .form-managed-file .file-widget-data {
+    float: initial; }
+  .form-managed-file .image-widget-data .form-group {
+    display: none; }
+  .form-managed-file .form-item {
+    margin-bottom: 0; }
+  .form-managed-file .image-widget-data {
+    flex: 1 1 250px; }
+  .form-managed-file .image-action {
+    flex: 100%; }
+  .form-managed-file .image-etc {
+    flex: 0 0 100%; }
 
 .form-items-inline {
   display: flex;
@@ -2050,11 +2059,11 @@ ul.menu {
   @media only screen and (min-width: 768px) {
     .slider.no-mobile-frame > .swiper,
     .carousel.no-mobile-frame > .swiper {
-      padding: 0 3rem; } }
+      padding: 0 2rem; } }
   @media only screen and (min-width: 1024px) {
     .slider.no-mobile-frame > .swiper,
     .carousel.no-mobile-frame > .swiper {
-      padding: 0 4rem; } }
+      padding: 0 2rem; } }
   @media only screen and (min-width: 1366px) {
     .slider.no-mobile-frame > .swiper,
     .carousel.no-mobile-frame > .swiper {
@@ -2152,15 +2161,8 @@ ul.menu {
 
 .block-new-products .card-product-v .text {
   padding: 1rem 0; }
-.block-new-products .carousel-products .swiper {
-  padding: 1rem 1rem 0; }
 .block-new-products .carousel-products .swiper-slide {
   height: auto; }
-@media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px), only screen and (min-width: 768px) and (max-width: 1023px), only screen and (min-width: 1024px) and (max-width: 1365px) {
-  .block-new-products .carousel-products {
-    position: relative;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%); } }
 @media only screen and (min-width: 1366px) {
   .block-new-products .card-product-v {
     transition: all 200ms; }
@@ -2915,7 +2917,6 @@ ul.menu {
   height: auto; }
 .block-news .news {
   background: #fff;
-  margin: 0 1rem;
   height: 100%; }
 .block-news a {
   color: inherit;
@@ -3106,7 +3107,7 @@ ul.menu {
         flex-basis: 50%;
         max-width: 50%;
         padding: 0 1rem; } }
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 1366px) {
       .agrocalc .form-item-culture,
       .agrocalc .form-item-stage {
         flex-basis: 33.3333333333%;
@@ -3123,7 +3124,7 @@ ul.menu {
         flex-basis: 50%;
         max-width: 50%;
         padding: 0 1rem; } }
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 1366px) {
       .agrocalc .form-item-area,
       .agrocalc .form-item-seed {
         flex-basis: 16.6666666667%;
@@ -3184,43 +3185,47 @@ ul.menu {
       flex-basis: 16.6666666667%;
       max-width: 16.6666666667%;
       padding: 0 1rem; } }
-  .agrocalc .program-wrapper .card-product-h .summary {
-    display: block !important;
-    padding-left: 0; }
-  .agrocalc .program-wrapper .card-product-h .info-mobile {
-    display: none !important; }
-  .agrocalc .program-wrapper .card-product-h .hobjects {
-    font-weight: 600;
-    margin: .5rem 0; }
-  .agrocalc .program-wrapper .card-product-h .period {
-    color: #ccc;
-    font-size: 0.889rem;
-    margin-bottom: .5rem; }
-  .agrocalc .program-wrapper .card-product-h .specs {
-    display: flex;
-    justify-content: space-around; }
-  .agrocalc .program-wrapper .card-product-h .spec {
-    font-size: 0.889rem;
-    text-align: center;
-    margin-bottom: 1rem; }
-    .agrocalc .program-wrapper .card-product-h .spec .label {
+  .agrocalc .program-wrapper {
+    margin-top: 2rem; }
+    .agrocalc .program-wrapper .card-product-h .summary {
+      display: block !important;
+      padding-left: 0; }
+    .agrocalc .program-wrapper .card-product-h .info-mobile {
+      display: none !important; }
+    .agrocalc .program-wrapper .card-product-h .hobjects {
+      font-weight: 600;
+      margin: .5rem 0; }
+    .agrocalc .program-wrapper .card-product-h .period {
+      color: #ccc;
       font-size: 0.889rem;
-      margin-bottom: 5px; }
-    .agrocalc .program-wrapper .card-product-h .spec .text {
-      font-size: 1.222rem;
-      font-weight: 500; }
-  .agrocalc .program-wrapper .card-product-h .spec.description {
-    padding-top: 1rem; }
-    .agrocalc .program-wrapper .card-product-h .spec.description a {
-      border-bottom: 1px dashed #000;
-      cursor: pointer; }
-    .agrocalc .program-wrapper .card-product-h .spec.description .tooltip {
-      display: none; }
-  .agrocalc .program-wrapper .view-row:not(:last-child) .card-product-h {
-    border-bottom: 1px solid #ccc; }
+      margin-bottom: .5rem; }
+    .agrocalc .program-wrapper .card-product-h .specs {
+      display: flex;
+      justify-content: space-around; }
+    .agrocalc .program-wrapper .card-product-h .spec {
+      font-size: 0.889rem;
+      text-align: center;
+      margin-bottom: 1rem; }
+      .agrocalc .program-wrapper .card-product-h .spec .label {
+        font-size: 0.889rem;
+        margin-bottom: 5px; }
+      .agrocalc .program-wrapper .card-product-h .spec .text {
+        font-size: 1.222rem;
+        font-weight: 500; }
+    .agrocalc .program-wrapper .card-product-h .spec.description {
+      padding-top: 1rem; }
+      .agrocalc .program-wrapper .card-product-h .spec.description a {
+        border-bottom: 1px dashed #000;
+        cursor: pointer; }
+      .agrocalc .program-wrapper .card-product-h .spec.description .tooltip {
+        display: none; }
+    .agrocalc .program-wrapper .view-row:not(:last-child) .card-product-h {
+      border-bottom: 1px solid #ccc; }
   @media only screen and (min-width: 1024px) {
     .agrocalc {
-      margin-bottom: 4rem; } }
+      margin-bottom: 4rem; }
+      .agrocalc .program-wrapper {
+        margin-top: 4rem; } }
 
 .page-admin table {
   font-size: 0.889rem; }
@@ -3846,7 +3851,8 @@ ul.action-links {
     justify-content: center;
     color: #000;
     height: 40px;
-    width: 40px;
+    min-width: 40px;
+    padding: 0 10px;
     transition: all 200ms; }
     .pager li.pager-previous a:hover,
     .pager li.pager-first a:hover,
@@ -4648,8 +4654,6 @@ ul.action-links {
   margin-bottom: 0; }
 .node-season-form .container-inline-date .description {
   display: none; }
-.node-season-form .tabledrag-toggle-weight-wrapper {
-  display: none; }
 .node-season-form table td {
   padding: 1rem; }
 .node-season-form table#field-pvp-check-values > tbody > tr.even,
@@ -5063,6 +5067,9 @@ ul.action-links {
     font-weight: 700;
     text-align: center;
     margin: 2rem 0 1rem; }
+  .node-season .pvp-event-check .image-note,
+  .node-season .pvp-event-treat .image-note {
+    min-height: 51px; }
   .node-season .pvp-event-check .list,
   .node-season .pvp-event-treat .list {
     padding: 0 1rem;
@@ -5074,7 +5081,8 @@ ul.action-links {
   .node-season .pvp-event-treat .comment {
     font-size: 0.889rem;
     line-height: 1.3;
-    padding: 0 1rem; }
+    padding: 0 1rem;
+    min-height: 170px; }
     .node-season .pvp-event-check .comment p,
     .node-season .pvp-event-treat .comment p {
       margin: 0 0 .5em 0; }

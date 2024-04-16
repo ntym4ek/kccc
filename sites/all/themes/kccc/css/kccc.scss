@@ -588,7 +588,8 @@ ul.action-links {
       border-radius: 5px;
       display: inline-flex; align-items: center; justify-content: center;
       color: $text-color;
-      height: 40px; width: 40px;
+      height: 40px; min-width: 40px;
+      padding: 0 10px;
       transition: all 200ms;
       &:hover {
         box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
@@ -1342,10 +1343,7 @@ ul.action-links {
     .form-item { margin-bottom: 0; }
     .description { display: none; }
   }
-  .tabledrag-toggle-weight-wrapper { display: none; }
-  table {
-    td { padding: 1rem; }
-  }
+  table td { padding: 1rem; }
 
   table#field-pvp-check-values > tbody > tr.even,
   table#field-pvp-check-values > tbody > tr.odd {
@@ -1404,6 +1402,8 @@ ul.action-links {
       input { width: 100%; }
     }
   }
+
+
   .image-widget-data .form-type-textfield {
     width: 100%;
     label { display: none; }
@@ -1737,6 +1737,7 @@ ul.action-links {
       font-weight: 700; text-align: center;
       margin: 2rem 0 1rem;
     }
+    .image-note { min-height: 51px; }   // для выравнивания высоты блоков в колонках
     .list {
       padding: 0 1rem; margin-bottom: 1rem;
       a:hover { text-decoration: underline; }
@@ -1744,6 +1745,7 @@ ul.action-links {
     .comment {
       font-size: $font-size-small; line-height: 1.3;
       padding: 0 1rem;
+      min-height: 170px;                // для выравнивания высоты блоков в колонках
       p { margin: 0 0 .5em 0; }
     }
   }

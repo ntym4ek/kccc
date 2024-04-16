@@ -104,6 +104,11 @@ fieldset .fieldset-legend {
   .file-widget-data { float: initial; }
   .image-widget-data .form-group { display: none; }
   .form-item { margin-bottom: 0; } // в табличной части убирает лишний отступ
+
+  display: flex; flex-wrap: wrap;
+  .image-widget-data { flex: 1 1 250px; }
+  .image-action { flex: 100%; }
+  .image-etc { flex: 0 0 100%; }
 }
 .form-items-inline {
   display: flex;

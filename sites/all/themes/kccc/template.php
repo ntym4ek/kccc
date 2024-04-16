@@ -254,7 +254,7 @@ function kccc_image_widget($vars)
 {
   $element = $vars['element'];
   $output = '';
-  $output .= '<div class="image-widget form-managed-file clearfix">';
+  $output .= '<div class="image-widget form-managed-file">';
 
   if (isset($element['preview'])) {
     $output .= '<div class="image-preview">';
@@ -298,7 +298,14 @@ function kccc_image_widget($vars)
   }
   $output .=   '</div>';
 
-  $output .=   '<div class="image-action">' . drupal_render_children($element) . '</div>';
+  $upload = drupal_render($element["upload"]);
+  $upload_button = drupal_render($element["upload_button"]);
+  $remove_button = drupal_render($element["remove_button"]);
+  if ($upload || $upload_button || $remove_button) {
+    $output .=   '<div class="image-action">' . $upload . $upload_button . $remove_button . '</div>';
+  }
+
+  $output .=   '<div class="image-etc">' . drupal_render_children($element) . '</div>';
   $output .= '</div>';
 
   return $output;
