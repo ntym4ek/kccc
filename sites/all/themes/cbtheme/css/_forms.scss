@@ -83,16 +83,12 @@ fieldset .fieldset-legend {
 .form-actions { margin-top: 1em*2; }
 .form-submit { font-size: 1em; }
 
-form,
-.form-content {
-  .ajax-progress {
-    position: absolute; top: 0; bottom: 0; left:0; right: 0; z-index: 99;
-    background: #000000bb;
-    display: flex; justify-content: center; align-items: center;
-    color: #fff;
-    transition: all 200ms;
-  }
-}
+//form,
+//.form-content {
+//  .ajax-progress {
+//
+//  }
+//}
 .filter-wrapper {
   opacity: .3;
   margin-bottom: 1rem;

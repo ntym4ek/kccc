@@ -517,6 +517,20 @@ fieldset {
   }
 }
 
+.ajax-progress {
+  position: fixed; top: 0; bottom: 0; left:0; right: 0; z-index: 99;
+  background: #ffffffcc; background-size: cover;
+  border-radius: 40px;
+  display: flex; justify-content: center; align-items: center;
+  color: #fff;
+  transition: all 200ms;
+  .throbber {
+    background-image: url(../../cbtheme/images/plant.gif);
+    height: 60px; width: 60px;
+  }
+  .message { color: $text-color; }
+}
+
 // --- Печатный вариант страниц ------------------------------------------------------------
 @media print {
   *,

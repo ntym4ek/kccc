@@ -273,10 +273,10 @@ function agrocalc_form($from, &$form_state)
         }
         // добавляем сообщение под результатом расчёта
         if ($program['hobjects']['missing']) {
-          $content .= '<div class="view-empty"><p>' . t('Our calculator could not find preparations for next harmful objects: @hobjects. But you can still send the request to our experts and they will help you to get protection system.', ['@hobjects' => drupal_strtolower($program['hobjects']['missing']['formatted'])]) . '</p></div>';
+          $content .= '<div class="view-empty col-xs-12"><p>' . t('Our calculator could not find preparations for next harmful objects: @hobjects. But you can still send the request to our experts and they will help you to get protection system.', ['@hobjects' => drupal_strtolower($program['hobjects']['missing']['formatted'])]) . '</p></div>';
         }
       } else {
-        $content .= '<div class="view-empty"><p>' . t('No products were found, try changing the filters.') . '</p></div>';
+        $content .= '<div class="view-empty col-xs-12"><p>' . t('No products were found, try changing the filters.') . '</p></div>';
       }
 
       // выводим программу

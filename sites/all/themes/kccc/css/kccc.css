@@ -1407,6 +1407,28 @@ fieldset {
       visibility: visible;
       opacity: 1; }
 
+.ajax-progress {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: #ffffffcc;
+  background-size: cover;
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  transition: all 200ms; }
+  .ajax-progress .throbber {
+    background-image: url(../../cbtheme/images/plant.gif);
+    height: 60px;
+    width: 60px; }
+  .ajax-progress .message {
+    color: #000; }
+
 @media print {
   *,
   *:before,
@@ -1707,21 +1729,6 @@ fieldset .fieldset-legend {
 
 .form-submit {
   font-size: 1em; }
-
-form .ajax-progress,
-.form-content .ajax-progress {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  background: #000000bb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  transition: all 200ms; }
 
 .filter-wrapper {
   opacity: .3;
