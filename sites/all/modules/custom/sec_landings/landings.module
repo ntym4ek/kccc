@@ -24,6 +24,12 @@ function landings_menu()
     'type' => MENU_CALLBACK,
     'file' => 'includes/webinar3.landings.inc',
   );
+  $items['landing/webinar4'] = array(
+    'page callback' => 'landings_webinar4_page',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/webinar4.landings.inc',
+  );
 
   return $items;
 }
