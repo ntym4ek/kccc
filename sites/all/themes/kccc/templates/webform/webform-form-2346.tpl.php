@@ -38,16 +38,20 @@
     <div class="col-sm-12 col-md-5 col-lg-4 col-lg-offset-2 last-md">
       <div class="block-attention">
         <div class="h4"><?php print t('Attention'); ?>!</div>
-        <p><?php print t('This is a form of sending a message without user identification and feedback.'); ?></p>
         <p><?php print t('If you want to make a suggestion and get an answer, use the «Ideas Center».'); ?></p>
         <div class="actions">
           <a href="<?php print url('node/15'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Ideas center'); ?></a>
+        </div>
+        <br>
+        <p><?php print t('If you want to leave a suggestion anonymously, then use the «Complaints and suggestions» section'); ?></p>
+        <div class="actions">
+          <a href="<?php print url('node/14'); ?>" class="btn btn-brand btn-wide btn-underline"><?php print t('Complaints and&nbsp;suggestions'); ?></a>
         </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-7 col-lg-6">
       <div class="form-content">
-        <div class="intro"><?php print t('Tell us about your wishes or comments – fill out the form below.'); ?></div>
+        <div class="intro"><?php print t('Leave a message in the form below.<p>We will review it and get back to you as soon as possible.</p>'); ?></div>
         <?php
           // Print out the main part of the form.
           // Feel free to break this up and move the pieces within the array.

@@ -108,7 +108,7 @@ function ext_node_preprocess_page(&$vars)
         // Для вебформ:
         // изменить Заголовок на баннере
         //  - Жалобы и Предложения, Центр идей
-        if (in_array($vars["node"]->nid, [14, 15]))             { $vars['banner_title'] = t('Feedback');  }
+        if (in_array($vars["node"]->nid, [14, 15, 2346]))       { $vars['banner_title'] = t('Feedback');  }
         //  - Кадровый резерв
         if ($vars["node"]->nid == 23)                           { $vars['banner_title'] = t('Careers');  }
       }

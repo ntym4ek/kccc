@@ -4566,14 +4566,17 @@ ul.action-links {
       margin-bottom: 1rem; }
 
 .webform-client-form-14 .form-actions,
-.webform-client-form-15 .form-actions {
+.webform-client-form-15 .form-actions,
+.webform-client-form-2346 .form-actions {
   text-align: center; }
 .webform-client-form-14 .block-attention .actions a,
-.webform-client-form-15 .block-attention .actions a {
+.webform-client-form-15 .block-attention .actions a,
+.webform-client-form-2346 .block-attention .actions a {
   max-width: 275px; }
 @media only screen and (min-width: 1024px) {
   .webform-client-form-14 .form-actions,
-  .webform-client-form-15 .form-actions {
+  .webform-client-form-15 .form-actions,
+  .webform-client-form-2346 .form-actions {
     text-align: left; } }
 
 .webform-client-form-15 .form-radios {

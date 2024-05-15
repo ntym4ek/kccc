@@ -176,6 +176,43 @@ function ext_form_webform_client_form_23_ajax_callback($form, $form_state)
   return $form;
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function ext_form_form_webform_client_form_2346_alter(&$form, &$form_state)
+{
+  // заполнить поле текста, если он присутствует в ссылке
+  if (isset($_GET['message'])) {
+    $form["submitted"]["tekst"]["text"]["#default_value"] = check_plain($_GET['message']);
+  }
+
+  // ajax обновление формы отправки заявки
+  $form['#prefix'] = '<div id="' . $form["#id"] . '-wrapper">';
+  $form['#suffix'] = '</div>';
+
+  $form['actions']['submit']['#ajax'] = [
+    'callback' => 'ext_form_webform_client_form_2346_ajax_callback',
+    'wrapper' => $form["#id"] . '-wrapper',
+  ];
+
+  $form["#submit"][] = 'ext_form_rebuild_submit';
+}
+function ext_form_webform_client_form_2346_ajax_callback($form, $form_state)
+{
+  if (!empty($form["#submission"])) {
+    $form['submitted']['complete'] = [
+      '#markup' => '<div class="complete">' .
+                     '<h4>' . t('Message been sent.') . '</h4>' .
+                     '<p>' . t('We will contact you as soon as possible.') . '</p>' .
+                   '</div>',
+    ];
+  }
+  // сбросить сообщение после обновления страницы
+  unset($_SESSION["webform_confirmation"]);
+
+  return $form;
+}
+
 function ext_form_rebuild_submit($form, &$form_state)
 {
   $form_state['rebuild'] = TRUE;
