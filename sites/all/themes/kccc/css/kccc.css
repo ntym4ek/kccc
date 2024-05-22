@@ -1046,12 +1046,12 @@ div.messages {
   z-index: -1; }
   .page-banner .image img {
     object-fit: cover;
-    height: 100%; }
+    height: 100%;
+    width: 100%; }
 .page-banner .banner-title-wrapper {
   color: #fff;
   font-weight: 700;
-  padding-top: 4rem;
-  max-width: 90%; }
+  padding-top: 4rem; }
 .page-banner .banner-title {
   font-size: 1.75rem;
   font-weight: 800;
@@ -1073,17 +1073,14 @@ div.messages {
   .page-banner .banner-title {
     font-size: 2rem; }
   .page-banner .banner-title-wrapper {
-    padding-top: 0;
-    max-width: 60%; }
+    padding-top: 0; }
   .page-banner .banner-prefix .share {
     font-size: 2rem;
     position: absolute;
     bottom: 15%; } }
 @media only screen and (min-width: 1366px) {
   .page-banner .banner-title {
-    font-size: 2.5rem; }
-  .page-banner .banner-title-wrapper {
-    max-width: 50%; } }
+    font-size: 2.5rem; } }
 
 .page-title {
   margin-bottom: 2rem; }
@@ -1133,10 +1130,6 @@ ul.tabs.secondary {
 .block {
   margin-bottom: 2rem;
   display: flow-root; }
-  .block p:first-child {
-    margin-top: 0; }
-  .block p:last-child {
-    margin-bottom: 0; }
   .block .view {
     margin-bottom: 0; }
 
@@ -1464,12 +1457,12 @@ fieldset {
   min-height: 2.3em;
   padding: .45em 1em; }
 .btn.btn-default {
-  background: #D9D9D9;
-  border-color: #D9D9D9;
+  background: #000;
+  border-color: #000;
   color: #fff; }
   .btn.btn-default:not(.btn-static):hover, .btn.btn-default:not(.btn-static):focus {
-    background: #c5c5c5;
-    border-color: #c5c5c5; }
+    background: black;
+    border-color: black; }
 .btn.btn-brand {
   background: #43B02A;
   border-color: #43B02A;
@@ -1493,11 +1486,11 @@ fieldset {
     border-color: #d29c00; }
 .btn.btn-outline.btn-default {
   background: transparent;
-  border-color: #E9E9E9;
-  color: #E9E9E9; }
+  border-color: #000;
+  color: #000; }
   .btn.btn-outline.btn-default:not(.btn-static):hover, .btn.btn-outline.btn-default:not(.btn-static):focus {
-    background-color: white;
-    border-color: #E9E9E9; }
+    background-color: #999999;
+    border-color: #000; }
 .btn.btn-outline.btn-brand {
   background: transparent;
   border-color: #43B02A;
@@ -1789,9 +1782,10 @@ fieldset .fieldset-legend {
   margin: 0 auto 3rem;
   display: flex;
   flex-wrap: wrap; }
-  .user-auth-form-wrapper .recovery-link {
+  .user-auth-form-wrapper .user-links {
     color: #ccc;
-    font-size: 0.889rem; }
+    font-size: 0.889rem;
+    margin-bottom: 1rem; }
   .user-auth-form-wrapper > h1 {
     margin-top: 0; }
   .user-auth-form-wrapper > h1,

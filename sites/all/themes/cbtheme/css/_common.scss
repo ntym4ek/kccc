@@ -106,7 +106,7 @@ div.messages {
 .page-header {
   display: flex; align-items: center;
   background: $header-bkg;
-  box-shadow: 0 4px 20px 0 rgba(0,0,0,.1);
+  box-shadow: $header-shadow;
   height: $header-height;
   .container { display: flex; }
   .branding {
@@ -118,9 +118,6 @@ div.messages {
     }
   }
   .menu { display: flex; justify-content: space-between; }
-
-  @media #{$tablet} {
-  }
 }
 
 .page-content {
@@ -136,7 +133,7 @@ div.messages {
   .rights { font-size: 1.1rem; text-align: right; }
 }
 
-.page-banner  {
+.page-banner {
   .container { display: flex; align-items: center; }
   .screen-width { height: 515px; }
   .image {
@@ -144,13 +141,12 @@ div.messages {
     position: absolute; z-index: -1;
     img {
       object-fit: cover;
-      height: 100%;
+      height: 100%; width: 100%;
     }
   }
   .banner-title-wrapper {
     color: #fff; font-weight: 700;
     padding-top: 4rem;
-    max-width: 90%;
   }
   .banner-title { font-size: $font-size-h1 * .7; font-weight: 800; line-height: 1.1; }
   .banner-prefix .share {
@@ -168,7 +164,6 @@ div.messages {
     .banner-title { font-size: $font-size-h1 * .8; }
     .banner-title-wrapper {
       padding-top: 0;
-      max-width: 60%;
     }
     .banner-prefix .share {
       font-size: 2rem;
@@ -177,7 +172,6 @@ div.messages {
   }
   @media #{$laptop} {
     .banner-title { font-size: $font-size-h1; }
-    .banner-title-wrapper { max-width: 50%; }
   }
 }
 
@@ -243,9 +237,9 @@ ul.tabs.secondary {
 .block {
   margin-bottom: 2rem;
   display: flow-root; // чтобы margin блока не схлопывался с margin контента (в слайдере с нижней пагинацией, например)
-  p:first-child { margin-top: 0; }
+  // p:first-child { margin-top: 0; } // лучше сделать частной настройкой, не всегда полезно
   //@media #{$laptop} { // почему только для лэптопа?
-    p:last-child { margin-bottom: 0; }
+  //  p:last-child { margin-bottom: 0; } // лучше сделать частной настройкой, не всегда полезно
   //}
   // .page-main &:last-child { margin-bottom: 0; } // чаще блоки без фона и лучше удалять отступ для остальных индивидуально
   .view { margin-bottom: 0; }

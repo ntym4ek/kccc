@@ -1,22 +1,22 @@
 name = Custom Base Theme
 description = Базовая тема
 package = Custom
-version = 1.53
+version = 1.55
 core = 7.x
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Regions
 ;;;;;;;;;;;;;;;;;;;;;
 
+regions[page_top] = Page Top
 regions[header] = Header
 regions[highlighted] = Highlighted
 regions[sidebar_first]  = Left sidebar
-regions[page_top] = Page Top
 regions[content] = Content
-regions[page_bottom] = Page Bottom
 regions[sidebar_second] = Right sidebar
 regions[downlighted] = Downlighted
 regions[footer] = Footer
+regions[page_bottom] = Page Bottom
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Styles

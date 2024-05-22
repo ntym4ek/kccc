@@ -12,12 +12,12 @@
 
   &.btn-static {} // для кнопок, не меняющих состояние при наведении
 
-  &.btn-default   { @include btn-color($gray-light); }
+  &.btn-default   { @include btn-color($text-color); }
   &.btn-brand     { @include btn-color($brand-color); }
   &.btn-danger    { @include btn-color($brand-red); }
   &.btn-warning   { @include btn-color($brand-orange); }
 
-  &.btn-outline.btn-default   { @include btn-color-outline($gray-lightest); }
+  &.btn-outline.btn-default   { @include btn-color-outline($text-color); }
   &.btn-outline.btn-brand     { @include btn-color-outline($brand-color); }
   &.btn-outline.btn-danger    { @include btn-color-outline($brand-red); }
   &.btn-outline.btn-warning   { @include btn-color-outline($brand-orange); }

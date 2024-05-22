@@ -32,21 +32,21 @@ $text-muted:        $gray!default;
 
 // шрифт
 //
-$font-url:              'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
+$font-url:              'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap'!default;
 $font-name:             'Montserrat'!default;
 
-$font-size-h1:            2.5rem;            // 42
-$font-size-h2:            1.667rem;          // 30
-$font-size-h3:            1.333rem;          // 24
-$font-size-h4:            1.222rem;          // 22
-$font-size-h5:            1rem;              // 18
-$font-size-h6:            .889rem;           // 16
+$font-size-h1:            2.5rem!default;            // 42
+$font-size-h2:            1.667rem!default;          // 30
+$font-size-h3:            1.333rem!default;          // 24
+$font-size-h4:            1.222rem!default;          // 22
+$font-size-h5:            1rem!default;              // 18
+$font-size-h6:            .889rem!default;           // 16
 
-$font-size-large:         1.222rem;          // 22
-$font-size-base:          1rem;              // 18
-$font-size-small:         .889rem;           // 16
+$font-size-large:         1.222rem!default;          // 22
+$font-size-base:          1rem!default;              // 18
+$font-size-small:         .889rem!default;           // 16
 
-// page
+// страница
 //
 $page-bkg:                #F8F7F4!default;
 $page-gutter-xs:          $gutter*2!default;
@@ -55,19 +55,20 @@ $page-gutter-md:          $gutter*2!default;
 $page-gutter-lg:          $gutter*2!default;
 $page-gutter-xl:          $gutter!default;
 
-// header
+// шапка
 //
 $header-height:           5rem!default;
 $header-text:             $gray-dark!default;
 $header-bkg:              #F8F7F4!default;
+$header-shadow:           0 4px 20px 0 rgba(0, 0, 0, 0.1)!default;
 
-// footer
+// подвал
 //
 //$footer-height:         80px!default;
 $footer-bkg:              #1E1E1C!default;
 $footer-text:             #fff!default;
 
-// menu
+// меню
 //
 $menu-mobile-btn-size:    5rem!default;
 $menu-mobile-btn-color:   #fff!default;
@@ -82,9 +83,8 @@ $submenu-item-color:      $text-color!default;
 $submenu-item-hover-color:$text-color!default;
 $submenu-item-hover-bkg:  $text-muted!default;
 
-
-
-// Формы
+// формы
+//
 $form-bottom-margin:      1rem!default;
 $form-item-height:        2.3em!default; // em, чтобы масштабировать в зависимости от размера шрифта
 $input-border-width:      1px!default;

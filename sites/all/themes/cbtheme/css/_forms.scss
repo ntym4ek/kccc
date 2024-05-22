@@ -153,13 +153,17 @@ fieldset .fieldset-legend {
   max-width: 450px;
   margin: 0 auto 3rem;
   display: flex; flex-wrap: wrap;
-  .recovery-link { color: $text-muted; font-size: $font-size-small; }
+  .user-links {
+    color: $text-muted; font-size: $font-size-small;
+    margin-bottom: 1rem;
+  }
   > h1 { margin-top: 0; }
   > h1,
   > form {
     line-height: 1.1;
     width: 100%
   }
+
   @media #{$tablet} {
     margin: 5vh auto 0;
   }
