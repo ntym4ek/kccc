@@ -10,7 +10,7 @@
  * $parameters['desiccants'] - добавить десиканты
  * $parameters['fertilizers'] - добавить удобрения
  *
- * @return array
+ * @return array|false
  *
  */
 function _reglaments_get_protection_system($params)
@@ -20,12 +20,21 @@ function _reglaments_get_protection_system($params)
 
   // если ВО не заданы, показать всю программу
   $show_full_program = empty($params['hobjects'][CAT_WEED]) && empty($params['hobjects'][CAT_DISEASE]) && empty($params['hobjects'][CAT_PEST]);
-
-  $program_id = $program_wr = null;
+  $cultures = [];
+  $program_id = $program_wr = $program_title = null;
+  if ($params['program_id']) {
+    $program_id = $params['program_id'];
+    $program_wr = entity_metadata_wrapper('node', $params['program_id']);
+    $cultures = $program_wr->field_cultures->raw();
+    $program_title = $program_wr->label();
+  }
+  if (!$cultures && $params['culture_id']) {
+    $cultures[] = $params['culture_id'];
+  }
 
   // составляем список регламентов для заданных культур
-  if ($params['culture_id']) {
-    $culture_wr = entity_metadata_wrapper('node', $params['culture_id']);
+  if ($cultures) {
+    $culture_wr = entity_metadata_wrapper('node', reset($cultures));
 
     if (!empty($params['stage_id'])) {
       $stage_info = helper_get_term_info($params['stage_id']);
@@ -34,10 +43,10 @@ function _reglaments_get_protection_system($params)
     // описание программы и ссылка на pdf --------------------------------------
     $program['header'] = [
       'id' => $program_id,
-      'title' => !$program_id ? $culture_wr->title->value() : $culture_wr->field_growth_stages_set->label(),
-      'description' => !$program_id ? t('Complex crops protection and feed program') : trim(strip_tags($program_wr->body->summary->value())),
+      'title' => $program_title ?: $culture_wr->title->value(),
+      'description' => !$program_id ? '' : $program_wr->body->value->value(),
       'stage' => isset($stage_info) ? $stage_info['label'] : '',
-      'pdf' => !$program_id || !$program_wr->field_file_attachments->value() ? '' : $program_wr->field_file_attachments[0]->file->url->value(),
+      'pdf' => !$program_id || !$program_wr->field_files->value() ? '' : $program_wr->field_files[0]->file->url->value(),
       'area' => empty($params['area']) ? '' : $params['area'],
       'seed' => empty($params['seed']) ? '' : $params['seed'],
     ];
@@ -46,14 +55,13 @@ function _reglaments_get_protection_system($params)
     // todo
     //  Cортировка по этапам применения.
     //  Объединение пересекающихся Регламентов.
-    $program['preps'] = [];
 
-    // найти все Регламенты для Культуры с привязкой в Препарату и Категории ---
+    // найти все Регламенты для Культуры с привязкой к Препарату и Категории ---
     $preps_w_regls_raw = [];
     $query = db_select('field_data_field_cultures', 'fc');
     $query->addField('fc', 'entity_id', 'rid');
     $query->condition('fc.bundle', 'field_prep_reglaments');
-    $query->condition('fc.field_cultures_target_id', $params['culture_id']);
+    $query->condition('fc.field_cultures_target_id', $cultures, 'IN');
     $query->innerJoin('field_data_field_prep_reglaments', 'fr', 'fr.field_prep_reglaments_value = fc.entity_id');
     $query->addField('fr', 'entity_id', 'nid');
     $query->innerJoin('field_data_field_prep_category', 'fpc', 'fpc.entity_id = fr.entity_id');
@@ -90,16 +98,30 @@ function _reglaments_get_protection_system($params)
                 && ($prep['cat'] != CAT_DESIC_TID || $params['desiccants'])
                 && ($prep['cat'] != CAT_FERT_TID || $params['fertilizers']))
             {
-              $product_info = sec_catalog_get_product_info($prep_id);
-              if (!isset($preps_w_regls[$hobject_cat][$prep_id])) {
-                $preps_w_regls[$hobject_cat][$prep_id] = [
+              $product_info = sec_catalog_get_product_info($prep_id, 'teaser');
+              if (!isset($preps_w_regls[$hobject_cat])) {
+                $hocat_title = '';
+                if ($hobject_cat == CAT_WEED)     $hocat_title = t('to protect against weeds');
+                if ($hobject_cat == CAT_DISEASE)  $hocat_title = t('to protect against diseases');
+                if ($hobject_cat == CAT_PEST)     $hocat_title = t('to protect against pests');
+                if ($hobject_cat == CAT_DESIC)    $hocat_title = t('for desiccation');
+                if ($hobject_cat == CAT_FERT)     $hocat_title = t('to improve yields');
+
+                $preps_w_regls[$hobject_cat] = [
+                  'id' => $hobject_cat,
+                  'label' => $hocat_title,
+                  'preps' => [],
+                ];
+              }
+              if (!isset($preps_w_regls[$hobject_cat]['preps'][$prep_id])) {
+                $preps_w_regls[$hobject_cat]['preps'][$prep_id] = [
                   'info' => $product_info,
                   'regls' => [],
                 ];
               }
               $regl = sec_catalog_get_reglament_info($regl_id);
               $regl = sec_catalog_get_reglament_info_formatted($regl, $product_info, ['area' => $params['area'], 'seed' => $params['seed']]);
-              $preps_w_regls[$hobject_cat][$prep_id]['regls'][$regl_id] = [
+              $preps_w_regls[$hobject_cat]['preps'][$prep_id]['regls'][$regl_id] = [
                 'info' => $regl,
                 'hobjects' => _get_entities_info($hobjects)
               ];
@@ -114,19 +136,19 @@ function _reglaments_get_protection_system($params)
       }
 
       ksort($preps_w_regls);
-      $program['preps'] = $preps_w_regls;
+      $program['categories'] = $preps_w_regls;
       $ho_missing = [];
       foreach($hobjects_missing as $category) {
         $ho_missing = array_unique(array_merge($ho_missing, $category));
       }
-      $program['hobjects'][CAT_WEED]    = _get_entities_info($params['hobjects'][CAT_WEED]);
-      $program['hobjects'][CAT_DISEASE]  = _get_entities_info($params['hobjects'][CAT_DISEASE]);
-      $program['hobjects'][CAT_PEST]    = _get_entities_info($params['hobjects'][CAT_PEST]);
-      $program['hobjects']['missing']       = _get_entities_info(array_values($ho_missing));
+      $program['hobjects'][CAT_WEED]      = _get_entities_info($params['hobjects'][CAT_WEED]);
+      $program['hobjects'][CAT_DISEASE]   = _get_entities_info($params['hobjects'][CAT_DISEASE]);
+      $program['hobjects'][CAT_PEST]      = _get_entities_info($params['hobjects'][CAT_PEST]);
+      $program['hobjects']['missing']     = _get_entities_info(array_values($ho_missing));
     }
   }
 
-  return $program;
+  return $program ?: false;
 }
 
 /**

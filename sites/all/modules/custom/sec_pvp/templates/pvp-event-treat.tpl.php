@@ -13,8 +13,8 @@
             <?php foreach ($event['photos'] as $i => $item) {
               print '<div class="swiper-slide">'  .
                       '<div class="image">' .
-                        '<a href="' . $item['photo_url'] . '" class="fancybox" rel="gallery-t-' . $event['id'] . '" data-fancybox="gallery-t-' . $event['id'] . '"' . $item['note'] . '>' .
-                          '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
+                        '<a href="' . $item['image'] . '" class="fancybox" rel="gallery-t-' . $event['id'] . '" data-fancybox="gallery-t-' . $event['id'] . '"' . $item['note'] . '>' .
+                          '<img src="' . $item['image_teaser'] . '" alt="' . $item['image_alt'] . '">' .
                         '</a>' .
                       '</div>' .
                       '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['photos']) . '.</span> ' . $item['note'] . '</div>' .

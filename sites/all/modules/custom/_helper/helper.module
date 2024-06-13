@@ -214,3 +214,12 @@ function helper_get_term_info($term)
 
   return $term_info;
 }
+
+function helper_image_style_base64($style, $image_uri)
+{
+  $path = $style ? image_style_url($style, $image_uri) : $image_uri;
+  $type = pathinfo(preg_replace('/^([^?]+).*$/', '$1', $path), PATHINFO_EXTENSION);
+  $data = file_get_contents($path);
+
+  return 'data:image/' . $type . ';base64,' . base64_encode($data);
+}

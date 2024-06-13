@@ -35,7 +35,7 @@ function sec_contacts_page()
   $content = '';
 
   // список Представителей
-  if ($contacts = sec_contacts_get_contacts_list()) {
+  if ($contacts = sec_contacts_get_contacts_ids()) {
 
     $content .= '<div class="row">';
 
@@ -71,7 +71,7 @@ function sec_contacts_page()
  *
  * @return array|false
  */
-function sec_contacts_get_contacts_list()
+function sec_contacts_get_contacts_ids()
 {
   $dbr = db_select('profile', 'p');
   $dbr->innerJoin('field_data_field_staff_is_in_contacts', 'fsc', 'fsc.entity_id = p.pid');

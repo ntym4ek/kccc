@@ -18,7 +18,7 @@ function ext_admin_cron_queue_info()
 function ext_admin_menu()
 {
   $items['admin/config/custom'] = array(
-    'title' => 'Сайт и приложение',
+    'title' => 'Сайт',
     'position' => 'right',
     'weight' => -99,
     'page callback' => 'system_admin_menu_block_page',
@@ -27,7 +27,7 @@ function ext_admin_menu()
     'file path' => drupal_get_path('module', 'system'),
   );
   $items['admin/config/custom/website'] = array(
-    'title' => 'Настройки сайта',
+    'title' => 'Настройки',
     'description' => 'Настройки контента и функционал для менеджеров',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ext_admin_settings_form'),

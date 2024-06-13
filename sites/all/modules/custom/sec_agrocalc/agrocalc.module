@@ -52,8 +52,7 @@ function agrocalc_form($from, &$form_state)
     'actions' => ['#type' => 'container', '#attributes' => ['class' => ['form-actions']]],
   ];
   $form['#attached']['js'] = [
-    'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js',
-    'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js',
+    'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js', 'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js', // библиотеки tooltip
     drupal_get_path('module', 'agrocalc') . '/js/agrocalc.js',
   ];
 
@@ -81,58 +80,48 @@ function agrocalc_form($from, &$form_state)
 
 
   // список Культур, для которых есть Регламенты -------------------------------
-  $query = db_select('node', 'n');
-  $query->condition('n.type', 'culture');
-  $query->condition('n.status', 1);
-  $query->distinct();
-  $query->innerJoin('field_data_field_cultures', 'fc', 'fc.field_cultures_target_id = n.nid');
-  $query->condition('fc.bundle', 'field_prep_reglaments');
-  $query->fields('n', array('nid', 'title'));
-  $query->orderby('n.title');
+  $options_c = [];
+  foreach (agrocalc_get_cultures_sorted() as $culture) {
+    $options_c[$culture->id] = $culture->label;
+  }
 
-  $results = $query->execute()->fetchAllKeyed();
-
-  $options = ['' => t('Choose option')] + $results;
+  $options = [0 => t('Choose option')] + $options_c;
   $form['params']['field']['culture'] = array(
     '#type' => 'select',
     '#title' => t('Culture'),
     '#options' => $options,
     '#default_value' => $culture_id,
     '#ajax' => array(
-        'callback' => 'agrocalc_form_refresh',
-        'wrapper' => 'agrocalc-form-wrapper',
+      'callback' => 'agrocalc_form_refresh',
+      'wrapper' => 'agrocalc-form-wrapper',
     ),
   );
 
 
   // список Фаз, для которых есть Регламенты по Культуре -----------------------
+  $options_s = [];
   if ($culture_id) {
-    $query = db_select('taxonomy_term_data', 't');
-    $query->condition('t.vid', VOCAB_GROW_CLASSIFICATION);
-    $query->fields('t', array('tid', 'name'));
-    $query->orderBy('t.weight');
-
-    $query->innerJoin('field_data_field_reg_treat_start', 'frts', 'frts.field_reg_treat_start_tid = t.tid');
-    $query->condition('frts.bundle', 'field_prep_reglaments');
-    $query->innerJoin('field_data_field_cultures', 'fc', 'fc.entity_id = frts.entity_id');
-    $query->condition('fc.bundle', 'field_prep_reglaments');
-    $query->condition('fc.field_cultures_target_id', $culture_id);
-    $results = $query->execute()->fetchAllKeyed();
+    foreach (agrocalc_get_stages($culture_id) as $stage) {
+      $options_s[$stage->id] = $stage->label;
+    }
   }
-  $options = ['all' => t('All phases')] + $results;
+
+  $options = ['all' => t('All phases')] + $options_s;
   $form['params']['field']['stage'] = array(
     '#type' => 'select',
     '#title' => t('Culture phase'),
     '#options' => $options,
-    '#disabled' => $culture_id ? false : true,
+    '#disabled' => !$culture_id,
     '#default_value' => $stage_id,
   );
+
+
 
   // Площадь посева ------------------------------------------------------------
   $form['params']['field']['area'] = array(
     '#type' => 'textfield',
     '#title' => t('Area, he'),
-    '#disabled' => $culture_id ? false : true,
+    '#disabled' => !$culture_id,
     '#default_value' => $area,
   );
 
@@ -140,7 +129,7 @@ function agrocalc_form($from, &$form_state)
   $form['params']['field']['seed'] = array(
     '#type' => 'textfield',
     '#title' => t('Seed ratio, kg/he'),
-    '#disabled' => $culture_id ? false : true,
+    '#disabled' => !$culture_id,
     '#default_value' => $seed,
   );
 
@@ -150,87 +139,73 @@ function agrocalc_form($from, &$form_state)
 
 
     // список всех Сорняков ------------------------------------------------------
-    $query = db_select('node', 'n');
-    $query->condition('n.type', 'weed');
-    $query->condition('n.status', 1);
-    $query->fields('n', ['nid', 'title']);
-    $query->orderBy('n.title');
-    $results = $query->execute()->fetchAllKeyed();
-
-    $options = $results;
+    $options_w = [];
+    foreach (agrocalc_get_weeds($culture_id) as $weed) {
+      $options_w[$weed->id] = $weed->label;
+    }
     $form['params']['problem']['weeds'] = [
       '#type' => 'select',
       '#title' => t('Weeds'),
-      '#options' => $options,
+      '#options' => $options_w,
       '#chosen' => TRUE,
       '#attributes' => ['class' => ['chosen-select']],
       '#multiple' => TRUE,
       '#default_value' => $weed_ids,
-      '#disabled' => $culture_id ? FALSE : TRUE,
+      '#disabled' => !$culture_id,
     ];
 
     // todo список Вредителей по Культуре ----------------------------------------
-    $query = db_select('node', 'n');
-    $query->condition('n.status', 1);
-    $query->condition('n.type', 'pest');
-    $query->condition('n.status', 1);
-    $query->fields('n', ['nid', 'title']);
-    $query->orderBy('n.title');
-    $results = $query->execute()->fetchAllKeyed();
-
-    $options = $results;
+    $options_p = [];
+    foreach (agrocalc_get_pests($culture_id) as $pest) {
+      $options_p[$pest->id] = $pest->label;
+    }
     $form['params']['problem']['pests'] = [
       '#type' => 'select',
       '#title' => t('Pests'),
-      '#options' => $options,
+      '#options' => $options_p,
       '#chosen' => TRUE,
       '#attributes' => ['class' => ['chosen-select']],
       '#multiple' => TRUE,
       '#default_value' => $pest_ids,
-      '#disabled' => $culture_id ? FALSE : TRUE,
+      '#disabled' => !$culture_id,
     ];
 
     // todo список Болезней по Культуре ------------------------------------------
-    $query = db_select('node', 'n');
-    $query->condition('n.status', 1);
-    $query->condition('n.type', 'disease');
-    $query->condition('n.status', 1);
-    $query->fields('n', ['nid', 'title']);
-    $query->orderBy('n.title');
-    $results = $query->execute()->fetchAllKeyed();
-
-    $options = $results;
+    $options_d = [];
+    foreach (agrocalc_get_diseases($culture_id) as $pest) {
+      $options_d[$pest->id] = $pest->label;
+    }
     $form['params']['problem']['diseases'] = [
       '#type' => 'select',
       '#title' => t('Diseases'),
-      '#options' => $options,
+      '#options' => $options_d,
       '#chosen' => TRUE,
       '#attributes' => ['class' => ['chosen-select']],
       '#multiple' => TRUE,
       '#default_value' => $disease_ids,
-      '#disabled' => $culture_id ? FALSE : TRUE,
+      '#disabled' => !$culture_id,
     ];
 
     // Дополнительные опции ------------------------------------------------------
     $form['params']['addon']['desic'] = [
       '#type' => 'checkbox',
       '#title' => t('desiccants'),
-      '#disabled' => $culture_id ? FALSE : TRUE,
+      '#disabled' => !$culture_id,
       '#default_value' => $desic,
     ];
     $form['params']['addon']['fert'] = [
       '#type' => 'checkbox',
       '#title' => t('fertilizers'),
-      '#disabled' => $culture_id ? FALSE : TRUE,
+      '#disabled' => !$culture_id,
       '#default_value' => $fert,
     ];
 
 
     /**
-     * $parameters['culture_id'] - список культур из программы или явно заданная культура
-     * $parameters['stage_id'] - фильтр по фазе культуры
-     * $parameters['weeds_arr'], $parameters['pests_arr'], $parameters['diseases_arr'] - фильтр по вредным объектам
-     * $parameters['desiccants'] - добавить десиканты
+     * $parameters['culture_id']  - список культур из программы или явно заданная культура
+     * $parameters['stage_id']    - фильтр по фазе культуры
+     * $parameters['hobjects']    - фильтр по вредным объектам
+     * $parameters['desiccants']  - добавить десиканты
      * $parameters['fertilizers'] - добавить удобрения
      */
     if ((!isset($form_state['triggering_element']) || $form_state['triggering_element']['#name'] != 'culture')) {
@@ -240,7 +215,7 @@ function agrocalc_form($from, &$form_state)
         CAT_DISEASE => $disease_ids,
       ];
 
-      $program = _reglaments_get_protection_system([
+      $params = [
         'culture_id' => $culture_id,
         'stage_id' => $stage_id,
         'area' => $area,
@@ -248,25 +223,19 @@ function agrocalc_form($from, &$form_state)
         'hobjects' => $hobjects,
         'desiccants' => $desic,
         'fertilizers' => $fert,
-      ]);
+      ];
+      $program = _reglaments_get_protection_system($params);
 
+      // сохранить Программу для последующей отправки в запросе
       $form_state['storage']['program'] = $program;
 
       //  вывести список препаратов
       $content = '';
-      if ($program['preps'] || $program['hobjects']['missing']) {
-        if ($program['preps']) {
-          foreach ($program['preps'] as $hocatid => $hobject_cat) {
-            $hocat_title = '';
-            if ($hocatid == CAT_WEED) $hocat_title = t('to protect against weeds');
-            if ($hocatid == CAT_DISEASE) $hocat_title = t('to protect against diseases');
-            if ($hocatid == CAT_PEST) $hocat_title = t('to protect against pests');
-            if ($hocatid == CAT_DESIC) $hocat_title = t('for desiccation');
-            if ($hocatid == CAT_FERT) $hocat_title = t('to improve yields');
-            if ($hocat_title) {
-              $content .= '<div class="col-xs-12"><h4>' . $hocat_title . '</h4></div>';
-            }
-            foreach ($hobject_cat as $nid => $prep) {
+      if ($program['categories'] || $program['hobjects']['missing']) {
+        if ($program['categories']) {
+          foreach ($program['categories'] as $category) {
+            $content .= '<div class="col-xs-12"><h4>' . $category['label'] . '</h4></div>';
+            foreach ($category['preps'] as $nid => $prep) {
               $content .= '<div class="view-row col-xs-12">';
               $content .=   theme('card_product_h', ['product' => $prep['info'], 'addon' => $prep['regls'], 'inline_link' => true]);
               $content .= '</div>';
@@ -353,7 +322,7 @@ function agrocalc_form($from, &$form_state)
 
 function agrocalc_form_refresh($form, $form_state)
 {
-    return $form;
+  return $form;
 }
 
 function agrocalc_form_validate($form, &$form_state)
@@ -387,28 +356,120 @@ function agrocalc_form_submit($form, &$form_state)
 {
   $program = $form_state['storage']['program'];
 
-  $params['mail_to'] = 'manager';
-  $params['data'] = [
+  $params = [
+    'source' => 'web',
     'program' => $program,
     'name' => $form_state['values']['name'],
     'phone' => $form_state['values']['phone'],
     'email' => valid_email_address($form_state['values']['email']) ? $form_state['values']['email'] : '',
     'region' => $form_state['values']['region'],
   ];
+  agrocalc_send_mails($params);
+
+  drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');
+  $form_state['rebuild'] = true;
+}
+
+function agrocalc_send_mails($params)
+{
+  $mail_params['mail_to'] = 'manager';
+  $mail_params['data'] = $params;
 
   // письмо мне
-  drupal_mail('ext_mail', 'agro_calculator', 'mega_comp@mail.ru', 'RU', $params, 'bot@kccc.ru');
+  drupal_mail('ext_mail', 'agro_calculator', 'mega_comp@mail.ru', 'RU', $mail_params, 'bot@kccc.ru');
 
   // отправка письма менеджеру, в отдел продаж
   if (strpos($_SERVER['HTTP_HOST'], '.local') === false) {
     if (variable_get('email_dep_sales', '')) {
-      drupal_mail('ext_mail', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $params, 'bot@kccc.ru');
+      drupal_mail('ext_mail', 'agro_calculator', variable_get('email_dep_sales', ''), 'RU', $mail_params, 'bot@kccc.ru');
     }
   }
+}
 
-  drupal_set_message('Заявка на детальный расчёт отправлена. В ближайшее время представитель свяжется с Вами.');
+/**
+ * Вернуть список Культур, участвующих в Регламентах
+ */
+function agrocalc_get_cultures_sorted()
+{
+  $query = db_select('node', 'n');
+  $query->condition('n.type', 'culture');
+  $query->condition('n.status', 1);
+  $query->distinct();
+  $query->innerJoin('field_data_field_cultures', 'fc', 'fc.field_cultures_target_id = n.nid');
+  $query->condition('fc.bundle', 'field_prep_reglaments');
+  $query->addField('n', 'nid', 'id');
+  $query->addField('n', 'title', 'label');
+  $query->orderby('n.title');
 
-  $form_state['rebuild'] = true;
+  return (array)$query->execute()->fetchAll();
+}
+
+/**
+ * Вернуть список этапов роста Культуры, присутствующих в Регламентах
+ */
+function agrocalc_get_stages($culture_id)
+{
+  $query = db_select('taxonomy_term_data', 't');
+  $query->condition('t.vid', VOCAB_GROW_CLASSIFICATION);
+  $query->addField('t', 'tid', 'id');
+  $query->addField('t', 'name', 'label');
+  $query->orderBy('t.weight');
+  $query->distinct();
+
+  $query->innerJoin('field_data_field_reg_treat_start', 'frts', 'frts.field_reg_treat_start_tid = t.tid');
+  $query->condition('frts.bundle', 'field_prep_reglaments');
+  $query->innerJoin('field_data_field_cultures', 'fc', 'fc.entity_id = frts.entity_id');
+  $query->condition('fc.bundle', 'field_prep_reglaments');
+  $query->condition('fc.field_cultures_target_id', $culture_id);
+
+  return (array)$query->execute()->fetchAll();
+}
+
+/**
+ * Вернуть список Сорняков
+ */
+function agrocalc_get_weeds($culture_id = null)
+{
+  // todo в зависимости от Культуры (нужно ли?)
+  $query = db_select('node', 'n');
+  $query->condition('n.type', 'weed');
+  $query->condition('n.status', 1);
+  $query->addField('n', 'nid', 'id');
+  $query->addField('n', 'title', 'label');
+  $query->orderBy('n.title');
+
+  return (array)$query->execute()->fetchAll();
+}
+
+/**
+ * Вернуть список Вредителей культур
+ */
+function agrocalc_get_pests($culture_id = null)
+{
+  // todo в зависимости от Культуры (нужно ли?)
+  $query = db_select('node', 'n');
+  $query->condition('n.status', 1);
+  $query->condition('n.type', 'pest');
+  $query->addField('n', 'nid', 'id');
+  $query->addField('n', 'title', 'label');
+  $query->orderBy('n.title');
+
+  return (array)$query->execute()->fetchAll();
+}
+
+/**
+ * Вернуть список Болезней культур
+ */
+function agrocalc_get_diseases($culture_id = null)
+{
+  // todo в зависимости от Культуры (нужно ли?)
+  $query = db_select('node', 'n');
+  $query->condition('n.status', 1);
+  $query->condition('n.type', 'disease');
+  $query->addField('n', 'nid', 'id');
+  $query->addField('n', 'title', 'label');
+  $query->orderBy('n.title');
+  return (array) $query->execute()->fetchAll();
 }
 
 /**

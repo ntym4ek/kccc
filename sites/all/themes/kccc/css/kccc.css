@@ -4187,7 +4187,7 @@ ul.action-links {
 .node-handbook .node-title {
   font-size: 1.667rem;
   font-weight: 300;
-  padding-bottom: 1rem; }
+  padding: 1rem 0; }
 .node-handbook .title-latin {
   color: #ccc; }
 .node-handbook .image {
@@ -4201,7 +4201,8 @@ ul.action-links {
     text-decoration: underline; }
 @media only screen and (min-width: 1366px) {
   .node-handbook .node-title {
-    font-size: 2.5rem; } }
+    font-size: 2.5rem;
+    padding-top: 0; } }
 
 .node-preparation .product-intro {
   margin-bottom: 2rem; }
@@ -5078,7 +5079,7 @@ ul.action-links {
   .node-season .pvp-event-treat .comment {
     font-size: 0.889rem;
     line-height: 1.3;
-    padding: 0 1rem;
+    padding: 0 .5rem;
     min-height: 170px; }
     .node-season .pvp-event-check .comment p,
     .node-season .pvp-event-treat .comment p {

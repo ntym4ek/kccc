@@ -15,10 +15,10 @@ function ext_redirect_init()
     || !empty($request_headers['referer']) && $request_headers['referer'] == 'https://app.kccc.ru/'
     // и из старого приложения, в тч apple
     || strpos($old_path, 'services/session/token') !== false
-    || strpos($old_path, 'drupalgap/') !== false
+    || strpos($old_path, 'drupalgap/') === 0
     || strpos($old_path, '.json') !== false
     || strpos($old_path, 'source/') !== false
-  ) {
+  ) { return;
     $headers = $response_headers = [];
 
     // собрать заголовки запроса

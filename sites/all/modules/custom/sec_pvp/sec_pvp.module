@@ -138,6 +138,8 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
       $pvps['list'][$pvp_nid] = sec_pvp_get_pvp_teaser($pvp_nid);
     }
   }
+  // сортировка для мобильного приложения
+  $pvps['sorted'] = $pvp_nids;
 
   return $pvps;
 }
@@ -159,17 +161,27 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
         'culture' => $pvp_wr->field_culture->label(),
         'path' => url('node/' . $pvp_wr->getIdentifier()),
         'comment' => t('Before treatment'),
+        'filters' => [                                              // набор фильтров текущей записи
+          'user' => $pvp_wr->author->uid->value(),                  // используется для локальной фильтрации записей в Приложении
+          'region' => $pvp_wr->field_region->getIdentifier(),
+          'culture' => $pvp_wr->field_culture->getIdentifier(),
+          'preparations' => [],
+          'components' => [],
+        ],
       ];
 
       // для короткого формата найти последнее событие
       // и последнюю обработку (используется в комментарии обработки и контроля)
       $event_id = $event_date = 0;
+      // а также собрать все применяемые Препараты и ДВ
+      $preparations = $components = [];
       // найти последний Контроль
-      foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr)
+      foreach ($pvp_wr->field_pvp_check->getIterator() as $check_wr) {
         if ($check_wr->field_datetime->value() > $event_date) {
           $event_date = $check_wr->field_datetime->value();
           $event_id = $check_wr->getIdentifier();
         }
+      }
       // найти последнюю Обработку
       $treat_id = $date = 0;
       foreach ($pvp_wr->field_pvp_treat->getIterator() as $treat_wr) {
@@ -181,7 +193,17 @@ function sec_pvp_get_pvp_teaser($pvp_nid)
           $event_date = $treat_wr->field_datetime->value();
           $event_id = $treat_wr->getIdentifier();
         }
+        // применённые препараты
+        foreach ($treat_wr->field_pvp_treat_preparations->getIterator() as $treat_preparation_wr) {
+          $preparations[$treat_preparation_wr->field_preparation->getIdentifier()] = $treat_preparation_wr->field_preparation->label(); // в Сезоне id 2155 возвращает строковые идентификаторы, что ломает приложение
+          foreach ($treat_preparation_wr->field_preparation->field_prep_components->getIterator() as $component_wr) {
+            $components[$component_wr->field_component->getIdentifier()] = $component_wr->field_component->label();
+          }
+        }
       }
+      $teaser['filters']['preparations'] = array_unique($preparations);
+      $teaser['filters']['components'] = array_unique($components);
+
       if ($event_id) {
         $event_wr = entity_metadata_wrapper('field_collection_item', $event_id);
         if ($event_wr->getBundle() == 'field_pvp_check') {
@@ -235,6 +257,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
           'label' => $pvp_wr->label(),
           'season' => $pvp_wr->field_pvp_season->value(),
           'year' => $pvp_wr->field_pvp_year->value(),
+          'uid' => $pvp_wr->author->uid->value(),
           'field' => [
             'owner' => $pvp_wr->field_pvp_field_owner->value(),
             'area' => $pvp_wr->field_pvp_field_area->value(),
@@ -279,6 +302,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             $ho = [
               'id' => $ch_wr->field_hobject->getIdentifier(),
               'label' => $ch_wr->field_hobject->label(),
+              'type' => $ch_wr->field_hobject->type->value(),
             ];
             if ($ch_wr->field_image->value()) {
               $ho['photo_uri'] = $ch_wr->field_image->file->value()->uri;
@@ -337,78 +361,88 @@ function sec_pvp_get_pvp_info($pvp_nid)
  */
 function sec_pvp_preprocess_pvp_event_check(&$vars)
 {
-  $pvp = $vars['pvp_info'];
-
-  $vars['event']['date_formatted'] = date('d.m.Y', $vars['event']['date']);
-
-  // добавляем стилизованные фото и тег alt
-  foreach ($vars['event']['culture']['photos'] as $key => $item) {
-    $vars['event']['culture']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
-    $vars['event']['culture']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
-    $vars['event']['culture']['photos'][$key]['photo_alt'] = $pvp['culture']['label'];
-  }
-  $hos = [];
-  foreach ($vars['event']['hobjects']['list'] as $item) {
-    if (!empty($item['photo_uri'])) {
-      $vars['event']['hobjects']['photos'][] = [
-        'photo_teaser' => image_style_url('teaser', $item['photo_uri']),
-        'photo_url' => file_create_url($item['photo_uri']),
-        'label' => $item['label'],
-        'photo_alt' => $item['label'],
-        'note' => $item['note'],
-      ];
-    } else {
-      $hos[] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
-    }
-  }
-  // список ВО без фото
-  if ($hos) {
-    $vars['event']['hobjects']['list_formatted'] = implode(', ', $hos);
-  }
-
+  sec_pvp_prepare_event_view($vars['event'], $vars['pvp_info']);
 }
+
 
 /**
  * Implements hook_preprocess_hook()
  */
 function sec_pvp_preprocess_pvp_event_treat(&$vars)
 {
-  $vars['event']['date_formatted'] = date('d.m.Y', $vars['event']['date']);
+  sec_pvp_prepare_event_view($vars['event'], $vars['pvp_info']);
+}
 
-  // добавляем стилизованные фото и тег alt
-  foreach ($vars['event']['photos'] as $key => $item) {
-    $vars['event']['photos'][$key]['photo_teaser'] = image_style_url('teaser', $item['photo_uri']);
-    $vars['event']['photos'][$key]['photo_url'] = file_create_url($item['photo_uri']);
-    $vars['event']['photos'][$key]['photo_alt'] = t('Treatment with products') . ' ' . variable_get('site_name');
-  }
+/**
+ * подготовить переменные События сезона в выводу
+ */
+function sec_pvp_prepare_event_view(&$event, $pvp)
+{
+  $event['date_formatted'] = date('d.m.Y', $event['date']);
 
-  if ($vars['event']['preparations']) {
-    $treat_unit_apply = '';
-    foreach ($vars['event']['preparations'] as $key => $item) {
-      $product_info = sec_catalog_get_product_info($item['preparation']['id']);
-      $treat_unit_apply = $product_info['units']['apply'];
-      if (!empty($item['old_mix_spend'])) {
-        $summary = '<div class="prep-spend">' . t('Mix spend') . ': <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
+  if ($event['type'] == 'check') {
+    // добавляем стилизованные фото и тег alt
+    foreach ($event['culture']['photos'] as $key => $item) {
+      $event['culture']['photos'][$key]['image_teaser'] = image_style_url('teaser', $item['photo_uri']);
+      $event['culture']['photos'][$key]['image'] = file_create_url($item['photo_uri']);
+      $event['culture']['photos'][$key]['image_alt'] = $pvp['culture']['label'];
+    }
+    $hos = [];
+    foreach ($event['hobjects']['list'] as $item) {
+      if (!empty($item['photo_uri'])) {
+        $event['hobjects']['photos'][] = [
+          'image_teaser' => image_style_url('teaser', $item['photo_uri']),
+          'image' => file_create_url($item['photo_uri']),
+          'image_alt' => $item['label'],
+          'label' => $item['label'],
+          'note' => $item['label'] . '. ' . $item['note'],
+        ];
       }
-      else {
-        $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">' . t('Product spend') . ': <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
-      }
-
-      $card = [
-        'title' => $product_info['title'],
-        'label' => $product_info['label'],
-        'path' => $product_info['path'],
-        'image' => $product_info['image'],
-        'components' => $product_info['components'],
-        'summary' => $summary,
-      ];
-      $vars['event']['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', ['product' => $card]);
+      $hos[] = '<a href="' . url('node/' . $item['id']) . '" target="_blank">' . $item['label'] . '</a>';
+    }
+    // список ВО без фото
+    if ($hos) {
+      $event['hobjects']['list_formatted'] = implode(', ', $hos);
+    }
+  } else {
+    // добавляем стилизованные фото и тег alt
+    foreach ($event['photos'] as $key => $item) {
+      $event['photos'][$key]['image_teaser'] = image_style_url('teaser', $item['photo_uri']);
+      $event['photos'][$key]['image'] = file_create_url($item['photo_uri']);
+      $event['photos'][$key]['image_alt'] = t('Treatment with products') . ' ' . variable_get('site_name');
     }
 
-    $vars['event']['title'] = count($vars['event']['preparations']) > 1 ? t('Tank mix') : t('Product');
-    $vars['event']['mix_spend_formatted'] = !empty($vars['event']['mix_spend']) ? '<div class="spend">' . t('Tank mix spend') . ': <span>' . helper_number_format($vars['event']['mix_spend'], 2) . '</span> ' . t('l', [], ['context' => 'units']) . '/' . $treat_unit_apply . '</div>' : '';
+    if ($event['preparations']) {
+      $treat_unit_apply = '';
+      foreach ($event['preparations'] as $key => $item) {
+        $product_info = sec_catalog_get_product_info($item['preparation']['id']);
+        $treat_unit_apply = $product_info['units']['apply'];
+        if (!empty($item['old_mix_spend'])) {
+          $summary = '<div class="prep-spend">' . t('Mix spend') . ': <span>' . helper_number_format($item['old_mix_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>';
+        }
+        else {
+          $summary = (float) $item['prep_spend'] ? '<div class="prep-spend">' . t('Product spend') . ': <span>' . helper_number_format($item['prep_spend'], 2) . '</span> ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'] . '</div>' : '';
+        }
+
+        $card = [
+          'id' => $product_info['id'],
+          'title' => $product_info['title'],
+          'label' => $product_info['label'],
+          'path' => $product_info['path'],
+          'image' => $product_info['image'],
+          'components' => $product_info['components'],
+          'summary' => $summary,
+        ];
+        $event['preparations'][$key]['preparation'] = $card;
+        $event['preparations'][$key]['preparation']['rendered'] = theme('card_product_h', ['product' => $card]);
+      }
+
+      $event['title'] = count($event['preparations']) > 1 ? t('Tank mix') : t('Product');
+      $event['mix_spend_formatted'] = !empty($event['mix_spend']) ? '<div class="spend">' . t('Tank mix spend') . ': <span>' . helper_number_format($event['mix_spend'], 2) . '</span> ' . t('l', [], ['context' => 'units']) . '/' . $treat_unit_apply . '</div>' : '';
+    }
   }
 }
+
 
 
 function sec_pvp_get_filters_default()

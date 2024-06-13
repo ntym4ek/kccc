@@ -1,4 +1,4 @@
-name = Swiper
+name = Функционал Swiper
 description = Модуль для вывода слайдеров и каруселей
 core = 7.x
 package = Custom

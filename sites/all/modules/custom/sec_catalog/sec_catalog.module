@@ -490,9 +490,15 @@ function sec_catalog_get_recommended_products()
 }
 
 /**
- * Вернуть массив с информацией о препарате
+ * @param $node - нода или ID
+ * @param $mode - режим выборки данных
+ *  full - полный набор
+ *  teaser - краткая информация для карточек
+ *
+ * @return array|mixed
+ * @throws \EntityMetadataWrapperException
  */
-function sec_catalog_get_product_info($node)
+function sec_catalog_get_product_info($node, $mode = 'full')
 {
   $key = $node->nid ?? $node;
   $product = &drupal_static(__FUNCTION__ . serialize($key));
@@ -524,12 +530,21 @@ function sec_catalog_get_product_info($node)
         'teaser' => image_style_url('card_product', $image_uri),
         'full' => file_create_url($image_uri),
       ];
+      $product['summary'] = $node_wr->field_prep_summary->value();
+      $product['path'] = url('node/' . $node_wr->getIdentifier());
 
       // категория
       $product['category'] = [
         'id' => $node_wr->field_prep_category->getIdentifier(),
         'label' => $node_wr->field_prep_category->label(),
         'icon_num' => $node_wr->field_prep_category->field_icon->value(),
+      ];
+
+      // препаративная форма
+      $product['formulation'] = [
+        'short' => $node_wr->field_prep_formulation->value() ? $node_wr->field_prep_formulation->language($GLOBALS['language']->language)->field_acronym->value() : '',
+        'full' => $node_wr->field_prep_formulation->language($GLOBALS['language']->language)
+          ->label(),
       ];
 
       // единицы измерения
@@ -543,6 +558,8 @@ function sec_catalog_get_product_info($node)
         'apply' => $unit_apply,
       ];
 
+      // компоненты
+      $product['components'] = [];
       $list = $list2 = [];
       foreach ($node_wr->field_prep_components->getIterator() as $component_wr) {
         if ($component_wr->value()) {
@@ -560,67 +577,81 @@ function sec_catalog_get_product_info($node)
       }
       $product['components'] = [
         'list' => $list,
-        'formatted' => implode(' + ', $list2),
+        'formatted' => $list ? implode(' + ', $list2) : '',
       ];
 
-      $product['formulation'] = [
-        'short' => $node_wr->field_prep_formulation->value() ? $node_wr->field_prep_formulation->language($GLOBALS['language']->language)->field_acronym->value() : '',
-        'full' => $node_wr->field_prep_formulation->language($GLOBALS['language']->language)->label(),
-      ];
-      $product['path'] = url('node/' . $node_wr->getIdentifier());
+      if ($mode == 'full') {
 
-      $product['summary'] = $node_wr->field_prep_summary->value();
-
-      $product['advantages'] = [];
-      foreach ($node_wr->field_prep_advantages->getIterator() as $adv_wr) {
-        if ($adv_wr->value()) {
-          $product['advantages'][] = [
-            'icon_num' => $adv_wr->field_icon->value(),
-            'text' => $adv_wr->field_text->value(),
-          ];
+        $product['advantages'] = [];
+        foreach ($node_wr->field_prep_advantages->getIterator() as $adv_wr) {
+          if ($adv_wr->value()) {
+            $product['advantages'][] = [
+              'icon_num' => $adv_wr->field_icon->value(),
+              'text' => $adv_wr->field_text->value(),
+            ];
+          }
         }
-      }
 
-      $product['specs'] = [];
-      $product['specs'][] = [
-        'icon_num' => $node_wr->field_prep_category->field_icon->value(),
-        'text' => $node_wr->field_prep_category->label(),
-      ];
-      $product['specs'][] = [
-        'icon_num' => '058',
-        'text' => $node_wr->field_prep_tare->label(),
-      ];
-      if ($product['components']['formatted']) {
+        // тара
+        $product['tare'] = [
+          'id' => $node_wr->field_prep_tare->getIdentifier(),
+          'label' => $node_wr->field_prep_tare->label(),
+        ];
+
+        // характеристики
+        $product['specs'] = [];
         $product['specs'][] = [
-          'icon_num' => '052',
-          'text' => $product['components']['formatted'],
+          'icon_num' => $node_wr->field_prep_category->field_icon->value(),
+          'text' => $node_wr->field_prep_category->label(),
         ];
-      }
-      $product['specs'][] = [
-        'icon_num' => '053',
-        'text' => $node_wr->field_prep_formulation->label(),
-      ];
-
-      $product['how_it_works_banner'] = $node_wr->field_prep_how_it_works_banner->value() ? $node_wr->field_prep_how_it_works_banner->file->url->value() : '';
-      $product['how_it_works'] = [];
-      foreach ($node_wr->field_prep_how_it_works->getIterator() as $how_wr) {
-        $product['how_it_works'][] = [
-          'icon_num' => $how_wr->field_icon->value(),
-          'text' => $how_wr->field_textarea->value(),
+        $product['specs'][] = [
+          'icon_num' => '058',
+          'text' => $node_wr->field_prep_tare->label(),
         ];
-      }
-
-      $product['instructions'] = [];
-      foreach ($node_wr->field_prep_instructions->getIterator() as $instr_wr) {
-        if ($instr_wr->value()) {
-          $product['instructions'][] = [
-            'title' => $instr_wr->field_prep_instruction_title->label(),
-            'icon_num' => $instr_wr->field_prep_instruction_title->field_icon->value(),
-            'text' => $instr_wr->field_textarea->value() ? $instr_wr->field_textarea->value->value() : '',
+        if (!empty($product['components']['formatted'])) {
+          $product['specs'][] = [
+            'icon_num' => '052',
+            'text' => $product['components']['formatted'],
           ];
         }
-      }
+        $product['specs'][] = [
+          'icon_num' => '053',
+          'text' => $node_wr->field_prep_formulation->label(),
+        ];
 
+        $product['how_it_works_banner'] = $node_wr->field_prep_how_it_works_banner->value() ? $node_wr->field_prep_how_it_works_banner->file->url->value() : '';
+        $product['how_it_works'] = [];
+        foreach ($node_wr->field_prep_how_it_works->getIterator() as $how_wr) {
+          $product['how_it_works'][] = [
+            'icon_num' => $how_wr->field_icon->value(),
+            'text' => $how_wr->field_textarea->value(),
+          ];
+        }
+
+        $product['instructions'] = [];
+        foreach ($node_wr->field_prep_instructions->getIterator() as $instr_wr) {
+          if ($instr_wr->value()) {
+            $product['instructions'][] = [
+              'title' => $instr_wr->field_prep_instruction_title->label(),
+              'icon_num' => $instr_wr->field_prep_instruction_title->field_icon->value(),
+              'text' => $instr_wr->field_textarea->value() ? $instr_wr->field_textarea->value->value() : '',
+            ];
+          }
+        }
+
+        $product['files'] = [];
+        foreach ($node_wr->field_files->getIterator() as $file_wr) {
+          if ($file_wr->value() && $file_wr->value()['status'] && $file_wr->value()['display']) {
+            $product['files'][$file_wr->value()['fid']] = [
+              'id' => $file_wr->value()['fid'],
+              'description' => $file_wr->value()['description'],
+              'url' => file_create_url($file_wr->value()['uri']),
+              'filesize' => $file_wr->value()['filesize'],
+              'filename' => $file_wr->value()['filename'],
+            ];
+          }
+        }
+      }
     }
   }
 

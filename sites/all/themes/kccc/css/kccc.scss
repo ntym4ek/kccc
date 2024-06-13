@@ -920,7 +920,7 @@ ul.action-links {
 .node-handbook {
   .node-title {
     font-size: $font-size-h2; font-weight: 300;
-    padding-bottom: 1rem;
+    padding: 1rem 0;
   }
   .title-latin { color: $text-muted; }
   .image {
@@ -938,7 +938,10 @@ ul.action-links {
   }
 
   @media #{$laptop} {
-    .node-title { font-size: $font-size-h1; }
+    .node-title {
+      font-size: $font-size-h1;
+      padding-top: 0;
+    }
   }
 }
 
@@ -1745,7 +1748,7 @@ ul.action-links {
     }
     .comment {
       font-size: $font-size-small; line-height: 1.3;
-      padding: 0 1rem;
+      padding: 0 .5rem;
       min-height: 170px;                // для выравнивания высоты блоков в колонках
       p { margin: 0 0 .5em 0; }
     }

@@ -1,0 +1,8 @@
+name = Функционал Мобильного приложения
+description = Дополнительная функциональность для Мобильного приложения
+version = 7.x-1.0
+core = 7.x
+package = Custom
+configure = admin/mobile/settings
+
+dependencies[] = drupalgap

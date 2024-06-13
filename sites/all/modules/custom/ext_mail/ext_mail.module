@@ -21,7 +21,7 @@ function ext_mail_mail($key, &$message, $params)
   switch($key) {
     case 'agro_calculator':
       if ($params['mail_to'] == 'manager') {
-        $message['subject'] = 'Новая заявка на сайте в разделе АгроКалькулятор';
+        $message['subject'] = $params['data']['source'] == 'app' ? 'Новая заявка в приложении в разделе Найти решение' : 'Новая заявка на сайте в разделе Агрокалькулятор';
         $message['body'][] = ext_mail_get_agro_calculator_mail_text($params['data']);
       }
       break;
@@ -37,7 +37,8 @@ function ext_mail_get_agro_calculator_mail_text($data, $recipient = 'manager')
   $email = $data['email'];
 
   $message = '<h2>' . t('Good day!') . '</h2>';
-  $message .= 'В разделе Калькулятор сайте kccc.ru была отправлена заявка.<br />';
+  $message .= $data['source'] == 'app' ? 'В разделе Найти решение в приложении была отправлена заявка.' : 'В разделе Агрокалькулятор сайте kccc.ru была отправлена заявка.';
+  $message .= '<br />';
   $message .= '<br />';
   $message .= '<b>Данные пользователя</b><br />';
   $message .= 'Регион: ' . $region . '<br />';

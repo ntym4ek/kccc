@@ -1,0 +1,233 @@
+<?php
+
+/**
+ * If running nginx, implement getallheaders ourself.
+ *
+ * Code is taken from http://php.net/manual/en/function.getallheaders.php
+ */
+if (!function_exists('getallheaders'))
+{
+  function getallheaders()
+  {
+    foreach ($_SERVER as $name => $value) {
+      if (substr($name, 0, 5) == 'HTTP_') {
+        $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+      }
+    }
+    return $headers;
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ext_mobile_app_menu()
+{
+  $items['app/catalog'] = [
+    'page callback' => 'ext_mobile_app_catalog_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/block-banners'] = [
+    'page callback' => 'ext_mobile_app_block_banners_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/block-products'] = [
+    'page callback' => 'ext_mobile_app_block_products_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/product/%'] = [
+    'page callback' => 'ext_mobile_app_product_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/price-list'] = [
+    'page callback' => 'ext_mobile_app_price_list_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/programs'] = [
+    'page callback' => 'ext_mobile_app_programs_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/program/%'] = [
+    'page callback' => 'ext_mobile_app_program_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/sellers'] = array(
+    'page callback' => 'ext_mobile_app_sellers_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/solution/cultures'] = array(
+    'page callback' => 'ext_mobile_app_solution_cultures_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/solution/stages/%'] = array(
+    'page callback' => 'ext_mobile_app_solution_stages_source',
+    'page arguments' => [3],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/solution/weeds'] = array(
+    'page callback' => 'ext_mobile_app_solution_weeds_source',
+    'page arguments' => [3],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/solution/pests/%'] = array(
+    'page callback' => 'ext_mobile_app_solution_pests_source',
+    'page arguments' => [3],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/solution/diseases/%'] = array(
+    'page callback' => 'ext_mobile_app_solution_diseases_source',
+    'page arguments' => [3],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  );
+  $items['app/pvps'] = [
+    'page callback' => 'ext_mobile_app_pvps_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/pvp/%'] = [
+    'page callback' => 'ext_mobile_app_pvp_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/handbook/%'] = [
+    'page callback' => 'ext_mobile_app_handbook_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/agenda'] = [
+    'page callback' => 'ext_mobile_app_agenda_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+  $items['app/version/%'] = [
+    'page callback' => 'ext_mobile_app_version_source',
+    'page arguments' => [2],
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+
+  $items['app/preloader/images'] = [
+    'page callback' => 'ext_mobile_app_preloader_source',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ext_mobile_app.sources.inc',
+  ];
+
+
+  // настройки
+  $items['admin/config/mobile'] = array(
+    'title' => 'Приложение',
+    'description' => 'App administration tools.',
+    'position' => 'right',
+    'weight' => -99,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/mobile/settings'] = array(
+    'title' => 'Настройки',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_mobile_app_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/ext_mobile_app.settings.inc',
+  );
+  $items['admin/config/mobile/settings-news'] = array(
+    'title' => 'Новостные баннеры',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_mobile_app_news_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/ext_mobile_app.settings.inc',
+    'weight' => 10,
+  );
+  $items['admin/config/mobile/settings-actual'] = array(
+    'title' => 'Баннеры препаратов',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_mobile_app_actual_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/ext_mobile_app.settings.inc',
+    'weight' => 20,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_init().
+ */
+function ext_mobile_app_init()
+{
+  // нужно настроить nginx на отправку Access-Control-Allow-Origin 'https://app.kccc.ru'
+  // так как nginx может отправлять изображения и некоторые json без обращения к серверу,
+  // то настраиваем удаление существующего Access-Control-Allow-Origin (отправленного отсюда для запросов переданных серверу)
+  // и добавляем снова
+  //  location / {
+  //    proxy_hide_header Access-Control-Allow-Origin;
+  //    add_header Access-Control-Allow-Origin "https://app.kccc.ru";
+  //  }
+  // для изображений добавляем отдельно
+  // ...
+
+  // для запросов от приложения (оно должно отправлять origin: https://app.kccc.ru)
+  // разрешить CORS запросы
+  $request_headers = getallheaders();
+  if ((!empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru')
+    || (!empty($request_headers['Origin']) && $request_headers['Origin'] == 'https://app.kccc.ru')) {
+    drupal_add_http_header('Access-Control-Allow-Origin', 'https://app.kccc.ru', true);
+    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
+  }
+}
+
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function ext_mobile_app_ctools_plugin_api($owner, $api)
+{
+  if ($owner == 'services' && $api == 'services') {
+    return array(
+      'version' => 3,
+      'file' => 'includes/ext_mobile_app.services.inc'
+    );
+  }
+}
+
+

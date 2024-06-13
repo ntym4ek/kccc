@@ -30,22 +30,14 @@ function sec_experts_page()
   $content = '';
 
   // список Представителей
-  if ($contacts = sec_experts_get_experts_list()) {
+  if ($experts = sec_experts_get_experts()) {
 
     $content .= '<div class="row">';
 
-    $sorted = [];
-    foreach ($contacts as $uid) {
-      $contact = ext_user_get_user_info($uid);
-      $key = ($contact['staff']['office']['weight'] ?? 1)*1000000+$uid;
-      $sorted[$key] = $contact;
-    }
-    ksort($sorted);
-
-    foreach ($sorted as $contact) {
-      $contact['active'] = true;
+    foreach ($experts as $expert) {
+      $expert['active'] = true;
       $content .= '<div class="col-xs-12 col-md-6">';
-      $content .=   theme('card_contact', $contact);
+      $content .=   theme('card_contact', $expert);
       $content .= '</div>';
     }
     $content .= '</div>';
@@ -66,7 +58,7 @@ function sec_experts_page()
  *
  * @return array|false
  */
-function sec_experts_get_experts_list()
+function sec_experts_get_experts_ids()
 {
   $dbr = db_select('profile', 'p');
   $dbr->innerJoin('field_data_field_staff_office', 'fso', 'fso.entity_id = p.pid');
@@ -79,6 +71,30 @@ function sec_experts_get_experts_list()
   return $users ?? false;
 }
 
+/**
+ * Вернуть список пользователей с должностью эксперта
+ *
+ * @return array
+ */
+function sec_experts_get_experts()
+{
+  $experts = [];
+  if ($experts_ids = sec_experts_get_experts_ids()) {
+    $sorted = [];
+    foreach ($experts_ids as $eid) {
+      $expert = ext_user_get_user_info($eid);
+      $key = ($expert['staff']['office']['weight'] ?? 1) * 1000000 + $eid;
+      $sorted[$key] = $expert;
+    }
+    ksort($sorted);
+
+    foreach ($sorted as $expert) {
+      $experts[$expert['id']] = $expert;
+    }
+  }
+
+  return $experts;
+}
 
 
 

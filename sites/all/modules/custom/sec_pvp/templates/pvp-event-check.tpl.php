@@ -13,8 +13,8 @@
             <?php foreach ($event['culture']['photos'] as $i => $item) {
               print '<div class="swiper-slide">'  .
                       '<div class="image">' .
-                        '<a href="' . $item['photo_url'] . '" class="fancybox" rel="gallery-c-' . $event['id'] . '" data-fancybox="gallery-c-' . $event['id'] . '" title="' . $item['note'] . '">' .
-                          '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
+                        '<a href="' . $item['image'] . '" class="fancybox" rel="gallery-c-' . $event['id'] . '" data-fancybox="gallery-c-' . $event['id'] . '" title="' . $item['note'] . '">' .
+                          '<img src="' . $item['image_teaser'] . '" alt="' . $item['image_alt'] . '">' .
                         '</a>' .
                       '</div>' .
                       '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['culture']['photos']) . '.</span> ' . $item['note'] . '</div>' .
@@ -41,11 +41,11 @@
         <div class="swiper">
           <div class="swiper-wrapper">
             <?php foreach ($event['hobjects']['photos'] as $i => $item) {
-              if (isset($item['photo_teaser'])) {
+              if (isset($item['image_teaser'])) {
                 print '<div class="swiper-slide">'  .
                         '<div class="image">' .
-                          '<a href="' . $item['photo_url'] . '" class="fancybox" rel="gallery-h-' . $event['id'] . '" data-fancybox="gallery-h-' . $event['id'] . '" title="' . $item['label'] . '. ' . $item['note'] . '">' .
-                            '<img src="' . $item['photo_teaser'] . '" alt="' . $item['photo_alt'] . '">' .
+                          '<a href="' . $item['image'] . '" class="fancybox" rel="gallery-h-' . $event['id'] . '" data-fancybox="gallery-h-' . $event['id'] . '" title="' . $item['label'] . '. ' . $item['note'] . '">' .
+                            '<img src="' . $item['image_teaser'] . '" alt="' . $item['image_alt'] . '">' .
                           '</a>' .
                         '</div>' .
                         '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['hobjects']['photos']) . '.</span> ' . $item['label'] . '. ' . $item['note'] . '</div>' .

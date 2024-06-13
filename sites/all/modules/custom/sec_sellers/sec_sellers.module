@@ -178,6 +178,9 @@ function sec_sellers_get_regions($level = 'regions', $parent = null, $include_si
 
 /**
  * Вернуть список сотрудников Департамента продаж
+ *
+ * фильтр можно передать извне (исп в приложении)
+ * или получить из параметров запроса (форма фильтра на сайте)
  */
 function sec_sellers_get_sellers_by_region()
 {
@@ -188,6 +191,8 @@ function sec_sellers_get_sellers_by_region()
   foreach (sec_sellers_get_regions('directions') as $direction) {
     $did = $direction['id'];
     foreach (sec_sellers_get_regions('areas', $did) as $area) {
+      $region_ids = [];
+
       // если Округ не задан или совпадает с выбранным
       if (empty($filters['areas']['current_id']) || $area['id'] == $filters['areas']['current_id']) {
 
@@ -195,7 +200,7 @@ function sec_sellers_get_sellers_by_region()
         if (empty($sellers[$did])) {
           $sellers[$did] = ['id' => $did, 'label' => $direction['label'], 'sellers_count' => 0, 'managers' => [], 'areas' => []];
         }
-        if ($uids = sec_sellers_get_users_at_region_list([$did])) {
+        if ($uids = sec_sellers_get_users_at_region_ids([$did])) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
             if ($user_info["staff"]["office"]["id"] == OFFICE_SALES_DIR_HEAD) {
@@ -208,32 +213,34 @@ function sec_sellers_get_sellers_by_region()
         // заполнить руководителей Округа
         $aid = $area['id'];
         if (empty($sellers[$did]['areas'])) {
-          $sellers[$did]['areas'] = ['managers' => [], 'sellers' => []];
+          $sellers[$did]['areas'][$aid] = ['id' => $aid, 'label' => $area['label'], 'managers' => [], 'sellers' => []];
         }
-        if ($uids = sec_sellers_get_users_at_region_list([$aid])) {
+        if ($uids = sec_sellers_get_users_at_region_ids([$aid])) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
             if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_MANAGER, OFFICE_DEALER])) {
-              $sellers[$did]['areas']['managers'][$uid] = $user_info;
+              $sellers[$did]['areas'][$aid]['managers'][$uid] = $user_info;
             }
           }
           $sellers[$did]['sellers_count'] += count($uids);
         }
 
-        $region_ids = [];
-        foreach (sec_sellers_get_regions('regions', $aid) as $region) $region_ids[] = $region['id'];
+        foreach (sec_sellers_get_regions('regions', $aid) as $region) {
+          if (empty($filters['regions']['current_id']) || $region['id'] == $filters['regions']['current_id']) {
+            $region_ids[] = $region['id'];
+          }
+        }
 
         // Представители выбранных регионов
-        if ($uids = sec_sellers_get_users_at_region_list($region_ids)) {
+        if ($uids = sec_sellers_get_users_at_region_ids($region_ids)) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
             if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_REPRESENTATIVE])) {
-              $sellers[$did]['areas']['sellers'][$uid] = $user_info;
+              $sellers[$did]['areas'][$aid]['sellers'][$uid] = $user_info;
             }
           }
           $sellers[$did]['sellers_count'] += count($uids);
         }
-
       }
     }
     if (empty($sellers[$did]['sellers_count'])) { unset($sellers[$did]); }
@@ -248,7 +255,7 @@ function sec_sellers_get_sellers_by_region()
  *
  * @return false
  */
-function sec_sellers_get_users_at_region_list($region_ids)
+function sec_sellers_get_users_at_region_ids($region_ids)
 {
   if ($region_ids) {
     $dbr = db_select('profile', 'p');
