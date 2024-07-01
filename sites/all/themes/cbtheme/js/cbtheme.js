@@ -220,7 +220,7 @@ const menuHide = 1024; // ширина экрана (обычно lg), начи�
         });
 
         $(".nav-mobile-left .page, .nav-mobile-left .nav-mobile-label").on("swiped-right", (e) => {
-          // если свайп вправо на Свайпере или блоке с классом main-menu-disabled, то не показываем меню
+          // если свайп вправо на Свайпере или блоке с классом mobile-menu-disabled, то не показываем меню
           let is_prohibited = $(e.target).closest(".mobile-menu-disabled, .swiper").length > 0;
           if (!is_prohibited) { showMobileNav(); }
         });

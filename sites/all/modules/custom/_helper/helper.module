@@ -160,8 +160,10 @@ function helper_number_format($number, $decimals)
   // форматируем согласно заданному количеству знаков после запятой
   $result = number_format($number, $decimals, ',', '');
   // обрезаем ноли после запятой
-  $result = str_replace(',00', '', $result);
-  $result = strpos($result, ',') ? rtrim($result, '0') : $result;
+  if (strpos($result, ',')) {
+    $result = rtrim($result, '0');
+    $result = rtrim($result, ',');
+  }
 
   return $result;
 }
@@ -199,7 +201,7 @@ function helper_get_term_info($term)
         'id' => $voc->vid,
         'name' => $voc->machine_name,
       ],
-      'path' => drupal_get_path_alias('taxonomy/term/' . $term_wr->getIdentifier()),
+      'path' => url('taxonomy/term/' . $term_wr->getIdentifier()),
     ];
 
     // todo по списку полей добавить значения в массив

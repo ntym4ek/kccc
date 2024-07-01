@@ -99,7 +99,7 @@
               <div class="container full-height">
                 <div class="banner-title-wrapper">
                   <?php if (!empty($banner_title_prefix)): ?><div class="banner-prefix"><?php print $banner_title_prefix; ?></div><?php endif; ?>
-                  <?php if ($banner_title): ?><div class="banner-title"><?php print $banner_title; ?></div><?php endif; ?>
+                  <?php if (!empty($banner_title)): ?><div class="banner-title"><?php print $banner_title; ?></div><?php endif; ?>
                   <?php if (!empty($banner_title_suffix)): ?><div class="banner-suffix"><?php print $banner_title_suffix; ?></div><?php endif; ?>
                 </div>
               </div>
@@ -259,6 +259,7 @@
       </div>
     </div>
 
-  <div id="back-to-top"><i class="icon icon-124"></i></div>
+    <div id="back-to-top"><i class="icon icon-124"></i></div>
+  </div>
 </div>
 

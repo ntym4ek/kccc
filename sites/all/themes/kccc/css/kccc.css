@@ -2160,9 +2160,6 @@ ul.menu {
 @media only screen and (min-width: 1366px) {
   .block-new-products .card-product-v {
     transition: all 200ms; }
-    .block-new-products .card-product-v:hover {
-      box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.2);
-      transform: translateY(-2px); }
     .block-new-products .card-product-v .text {
       padding: 1rem; } }
 

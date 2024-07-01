@@ -322,7 +322,7 @@ function kccc_preprocess_menu_block_wrapper(&$vars)
   // для контекстного меню под баннером добавить класс,
   // выключающий срабатывание бокового меню на свайп
   if ($vars["config"]["menu_name"] = 'menu-context') {
-    $vars['classes_array'][] = 'main-menu-disabled';
+    $vars['classes_array'][] = 'mobile-menu-disabled';
   }
 }
 

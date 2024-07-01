@@ -54,26 +54,31 @@ function sec_sellers_page()
           $content .= '</div>';
         }
 
-          if ($direction['areas']['managers']) {
-            $content .= '<div class="row">';
-            foreach ($direction['areas']['managers'] as $manager) {
-              $manager['active'] = true;
-              $content .= '<div class="col-xs-12 col-md-6">';
-              $content .=   theme('card_contact', $manager);
+        if ($direction['areas']) {
+          foreach ($direction['areas'] as $area) {
+            if ($area['managers']) {
+              $content .= '<div class="row">';
+              foreach ($area['managers'] as $manager) {
+                $manager['active'] = true;
+                $content .= '<div class="col-xs-12 col-md-6">';
+                $content .=   theme('card_contact', $manager);
+                $content .= '</div>';
+              }
               $content .= '</div>';
             }
-            $content .= '</div>';
-          }
-          if ($direction['areas']) {
-            $content .= '<div class="row">';
-            foreach ($direction['areas']['sellers'] as $seller) {
-              $seller['active'] = true;
-              $content .= '<div class="col-xs-12 col-md-6">';
-              $content .=   theme('card_contact', $seller);
+
+            if ($area['sellers']) {
+              $content .= '<div class="row">';
+              foreach ($area['sellers'] as $seller) {
+                $seller['active'] = true;
+                $content .= '<div class="col-xs-12 col-md-6">';
+                $content .=   theme('card_contact', $seller);
+                $content .= '</div>';
+              }
               $content .= '</div>';
             }
-            $content .= '</div>';
           }
+        }
       }
     }
   } else {
@@ -212,7 +217,7 @@ function sec_sellers_get_sellers_by_region()
 
         // заполнить руководителей Округа
         $aid = $area['id'];
-        if (empty($sellers[$did]['areas'])) {
+        if (empty($sellers[$did]['areas'][$aid])) {
           $sellers[$did]['areas'][$aid] = ['id' => $aid, 'label' => $area['label'], 'managers' => [], 'sellers' => []];
         }
         if ($uids = sec_sellers_get_users_at_region_ids([$aid])) {

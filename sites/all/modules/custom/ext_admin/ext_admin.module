@@ -193,10 +193,10 @@ function ext_admin_preprocess_page(&$vars)
 
 function ext_admin_execute_form($form, $form_state)
 {
-//  $function = 'ext_admin_func_nodes_process';
+  $function = 'ext_admin_func_nodes_process';
 //  $function = 'ext_admin_func_preparations_import';
 //  $function = 'ext_admin_func_terms_process';
-  $function = 'ext_admin_func_pvps_date_process';
+//  $function = 'ext_admin_func_pvps_date_process';
 
   $form['message'] = array(
     '#markup' => ($function ? '<p>Будет запущена функция ' . $function . '</p>' : '<p>Функция для запуска не задана</p>'),
@@ -307,7 +307,7 @@ function ext_admin_func_terms_process()
 function ext_admin_func_nodes_process()
 {
   $dbr = db_select('node', 'n');
-  $dbr->condition('n.type', ['article', 'blog', 'review', 'weed', 'disease', 'pest'], 'IN');
+  $dbr->condition('n.type', ['culture'], 'IN');
   $dbr->addField('n', 'nid');
 //  $dbr->range(0, 1);
   if ($nodes_ids = $dbr->execute()->fetchCol()) {

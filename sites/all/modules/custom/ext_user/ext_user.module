@@ -234,7 +234,7 @@ function ext_user_form_user_login_alter(&$form, &$form_state)
   $form["pass"]["#title"] = t('Password');
   unset($form['pass']['#description']);
 
-  $form["actions"]["submit"]['#value'] = t('Submit');
+  $form["actions"]["submit"]['#value'] = t('Log in');
   $form["actions"]["submit"]['#attributes']['class'] = ['btn', 'btn-brand', 'btn-full-wide'];
 
   // обработчики
