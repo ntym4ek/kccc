@@ -111,11 +111,11 @@
   .category { display:flex; justify-content: center; }
   .text {
     display: flex; align-items: center;
-    border-bottom: 1px solid $gray-dark;
+    border-bottom: 1px solid $gray-light;
     font-size: $font-size-h2;
     margin: 1rem 0; padding: 7px 0;
     width: 20rem;
-    .index { color: $gray-dark; }
+    .index { color: $brand-color; font-size: 2rem; }
     .title {
       flex: auto;
       color: $brand-color; font-weight: 500;

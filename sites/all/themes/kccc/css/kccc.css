@@ -2191,13 +2191,14 @@ ul.menu {
 .block-catalog .text {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #7D7C7C;
+  border-bottom: 1px solid #D9D9D9;
   font-size: 1.667rem;
   margin: 1rem 0;
   padding: 7px 0;
   width: 20rem; }
   .block-catalog .text .index {
-    color: #7D7C7C; }
+    color: #43B02A;
+    font-size: 2rem; }
   .block-catalog .text .title {
     flex: auto;
     color: #43B02A;
@@ -3273,7 +3274,7 @@ ul.menu {
   --swiper-theme-color: #43B02A; }
 
 i.icon {
-  font-size: 1.8rem; }
+  font-size: 1.8em; }
   i.icon.icon-rounded {
     border: 3px solid #000;
     border-radius: 2em;
