@@ -1,18 +1,18 @@
 <?php
 ?>
 
-<?php if (!$inline_link): ?>
+<?php if (!$inline_link && $product['path']): ?>
 <a href="<?php print $product['path']; ?>">
 <?php endif; ?>
   <div class="card card-product-h">
     <div class="product">
       <div class="image">
-        <?php if ($inline_link): ?><a href="<?php print $product['path']; ?>"><?php endif; ?>
+        <?php if ($inline_link && $product['path']): ?><a href="<?php print $product['path']; ?>"><?php endif; ?>
           <img src="<?php print $product['image']['teaser']; ?>" alt="<?php print $product['title']; ?>">
-        <?php if ($inline_link): ?></a><?php endif; ?>
+        <?php if ($inline_link && $product['path']): ?></a><?php endif; ?>
       </div>
       <div class="info">
-        <div class="title"><?php if ($inline_link): ?><a href="<?php print $product['path']; ?>"><?php endif; ?><?php print $product['label']; ?><?php if ($inline_link): ?></a><?php endif; ?></div>
+        <div class="title"><?php if ($inline_link && $product['path']): ?><a href="<?php print $product['path']; ?>"><?php endif; ?><?php print $product['label']; ?><?php if ($inline_link): ?></a><?php endif; ?></div>
         <div class="components"><?php print $product['components']['formatted']; ?></div>
         <div class="summary hide-xs show-xl"><?php print $product['summary']; ?></div>
       </div>
@@ -49,6 +49,6 @@
       </div>
     <?php endif; ?>
   </div>
-<?php if (!$inline_link): ?>
+<?php if (!$inline_link && $product['path']): ?>
 </a>
 <?php endif; ?>

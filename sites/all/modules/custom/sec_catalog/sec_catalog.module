@@ -511,6 +511,7 @@ function sec_catalog_get_product_info($node, $mode = 'full')
       $product['id'] = $node_wr->getIdentifier();
       $product['title'] = trim($node_wr->label());
       $product['novelty'] = $node_wr->field_prep_novelty->value();
+      $product['status'] = $node_wr->status->value();
       $trademark = $node_wr->field_prep_trademark->value() ? '<span class="tm">®</span>' : '';
       // наименование для вывода (с формуляцией, например)
       if (strpos($product['title'], ' ') !== false) {
@@ -531,7 +532,7 @@ function sec_catalog_get_product_info($node, $mode = 'full')
         'full' => file_create_url($image_uri),
       ];
       $product['summary'] = $node_wr->field_prep_summary->value();
-      $product['path'] = url('node/' . $node_wr->getIdentifier());
+      $product['path'] = $product['status'] ? url('node/' . $node_wr->getIdentifier()) : '';
 
       // категория
       $product['category'] = [
