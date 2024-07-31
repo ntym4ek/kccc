@@ -370,12 +370,19 @@ function ext_node_preprocess_node(&$vars)
   // -- Автор
   if ($vars['display_submitted']) {
     if ($vars['view_mode'] == 'full') {
+      $author_info = [];
       if ($node->uid) {
         $author_info = ext_user_get_user_info($node->uid);
-      } else {
-        $author_info = ext_user_get_dumb_user_info();
       }
-      $vars['author'] = theme('card_contact', $author_info);
+
+      if ($node->type == 'season' && empty($author_info['status'])) {
+        $author_info = ext_user_get_dumb_seller_info();
+      }
+      if ($author_info) {
+        $vars['author'] = theme('card_contact', $author_info);
+      } else {
+        $vars['display_submitted'] = false;
+      }
     }
   }
 }

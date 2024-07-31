@@ -753,9 +753,9 @@ function ext_user_get_user_info($user = null)
 }
 
 /**
- * Вернуть массив с информацие об обезличенном региональном представителе
+ * Вернуть массив с информацией об обезличенном региональном представителе
  */
-function ext_user_get_dumb_user_info()
+function ext_user_get_dumb_seller_info()
 {
   $photo_uri = 'public://images/default/no_photo.png';
   return [
