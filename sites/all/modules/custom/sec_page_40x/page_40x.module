@@ -59,8 +59,8 @@ function page_40x_403_redirect()
     drupal_exit();
   }
 
-  $breadcrumbs[] = l('', null);
-  $breadcrumbs[] = l(t('Page access is prohibited'), 'blog');
+  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l(t('Home'), '<front>');
+  $breadcrumbs[] = l(t('Page access is prohibited'), null);
   drupal_set_breadcrumb($breadcrumbs);
 
   // иначе стандартное сообщение 403
@@ -79,8 +79,8 @@ function page_40x_404_redirect()
     drupal_exit();
   }
 
-  $breadcrumbs[] = l('', null);
-  $breadcrumbs[] = l(t('Page not found'), 'blog');
+  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l(t('Home'), '<front>');
+  $breadcrumbs[] = l(t('Page not found'), null);
   drupal_set_breadcrumb($breadcrumbs);
 
   // стандартное сообщение 404

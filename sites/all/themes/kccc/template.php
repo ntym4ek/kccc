@@ -329,7 +329,7 @@ function kccc_preprocess_menu_block_wrapper(&$vars)
 function kccc_preprocess_mimemail_message(&$vars)
 {
   // переменные для шаблона письма
-  $vars['logo']   = $GLOBALS['base_url'] . '/sites/all/themes/kccc/images/logo/logo_mail.png';
+  // $vars['logo']   = $GLOBALS['base_url'] . '/sites/all/themes/kccc/images/logo/logo_mail.png'; // задаётся в базовой теме
   $vars['site_name'] = '';
 }
 
