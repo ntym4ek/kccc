@@ -90,6 +90,7 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
 {
   $pvps = [
     'list' => [],
+    'sorted' => [],               // сортировка для мобильного приложения
   ];
 
   // список ПвП с сортировкой по дате обновления
@@ -137,9 +138,9 @@ function sec_pvp_get_pvp_filtered($filters, $qty = null, $from = 0)
     foreach ($pvp_nids as $pvp_nid) {
       $pvps['list'][$pvp_nid] = sec_pvp_get_pvp_teaser($pvp_nid);
     }
+
+    $pvps['sorted'] = $pvp_nids;
   }
-  // сортировка для мобильного приложения
-  $pvps['sorted'] = $pvp_nids;
 
   return $pvps;
 }

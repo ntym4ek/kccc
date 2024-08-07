@@ -18,6 +18,16 @@ function _reglaments_get_protection_system($params)
   $program = [];
   if (!empty($params['stage_id']) && !is_numeric($params['stage_id'])) unset($params['stage_id']);
 
+  // при запросе из приложения, судя по всему не всегда задаётся массив hobjects
+  // создадим пустую структуру
+  if (!isset($params['hobjects'])) {
+    $params['hobjects'] = [
+      CAT_WEED      => [],
+      CAT_DISEASE   => [],
+      CAT_PEST      => [],
+    ];
+  }
+
   // если ВО не заданы, показать всю программу
   $show_full_program = empty($params['hobjects'][CAT_WEED]) && empty($params['hobjects'][CAT_DISEASE]) && empty($params['hobjects'][CAT_PEST]);
   $cultures = [];
