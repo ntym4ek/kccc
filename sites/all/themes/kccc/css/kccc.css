@@ -1692,11 +1692,11 @@ fieldset {
     cursor: default;
     pointer-events: none; }
   .form-item .form-text,
-  .form-item .form-select,
+  .form-item .form-select:not([multiple="multiple"]),
   .field-type-text-long .form-text,
-  .field-type-text-long .form-select,
+  .field-type-text-long .form-select:not([multiple="multiple"]),
   .field-type-text-with-summary .form-text,
-  .field-type-text-with-summary .form-select {
+  .field-type-text-with-summary .form-select:not([multiple="multiple"]) {
     height: 2.3em; }
   .form-item .description,
   .field-type-text-long .description,
