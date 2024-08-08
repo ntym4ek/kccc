@@ -414,6 +414,8 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
 
     if ($form["#user_category"] == 'main') {
       $form["profile_main"]["field_user_photo"]["und"][0]["#description"] = '';
+      // убрать поле информации о ревизии
+      $form["profile_main"]["revision_information"]['#access'] = false;
     }
 
     $form["#submit"][] = 'ext_user_form_user_profile_form_submit';
