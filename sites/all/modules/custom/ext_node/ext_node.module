@@ -370,14 +370,7 @@ function ext_node_preprocess_node(&$vars)
   // -- Автор
   if ($vars['display_submitted']) {
     if ($vars['view_mode'] == 'full') {
-      $author_info = [];
-      if ($node->uid) {
-        $author_info = ext_user_get_user_info($node->uid);
-      }
-
-      if ($node->type == 'season' && empty($author_info['status'])) {
-        $author_info = ext_user_get_dumb_seller_info();
-      }
+      $author_info = ext_user_get_author_info($node);
       if ($author_info) {
         $vars['author'] = theme('card_contact', $author_info);
       } else {
@@ -415,22 +408,24 @@ function ext_node_form_alter(&$form, &$form_state, $form_id)
  */
 function ext_node_form_node_form_alter(&$form, &$form_state)
 {
-  if (in_array($form["type"]["#value"], ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
-    // убрать неиспользуемые опции
-    $form["options"]["promote"]["#access"] = false;
-    $form["options"]["sticky"]["#access"] = false;
+  if ($GLOBALS['theme'] != 'seven'){
+    if (in_array($form["type"]["#value"], ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
+      // убрать неиспользуемые опции
+      $form["options"]["promote"]["#access"] = false;
+      $form["options"]["sticky"]["#access"] = false;
 
-    // изменить формат поля Body на редактор по умолчанию
-    if (isset($form["body"])) {
-      $lang = $form["body"]["#language"];
-      if ($form["body"][$lang][0]["#type"] == 'text_format' && !$form["body"][$lang][0]["#format"]) {
-        $form["body"][$lang][0]["#format"] = 'filtered_html';
+      // изменить формат поля Body на редактор по умолчанию
+      if (isset($form["body"])) {
+        $lang = $form["body"]["#language"];
+        if ($form["body"][$lang][0]["#type"] == 'text_format' && !$form["body"][$lang][0]["#format"]) {
+          $form["body"][$lang][0]["#format"] = 'filtered_html';
+        }
       }
-    }
 
-    // предварительная обработка текстов
-    require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
-    ext_node_prepare_content_to_edit($form);
+      // предварительная обработка текстов
+      require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
+      ext_node_prepare_content_to_edit($form);
+    }
   }
 }
 

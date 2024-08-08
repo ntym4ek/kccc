@@ -546,17 +546,25 @@ function ext_user_user_load_by_login($login)
  */
 function ext_user_get_user_info($user = null)
 {
-  if (empty($user)) $user = $GLOBALS['user']->uid;
+  if (!isset($user)) $user = $GLOBALS['user']->uid;
   $key = $user->uid ?? $user;
   $result = &drupal_static(__FUNCTION__ . serialize($key));
 
   if (empty($result)) {
     $account = is_numeric($user) ? user_load($user) : $user;
 
-    $surname = $name = $name2 = $email = $phone = '';
+    $surname = $name = $name2 = $email = $phone = $name_full = '';
     $photo_uri = 'public://images/default/no_photo.png';
     $staff = [];
     $label = t('User');
+
+    // Специфика аккаунтов на сайте такова, что часть из них принадлежит сотрудникам организации.
+    // Сотрудники имеют свойство меняться, а email их должностей нет, в особенности для представителей и экспертов.
+    // Если материал создан уволенным сотрудником, то информацию об уволенном сотруднике выводить нельзя,
+    // а о текущем сотруднике неправильно, так как это не его материал.
+    // На сайте в таком случае выводится заглушка безымянного сотрудника, ведущая в раздел представителей.
+    // Для определения актуальности авторства нам нужен timestamp смены информации о сотруднике в main профиле.
+    $name_changed = null;
 
     if (!empty($account->uid)) {
       if ($main_pr2 = profile2_load_by_user($account, 'main')) {
@@ -576,6 +584,17 @@ function ext_user_get_user_info($user = null)
         $phone = $main_wr->field_user_phone->value() ? $main_wr->field_user_phone->value() : '';
         if ($main_wr->field_user_photo->value()) {
           $photo_uri = $main_wr->field_user_photo->file->value()->uri;
+        }
+
+        // выяснить время последнего изменения профиля
+        $revisions = profile2_revision_list($main_pr2);
+        if (count($revisions) > 1) {
+          foreach($revisions as $revision) {
+            $main_pr2_rev = profile2_load($main_pr2->pid, $revision->vid);
+            if ($main_pr2_rev->field_user_surname["und"][0]["value"] != $main_pr2->field_user_surname["und"][0]["value"]) {
+              $name_changed = $main_pr2_rev->revision_timestamp;
+            }
+          }
         }
       }
 
@@ -739,6 +758,7 @@ function ext_user_get_user_info($user = null)
         'name2' => $name2,
         'name_full' => $name_full,
         'name_short' => $name . ' ' . $surname,
+        'name_changed' => $name_changed,
         'phone' => ext_user_normalize_phone($phone),
         'photo' => [
           'uri'     => $photo_uri,
@@ -752,6 +772,26 @@ function ext_user_get_user_info($user = null)
   }
 
   return $result;
+}
+
+/**
+ * Вернуть информацию об авторе материала.
+ * Учитывает смену представителей на одном и том же email.
+ *  - если после публикации материала представитель (фамилия) сменился, выводим пустышку
+ *  - если аккаунт не активен, выводим пустышку
+ */
+function ext_user_get_author_info($node)
+{
+  $author_info = ext_user_get_user_info($node->uid);
+  if (empty($author_info['status'])) {
+    return ext_user_get_dumb_seller_info();
+  }
+
+  if ($author_info['main']['name_changed'] && $node->created < $author_info['main']['name_changed']) {
+    return ext_user_get_dumb_seller_info();
+  }
+
+  return $author_info;
 }
 
 /**

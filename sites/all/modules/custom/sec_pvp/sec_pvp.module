@@ -821,7 +821,7 @@ function sec_pvp_filters_form_ajax($form, $form_state)
  */
 function sec_pvp_form_node_form_alter(&$form, &$form_state, $form_id)
 {
-  if ($form["#form_id"] == 'season_node_form') {
+  if ($GLOBALS['theme'] != 'seven' && $form["#form_id"] == 'season_node_form') {
     // изменить поле Сезон
     $form["field_pvp_season"]["und"][0]["value"]["#type"] = 'select';
     $form["field_pvp_season"]["und"][0]["value"]["#size"] = 1;
