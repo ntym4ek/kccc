@@ -43,16 +43,23 @@
           <div class="download">
             <div class="row center-xs">
               <div class="col-xs-6 col-md-4">
+                <a href="https://www.rustore.ru/catalog/app/com.kccc.agroshop">
+                  <div class="img">
+                    <img src="/sites/all/modules/custom/ext_block/images/app-rustore.png" alt="<?php print t('Mobile application of TH «KCCC» LLC at RuStore'); ?>">
+                  </div>
+                </a>
+              </div>
+              <div class="col-xs-6 col-md-4">
                 <a href="https://play.google.com/store/apps/details?id=com.kccc.agroshop">
                   <div class="img">
-                    <img src="/sites/all/modules/custom/ext_block/images/google_play.png" alt="<?php print t('Mobile application of TH «KCCC» LLC at Google Play'); ?>">
+                    <img src="/sites/all/modules/custom/ext_block/images/app-googleplay.png" alt="<?php print t('Mobile application of TH «KCCC» LLC at Google Play'); ?>">
                   </div>
                 </a>
               </div>
               <div class="col-xs-6 col-md-4">
                 <a href="https://apps.apple.com/ru/app/id1059364721">
                   <div class="img">
-                    <img src="/sites/all/modules/custom/ext_block/images/app_store.png" alt="<?php print t('Mobile application of TH «KCCC» LLC at App Store'); ?>">
+                    <img src="/sites/all/modules/custom/ext_block/images/app-appstore.png" alt="<?php print t('Mobile application of TH «KCCC» LLC at App Store'); ?>">
                   </div>
                 </a>
               </div>

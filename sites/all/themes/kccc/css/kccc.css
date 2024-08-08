@@ -3268,6 +3268,9 @@ ul.menu {
     .branches {
       margin-bottom: 4rem; } }
 
+.page-taxonomy-term-edit #edit-parent {
+  height: 400px; }
+
 :root {
   --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
