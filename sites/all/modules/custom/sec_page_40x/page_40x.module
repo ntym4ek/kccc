@@ -59,7 +59,7 @@ function page_40x_403_redirect()
     drupal_exit();
   }
 
-  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l(t('Home'), '<front>');
+  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l('', '<front>');
   $breadcrumbs[] = l(t('Page access is prohibited'), null);
   drupal_set_breadcrumb($breadcrumbs);
 
@@ -79,7 +79,7 @@ function page_40x_404_redirect()
     drupal_exit();
   }
 
-  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l(t('Home'), '<front>');
+  if (variable_get('path_breadcrumbs_home_link_enabled')) $breadcrumbs[] = l('', '<front>');
   $breadcrumbs[] = l(t('Page not found'), null);
   drupal_set_breadcrumb($breadcrumbs);
 

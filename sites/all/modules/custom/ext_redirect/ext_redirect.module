@@ -9,65 +9,6 @@ function ext_redirect_init()
 
   // обработка запросов Приложения
   $request_headers = getallheaders();
-  if (
-    // для запросов из нового приложения, где прописан Host: https://app.kccc.ru/
-       !empty($request_headers['origin']) && $request_headers['origin'] == 'https://app.kccc.ru'
-    || !empty($request_headers['referer']) && $request_headers['referer'] == 'https://app.kccc.ru/'
-    // и из старого приложения, в тч apple
-    || strpos($old_path, 'services/session/token') !== false
-    || strpos($old_path, 'drupalgap/') === 0
-    || strpos($old_path, '.json') !== false
-    || strpos($old_path, 'source/') !== false
-  ) { return;
-    $headers = $response_headers = [];
-
-    // собрать заголовки запроса
-    foreach ($request_headers as $t => $v) {
-      if (!in_array($t, ['Host'])) {
-        $headers[] = $t . ': ' . $v;
-      }
-    }
-
-    // сделать запрос на старый сайт
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,'https://old.kccc.ru' . $_SERVER["REQUEST_URI"]);
-    if ($_SERVER["REQUEST_METHOD"] == 'POST')  {
-      curl_setopt($ch, CURLOPT_POST, 1);
-      $data = $_REQUEST;
-      unset($data['q']);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-    }
-    // функция для получения заголовков из ответа
-    curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-      function($curl, $header) use (&$response_headers)
-      {
-        $len = strlen($header);
-        $header = explode(':', $header, 2);
-        if (count($header) < 2) // ignore invalid headers
-          return $len;
-
-        $response_headers[strtolower(trim($header[0]))] = trim($header[1]);
-
-        return $len;
-      }
-    );
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    // вернуть ответ приложению
-    drupal_add_http_header('Content-Type', $response_headers['content-type'], true);
-    if (isset($response_headers['content-length'])) drupal_add_http_header('Content-Length', $response_headers['content-length'], true);
-    if (isset($response_headers['accept-ranges'])) drupal_add_http_header('Accept-Ranges', $response_headers['accept-ranges'], true);
-    if (isset($response_headers['content-encoding'])) drupal_add_http_header('Content-Encoding', $response_headers['content-encoding'], true);
-    drupal_add_http_header('Access-Control-Allow-Origin', $response_headers['access-control-allow-origin'], true);
-    drupal_add_http_header('Access-Control-Allow-Headers', 'x-csrf-token, Authorization, Origin, X-Requested-With, Accept, Content-Type', true);
-    print $response;
-    drupal_exit();
-  }
-
 
   // todo переадресация Разделов с изменившимися адресами
   //  301 Moved Permanently
@@ -191,22 +132,4 @@ function ext_redirect_init()
     drupal_exit();
   }
 
-//   если путь на сайте не существует, переадресовать на старый сайт
-//   302 Moved Temporarily
-//   todo kccc.ru -> old.kccc.ru
-//   todo не забыть про запросы от Приложения и Расписания
-//   todo в теории,всё подряд переадресовать нельзя (что-то 404, но оно и на старом 404)
-  if (!drupal_valid_path($old_path)) { // Not a system URL.
-    if (!drupal_lookup_path('source', $old_path))  { // Not a path alias.
-
-      $new_path = 'https://old.kccc.ru' . $_SERVER["REQUEST_URI"];
-
-      unset($_GET['q']);
-      if ($query = drupal_http_build_query($_GET)) {
-        $new_path .= '?' . $query;
-      }
-      header('Location: ' . $new_path, true, 302);
-      drupal_exit();
-    }
-  }
 }
