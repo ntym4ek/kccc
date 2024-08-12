@@ -160,6 +160,12 @@ function _reglaments_get_protection_system($params)
         }
       }
 
+      $program['hobjects'] = [
+        CAT_WEED => [],
+        CAT_DISEASE => [],
+        CAT_PEST => [],
+        'missing' => [],
+      ];
       if (!empty($params['hobjects'])) {
         $program['hobjects'][CAT_WEED] = _get_entities_info($params['hobjects'][CAT_WEED]);
         $program['hobjects'][CAT_DISEASE] = _get_entities_info($params['hobjects'][CAT_DISEASE]);
