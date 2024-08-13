@@ -370,7 +370,7 @@ function ext_node_preprocess_node(&$vars)
   // -- Автор
   if ($vars['display_submitted']) {
     if ($vars['view_mode'] == 'full') {
-      $author_info = ext_user_get_author_info($node);
+      $author_info = ext_user_get_author_info($node->nid);
       if ($author_info) {
         $vars['author'] = theme('card_contact', $author_info);
       } else {

@@ -417,6 +417,10 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
       // убрать поле информации о ревизии
       $form["profile_main"]["revision_information"]['#access'] = false;
     }
+    if ($form["#user_category"] == 'staff') {
+      // убрать поле информации о ревизии
+      $form["profile_staff"]["revision_information"]['#access'] = false;
+    }
 
     $form["#submit"][] = 'ext_user_form_user_profile_form_submit';
   }
@@ -779,9 +783,16 @@ function ext_user_get_user_info($user = null)
  * Учитывает смену представителей на одном и том же email.
  *  - если после публикации материала представитель (фамилия) сменился, выводим пустышку
  *  - если аккаунт не активен, выводим пустышку
+ *
+ * @param $node - Нода или её ID
  */
 function ext_user_get_author_info($node)
 {
+  if (is_numeric($node)) $node = node_load($node);
+
+  if (empty($node->uid)) {
+    return ext_user_get_dumb_seller_info();
+  }
   $author_info = ext_user_get_user_info($node->uid);
   if (empty($author_info['status'])) {
     return ext_user_get_dumb_seller_info();
@@ -802,6 +813,7 @@ function ext_user_get_dumb_seller_info()
   $photo_uri = 'public://images/default/no_photo.png';
   return [
     'label' => t('Regional representative'),
+    'email' => '', // todo используется в мобильном приложении, поправить 4.0.4
     'main' => [
       'name_full' => t('Regional representative'),
       'photo' => [
@@ -813,6 +825,7 @@ function ext_user_get_dumb_seller_info()
     'staff' => [
       'manage' => t('TH «KCCC» LLC'),
       'hide_contact' => 1,
+      'office' => ['title' => ''], // todo используется в мобильном приложении, поправить 4.0.4
     ],
     'url' => 'predstaviteli',
   ];

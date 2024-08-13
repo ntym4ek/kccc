@@ -281,7 +281,7 @@ function ext_mobile_app_pvp_source($pvp_id)
   foreach($pvp['events'] as &$event) {
     sec_pvp_prepare_event_view($event, $pvp);
   }
-  $author = ext_user_get_user_info($pvp['uid']);
+  $author = ext_user_get_author_info($pvp_id);
 
   drupal_json_output(['pvp' => $pvp, 'author' => $author]);
   drupal_exit();
