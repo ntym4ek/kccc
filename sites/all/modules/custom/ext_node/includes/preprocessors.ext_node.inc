@@ -17,6 +17,9 @@ function ext_node_prepare_content_to_save(&$node)
       $text = html_entity_decode($text);
       $text = str_replace(' ', ' ', $text);
 
+      // заменить неправильное написание гран при на гран-при
+      $text = preg_replace('/гран\sпри/iu', 'Гран-при', $text);
+
       // убрать все ссылки (с исключениями)
       $text = ext_node_remove_all_links($text);
       // проставить внутренние ссылки
@@ -90,7 +93,8 @@ function ext_node_place_internal_links($text)
   foreach (ext_node_replacements_list() as $replacement_item) {
     $patterns = ext_node_convert_needles_to_preg_patterns($replacement_item);
     $id_attr = empty($replacement_item['id']) ? '' : 'data-node-id="' . $replacement_item['id'] . '" ';
-    $replace = '\\1<a href="' . url($replacement_item['url']) . '" ' . $id_attr . 'target="_blank">\\2</a>\\3';
+    $replace_text = $replacement_item['replace'] ?? '\\2';
+    $replace = '\\1<a href="' . url($replacement_item['url']) . '" ' . $id_attr . 'target="_blank">' . $replace_text . '</a>\\3';
     foreach ($patterns as $pattern) {
       $text_old = $text;
       $text = preg_replace($pattern, $replace, $text, 1);
@@ -124,16 +128,28 @@ function ext_node_replacements_list()
   ];
   $result[] = [
     'needles' => [
+      'смола', 'смолы', 'смол',
+    ],
+    'url' => 'https://smola.kccc.ru',
+  ];
+  $result[] = [
+    'needles' => [
+      'минеральные удобрения', 'минеральных удобрений', 'минеральными удобрениями',
+    ],
+    'url' => 'https://mineral.kccc.ru',
+  ];
+  $result[] = [
+    'needles' => [
       'ООО ТД "Кирово-Чепецкая Химическая Компания"',
       'ООО Торговый Дом "Кирово-Чепецкая Химическая Компания"',
       'ТД "Кирово-Чепецкая Химическая Компания"',
       'Торговый Дом "Кирово-Чепецкая Химическая Компания"',
       'Торговый Дом "КЧХК"',
-      'ООО ТД "КЧХК"', 'ТД "КЧХК"',
+      'ООО ТД "КЧХК"', 'ТД "КЧХК"', 'ТД КЧХК',
       'Кирово-Чепецкой Химической Компании',
       'KCCC', 'КССС',
     ],
-    'url' => 'https://kccc.ru',
+    'url' => 'https://kccc.ru/o-kompanii',
   ];
   $result[] = [
     'needles' => [
@@ -144,7 +160,7 @@ function ext_node_replacements_list()
   ];
   $result[] = [
     'needles' => [
-      'испытани', 'опыты',
+      'испытаний препаратов', 'испытания препаратов', 'испытани', 'опыты',
     ],
     'url' => 'https://kccc.ru/preparaty-v-pole',
   ];
@@ -184,14 +200,24 @@ function ext_node_replacements_list()
     // подготовить список фраз для каждого препарата
     foreach($products as $product) {
       $title = trim($product->title);
-      $result[$product->nid] = [
+      $result[] = [
         'needles' => [$title . ', ' . trim($product->formulation), $title . ',' . trim($product->formulation), $title],
         'url' => 'node/' . $product->nid,
         'id' => $product->nid,
+        'replace' => $title,
         'exclude' => $product->exclude ?? '',
       ];
     }
   }
+
+  // паттерны, которые могут совпадать с названиями препаратов
+  $result[] = [
+    'needles' => [
+      'агроминералами', 'агроминералов', 'агроминералы', 'агроминерал', 'AgroMineral'
+    ],
+    'url' => 'https://mineral.kccc.ru/catalog/brands/agromineral',
+  ];
+
 
   return $result;
 }
@@ -215,7 +241,7 @@ function ext_node_convert_needles_to_preg_patterns($replacement)
 
     // кавычки могут быть любыми
     $needle = str_replace('"', '["\']', $needle);
-    $patterns[] = '/(?:' . $exclude . ')(*SKIP)(*F)|([>\s\"])(' . $needle . '.*?)([<\.\!\?\,\s\"\;\:])/si';
+    $patterns[] = '/(?:' . $exclude . ')(*SKIP)(*F)|(>|\s|\"|\(|\A|\+)(' . $needle . '.*?)(<|\.|\!|\?|\,|\s|\"|\;|\:|\)|\+)/siu';
   }
 
   return $patterns;
