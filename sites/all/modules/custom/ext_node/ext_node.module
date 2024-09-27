@@ -414,6 +414,9 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
       $form["options"]["promote"]["#access"] = false;
       $form["options"]["sticky"]["#access"] = false;
 
+      // убрать авторство (Попов пытался там набрать своё имя)
+      $form["author"]["#access"] = false;
+
       // изменить формат поля Body на редактор по умолчанию
       if (isset($form["body"])) {
         $lang = $form["body"]["#language"];
