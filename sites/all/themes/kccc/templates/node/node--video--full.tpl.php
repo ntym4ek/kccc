@@ -110,4 +110,10 @@
             allowfullscreen></iframe>
   </div>
 
+  <?php if (!empty($youtube_url)): ?>
+  <div class="youtube-link">
+    <?php print t('This video is available on !youtube', ['!youtube' => '<a href="' . $youtube_url . '" target="_blank" rel="nofollow">YouTube</a>']); ?>
+  </div>
+  <?php endif; ?>
+
 </div>

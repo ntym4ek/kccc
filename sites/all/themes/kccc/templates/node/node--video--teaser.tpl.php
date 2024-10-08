@@ -100,6 +100,15 @@
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen></iframe>
+
+<!--    <iframe width="720"-->
+<!--            height="405"-->
+<!--            src="https://rutube.ru/play/embed/20c072d083d564eff65d4a58ec039b67/"-->
+<!--            frameBorder="0"-->
+<!--            allow="clipboard-write; autoplay"-->
+<!--            webkitAllowFullScreen-->
+<!--            mozallowfullscreen-->
+<!--            allowFullScreen></iframe>-->
   </div>
 
   <div class="title">

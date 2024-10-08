@@ -896,6 +896,10 @@ ul.action-links {
     .field { margin-bottom: 0; }
   }
 
+  .youtube-link {
+    margin-top: 1rem;
+  }
+
   @media #{$tablet} {
     .node-images .image {
       min-height: 250px;
@@ -913,6 +917,11 @@ ul.action-links {
 .cke_editable {
   line-height: 1.4;
   a { font-weight: 500; }
+  table {
+    font-size: .8em;
+    width: 100%;
+    p { margin: 0; }
+  }
 }
 .cke_editable { padding: 0 1rem; }
 

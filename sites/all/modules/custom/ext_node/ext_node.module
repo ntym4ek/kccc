@@ -207,11 +207,18 @@ function ext_node_preprocess_node(&$vars)
   // -- Тип Видео
   if ($node->type == 'video') {
     // преобразовать ссылку https://www.youtube.com/watch?v=BiNh9OXi95g в embed (https://www.youtube.com/embed/BiNh9OXi95g)
-    $url = $vars['field_text'][0]['value'];
-    if (strpos($url, 'https://youtu.be/') !== false) {
-      $vars['video_embed_url'] = str_replace('https://youtu.be/', 'https://www.youtube.com/embed/', $url);
-    } elseif (strpos($url, 'https://www.youtube.com/watch?v=') !== false) {
-      $vars['video_embed_url'] = str_replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/', $url);
+    $youtube_url = $vars['field_text'][0]['value'];
+    $rutube_url = $vars['field_link_rutube'][0]['value'] ?? '';
+    // предпочтение рутубу
+    if ($rutube_url) {
+      $vars['video_embed_url'] = str_replace('https://rutube.ru/video/', 'https://rutube.ru/play/embed/', $rutube_url);
+      $vars['youtube_url'] = $youtube_url;
+    } else {
+      if (strpos($youtube_url, 'https://youtu.be/') !== false) {
+        $vars['video_embed_url'] = str_replace('https://youtu.be/', 'https://www.youtube.com/embed/', $youtube_url);
+      } elseif (strpos($youtube_url, 'https://www.youtube.com/watch?v=') !== false) {
+        $vars['video_embed_url'] = str_replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/', $youtube_url);
+      }
     }
   }
 

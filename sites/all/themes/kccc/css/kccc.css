@@ -4175,6 +4175,8 @@ ul.action-links {
       bottom: -27px; }
     .node-full blockquote .field {
       margin-bottom: 0; }
+  .node-full .youtube-link {
+    margin-top: 1rem; }
   @media only screen and (min-width: 1024px) {
     .node-full .node-images .image {
       min-height: 250px; }
@@ -4195,6 +4197,15 @@ ul.action-links {
   .node-full blockquote a,
   .cke_editable a {
     font-weight: 500; }
+  .node-full .node-text table,
+  .node-full blockquote table,
+  .cke_editable table {
+    font-size: .8em;
+    width: 100%; }
+    .node-full .node-text table p,
+    .node-full blockquote table p,
+    .cke_editable table p {
+      margin: 0; }
 
 .cke_editable {
   padding: 0 1rem; }
