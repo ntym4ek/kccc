@@ -3447,7 +3447,7 @@ a {
     color: #606060;
     font-size: 1rem; }
     .breadcrumb .first a:before {
-      content: "\e01a"; }
+      content: "\e079"; }
     .breadcrumb .first a:hover {
       color: #43B02A; }
   .breadcrumb .delimiter {
@@ -3460,7 +3460,7 @@ a {
       position: absolute;
       top: .17rem;
       visibility: visible;
-      content: "\e01b";
+      content: "\e07a";
       color: #43B02A;
       font-size: .8rem; }
   .breadcrumb a {
@@ -4401,7 +4401,9 @@ ul.action-links {
     text-align: center;
     margin-bottom: 1.2rem; }
   .node-preparation .product-reglaments .card-decor .label {
+    color: #7D7C7C;
     font-size: 0.889rem;
+    font-weight: 400;
     margin-bottom: 5px; }
   .node-preparation .product-reglaments .card-decor .text {
     font-size: 1.222rem;

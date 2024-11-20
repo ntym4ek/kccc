@@ -238,6 +238,7 @@
                     <li class="socials">
                       <a href="https://vk.com/public147827276" rel="nofollow" target="_blank" title="<?php print t('VK'); ?>"><i class="icon icon-rounded icon-068 hover-raise"></i></a>
                       <a href="https://ok.ru/group/54447113371728" rel="nofollow" target="_blank" title="<?php print t('OK'); ?>"><i class="icon icon-rounded icon-090 hover-raise"></i></a>
+                      <a href="https://rutube.ru/channel/44211907" rel="nofollow" target="_blank" title="RuTube"><i class="icon icon-rounded icon-148 hover-raise"></i></a>
                       <a href="https://youtube.com/@kccc_td" rel="nofollow" target="_blank" title="YouTube"><i class="icon icon-rounded icon-069 hover-raise"></i></a>
                       <a href="https://dzen.ru/td_kccc" rel="nofollow" target="_blank" title="<?php print t('Yandex Dzen'); ?>"><i class="icon icon-rounded icon-070 hover-raise"></i></a>
                       <a href="https://t.me/tdkccc" rel="nofollow" target="_blank" title="Telegram"><i class="icon icon-rounded icon-091 hover-raise"></i></a>

@@ -2,6 +2,12 @@
   Drupal.behaviors.kccc = {
     attach: function (context, settings) {
 
+      // --- Главное Меню ------------------------------------------------------
+      // не переходить по ссылке на выпадающих меню в мобильной версии
+      $(".header .menu-wr .expanded > a").on("click", (e) => {
+        e.preventDefault();
+      });
+
       // -- Скролл мышкой подменю на десктопах ---------------------------------
       $(".page-highlighted .sub-menu").mousedown(function(event) {
         let $this = $(this),

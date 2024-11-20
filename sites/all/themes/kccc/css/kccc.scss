@@ -173,7 +173,7 @@ a { color: $brand-color; }
   .first a {
     color: #606060; font-size: 1rem;
     &:before {
-      content: "\e01a";
+      content: "\e079";
     }
     &:hover { color: $brand-color; }
   }
@@ -186,7 +186,7 @@ a { color: $brand-color; }
     &:before {
       position: absolute; top: .17rem;
       visibility: visible;
-      content: "\e01b";
+      content: "\e07a";
       color: $brand-color; font-size: .8rem;
     }
   }
@@ -1122,7 +1122,7 @@ ul.action-links {
         margin-bottom: 1.2rem;
       }
       .label {
-        font-size: $font-size-small;
+        color: $text-light; font-size: $font-size-small; font-weight: 400;
         margin-bottom: 5px;
       }
       .text { font-size: $font-size-large; font-weight: 500; }
