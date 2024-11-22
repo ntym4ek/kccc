@@ -2,6 +2,15 @@
 
 function sec_pesticides_menu()
 {
+  $items['admin/config/custom/pesticides'] = array(
+    'title' => 'Пестициды МСХ',
+    'description' => 'Импорт Пестицидов с сайта МСХ',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ext_pesticides_import_form'),
+    'access arguments' => array('access manager settings'),
+    'weight' => 5,
+  );
+
   $items['pesticides'] = array(
     'title' => 'Pesticides',
     'description' => t('Pesticides handbook'),
@@ -23,6 +32,40 @@ function sec_pesticides_cron_queue_info()
   );
 
   return $queues;
+}
+
+function ext_pesticides_import_form($form, $form_state)
+{
+  $form['version'] = [
+    '#markup' => '<p>Текущая версия справочника: ' . variable_get('mcx_file_version', 'нет') . '<p>',
+  ];
+
+  $form['import'] = ['#type' => 'fieldset', '#title' => 'Импорт'];
+  $form['import']['message'] = array(
+    '#markup' => '<p>Будут последовательно выполнены следующие задачи:</p>' .
+                  '<ul>' .
+                    '<li>скачивание архива с сайта МСХ</li>' .
+                    '<li>распаковка</li>' .
+                    '<li>постановка задач на удаление всех предыдущих записей</li>' .
+                    '<li>постановка задач на импорт по cron</li>' .
+                  '</ul><p></p>',
+  );
+  $form['import']['force'] = [
+    '#type' => 'checkbox',
+    '#title' => 'перезагрузить текущую версию',
+    '#defaulr_value' => false,
+  ];
+
+  $form['import']['run'] = [
+    '#type' => 'submit',
+    '#value' => 'Запустить импорт',
+  ];
+
+  return $form;
+}
+function ext_pesticides_import_form_submit($form, $form_state)
+{
+  sec_pesticides_mcx_import($form_state['values']['force']);
 }
 
 /**
@@ -47,81 +90,109 @@ function sec_pesticides_page()
 /**
  * Выполнить импорт справочника с сайта Минсельхоза
  */
-function sec_pesticides_mcx_import_info()
+function sec_pesticides_mcx_import($force_import = false)
 {
   if ($data_arr = sec_pesticides_mcx_get_new_info()) {
-    // создать очередь на добавление записей по крону,
-    // так как импорт всех в одном цикле может выйти за пределы max_execution_time
+    if (variable_get('mcx_file_version') == $data_arr['filename'] && !$force_import) {
+      drupal_set_message('Текущая версия справочника уже импортирована');
+      return;
+    }
+    // сохранить версию импортированного файла
+    variable_set('mcx_file_version', $data_arr['filename']);
+
     $queue = DrupalQueue::get('mcx_processing_queue');
-    //$queue->deleteQueue(); // todo удалить
+    $queue->deleteQueue(); // todo удалить
+
+    // Создать очередь на удаление записей по крону.
+    // Удаление необходимо, так как в справочнике МСХ присутствуют дубли по имени
+    // с разной формуляцией и даже полные дубли в разных категориях, а ID отсутствует.
+    $dbr = db_select('node', 'n');
+    $dbr->condition('n.type', 'pesticide');
+    $dbr->addField('n', 'nid');
+    if ($nids = $dbr->execute()->fetchCol()) {
+      foreach ($nids as $record) {
+        $queue->createItem(['op' => 'delete', 'record' => $record]);
+      }
+      entity_delete_multiple('node', $nids);
+    }
+
+    // Создать очередь на добавление записей по крону,
+    // так как импорт всех в одном цикле может выйти за пределы max_execution_time
     foreach ($data_arr['items'] as $record) {
-      $queue->createItem($record);
+      $queue->createItem(['op' => 'import', 'record' => $record]);
     }
     drupal_set_message('Добавлено ' . count($data_arr['items']) . ' записей для обработки');
   }
 }
 
 /**
- * Выполнить импорт записи справочника с сайта Минсельхоза
+ * Выполнить удаление старой записи
+ * или импорт новой записи справочника с сайта Минсельхоза
  */
-function sec_pesticides_mcx_process_item($record)
+function sec_pesticides_mcx_process_item($data)
 {
-  if ($record["Naimenovanie"]["item"]) {
-    // проверить наличие записи с таким заголовком
-    $dbr = db_select('node', 'n');
-    $dbr->condition('n.type', 'pesticide');
-    $dbr->condition('n.title', $record["Naimenovanie"]["item"]);
-    $dbr->addField('n', 'nid');
-    if ($nid = $dbr->execute()->fetchField()) {
-      $node = node_load($nid);
-    }
-    else {
-      $node = entity_create('node', [
-        'type' => 'pesticide',
-        'title' => $record["Naimenovanie"]["item"],
-      ]);
-      node_save($node);
-    }
+  $record = $data['record'];
+  if ($data['op'] == 'delete') {
+    node_delete($record);
+    return;
+  }
+
+  if ($data['op'] == 'import' && $record["Naimenovanie"]["item"] && !is_array($record["Naimenovanie"]["item"])) {
+    $node = entity_create('node', [
+      'type' => 'pesticide',
+      'title' => $record["Naimenovanie"]["item"],
+    ]);
+    node_save($node);
 
     $node_wr = entity_metadata_wrapper('node', $node);
-    if (isset($record["Gruppa"]["item"])) $node_wr->field_hp_gruppa = $record["Gruppa"]["item"];
-    if (isset($record["Deystvuyushee_veshestvo"]["item"])) $node_wr->field_hp_dv = $record["Deystvuyushee_veshestvo"]["item"];
-    if (isset($record["Soderzhanie_deystvuyushego_veshestva"]["item"])) $node_wr->field_hp_sdv = $record["Soderzhanie_deystvuyushego_veshestva"]["item"];
-    if (isset($record["Preparativnaya_forma"]["item"])) $node_wr->field_hp_pf = $record["Preparativnaya_forma"]["item"];
-    if (isset($record["Registrant"]["item"])) $node_wr->field_hp_registrant = $record["Registrant"]["item"];
-    if (isset($record["Klass_opasnosti"]["item"])) $node_wr->field_hp_ko = $record["Klass_opasnosti"]["item"];
-    if (isset($record["Srok_registracii_Po"]["item"])) $node_wr->field_hp_srp = $record["Srok_registracii_Po"]["item"];
-    if (isset($record["Nomer_gosudarstvennoy_registracii"]["item"])) $node_wr->field_hp_ngr = $record["Nomer_gosudarstvennoy_registracii"]["item"];
+    if (isset($record["Gruppa"]["item"]) && !is_array($record["Gruppa"]["item"]))
+      $node_wr->field_hp_gruppa = $record["Gruppa"]["item"];
+    if (isset($record["Deystvuyushee_veshestvo"]["item"]) && !is_array($record["Deystvuyushee_veshestvo"]["item"]))
+      $node_wr->field_hp_dv = $record["Deystvuyushee_veshestvo"]["item"];
+    if (isset($record["Soderzhanie_deystvuyushego_veshestva"]["item"]) && !is_array($record["Soderzhanie_deystvuyushego_veshestva"]["item"]))
+      $node_wr->field_hp_sdv = $record["Soderzhanie_deystvuyushego_veshestva"]["item"];
+    if (isset($record["Preparativnaya_forma"]["item"]) && !is_array($record["Preparativnaya_forma"]["item"]))
+      $node_wr->field_hp_pf = $record["Preparativnaya_forma"]["item"];
+    if (isset($record["Registrant"]["item"]) && !is_array($record["Registrant"]["item"]))
+      $node_wr->field_hp_registrant = $record["Registrant"]["item"];
+    if (isset($record["Klass_opasnosti"]["item"]) && !is_array($record["Klass_opasnosti"]["item"]))
+      $node_wr->field_hp_ko = $record["Klass_opasnosti"]["item"];
+    if (isset($record["Srok_registracii_Po"]["item"]) && !is_array($record["Srok_registracii_Po"]["item"]))
+      $node_wr->field_hp_srp = $record["Srok_registracii_Po"]["item"];
+    if (isset($record["Nomer_gosudarstvennoy_registracii"]["item"]) && !is_array($record["Nomer_gosudarstvennoy_registracii"]["item"]))
+      $node_wr->field_hp_ngr = $record["Nomer_gosudarstvennoy_registracii"]["item"];
 
-    // удалить регламенты, чтобы не искать для редактирования
-    $arr = [];
-    foreach ($node_wr->field_hp_reglamenty->getIterator() as $key => $regl_wr) {
-      $arr[] = $regl_wr->getIdentifier();
-      // удалить, иначе останется ссылка на несуществующую запись
-      $node_wr->field_hp_reglamenty[$key] = null;
-    }
-    if ($arr) entity_delete_multiple('field_collection_item', $arr);
-
-    // задаём регламенты заново
+    // задаём регламенты
     if ($record["fulldataset"]) {
+      // json_encode некорректно обрабатывает одиночные подмассивы, корректируем
+      if (!isset($record["fulldataset"]['item'][0])) {
+        $arr = $record["fulldataset"]['item'];
+        $record["fulldataset"]['item'] = [0 => $arr];
+      }
       foreach ($record["fulldataset"]['item'] as $reglament) {
         $regl = entity_create('field_collection_item', ['field_name' => 'field_hp_reglamenty']);
         $regl->setHostEntity('node', $node);
         $regl_wr = entity_metadata_wrapper('field_collection_item', $regl);
 
-        if (isset($reglament['Vrednyy_obekt_naznachenie'])) $regl_wr->field_hpr_vo = $reglament['Vrednyy_obekt_naznachenie'];
-        if (isset($reglament['Kultura_obrabatyvaemyy_obekt'])) $regl_wr->field_hpr_koo = $reglament['Kultura_obrabatyvaemyy_obekt'];
-        if (isset($reglament['Sposob_i_vremya_obrabotki'])) $regl_wr->field_hpr_svo = $reglament['Sposob_i_vremya_obrabotki'];
-        if (isset($reglament['Srok_ozhidaniya_kratnost_obrabotok'])) $regl_wr->field_hpr_soko = $reglament['Srok_ozhidaniya_kratnost_obrabotok'];
-        if (isset($reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot'])) $regl_wr->field_hpr_svrmr = $reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot'];
-        if (isset($reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt'])) $regl_wr->field_hpr_npp = $reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt'];
+        if (isset($reglament['Vrednyy_obekt_naznachenie']) && !is_array($reglament['Vrednyy_obekt_naznachenie']))
+          $regl_wr->field_hpr_vo = drupal_substr($reglament['Vrednyy_obekt_naznachenie'], 0, 255);
+        if (isset($reglament['Kultura_obrabatyvaemyy_obekt']) && !is_array($reglament['Kultura_obrabatyvaemyy_obekt']))
+          $regl_wr->field_hpr_koo = $reglament['Kultura_obrabatyvaemyy_obekt'];
+        if (isset($reglament['Sposob_i_vremya_obrabotki']) && !is_array($reglament['Sposob_i_vremya_obrabotki']))
+          $regl_wr->field_hpr_svo = $reglament['Sposob_i_vremya_obrabotki'];
+        if (isset($reglament['Srok_ozhidaniya_kratnost_obrabotok']) && !is_array($reglament['Srok_ozhidaniya_kratnost_obrabotok']))
+          $regl_wr->field_hpr_soko = $reglament['Srok_ozhidaniya_kratnost_obrabotok'];
+        if (isset($reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot']) && !is_array($reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot']))
+          $regl_wr->field_hpr_svrmr = $reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot'];
+        if (isset($reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt']) && !is_array($reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt']))
+          $regl_wr->field_hpr_npp = $reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt'];
       }
     }
     $node_wr->save();
 
     watchdog('processing', 'Импортирован препарат ' . $record["Naimenovanie"]["item"]);
   } else {
-    watchdog('processing', 'Импортирован препарат ' . $record["Naimenovanie"]["item"], null, WATCHDOG_WARNING);
+    watchdog('processing', 'Препарат не импортирован.\n<pre>@var</pre>', ['@var' => print_r($record)], WATCHDOG_WARNING);
   }
 }
 
@@ -152,13 +223,16 @@ function sec_pesticides_mcx_get_new_info()
         $zip->close();
 
         $data = file_get_contents(file_directory_temp() . '/' . $filename);
+//        $data = file_get_contents('d:/' . $filename); // тесты
         // Convert xml string into an object
         $new = simplexml_load_string($data);
-        $con = json_encode($new);
-        $info = json_decode($con, TRUE);
+        $con = drupal_json_encode($new);
+        $info = drupal_json_decode($con);
       }
     }
   }
+
+  $info['filename'] = $filename;
 
   return $info;
 }
