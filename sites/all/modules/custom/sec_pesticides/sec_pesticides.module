@@ -1,0 +1,165 @@
+<?php
+
+function sec_pesticides_menu()
+{
+  $items['pesticides'] = array(
+    'title' => 'Pesticides',
+    'description' => t('Pesticides handbook'),
+    'page callback' => 'sec_pesticides_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function sec_pesticides_cron_queue_info()
+{
+  $queues['mcx_processing_queue'] = array(
+    'worker callback' => 'sec_pesticides_mcx_process_item',
+  );
+
+  return $queues;
+}
+
+/**
+ * Pre-processes variables for the "page" theme hook.
+ */
+function sec_pesticides_preprocess_page(&$vars)
+{
+  if (arg(0) == 'pesticides') {
+    //$vars['banner_title'] = t('Pesticides');
+    //$vars['is_title_on'] = false;
+  }
+}
+
+// главная страница
+function sec_pesticides_page()
+{
+  $output = 'В разработке';
+
+  return  $output;
+}
+
+/**
+ * Выполнить импорт справочника с сайта Минсельхоза
+ */
+function sec_pesticides_mcx_import_info()
+{
+  if ($data_arr = sec_pesticides_mcx_get_new_info()) {
+    // создать очередь на добавление записей по крону,
+    // так как импорт всех в одном цикле может выйти за пределы max_execution_time
+    $queue = DrupalQueue::get('mcx_processing_queue');
+    //$queue->deleteQueue(); // todo удалить
+    foreach ($data_arr['items'] as $record) {
+      $queue->createItem($record);
+    }
+    drupal_set_message('Добавлено ' . count($data_arr['items']) . ' записей для обработки');
+  }
+}
+
+/**
+ * Выполнить импорт записи справочника с сайта Минсельхоза
+ */
+function sec_pesticides_mcx_process_item($record)
+{
+  if ($record["Naimenovanie"]["item"]) {
+    // проверить наличие записи с таким заголовком
+    $dbr = db_select('node', 'n');
+    $dbr->condition('n.type', 'pesticide');
+    $dbr->condition('n.title', $record["Naimenovanie"]["item"]);
+    $dbr->addField('n', 'nid');
+    if ($nid = $dbr->execute()->fetchField()) {
+      $node = node_load($nid);
+    }
+    else {
+      $node = entity_create('node', [
+        'type' => 'pesticide',
+        'title' => $record["Naimenovanie"]["item"],
+      ]);
+      node_save($node);
+    }
+
+    $node_wr = entity_metadata_wrapper('node', $node);
+    if (isset($record["Gruppa"]["item"])) $node_wr->field_hp_gruppa = $record["Gruppa"]["item"];
+    if (isset($record["Deystvuyushee_veshestvo"]["item"])) $node_wr->field_hp_dv = $record["Deystvuyushee_veshestvo"]["item"];
+    if (isset($record["Soderzhanie_deystvuyushego_veshestva"]["item"])) $node_wr->field_hp_sdv = $record["Soderzhanie_deystvuyushego_veshestva"]["item"];
+    if (isset($record["Preparativnaya_forma"]["item"])) $node_wr->field_hp_pf = $record["Preparativnaya_forma"]["item"];
+    if (isset($record["Registrant"]["item"])) $node_wr->field_hp_registrant = $record["Registrant"]["item"];
+    if (isset($record["Klass_opasnosti"]["item"])) $node_wr->field_hp_ko = $record["Klass_opasnosti"]["item"];
+    if (isset($record["Srok_registracii_Po"]["item"])) $node_wr->field_hp_srp = $record["Srok_registracii_Po"]["item"];
+    if (isset($record["Nomer_gosudarstvennoy_registracii"]["item"])) $node_wr->field_hp_ngr = $record["Nomer_gosudarstvennoy_registracii"]["item"];
+
+    // удалить регламенты, чтобы не искать для редактирования
+    $arr = [];
+    foreach ($node_wr->field_hp_reglamenty->getIterator() as $key => $regl_wr) {
+      $arr[] = $regl_wr->getIdentifier();
+      // удалить, иначе останется ссылка на несуществующую запись
+      $node_wr->field_hp_reglamenty[$key] = null;
+    }
+    if ($arr) entity_delete_multiple('field_collection_item', $arr);
+
+    // задаём регламенты заново
+    if ($record["fulldataset"]) {
+      foreach ($record["fulldataset"]['item'] as $reglament) {
+        $regl = entity_create('field_collection_item', ['field_name' => 'field_hp_reglamenty']);
+        $regl->setHostEntity('node', $node);
+        $regl_wr = entity_metadata_wrapper('field_collection_item', $regl);
+
+        if (isset($reglament['Vrednyy_obekt_naznachenie'])) $regl_wr->field_hpr_vo = $reglament['Vrednyy_obekt_naznachenie'];
+        if (isset($reglament['Kultura_obrabatyvaemyy_obekt'])) $regl_wr->field_hpr_koo = $reglament['Kultura_obrabatyvaemyy_obekt'];
+        if (isset($reglament['Sposob_i_vremya_obrabotki'])) $regl_wr->field_hpr_svo = $reglament['Sposob_i_vremya_obrabotki'];
+        if (isset($reglament['Srok_ozhidaniya_kratnost_obrabotok'])) $regl_wr->field_hpr_soko = $reglament['Srok_ozhidaniya_kratnost_obrabotok'];
+        if (isset($reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot'])) $regl_wr->field_hpr_svrmr = $reglament['Sroki_vyhoda_dlya_ruchnyh_mehanizirovannyh_rabot'];
+        if (isset($reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt'])) $regl_wr->field_hpr_npp = $reglament['Norma_primeneniya_preparata_lga_kgga_lt_kgt'];
+      }
+    }
+    $node_wr->save();
+
+    watchdog('processing', 'Импортирован препарат ' . $record["Naimenovanie"]["item"]);
+  } else {
+    watchdog('processing', 'Импортирован препарат ' . $record["Naimenovanie"]["item"], null, WATCHDOG_WARNING);
+  }
+}
+
+/**
+ * Получить последнюю версию данных с сайта Минсельхоза
+ */
+function sec_pesticides_mcx_get_new_info()
+{
+  $info = [];
+  // получить сводку по версиям справочника
+  $data = file_get_contents('http://opendata.mcx.ru/opendata/7708075454-pestitsidy/meta.xml');
+
+  // найти ссылку на последнюю версию
+  $url = '';
+  $xml = new SimpleXMLElement($data);
+  if ($result = $xml->xpath('/meta/data/dataversion[last()]/source')) {
+    $url = $result[0]->__toString();
+  }
+
+  if ($url) {
+    $filename = drupal_basename($url);
+    $filepath = file_directory_temp() . '\mcx-data.zip';
+    if (file_put_contents($filepath, fopen($url, 'r'))) {
+      // распаковать zip
+      $zip = new ZipArchive;
+      if ($zip->open($filepath) === true) {
+        $zip->extractTo(file_directory_temp());
+        $zip->close();
+
+        $data = file_get_contents(file_directory_temp() . '/' . $filename);
+        // Convert xml string into an object
+        $new = simplexml_load_string($data);
+        $con = json_encode($new);
+        $info = json_decode($con, TRUE);
+      }
+    }
+  }
+
+  return $info;
+}
+
