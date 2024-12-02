@@ -436,6 +436,19 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
       require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
       ext_node_prepare_content_to_edit($form);
     }
+
+    // добавить опцию публикации на международные сайты
+    if (in_array($form["type"]["#value"], ['article'])) {
+      $countries = [
+        'kz' => 'Казахстан',
+        'MG' => 'Монголия',
+      ];
+      $form["options"]["countries"] = [
+        '#type' => 'checkboxes',
+        '#title' => 'Опубликовать также на сайтах стран:',
+        '#options' => $countries,
+      ];
+    }
   }
 }
 
