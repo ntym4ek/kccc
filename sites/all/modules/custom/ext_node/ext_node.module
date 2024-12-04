@@ -415,7 +415,7 @@ function ext_node_form_alter(&$form, &$form_state, $form_id)
  */
 function ext_node_form_node_form_alter(&$form, &$form_state)
 {
-  if ($GLOBALS['theme'] != 'seven'){
+  if (!user_has_role(ADMIN_RID)){
     if (in_array($form["type"]["#value"], ['article', 'blog', 'review', 'weed', 'disease', 'pest'])) {
       // убрать неиспользуемые опции
       $form["options"]["promote"]["#access"] = false;
@@ -436,37 +436,9 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
       require_once (drupal_get_path('module', 'ext_node') . '/includes/preprocessors.ext_node.inc');
       ext_node_prepare_content_to_edit($form);
     }
-
-    // добавить опцию публикации на международные сайты
-    // только для базового сайта
-    if ($GLOBALS["base_root"] == 'http://kccc.local') {
-      if (in_array($form["type"]["#value"], ['article'])) {
-        $countries = [
-          'kz' => 'Казахстан',
-          'mg' => 'Монголия',
-        ];
-        $form["options"]["countries"] = [
-          '#type' => 'checkboxes',
-          '#title' => 'Опубликовать также на сайтах стран:',
-          '#options' => $countries,
-        ];
-
-        $form["#submit"][] = 'ext_node_form_node_form_submit';
-      }
-    }
   }
 }
-function ext_node_form_node_form_submit($form, $form_state)
-{
-  $countries = [];
-  foreach ($form_state['values']['countries'] as $country => $value) {
-    if ($value) $countries[] = $country;
-  }
 
-  if ($countries) {
-    node_eximport_export_entity('node', $form_state["values"]["nid"], $countries);
-  }
-}
 
 /**
  * Implements hook_entity_property_info_alter.

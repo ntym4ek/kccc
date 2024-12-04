@@ -31,11 +31,7 @@ function node_eximport_cron_queue_info()
 
 function node_eximport_export_entity($entity_type, $eid, $countries)
 {
-  $info = entity_get_info($entity_type);
   $entity = entity_load_single($entity_type, $eid);
-  // сбросить id, чтобы сущность считалась новой
-  unset($entity->{$info["entity keys"]["id"]});
-  unset($entity->{$info["entity keys"]["revision"]});
   $data = [
     'entity_type' => $entity_type,
     'entity' => $entity,
@@ -62,6 +58,7 @@ function node_eximport_process_item($args)
   }
 
   // сделать запрос
+  $result = false;
   if ($target_url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $target_url . '/api/1/eximport');
@@ -69,15 +66,16 @@ function node_eximport_process_item($args)
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['data' => $data]));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     if ($response = curl_exec($ch)) {
-
+      $arr = drupal_json_decode($response);
+      $result = $arr['result'] ?? false;
     }
     curl_close($ch);
   }
 
-  // todo в случае неудачи, добавить запрос в конец очереди
-  if (false) {
+  // в случае неудачи, добавить запрос в конец очереди
+  if (!$result) {
     $queue = DrupalQueue::get('eximport_queue');
-    $queue->createItem(['iso' => $args['iso'], 'json' => $args['json']]);
+    $queue->createItem(['iso' => $args['iso'], 'data' => $args['data']]);
   }
 }
 
@@ -89,15 +87,58 @@ function node_eximport_import_entity()
     // дешифровать данные
     $json = helper_decrypt(EXIMPORT_CRYPTO_KEY, $_POST['data']);
     $data = drupal_json_decode($json);
-    watchdog('eximport', 'node_eximport_import_entity fired. <pre>@data</pre>', ['@data' => print_r($data, true)]);
+
     if (isset($data['entity_type'])) {
+      $info = entity_get_info($data['entity_type']);
       $entity_arr = $data['entity'];
+      $entity_orig_id = $entity_arr[$info["entity keys"]["id"]];
+
+      // записать значение оригинального ID
+      $entity_arr['field_eximport_entity_id'][LANGUAGE_NONE][0]['value'] = $entity_orig_id;
+
+      // создать (если отсутствует) поле и экземпляр для хранения оригинального ID
+      if (!field_info_field('field_eximport_entity_id')) {
+        $field = [
+          'field_name'   => 'field_eximport_entity_id',
+          'type'         => 'text',
+        ];
+        field_create_field($field);
+      }
+      if (!field_info_instance($data['entity_type'], 'field_eximport_entity_id', $entity_arr[$info["entity keys"]["bundle"]])) {
+        $instance = [
+          'field_name' => 'field_eximport_entity_id',
+          'entity_type' => $data['entity_type'],
+          'bundle' => $entity_arr[$info["entity keys"]["bundle"]],
+          'label' => t('Original exported entity ID'),
+          'type' => 'text',
+        ];
+        field_create_instance($instance);
+      }
+
+      // проверка на существование сущности
+      $query = new EntityFieldQuery();
+      $result = $query
+        ->entityCondition('entity_type', $data['entity_type'])
+        ->fieldCondition('field_eximport_entity_id', 'value', $entity_orig_id)
+        ->execute();
+      if (!empty($result[$data['entity_type']])) {
+        $entity_id = reset($result[$data['entity_type']])->{$info["entity keys"]["id"]};
+        $entity_arr[$info["entity keys"]["id"]] = $entity_id;
+        $entity_arr['is_new'] = false;
+      } else {
+        // сбросить id, чтобы сущность считалась новой
+        unset($entity_arr[$info["entity keys"]["id"]]);
+      }
+      unset($entity_arr[$info["entity keys"]["revision"]]);
+
+      // создать сущность
       $entity = entity_create($data['entity_type'], $entity_arr);
+
+      // сохранить сущность
       $result = (bool) entity_save($data['entity_type'], $entity);
 
       // node_save (и другие?) не возвращает результат, проверяем по наличию ID
       if (in_array($data['entity_type'], ['node'])) {
-        $info = entity_get_info($data['entity_type']);
         if (!empty($entity->{$info["entity keys"]["id"]})) {
           $result = true;
         }
@@ -105,6 +146,54 @@ function node_eximport_import_entity()
     }
   }
 
+  if (!$result) {
+    watchdog('eximport', 'Неудачный импорт сущности @entity_type. <pre>@entity_arr</pre>', ['@entity_type' => $data['entity_type'], '@data' => print_r($entity_arr, true)]);
+  }
+
   drupal_json_output(['result' => $result]);
   drupal_exit();
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function node_eximport_form_node_form_alter(&$form, &$form_state)
+{
+  if (!user_has_role(ADMIN_RID)){
+    // убрать доступ к полю оригинального ID
+    if (isset($form["field_eximport_entity_id"])) {
+      $form["field_eximport_entity_id"]["#access"] = false;
+    }
+
+    // добавить опцию публикации на международные сайты
+    // только для базового сайта
+    if ($GLOBALS["base_root"] == 'http://kccc.local') {
+      if (in_array($form["type"]["#value"], ['article'])) {
+        $countries = [
+          'kz' => 'Казахстан',
+          'mg' => 'Монголия',
+        ];
+        $form["options"]["countries"] = [
+          '#type' => 'checkboxes',
+          '#title' => 'Опубликовать также на сайтах стран:',
+          '#options' => $countries,
+        ];
+
+        $form["#submit"][] = 'node_eximport_form_node_form_submit';
+      }
+    }
+
+  }
+}
+
+function node_eximport_form_node_form_submit($form, $form_state)
+{
+  $countries = [];
+  foreach ($form_state['values']['countries'] as $country => $value) {
+    if ($value) $countries[] = $country;
+  }
+
+  if ($countries) {
+    node_eximport_export_entity('node', $form_state["values"]["nid"], $countries);
+  }
 }
