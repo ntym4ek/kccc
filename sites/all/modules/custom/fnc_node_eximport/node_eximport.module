@@ -1,0 +1,110 @@
+<?php
+
+const KZ = 'https://kz.kccc.ru';
+const EXIMPORT_CRYPTO_KEY = 'Kccc613048';
+
+/**
+ * Implements hook_menu().
+ */
+function node_eximport_menu()
+{
+  $items['api/1/eximport'] = array(
+    'page callback' => 'node_eximport_import_entity',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function node_eximport_cron_queue_info()
+{
+  $queues['eximport_queue'] = [
+    'worker callback' => 'node_eximport_process_item',
+  ];
+
+  return $queues;
+}
+
+function node_eximport_export_entity($entity_type, $eid, $countries)
+{
+  $info = entity_get_info($entity_type);
+  $entity = entity_load_single($entity_type, $eid);
+  // сбросить id, чтобы сущность считалась новой
+  unset($entity->{$info["entity keys"]["id"]});
+  unset($entity->{$info["entity keys"]["revision"]});
+  $data = [
+    'entity_type' => $entity_type,
+    'entity' => $entity,
+  ];
+
+  // создать задания на отправку массив на сайты
+  $queue = DrupalQueue::get('eximport_queue');
+  $queue->deleteQueue();
+  foreach ($countries as $iso) {
+    $queue->createItem(['iso' => $iso, 'data' => $data]);
+  }
+}
+
+function node_eximport_process_item($args)
+{
+  // данные нужно зашифровать, во избежание стороннего доступа
+  $data = helper_encrypt(EXIMPORT_CRYPTO_KEY, drupal_json_encode($args['data']));
+
+  // определить целевой сайт
+  $target_url = '';
+  switch ($args['iso']) {
+//    case 'kz' : $target_url = KZ;
+    case 'kz' : $target_url = 'http://kccc.local';
+  }
+
+  // сделать запрос
+  if ($target_url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target_url . '/api/1/eximport');
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['data' => $data]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    if ($response = curl_exec($ch)) {
+
+    }
+    curl_close($ch);
+  }
+
+  // todo в случае неудачи, добавить запрос в конец очереди
+  if (false) {
+    $queue = DrupalQueue::get('eximport_queue');
+    $queue->createItem(['iso' => $args['iso'], 'json' => $args['json']]);
+  }
+}
+
+function node_eximport_import_entity()
+{
+  $result = false;
+
+  if ($_POST['data']) {
+    // дешифровать данные
+    $json = helper_decrypt(EXIMPORT_CRYPTO_KEY, $_POST['data']);
+    $data = drupal_json_decode($json);
+    watchdog('eximport', 'node_eximport_import_entity fired. <pre>@data</pre>', ['@data' => print_r($data, true)]);
+    if (isset($data['entity_type'])) {
+      $entity_arr = $data['entity'];
+      $entity = entity_create($data['entity_type'], $entity_arr);
+      $result = (bool) entity_save($data['entity_type'], $entity);
+
+      // node_save (и другие?) не возвращает результат, проверяем по наличию ID
+      if (in_array($data['entity_type'], ['node'])) {
+        $info = entity_get_info($data['entity_type']);
+        if (!empty($entity->{$info["entity keys"]["id"]})) {
+          $result = true;
+        }
+      }
+    }
+  }
+
+  drupal_json_output(['result' => $result]);
+  drupal_exit();
+}

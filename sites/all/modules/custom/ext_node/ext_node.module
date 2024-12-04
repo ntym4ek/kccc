@@ -438,20 +438,35 @@ function ext_node_form_node_form_alter(&$form, &$form_state)
     }
 
     // добавить опцию публикации на международные сайты
-    if (in_array($form["type"]["#value"], ['article'])) {
-      $countries = [
-        'kz' => 'Казахстан',
-        'MG' => 'Монголия',
-      ];
-      $form["options"]["countries"] = [
-        '#type' => 'checkboxes',
-        '#title' => 'Опубликовать также на сайтах стран:',
-        '#options' => $countries,
-      ];
+    // только для базового сайта
+    if ($GLOBALS["base_root"] == 'http://kccc.local') {
+      if (in_array($form["type"]["#value"], ['article'])) {
+        $countries = [
+          'kz' => 'Казахстан',
+          'mg' => 'Монголия',
+        ];
+        $form["options"]["countries"] = [
+          '#type' => 'checkboxes',
+          '#title' => 'Опубликовать также на сайтах стран:',
+          '#options' => $countries,
+        ];
+
+        $form["#submit"][] = 'ext_node_form_node_form_submit';
+      }
     }
   }
 }
+function ext_node_form_node_form_submit($form, $form_state)
+{
+  $countries = [];
+  foreach ($form_state['values']['countries'] as $country => $value) {
+    if ($value) $countries[] = $country;
+  }
 
+  if ($countries) {
+    node_eximport_export_entity('node', $form_state["values"]["nid"], $countries);
+  }
+}
 
 /**
  * Implements hook_entity_property_info_alter.
