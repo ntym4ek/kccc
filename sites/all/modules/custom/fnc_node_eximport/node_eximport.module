@@ -5,6 +5,7 @@ const EXIMPORT_SITES_DEST = [
   'kz' => ['url' => 'https://kz.kccc.ru', 'label' => 'Казахстан'],
 ];
 const EXIMPORT_CRYPTO_KEY = 'Kccc613048';
+const EXIMPORT_PUBLISH_TYPES = ['article', 'blog', 'review', 'video'];          // типы материалов, для которых доступна функция дублирования
 
 /**
  * Implements hook_menu().
@@ -88,14 +89,9 @@ function node_eximport_import_entity()
 
     if (isset($data['entity_type'])) {
       $info = entity_get_info($data['entity_type']);
-      $entity_arr = $data['entity'];
-      $entity_orig_id = $entity_arr[$info["entity keys"]["id"]];
-
-      // убрать сведения о переводах
-      unset($entity_arr['translations']);
-
-      // записать значение оригинального ID
-      $entity_arr['field_eximport_entity_id'][LANGUAGE_NONE][0]['value'] = $entity_orig_id;
+      $prop_info = entity_get_property_info($data['entity_type'])['properties'];
+      $entity_orig_arr = $data['entity'];
+      $entity_orig_id = $entity_orig_arr[$info["entity keys"]["id"]];
 
       // создать (если отсутствует) поле и экземпляр для хранения оригинального ID
       if (!field_info_field('field_eximport_entity_id')) {
@@ -105,11 +101,11 @@ function node_eximport_import_entity()
         ];
         field_create_field($field);
       }
-      if (!field_info_instance($data['entity_type'], 'field_eximport_entity_id', $entity_arr[$info["entity keys"]["bundle"]])) {
+      if (!field_info_instance($data['entity_type'], 'field_eximport_entity_id', $entity_orig_arr[$info["entity keys"]["bundle"]])) {
         $instance = [
           'field_name' => 'field_eximport_entity_id',
           'entity_type' => $data['entity_type'],
-          'bundle' => $entity_arr[$info["entity keys"]["bundle"]],
+          'bundle' => $entity_orig_arr[$info["entity keys"]["bundle"]],
           'label' => t('Original exported entity ID'),
           'type' => 'text',
           'display' => array(
@@ -129,33 +125,43 @@ function node_eximport_import_entity()
         ->execute();
       if (!empty($result[$data['entity_type']])) {
         $entity_id = reset($result[$data['entity_type']])->{$info["entity keys"]["id"]};
-        $entity_arr[$info["entity keys"]["id"]] = $entity_id;
-        unset($entity_arr[$info["entity keys"]["revision"]]);
-        $entity_arr['is_new'] = false;
+        $entity = entity_load_single($data['entity_type'], $entity_id);
       } else {
-        // сбросить id, чтобы сущность считалась новой
-        $entity_arr[$info["entity keys"]["id"]] = '';
-        $entity_arr[$info["entity keys"]["revision"]] = '';
+        $entity_arr = [];
+
+        // скопировать свойства сущности
+        foreach ($prop_info as $name => $prop) {
+          if (isset($prop['schema field']) && !in_array($name, ['nid', 'vid'])) {
+            $entity_arr[$prop['schema field']] = $entity_orig_arr[$prop['schema field']];
+          }
+        }
+        // создать сущность
+        $entity = entity_create($data['entity_type'], $entity_arr);
       }
 
-      // найти поля файлов и изображений и скачать их
-      foreach (field_info_instances($data['entity_type'], $entity_arr[$info["entity keys"]["bundle"]]) as $field_name => $instance) {
+      // скопировать поля
+      foreach (field_info_instances($data['entity_type'], $entity_orig_arr[$info["entity keys"]["bundle"]]) as $field_name => $instance) {
         $field_info = field_info_field($field_name);
+        // файлов и изображений скачать
         if (in_array($field_info['type'], ['image', 'file'])) {
-          foreach ($entity_arr[$field_name] as $lang => $lang_value) {
+          foreach ($entity_orig_arr[$field_name] as $lang => $lang_value) {
             foreach ($lang_value as $key => $field) {
               $file_uri = $field["uri"];
               $file_url = str_replace('public://', EXIMPORT_SITE_SOURCE . '/sites/default/files/', $file_uri);
-              $entity_arr[$field_name][$lang][$key] = (array) system_retrieve_file($file_url, 'temporary://', false);
-              $entity_arr[$field_name][$lang][$key]['alt'] = $field['alt'];
-              $entity_arr[$field_name][$lang][$key]['title'] = $field['title'];
+              $entity->{$field_name}[$lang][$key] = (array) system_retrieve_file($file_url, 'temporary://', true);
+              $entity->{$field_name}[$lang][$key]['alt'] = $field['alt'];
+              $entity->{$field_name}[$lang][$key]['title'] = $field['title'];
             }
           }
         }
+        // остальные скопировать
+        elseif ($field_name != 'field_eximport_entity_id') {
+          $entity->{$field_name} = $entity_orig_arr[$field_name];
+        }
       }
 
-      // создать сущность
-      $entity = entity_create($data['entity_type'], $entity_arr);
+      // записать значение оригинального ID
+      $entity->field_eximport_entity_id[LANGUAGE_NONE][0]['value'] = $entity_orig_id;
 
       // сохранить сущность
       $result = (bool) entity_save($data['entity_type'], $entity);
@@ -170,7 +176,7 @@ function node_eximport_import_entity()
   }
 
   if (!$result) {
-    watchdog('eximport', 'Неудачный импорт сущности @entity_type. <pre>@entity_arr</pre>', ['@entity_type' => $data['entity_type'], '@data' => print_r($entity_arr, true)]);
+    watchdog('eximport', 'Неудачный импорт сущности @entity_type. <pre>@entity_arr</pre>', ['@entity_type' => $data['entity_type'], '@data' => print_r($entity_orig_arr, true)]);
     //              watchdog('eximport', 'ссылка @url<br> <pre>@entity_arr</pre>', ['@url' => $file_url, '@entity_arr' => print_r($a, true)]);
   }
 
@@ -186,7 +192,7 @@ function node_eximport_form_node_form_alter(&$form, &$form_state)
   // добавить опцию публикации на международные сайты
   // только для базового сайта
   if ($GLOBALS["base_root"] == EXIMPORT_SITE_SOURCE) {
-    if (in_array($form["type"]["#value"], ['article'])) {
+    if (in_array($form["type"]["#value"], EXIMPORT_PUBLISH_TYPES)) {
       $countries = [];
       foreach(EXIMPORT_SITES_DEST as $iso => $value) {
         $countries[$iso] = $value['label'];
