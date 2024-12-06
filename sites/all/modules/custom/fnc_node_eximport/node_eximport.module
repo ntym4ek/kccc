@@ -1,6 +1,9 @@
 <?php
 
-const KZ = 'https://kz.kccc.ru';
+const EXIMPORT_SITE_SOURCE = 'https://kccc.ru';
+const EXIMPORT_SITES_DEST = [
+  'kz' => ['url' => 'https://kz.kccc.ru', 'label' => 'Казахстан'],
+];
 const EXIMPORT_CRYPTO_KEY = 'Kccc613048';
 
 /**
@@ -51,11 +54,7 @@ function node_eximport_process_item($args)
   $data = helper_encrypt(EXIMPORT_CRYPTO_KEY, drupal_json_encode($args['data']));
 
   // определить целевой сайт
-  $target_url = '';
-  switch ($args['iso']) {
-//    case 'kz' : $target_url = KZ;
-    case 'kz' : $target_url = 'http://kccc.local';
-  }
+  $target_url = EXIMPORT_SITES_DEST[$args['iso']]['url'];
 
   // сделать запрос
   $result = false;
@@ -74,8 +73,7 @@ function node_eximport_process_item($args)
 
   // в случае неудачи, добавить запрос в конец очереди
   if (!$result) {
-    $queue = DrupalQueue::get('eximport_queue');
-    $queue->createItem(['iso' => $args['iso'], 'data' => $args['data']]);
+    watchdog('eximport', 'Неудачный экспорт сущности @entity_type. <pre>@entity_arr</pre>', ['@entity_type' => $args['data']['entity_type'], '@entity_arr' => print_r($args['data']['entity'], true)]);
   }
 }
 
@@ -92,6 +90,9 @@ function node_eximport_import_entity()
       $info = entity_get_info($data['entity_type']);
       $entity_arr = $data['entity'];
       $entity_orig_id = $entity_arr[$info["entity keys"]["id"]];
+
+      // убрать сведения о переводах
+      unset($entity_arr['translations']);
 
       // записать значение оригинального ID
       $entity_arr['field_eximport_entity_id'][LANGUAGE_NONE][0]['value'] = $entity_orig_id;
@@ -111,6 +112,11 @@ function node_eximport_import_entity()
           'bundle' => $entity_arr[$info["entity keys"]["bundle"]],
           'label' => t('Original exported entity ID'),
           'type' => 'text',
+          'display' => array(
+            'default' => array(
+              'type' => 'hidden'
+            ),
+          )
         ];
         field_create_instance($instance);
       }
@@ -124,12 +130,29 @@ function node_eximport_import_entity()
       if (!empty($result[$data['entity_type']])) {
         $entity_id = reset($result[$data['entity_type']])->{$info["entity keys"]["id"]};
         $entity_arr[$info["entity keys"]["id"]] = $entity_id;
+        unset($entity_arr[$info["entity keys"]["revision"]]);
         $entity_arr['is_new'] = false;
       } else {
         // сбросить id, чтобы сущность считалась новой
-        unset($entity_arr[$info["entity keys"]["id"]]);
+        $entity_arr[$info["entity keys"]["id"]] = '';
+        $entity_arr[$info["entity keys"]["revision"]] = '';
       }
-      unset($entity_arr[$info["entity keys"]["revision"]]);
+
+      // найти поля файлов и изображений и скачать их
+      foreach (field_info_instances($data['entity_type'], $entity_arr[$info["entity keys"]["bundle"]]) as $field_name => $instance) {
+        $field_info = field_info_field($field_name);
+        if (in_array($field_info['type'], ['image', 'file'])) {
+          foreach ($entity_arr[$field_name] as $lang => $lang_value) {
+            foreach ($lang_value as $key => $field) {
+              $file_uri = $field["uri"];
+              $file_url = str_replace('public://', EXIMPORT_SITE_SOURCE . '/sites/default/files/', $file_uri);
+              $entity_arr[$field_name][$lang][$key] = (array) system_retrieve_file($file_url, 'temporary://', false);
+              $entity_arr[$field_name][$lang][$key]['alt'] = $field['alt'];
+              $entity_arr[$field_name][$lang][$key]['title'] = $field['title'];
+            }
+          }
+        }
+      }
 
       // создать сущность
       $entity = entity_create($data['entity_type'], $entity_arr);
@@ -148,6 +171,7 @@ function node_eximport_import_entity()
 
   if (!$result) {
     watchdog('eximport', 'Неудачный импорт сущности @entity_type. <pre>@entity_arr</pre>', ['@entity_type' => $data['entity_type'], '@data' => print_r($entity_arr, true)]);
+    //              watchdog('eximport', 'ссылка @url<br> <pre>@entity_arr</pre>', ['@url' => $file_url, '@entity_arr' => print_r($a, true)]);
   }
 
   drupal_json_output(['result' => $result]);
@@ -159,30 +183,29 @@ function node_eximport_import_entity()
  */
 function node_eximport_form_node_form_alter(&$form, &$form_state)
 {
+  // добавить опцию публикации на международные сайты
+  // только для базового сайта
+  if ($GLOBALS["base_root"] == EXIMPORT_SITE_SOURCE) {
+    if (in_array($form["type"]["#value"], ['article'])) {
+      $countries = [];
+      foreach(EXIMPORT_SITES_DEST as $iso => $value) {
+        $countries[$iso] = $value['label'];
+      }
+      $form["options"]["countries"] = [
+        '#type' => 'checkboxes',
+        '#title' => 'Опубликовать также на сайтах стран:',
+        '#options' => $countries,
+      ];
+
+      $form["#submit"][] = 'node_eximport_form_node_form_submit';
+    }
+  }
+
   if (!user_has_role(ADMIN_RID)){
     // убрать доступ к полю оригинального ID
     if (isset($form["field_eximport_entity_id"])) {
       $form["field_eximport_entity_id"]["#access"] = false;
     }
-
-    // добавить опцию публикации на международные сайты
-    // только для базового сайта
-    if ($GLOBALS["base_root"] == 'http://kccc.local') {
-      if (in_array($form["type"]["#value"], ['article'])) {
-        $countries = [
-          'kz' => 'Казахстан',
-          'mg' => 'Монголия',
-        ];
-        $form["options"]["countries"] = [
-          '#type' => 'checkboxes',
-          '#title' => 'Опубликовать также на сайтах стран:',
-          '#options' => $countries,
-        ];
-
-        $form["#submit"][] = 'node_eximport_form_node_form_submit';
-      }
-    }
-
   }
 }
 

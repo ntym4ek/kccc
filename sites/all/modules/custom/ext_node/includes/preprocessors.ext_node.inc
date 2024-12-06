@@ -151,13 +151,13 @@ function ext_node_replacements_list()
       'kccc.ru',
       'KCCC', 'КССС',
     ],
-    'url' => 'https://kccc.ru/o-kompanii',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/o-kompanii'),
   ];
   $result[] = [
     'needles' => [
       'представитель', 'представителей', 'представителя', 'представителю',
     ],
-    'url' => 'https://kccc.ru/predstaviteli',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/predstaviteli'),
   ];
   $result[] = [
     'needles' => [
@@ -165,7 +165,7 @@ function ext_node_replacements_list()
       'испытания', 'испытаний', 'испытании',
       'опыты', 'опытов',
     ],
-    'url' => 'https://kccc.ru/preparaty-v-pole',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/preparaty-v-pole'),
   ];
   $result[] = [
     'needles' => [
@@ -173,25 +173,25 @@ function ext_node_replacements_list()
       'специалист', 'специалистов', 'специалиста', 'специалисту', 'специалистам',
       'эксперт по защите растений', 'эксперт', 'экспертов', 'эксперта', 'эксперту', 'экспертам'
     ],
-    'url' => 'https://kccc.ru/eksperty',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/eksperty'),
   ];
   $result[] = [
     'needles' => [
       'агрокалькулятор', 'агрокалькуляторе', 'агрокалькулятором',
     ],
-    'url' => 'https://kccc.ru/agro-kalkulator',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/agro-kalkulator'),
   ];
   $result[] = [
     'needles' => [
       'справочник', 'справочнике', 'справочники', 'справочником', 'справочниками',
     ],
-    'url' => 'https://kccc.ru/spravochniki',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/spravochniki'),
   ];
   $result[] = [
     'needles' => [
       'программы защиты', 'программа защиты', 'программ защиты', 'системы защиты', 'система защиты', 'систем защиты'
     ],
-    'url' => 'https://kccc.ru/programmy-zashchity',
+    'url' => ext_node_prepare_pp_url('https://kccc.ru/programmy-zashchity'),
   ];
 
   // препараты
@@ -354,4 +354,22 @@ function ext_node_text_typograph_request($text)
   curl_close($ch);
 
   return $response ?? false;
+}
+
+/**
+ * Вернуть относительную или абсолютную ссылку в зависимости
+ * от её существования на текущем сайте
+ *
+ * @param $path - абсолютная ссылка
+ */
+function ext_node_prepare_pp_url($path_abs)
+{
+  global $base_url;
+
+  $path_rel = str_replace('https://kccc.ru', '', $path_abs);
+  if (!drupal_valid_path($base_url . $path_rel) && !drupal_lookup_path('source', $base_url . $path_rel)) {
+    return $path_abs;
+  } else {
+    return $path_rel;
+  }
 }
