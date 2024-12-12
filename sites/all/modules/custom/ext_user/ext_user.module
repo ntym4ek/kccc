@@ -16,7 +16,8 @@ const OFFICE_SALES_MANAGER = 229;
 const OFFICE_SALES_REPRESENTATIVE = 230;
 const OFFICE_SALES_EXPERT = 231;
 const OFFICE_SALES_SPECIALIST = 232;
-const OFFICE_DEALER = 879;
+const OFFICE_FOREIGN_DEALER = 985;
+const OFFICE_FOREIGN_DISTRIBUTOR = 879;
 
 /**
  * Implements hook_init().
@@ -432,7 +433,7 @@ function ext_user_form_user_profile_form_alter(&$form, &$form_state)
     }
 
     // показывать регионы только для отдела продаж
-    foreach ([OFFICE_SALES_DIR_HEAD, OFFICE_SALES_MANAGER, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT, OFFICE_SALES_REPRESENTATIVE, OFFICE_DEALER] as $office) {
+    foreach ([OFFICE_SALES_DIR_HEAD, OFFICE_SALES_MANAGER, OFFICE_SALES_SPECIALIST, OFFICE_SALES_EXPERT, OFFICE_SALES_REPRESENTATIVE, OFFICE_FOREIGN_DISTRIBUTOR, OFFICE_FOREIGN_DEALER] as $office) {
       $form["profile_staff"]["field_regions"]["und"]['#states']['visible'][':input[name="profile_staff[field_staff_office][und]"]'][] = ['value' => $office];
     }
 

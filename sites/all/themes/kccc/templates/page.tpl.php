@@ -223,7 +223,7 @@
                       <li><a id="pricelist" href="<?php print $price_list_url; ?>" title="<?php print t('Download price-list'); ?>" download><?php print t('Price-list'); ?></a></li>
                     <?php endif;?>
                     <?php if (isset($catalog_url)): ?>
-                      <li><a id="catalog_pdf" href="<?php print $catalog_url; ?>" title="<?php print t('Download catalog'); ?>" download><?php print t('Catalog for'); ?> <?php print date('Y'); ?> <?php print t('year'); ?></a></li>
+                      <li><a id="catalog_pdf" href="<?php print $catalog_url; ?>" title="<?php print t('Download catalog'); ?>" download><?php print t('Products catalog'); ?></a></li>
                     <?php endif;?>
                   </ul>
                 </div>

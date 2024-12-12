@@ -34,6 +34,7 @@
             </div>
             </div>
           </div>
+          <?php if ($GLOBALS["base_root"] != 'https://kz.kccc.ru'): ?>
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
@@ -44,6 +45,7 @@
             </div>
             </div>
           </div>
+          <?php endif; ?>
           <div class="col-xs-6">
             <div class="b">
             <div class="contact hover-raise">
@@ -59,7 +61,8 @@
 
       <div class="col-xs-12 col-md-6 col-lg-8">
         <div class="map">
-          <img src="/sites/all/modules/custom/ext_block/images/map.jpg" alt="<?php print t('Representative offices of TH «KCCC» LLC'); ?>">
+          <?php $iso = $GLOBALS["base_root"] == 'https://kz.kccc.ru' ? 'kz' : 'ru'; ?>
+          <img src="/sites/all/modules/custom/ext_block/images/map-<?php print $iso; ?>.jpg" alt="<?php print t('Representative offices of TH «KCCC» LLC'); ?>">
         </div>
       </div>
     </div>
