@@ -17,6 +17,13 @@ function kccc_preprocess_page(&$vars)
     ], 'description');
   }
 
+  // -- Меняем заголовок страницы
+  // т.к. не получилось это сделать из настроек
+  if (arg(0) == 'privacy-policy') {
+    drupal_set_title(t('The policy regarding the processing of personal data'));
+    $vars['banner_title'] = drupal_get_title();
+  }
+
   // -- Переключатель языка
   $path = drupal_is_front_page() ? '<front>' : $_GET['q'];
   if ($links = language_negotiation_get_switch_links('language', $path)) {

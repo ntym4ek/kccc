@@ -84,7 +84,17 @@ function sec_branches_page()
 
 function sec_branches_get_branches()
 {
-  $branches = [];
+  $branches = [
+    'RU-KIR' => [[
+      'target' => 'Главный офис',
+      'address' => '613048, Кировская область, г. Кирово-Чепецк, ул.Производственная, 6',
+      'phones' => [
+        ['raw' => str_replace(['(', ')', '-', ' '], '', variable_get('phone_reception', '8 (8332) 76-15-30')), 'txt' => variable_get('phone_reception', '8 (8332) 76-15-30')],
+      ],
+      'schedule' => 'Пн-Пт  8:00-17:00',
+      'coords' => ['x' => 58.540577, 'y' => 49.976613],
+    ]],
+  ];
   $voc = taxonomy_vocabulary_machine_name_load('warehouses');
   if ($voc && $terms = taxonomy_get_tree($voc->vid)) {
       foreach ($terms as $term) {

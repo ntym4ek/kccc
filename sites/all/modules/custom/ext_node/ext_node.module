@@ -121,7 +121,6 @@ function ext_node_preprocess_page(&$vars)
       }
     }
   }
-
 }
 
 /**
@@ -251,7 +250,7 @@ function ext_node_preprocess_node(&$vars)
 
     if ($vars['view_mode'] == 'full') {
       // категория препарата для темизации в цвет
-      $vars['classes_array'][] = 'category-' . $category_tid = $vars["node"]->field_prep_category["und"][0]["tid"];
+      $vars['classes_array'][] = 'category-' . $vars["node"]->field_prep_category["und"][0]["tid"];
 
       // В зависимости от вида ссылки на странице препарата может выводиться разная информация.
       // Информация делится на секции: Описание, Опыт применения, Медиа, Документы
