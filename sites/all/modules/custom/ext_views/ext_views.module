@@ -63,6 +63,11 @@ function ext_views_preprocess_page(&$vars)
     }
     if (arg(0) == 'spravochniki') {
       $vars['banner_title'] = t('Handbooks');
+      if (arg(1) == 'pesticidy') $vars['banner_title'] = t('Pesticides handbook');
+      if (arg(1) == 'kultury') $vars['banner_title'] = t('Cultural plants handbook');
+      if (arg(1) == 'sornye-rasteniya') $vars['banner_title'] = t('Weeds handbook');
+      if (arg(1) == 'vrediteli') $vars['banner_title'] = t('Plants pests handbook');
+      if (arg(1) == 'bolezni') $vars['banner_title'] = t('Plants diseases handbook');
     }
     if (arg(0) == 'vakansii') {
       $vars['banner_title'] = t('Careers');

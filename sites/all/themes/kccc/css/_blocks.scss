@@ -897,3 +897,23 @@
   }
 
 }
+
+.block-facetapi,
+.block-current-search {
+  .block-title {
+    font-size: $font-size-base; font-weight: 600;
+  }
+
+  ul li {
+    display: flex; align-items: flex-start;
+    margin-left: 0;
+    list-style: none;
+    a { color: inherit; }
+    .form-item { margin-bottom: 0; } // для списков c AJAX
+  }
+  .form-type-checkbox {
+    display: flex; align-items: flex-start;
+    input { margin-top: 4px; margin-right: 10px; }
+    label { font-size: $font-size-small; font-weight: 400; }
+  }
+}

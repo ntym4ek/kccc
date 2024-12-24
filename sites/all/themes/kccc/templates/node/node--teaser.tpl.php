@@ -96,7 +96,7 @@
     <?php print drupal_render($images[0]); ?>
   </div>
 
-  <div class="title">
+  <div class="node-title">
     <a href="<?php print $node_url; ?>"><?php print $title; ?></a>
   </div>
 </div>
