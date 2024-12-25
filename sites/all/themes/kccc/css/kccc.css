@@ -1357,7 +1357,8 @@ fieldset {
   border: 0.5rem solid #43B02A85;
   font-size: 2rem; }
   #back-to-top .icon {
-    color: #43B02A; }
+    color: #43B02A;
+    margin: -1px; }
   @media only screen and (min-width: 1024px) {
     #back-to-top {
       font-size: 1.4rem; } }
@@ -1471,7 +1472,7 @@ fieldset {
   border: 1px solid transparent;
   border-radius: 1px;
   min-height: 2.3em;
-  padding: .45em 1em; }
+  padding: 0.45em 1em; }
 .btn.btn-default {
   background: #D9D9D9;
   border-color: #D9D9D9;
@@ -1550,7 +1551,7 @@ fieldset {
 .btn.btn-wide {
   padding-left: 3em;
   padding-right: 3em; }
-.btn.btn-full-wide {
+.btn.btn-full-wide, .btn.btn-full-width {
   width: 100%; }
 .btn.btn-full-height {
   display: inline-flex;

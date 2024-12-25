@@ -75,7 +75,10 @@ function ext_node_prepare_content_to_edit(&$form)
 function ext_node_remove_all_links($text)
 {
   // составить паттерн исключений, содержащих текст
-  $excludes_list = ['youtu.be', 'youtube.com', 'music.yandex.ru'];
+  $excludes_list = [
+    'youtu.be', 'youtube.com', 'rutube.ru', 'music.yandex.ru',
+    'kccc.ru/video', 'kccc.ru/blog', 'kccc.ru/novosti', 'kccc.ru/spravochniki', 'kccc.ru/agro-kalkulator', 'kccc.ru/programmy-zashchity', 'kccc.ru/preparaty-v-pole',
+  ];
   $excludes = [];
   foreach ($excludes_list as $item) {
     $excludes[] = '<a[^>]href="[^"]*' . $item . '[^"]*".*?</a>';
