@@ -2984,18 +2984,37 @@ ul.menu {
 .block-current-search .block-title {
   font-size: 1rem;
   font-weight: 600; }
-.block-facetapi ul li,
-.block-current-search ul li {
-  display: flex;
-  align-items: flex-start;
-  margin-left: 0;
-  list-style: none; }
-  .block-facetapi ul li a,
-  .block-current-search ul li a {
-    color: inherit; }
-  .block-facetapi ul li .form-item,
-  .block-current-search ul li .form-item {
-    margin-bottom: 0; }
+.block-facetapi [type=text],
+.block-current-search [type=text] {
+  padding: .35em .45rem;
+  color: #000;
+  font-size: 0.889rem;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ddd;
+  border-radius: 1px; }
+.block-facetapi .dropdown-filter,
+.block-current-search .dropdown-filter {
+  margin-bottom: .5rem; }
+.block-facetapi ul,
+.block-current-search ul {
+  border: 1px solid #eee;
+  padding: .5rem;
+  margin: 0;
+  overflow-x: auto;
+  max-height: 200px; }
+  .block-facetapi ul li,
+  .block-current-search ul li {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 0;
+    list-style: none; }
+    .block-facetapi ul li a,
+    .block-current-search ul li a {
+      color: inherit; }
+    .block-facetapi ul li .form-item,
+    .block-current-search ul li .form-item {
+      margin-bottom: 0; }
 .block-facetapi .form-type-checkbox,
 .block-current-search .form-type-checkbox {
   display: flex;
@@ -3004,10 +3023,15 @@ ul.menu {
   .block-current-search .form-type-checkbox input {
     margin-top: 4px;
     margin-right: 10px; }
-  .block-facetapi .form-type-checkbox label,
-  .block-current-search .form-type-checkbox label {
+  .block-facetapi .form-type-checkbox label, .block-facetapi .form-type-checkbox a,
+  .block-current-search .form-type-checkbox label,
+  .block-current-search .form-type-checkbox a {
     font-size: 0.889rem;
     font-weight: 400; }
+@media only screen and (min-width: 1366px) {
+  .block-facetapi ul,
+  .block-current-search ul {
+    max-height: 400px; } }
 
 .page40x {
   display: flex;
@@ -3305,6 +3329,11 @@ ul.menu {
   --swiper-navigation-size: 60px;
   --swiper-navigation-color: #43B02A;
   --swiper-theme-color: #43B02A; }
+
+*,
+html * {
+  scrollbar-width: thin;
+  scrollbar-color: #43B02A #f1f1f1; }
 
 i.icon {
   font-size: 1.8em; }
@@ -3841,6 +3870,14 @@ ul.action-links {
         flex-basis: 25%;
         max-width: 25%;
         padding: 0 1rem; } }
+  @media only screen and (min-width: 768px) {
+    .view .views-exposed-widgets .views-submit-button {
+      flex-basis: 25%;
+      max-width: 25%;
+      padding: 0 1rem; } }
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px) {
+    .view .views-exposed-widgets .views-submit-button .form-submit {
+      margin-top: 0; } }
 .view .node-teaser {
   box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.1); }
 .view .card {

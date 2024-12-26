@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file module file.
+ */
+
+/**
+ * Implements hook_facetapi_widgets().
+ */
+function ext_facetapi_facetapi_widgets() {
+  return array(
+    'facetapi_dropdowns_checkbox_links' => array(
+      'handler' => array(
+        'label' => t('Ajax dropdown links with checkboxes'),
+        'class' => 'FacetapiWidgetDropdownsCheckboxLinks',
+        'query types' => array('term', 'date'),
+      ),
+    ),
+  );
+}
+
+/**
+ * TODO
+ */
+// function facetapi_bootstrap_dropdown_widget_facet_items_alter(&$build, &$settings) {
+
+// }
+
+/**
+ * Implements hook_theme().
+ */
+function ext_facetapi_theme() {
+  return array(
+    'dropdown_facet' => array(
+      'render element' => 'element',
+      'file' => 'includes/facetapi_dropdown.theme.inc',
+    ),
+  );
+}

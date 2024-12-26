@@ -17,6 +17,12 @@
   //--swiper-pagination-bottom: 1rem;
 }
 
+*,
+html * {
+  scrollbar-width: thin;
+  scrollbar-color: $brand-color #f1f1f1;
+}
+
 // иконочный шрифт
 i.icon {
   font-size: 1.8em;
@@ -542,6 +548,13 @@ ul.action-links {
       @include col('xs', 12);
       @include col('md', 6);
       @include col('xl', 3);
+    }
+    .views-submit-button {
+      @include col('md', 3);
+
+      @media #{$phone-only, $smart-only} {
+        .form-submit { margin-top: 0; }
+      }
     }
   }
 

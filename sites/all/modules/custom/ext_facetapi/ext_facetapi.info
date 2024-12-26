@@ -1,0 +1,8 @@
+name = Ext Facet API Dropdown Widget
+description = Provides a dropdown with search for facets.
+dependencies[] = facetapi
+dependencies[] = search_api
+package = Custom
+core = 7.x
+files[] = plugins/facetapi/dropdown_widget.inc
+

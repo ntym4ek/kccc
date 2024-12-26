@@ -24,6 +24,9 @@ function ext_views_theme()
     'custom_pager'    => [
       'variables' => ['query' => null, 'total' => null, 'per_page' => null],
     ],
+    'bootstrap_dropdown_facet' => array(
+      'render element' => 'element',
+    ),
   ];
 }
 
@@ -189,3 +192,6 @@ function ext_views_form_views_exposed_form_alter(&$form, &$form_state, $form_id)
     }
   }
 }
+
+
+
