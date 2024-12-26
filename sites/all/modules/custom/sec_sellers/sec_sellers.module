@@ -100,7 +100,7 @@ function sec_sellers_page()
                 '</div>' .
               '</div>' .
             '</div>' .
-            ($GLOBALS["base_root"] == 'https://kccc.ru' ?
+            (in_array($GLOBALS["base_root"], ['https://kccc.ru', 'http://kccc.local']) ?
             '<div class="sellers-filter">' .
               drupal_render($form) .
             '</div>' : '') .
@@ -224,7 +224,7 @@ function sec_sellers_get_sellers_by_region()
         if ($uids = sec_sellers_get_users_at_region_ids([$aid])) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
-            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_MANAGER, OFFICE_FOREIGN_DISTRIBUTOR, OFFICE_FOREIGN_DEALER])) {
+            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_MANAGER, OFFICE_FOREIGN_HEAD])) {
               $sellers[$did]['areas'][$aid]['managers'][$uid] = $user_info;
               $sellers[$did]['sellers_count']++;
             }
@@ -238,10 +238,11 @@ function sec_sellers_get_sellers_by_region()
         }
 
         // Представители выбранных регионов
-        if ($uids = sec_sellers_get_users_at_region_ids($region_ids)) {
+        $uids = array_merge($uids, sec_sellers_get_users_at_region_ids($region_ids));
+        if ($uids) {
           foreach ($uids as $uid) {
             $user_info = ext_user_get_user_info($uid);
-            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_REPRESENTATIVE])) {
+            if (in_array($user_info["staff"]["office"]["id"], [OFFICE_SALES_REPRESENTATIVE, OFFICE_FOREIGN_DISTRIBUTOR, OFFICE_FOREIGN_DEALER])) {
               $sellers[$did]['areas'][$aid]['sellers'][$uid] = $user_info;
               $sellers[$did]['sellers_count']++;
             }
@@ -275,7 +276,7 @@ function sec_sellers_get_users_at_region_ids($region_ids)
     $users = $dbr->execute()->fetchCol();
   }
 
-  return $users ?? false;
+  return $users ?? [];
 }
 
 /**
