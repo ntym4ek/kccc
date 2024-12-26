@@ -24,6 +24,9 @@ function ext_views_theme()
     'custom_pager'    => [
       'variables' => ['query' => null, 'total' => null, 'per_page' => null],
     ],
+    'bootstrap_dropdown_facet' => array(
+      'render element' => 'element',
+    ),
   ];
 }
 
@@ -63,6 +66,11 @@ function ext_views_preprocess_page(&$vars)
     }
     if (arg(0) == 'spravochniki') {
       $vars['banner_title'] = t('Handbooks');
+      if (arg(1) == 'pesticidy') $vars['banner_title'] = t('Pesticides handbook');
+      if (arg(1) == 'kultury') $vars['banner_title'] = t('Cultural plants handbook');
+      if (arg(1) == 'sornye-rasteniya') $vars['banner_title'] = t('Weeds handbook');
+      if (arg(1) == 'vrediteli') $vars['banner_title'] = t('Plants pests handbook');
+      if (arg(1) == 'bolezni') $vars['banner_title'] = t('Plants diseases handbook');
     }
     if (arg(0) == 'vakansii') {
       $vars['banner_title'] = t('Careers');
@@ -159,3 +167,31 @@ function ext_views_views_filters_selective_sort_alter(array &$oids, $handler)
     if (strpos(drupal_strtolower($item), 'empty') !== false) unset($oids[$key]);
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ext_views_form_views_exposed_form_alter(&$form, &$form_state, $form_id)
+{
+  // По умолчанию views не видит настройки фасетных фильтров на странице.
+  // Если выполнить поиск в текстовой строке, то установки фасет блоков будут "забыты".
+  // Проверяем наличие установленных фильтров и добавляем их к параметрам.
+  // https://tech-tamer.com/drupal-7-refining-a-faceted-search-with-an-exposed-filter-solved/
+
+  // Add facets as hidden inputs to preserve selection.
+  if ( isset($_GET['k']) /* && ADD ANY OTHER VIEW-IDENTIFYING CODE DESIRED */ ) {
+    // Get the parameters from the current page request.
+    $params = drupal_get_query_parameters();
+    // Add the facet values as hidden elements to the form.
+    // The browser will turn them back into query parameters.
+    foreach ( $params['k'] as $delta => $value ) {
+      $form['f[' . $delta . ']'] = array(
+        '#type' => 'hidden',
+        '#value' => check_plain($value),
+      );
+    }
+  }
+}
+
+
+

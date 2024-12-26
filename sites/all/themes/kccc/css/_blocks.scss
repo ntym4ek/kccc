@@ -897,3 +897,42 @@
   }
 
 }
+
+.block-facetapi,
+.block-current-search {
+  .block-title {
+    font-size: $font-size-base; font-weight: 600;
+  }
+
+  [type=text] {
+    padding: .35em .45rem;
+    color: $text-color; font-size: $font-size-small;
+    background-color: #fff; background-image: none; border: $input-border-width solid #ddd; border-radius: $input-border-radius;
+  }
+  .dropdown-filter {
+    margin-bottom: .5rem;
+  }
+
+  ul {
+    border: 1px solid #eee;
+    padding: .5rem; margin: 0;
+    overflow-x: auto;
+    max-height: 200px;
+  li {
+      display: flex; align-items: flex-start;
+      margin-left: 0;
+      list-style: none;
+      a { color: inherit; }
+      .form-item { margin-bottom: 0; } // для списков c AJAX
+    }
+  }
+  .form-type-checkbox {
+    display: flex; align-items: flex-start;
+    input { margin-top: 4px; margin-right: 10px; }
+    label, a { font-size: $font-size-small; font-weight: 400; }
+  }
+
+  @media #{$laptop} {
+    ul { max-height: 400px; }
+  }
+}

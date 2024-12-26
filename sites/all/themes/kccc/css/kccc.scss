@@ -543,6 +543,17 @@ ul.action-links {
       @include col('md', 6);
       @include col('xl', 3);
     }
+    .views-submit-button {
+      @include col('md', 3);
+
+      @media #{$phone-only, $smart-only} {
+        .form-submit { margin-top: 0; }
+      }
+    }
+  }
+
+  .node-teaser {
+    box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.1);
   }
 
   .card {
@@ -555,6 +566,12 @@ ul.action-links {
 
   &.view-admin-views-user {
     .views-table { width: 100%; }
+  }
+  &.view-pesticides {
+    .views-widget-filter-search_api_views_fulltext {
+      @include col('xs', 12);
+      @include col('md', 9);
+    }
   }
 
   @media #{$laptop} {
@@ -830,7 +847,7 @@ ul.action-links {
     color: #fff; font-weight: 500;
     padding: .5rem 1rem;
   }
-  .title {
+  .node-title {
     font-weight: 700;
     padding: 1rem;
   }
@@ -838,7 +855,7 @@ ul.action-links {
 
   // тизер в сайдбаре
   .page-right & {
-    .title {
+    .node-title {
       font-size: $font-size-small; font-weight: 500; text-align: center;
       padding: 1rem .5rem;
     }
@@ -962,7 +979,7 @@ ul.action-links {
       height: 100%;
     }
     .top { text-align: center; }
-    .title {
+    .node-title {
       font-size: $font-size-h2; font-weight: 300;
       padding-bottom: 1rem;
     }
@@ -994,14 +1011,14 @@ ul.action-links {
 
     @media #{$tablet} {
       .top { text-align: left; }
-      .title { font-size: $font-size-h3; font-weight: 300; }
+      .node-title { font-size: $font-size-h3; font-weight: 300; }
       .summary { font-weight: 500; }
       .actions { text-align: left; }
     }
     @media #{$laptop} {
       margin-bottom: 4rem;
       .image { padding-right: 4rem; }
-      .title {
+      .node-title {
         font-size: $font-size-h1;
         padding-bottom: 2rem;
       }
@@ -1210,6 +1227,45 @@ ul.action-links {
 
   @media #{$tablet} {
     .block { margin-bottom: 4rem; }
+  }
+}
+
+.node-pesticide {
+  &.node-teaser {
+    .node-title { display: flex; justify-content: space-between; }
+    .field { margin-bottom: 0; }
+    .field-name-field-hp-gruppa { font-size: $font-size-small; }
+    .field-name-field-hp-registrant {
+      color: $text-light; font-size: $font-size-small; font-weight: 400;
+    }
+    .field-name-field-hp-dv {
+      font-size: $font-size-small;
+      padding: 0 1rem 1rem;
+    }
+  }
+
+  &.node-full {
+    .node-specs {
+      .field {
+        display: flex;
+        margin-bottom: 0;
+      }
+      .field-label {
+        font-weight: 400; text-align: right;
+        margin-right: 1rem;
+        width: 280px;
+        &:before { content: none; }
+      }
+    }
+    .node-reglaments {
+      table {
+        font-size: $font-size-small; font-weight: 400;
+        tr.even, tr.odd { background: none; }
+        th {
+          font-size: $font-size-small; font-weight: 400; text-align: center;
+        }
+      }
+    }
   }
 }
 

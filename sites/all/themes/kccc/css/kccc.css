@@ -2983,6 +2983,59 @@ ul.menu {
   .block-recommendations .instruction .text {
     padding-right: 2rem; } }
 
+.block-facetapi .block-title,
+.block-current-search .block-title {
+  font-size: 1rem;
+  font-weight: 600; }
+.block-facetapi [type=text],
+.block-current-search [type=text] {
+  padding: .35em .45rem;
+  color: #000;
+  font-size: 0.889rem;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ddd;
+  border-radius: 1px; }
+.block-facetapi .dropdown-filter,
+.block-current-search .dropdown-filter {
+  margin-bottom: .5rem; }
+.block-facetapi ul,
+.block-current-search ul {
+  border: 1px solid #eee;
+  padding: .5rem;
+  margin: 0;
+  overflow-x: auto;
+  max-height: 200px; }
+  .block-facetapi ul li,
+  .block-current-search ul li {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 0;
+    list-style: none; }
+    .block-facetapi ul li a,
+    .block-current-search ul li a {
+      color: inherit; }
+    .block-facetapi ul li .form-item,
+    .block-current-search ul li .form-item {
+      margin-bottom: 0; }
+.block-facetapi .form-type-checkbox,
+.block-current-search .form-type-checkbox {
+  display: flex;
+  align-items: flex-start; }
+  .block-facetapi .form-type-checkbox input,
+  .block-current-search .form-type-checkbox input {
+    margin-top: 4px;
+    margin-right: 10px; }
+  .block-facetapi .form-type-checkbox label, .block-facetapi .form-type-checkbox a,
+  .block-current-search .form-type-checkbox label,
+  .block-current-search .form-type-checkbox a {
+    font-size: 0.889rem;
+    font-weight: 400; }
+@media only screen and (min-width: 1366px) {
+  .block-facetapi ul,
+  .block-current-search ul {
+    max-height: 400px; } }
+
 .page40x {
   display: flex;
   flex-wrap: wrap;
@@ -3815,6 +3868,16 @@ ul.action-links {
         flex-basis: 25%;
         max-width: 25%;
         padding: 0 1rem; } }
+  @media only screen and (min-width: 768px) {
+    .view .views-exposed-widgets .views-submit-button {
+      flex-basis: 25%;
+      max-width: 25%;
+      padding: 0 1rem; } }
+  @media only screen and (max-width: 359px), only screen and (min-width: 360px) and (max-width: 767px) {
+    .view .views-exposed-widgets .views-submit-button .form-submit {
+      margin-top: 0; } }
+.view .node-teaser {
+  box-shadow: 1px 3px 17px rgba(0, 0, 0, 0.1); }
 .view .card {
   border-radius: 5px;
   color: #000; }
@@ -3826,6 +3889,15 @@ ul.action-links {
   padding: 1rem 0; }
 .view.view-admin-views-user .views-table {
   width: 100%; }
+.view.view-pesticides .views-widget-filter-search_api_views_fulltext {
+  flex-basis: 100%;
+  max-width: 100%;
+  padding: 0 1rem; }
+  @media only screen and (min-width: 768px) {
+    .view.view-pesticides .views-widget-filter-search_api_views_fulltext {
+      flex-basis: 75%;
+      max-width: 75%;
+      padding: 0 1rem; } }
 @media only screen and (min-width: 1366px) {
   .view .view-filters {
     margin-bottom: 1.5rem; }
@@ -4115,12 +4187,12 @@ ul.action-links {
   color: #fff;
   font-weight: 500;
   padding: .5rem 1rem; }
-.node-teaser .title {
+.node-teaser .node-title {
   font-weight: 700;
   padding: 1rem; }
 .node-teaser a {
   color: inherit; }
-.page-right .node-teaser .title {
+.page-right .node-teaser .node-title {
   font-size: 0.889rem;
   font-weight: 500;
   text-align: center;
@@ -4243,7 +4315,7 @@ ul.action-links {
     height: 100%; }
   .node-preparation .product-intro .top {
     text-align: center; }
-  .node-preparation .product-intro .title {
+  .node-preparation .product-intro .node-title {
     font-size: 1.667rem;
     font-weight: 300;
     padding-bottom: 1rem; }
@@ -4275,7 +4347,7 @@ ul.action-links {
   @media only screen and (min-width: 1024px) {
     .node-preparation .product-intro .top {
       text-align: left; }
-    .node-preparation .product-intro .title {
+    .node-preparation .product-intro .node-title {
       font-size: 1.333rem;
       font-weight: 300; }
     .node-preparation .product-intro .summary {
@@ -4287,7 +4359,7 @@ ul.action-links {
       margin-bottom: 4rem; }
       .node-preparation .product-intro .image {
         padding-right: 4rem; }
-      .node-preparation .product-intro .title {
+      .node-preparation .product-intro .node-title {
         font-size: 2.5rem;
         padding-bottom: 2rem; }
       .node-preparation .product-intro .specification {
@@ -4486,6 +4558,40 @@ ul.action-links {
 @media only screen and (min-width: 1024px) {
   .node-preparation .block {
     margin-bottom: 4rem; } }
+
+.node-pesticide.node-teaser .node-title {
+  display: flex;
+  justify-content: space-between; }
+.node-pesticide.node-teaser .field {
+  margin-bottom: 0; }
+.node-pesticide.node-teaser .field-name-field-hp-gruppa {
+  font-size: 0.889rem; }
+.node-pesticide.node-teaser .field-name-field-hp-registrant {
+  color: #7D7C7C;
+  font-size: 0.889rem;
+  font-weight: 400; }
+.node-pesticide.node-teaser .field-name-field-hp-dv {
+  font-size: 0.889rem;
+  padding: 0 1rem 1rem; }
+.node-pesticide.node-full .node-specs .field {
+  display: flex;
+  margin-bottom: 0; }
+.node-pesticide.node-full .node-specs .field-label {
+  font-weight: 400;
+  text-align: right;
+  margin-right: 1rem;
+  width: 280px; }
+  .node-pesticide.node-full .node-specs .field-label:before {
+    content: none; }
+.node-pesticide.node-full .node-reglaments table {
+  font-size: 0.889rem;
+  font-weight: 400; }
+  .node-pesticide.node-full .node-reglaments table tr.even, .node-pesticide.node-full .node-reglaments table tr.odd {
+    background: none; }
+  .node-pesticide.node-full .node-reglaments table th {
+    font-size: 0.889rem;
+    font-weight: 400;
+    text-align: center; }
 
 .node-page .files {
   margin-bottom: 2rem; }

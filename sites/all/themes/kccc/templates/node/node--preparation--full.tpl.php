@@ -97,7 +97,7 @@
       <div class="col-xs-12 col-md-8 col-lg-6">
         <div class="product-info">
           <div class="top hide-xs show-md">
-            <div class="title"><?php print $product_info['label']; ?></div>
+            <div class="node-title"><?php print $product_info['label']; ?></div>
             <div class="summary"><?php print $product_info['summary']; ?></div>
           </div>
           <div class="bottom">

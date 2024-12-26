@@ -193,7 +193,7 @@ function ext_admin_preprocess_page(&$vars)
 
 function ext_admin_execute_form($form, $form_state)
 {
-  $function = 'ext_admin_func_nodes_process';
+  $function = '';
 //  $function = 'ext_admin_func_preparations_import';
 //  $function = 'ext_admin_func_terms_process';
 //  $function = 'ext_admin_func_pvps_date_process';

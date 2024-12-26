@@ -83,20 +83,13 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
   <div class="node-info">
-    <div class="date"><?php print $date; ?></div>
-    <?php if (isset($stats['totalcount'])): ?>
-    <div class="stats">
-      <div class="media"><i class="icon icon-099"></i></div>
-      <div class="text"><?php print $stats['totalcount']; ?></div>
-    </div>
-    <?php endif; ?>
-  </div>
-
-  <div class="image">
-    <?php print drupal_render($images[0]); ?>
+    <?php print render($content['field_hp_gruppa']); ?>
   </div>
 
   <div class="node-title">
     <a href="<?php print $node_url; ?>"><?php print $title; ?></a>
+    <?php print render($content['field_hp_registrant']); ?>
   </div>
+
+  <?php print render($content['field_hp_dv']); ?>
 </div>

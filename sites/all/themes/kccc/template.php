@@ -352,3 +352,17 @@ function kccc_menu_breadcrumb_alter(&$active_trail, $item)
     $active_trail[0]["title"] = '';
   }
 }
+
+function kccc_facetapi_title($vars)
+{
+  // Сделать заголовки блоков фасетных фильтров мультиязычными
+  if (strpos($vars["facet"]["#settings"]->facet, 'field_hp_registrant') !== false) {
+    return t('Registrant');
+  }
+  if (strpos($vars["facet"]["#settings"]->facet, 'field_hp_gruppa') !== false) {
+    return t('Group');
+  }
+  if (strpos($vars["facet"]["#settings"]->facet, 'field_hp_pf') !== false) {
+    return t('Formulation');
+  }
+}
