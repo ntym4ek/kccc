@@ -882,9 +882,12 @@ html {
     html {
       font-size: 18px; } }
 
-* {
+*,
+html * {
   box-sizing: border-box;
-  outline: 0 !important; }
+  outline: 0 !important;
+  scrollbar-width: thin;
+  scrollbar-color: #43B02A #f1f1f1; }
 
 a {
   text-decoration: none; }
@@ -3330,11 +3333,6 @@ ul.menu {
   --swiper-navigation-color: #43B02A;
   --swiper-theme-color: #43B02A; }
 
-*,
-html * {
-  scrollbar-width: thin;
-  scrollbar-color: #43B02A #f1f1f1; }
-
 i.icon {
   font-size: 1.8em; }
   i.icon.icon-rounded {
@@ -4575,6 +4573,25 @@ ul.action-links {
 .node-pesticide.node-teaser .field-name-field-hp-dv {
   font-size: 0.889rem;
   padding: 0 1rem 1rem; }
+.node-pesticide.node-full .node-specs .field {
+  display: flex;
+  margin-bottom: 0; }
+.node-pesticide.node-full .node-specs .field-label {
+  font-weight: 400;
+  text-align: right;
+  margin-right: 1rem;
+  width: 280px; }
+  .node-pesticide.node-full .node-specs .field-label:before {
+    content: none; }
+.node-pesticide.node-full .node-reglaments table {
+  font-size: 0.889rem;
+  font-weight: 400; }
+  .node-pesticide.node-full .node-reglaments table tr.even, .node-pesticide.node-full .node-reglaments table tr.odd {
+    background: none; }
+  .node-pesticide.node-full .node-reglaments table th {
+    font-size: 0.889rem;
+    font-weight: 400;
+    text-align: center; }
 
 .node-page .files {
   margin-bottom: 2rem; }

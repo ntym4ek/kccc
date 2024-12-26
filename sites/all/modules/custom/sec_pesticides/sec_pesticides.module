@@ -237,3 +237,34 @@ function sec_pesticides_mcx_get_new_info()
   return $info;
 }
 
+/**
+ * Implements hook_preprocess_node().
+ */
+function sec_pesticides_preprocess_node(&$vars)
+{
+  if ($vars['view_mode'] == 'full' && $vars['node']->type == 'pesticide') {
+    // сформировать таблицу из регламентов
+    $header = [
+      'Культура (обрабатываемый объект)',
+      'Вредный объект',
+      'Норма применения препарата',
+      'Способ и время обработки',
+      'Срок ожидания (кратность обработок)',
+      'Сроки выхода для ручных и механизированных работ',
+    ];
+
+    $rows = [];
+    foreach($vars["field_hp_reglamenty"] as $reg) {
+      $rows[] = [
+        $reg["field_collection"]->field_hpr_koo["und"][0]["value"],
+        $reg["field_collection"]->field_hpr_vo["und"][0]["value"],
+        ['data' => $reg["field_collection"]->field_hpr_npp["und"][0]["value"], 'align' => 'center'],
+        $reg["field_collection"]->field_hpr_svo["und"][0]["value"],
+        ['data' => $reg["field_collection"]->field_hpr_soko["und"][0]["value"], 'align' => 'center'],
+        ['data' => $reg["field_collection"]->field_hpr_svrmr["und"][0]["value"], 'align' => 'center'],
+      ];
+    }
+
+    $vars['reglaments'] = theme('table', array('header' => $header, 'rows' => $rows, 'empty' => t('No strings available.')));
+  }
+}

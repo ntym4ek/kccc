@@ -17,12 +17,6 @@
   //--swiper-pagination-bottom: 1rem;
 }
 
-*,
-html * {
-  scrollbar-width: thin;
-  scrollbar-color: $brand-color #f1f1f1;
-}
-
 // иконочный шрифт
 i.icon {
   font-size: 1.8em;
@@ -1247,6 +1241,30 @@ ul.action-links {
     .field-name-field-hp-dv {
       font-size: $font-size-small;
       padding: 0 1rem 1rem;
+    }
+  }
+
+  &.node-full {
+    .node-specs {
+      .field {
+        display: flex;
+        margin-bottom: 0;
+      }
+      .field-label {
+        font-weight: 400; text-align: right;
+        margin-right: 1rem;
+        width: 280px;
+        &:before { content: none; }
+      }
+    }
+    .node-reglaments {
+      table {
+        font-size: $font-size-small; font-weight: 400;
+        tr.even, tr.odd { background: none; }
+        th {
+          font-size: $font-size-small; font-weight: 400; text-align: center;
+        }
+      }
     }
   }
 }
