@@ -929,7 +929,7 @@
   .form-type-checkbox {
     display: flex; align-items: flex-start;
     input { margin-top: 4px; margin-right: 10px; }
-    label, a { font-size: $font-size-small; font-weight: 400; }
+    &, label, a { font-size: $font-size-small; font-weight: 400; }
   }
 
   @media #{$laptop} {

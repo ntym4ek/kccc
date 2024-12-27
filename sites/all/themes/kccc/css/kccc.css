@@ -3026,7 +3026,8 @@ ul.menu {
   .block-current-search .form-type-checkbox input {
     margin-top: 4px;
     margin-right: 10px; }
-  .block-facetapi .form-type-checkbox label, .block-facetapi .form-type-checkbox a,
+  .block-facetapi .form-type-checkbox, .block-facetapi .form-type-checkbox label, .block-facetapi .form-type-checkbox a,
+  .block-current-search .form-type-checkbox,
   .block-current-search .form-type-checkbox label,
   .block-current-search .form-type-checkbox a {
     font-size: 0.889rem;
