@@ -179,16 +179,16 @@ function ext_views_form_views_exposed_form_alter(&$form, &$form_state, $form_id)
   // https://tech-tamer.com/drupal-7-refining-a-faceted-search-with-an-exposed-filter-solved/
 
   // Add facets as hidden inputs to preserve selection.
-  if ( isset($_GET['k']) /* && ADD ANY OTHER VIEW-IDENTIFYING CODE DESIRED */ ) {
+  if (arg(0) == 'spravochniki' && arg(1) == 'pesticidy' && !empty($_GET['k']) /* && ADD ANY OTHER VIEW-IDENTIFYING CODE DESIRED */ ) {
     // Get the parameters from the current page request.
     $params = drupal_get_query_parameters();
     // Add the facet values as hidden elements to the form.
     // The browser will turn them back into query parameters.
-    foreach ( $params['k'] as $delta => $value ) {
-      $form['f[' . $delta . ']'] = array(
+    foreach ($params['k'] as $delta => $value) {
+      $form['f[' . $delta . ']'] = [
         '#type' => 'hidden',
         '#value' => check_plain($value),
-      );
+      ];
     }
   }
 }
