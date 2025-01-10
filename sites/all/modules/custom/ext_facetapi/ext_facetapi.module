@@ -9,9 +9,9 @@
  */
 function ext_facetapi_facetapi_widgets() {
   return array(
-    'facetapi_dropdowns_checkbox_links' => array(
+    'facetapi_dropdown_ajax_checkboxes' => array(
       'handler' => array(
-        'label' => t('Ajax dropdown links with checkboxes'),
+        'label' => t('Ajax multiple checkboxes with dropdown'),
         'class' => 'FacetapiWidgetDropdownsCheckboxLinks',
         'query types' => array('term', 'date'),
       ),

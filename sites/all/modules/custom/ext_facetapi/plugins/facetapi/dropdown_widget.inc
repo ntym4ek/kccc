@@ -6,7 +6,7 @@
  * This widget renders facets in the same way as FacetapiWidgetLinks but uses
  * JavaScript to transform the links into checkboxes followed by the facet.
  */
-class FacetapiWidgetDropdownsCheckboxLinks extends FacetapiWidgetCheckboxLinks {
+class FacetapiWidgetDropdownsCheckboxLinks extends FacetapiAjaxWidgetCheckboxes {
 
   /**
    * Overrides FacetapiWidgetLinks::init().
@@ -24,6 +24,29 @@ class FacetapiWidgetDropdownsCheckboxLinks extends FacetapiWidgetCheckboxLinks {
   }
 
   /**
+   * Returns uuid for the facet widget.
+   * It's need to identify the facet option.
+   * @param null $value
+   *   Some facets have many separate input elements. For example checkboxes or links.
+   *   We need $value to identify each option.
+   */
+  protected function getAjaxFacetsUuid($value = NULL) {
+    $to_replace = ['_', ' ', ':'];
+    switch ($this->id) {
+      case 'facetapi_ajax_select':
+      case 'facetapi_ajax_ranges':
+        return str_replace('_', '-', $this->id) . '-' . str_replace($to_replace, '-', $this->key);
+        break;
+
+      case 'facetapi_ajax_links':
+      case 'facetapi_ajax_checkboxes':
+      case 'facetapi_dropdowns_ajax_checkboxes':
+        return str_replace('_', '-', $this->id) . '-' . str_replace($to_replace, '-', $this->key . '-' . drupal_strtolower($value));
+        break;
+    }
+  }
+
+  /**
    * Implements FacetapiWidget::execute().
    *
    * Transforms the render array into something that can be themed by
@@ -35,13 +58,32 @@ class FacetapiWidgetDropdownsCheckboxLinks extends FacetapiWidgetCheckboxLinks {
   public function execute() {
     $element = &$this->build[$this->facet['field alias']];
 
+    // сменить название виджета на 'facetapi_ajax_checkboxes'
+    // так как js обрабчик навешивается на виджеты по имени
+    $this->jsSettings["widget"] = 'facetapi_ajax_checkboxes';
+
+    // класс для списка, по которому скрипт добавляет поле ввода
+    $this->build['#attributes']['class'][] = 'dropdown-menu';
+
     // Sets each item's theme hook, builds item list.
     $this->setThemeHooks($element);
-    $element = array(
-      '#theme' => 'dropdown_facet',
+    $item_list = [
+      '#theme' => 'item_list',
       '#items' => $this->buildListItems($element),
       '#attributes' => $this->build['#attributes'],
-    );
+    ];
+
+    // We cannot use drupal_html_id to save the same id for each facet.
+    $wrapper_id = $this->build['#attributes']['id'] . '-wrapper';
+
+    $element = [
+      '#markup' => '<div id="' . $wrapper_id . '" class="dropdown dropdown-more">'
+        . $this->getResetLink()
+        . render($item_list)
+        . '</div>'
+    ];
+
+    ajax_facets_add_ajax_js($this->facet);
   }
 
   /**

@@ -12,6 +12,9 @@
  */
 (function($) {
 
+  Drupal.behaviors.dropdown_widget = {
+    attach: function (context, settings) {
+
     $.fn.bsDropDownFilter = function(options) {
         return this.filter(".dropdown-menu").each(function() {
             var opts = $.extend({}, $.fn.bsDropDownFilter.defaults, options);
@@ -60,4 +63,8 @@
         });
 
     });
+
+    }
+  };
+
 }(jQuery));

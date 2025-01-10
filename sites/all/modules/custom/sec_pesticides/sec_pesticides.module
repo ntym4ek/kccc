@@ -255,13 +255,19 @@ function sec_pesticides_preprocess_node(&$vars)
 
     $rows = [];
     foreach($vars["field_hp_reglamenty"] as $reg) {
+      $koo = $reg["field_collection"]->field_hpr_koo["und"][0]["value"] ?? '';
+      $vo = $reg["field_collection"]->field_hpr_vo["und"][0]["value"] ?? '';
+      $npp = $reg["field_collection"]->field_hpr_npp["und"][0]["value"] ?? '';
+      $svo = $reg["field_collection"]->field_hpr_svo["und"][0]["value"] ?? '';
+      $soko = $reg["field_collection"]->field_hpr_soko["und"][0]["value"] ?? '';
+      $svrmr = $reg["field_collection"]->field_hpr_svrmr["und"][0]["value"] ?? '';
       $rows[] = [
-        $reg["field_collection"]->field_hpr_koo["und"][0]["value"],
-        $reg["field_collection"]->field_hpr_vo["und"][0]["value"],
-        ['data' => $reg["field_collection"]->field_hpr_npp["und"][0]["value"], 'align' => 'center'],
-        $reg["field_collection"]->field_hpr_svo["und"][0]["value"],
-        ['data' => $reg["field_collection"]->field_hpr_soko["und"][0]["value"], 'align' => 'center'],
-        ['data' => $reg["field_collection"]->field_hpr_svrmr["und"][0]["value"], 'align' => 'center'],
+        $koo,
+        $vo,
+        ['data' => $npp, 'align' => 'center'],
+        $svo,
+        ['data' => $soko, 'align' => 'center'],
+        ['data' => $svrmr, 'align' => 'center'],
       ];
     }
 
