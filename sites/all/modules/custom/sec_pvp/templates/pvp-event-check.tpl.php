@@ -44,11 +44,11 @@
               if (isset($item['image_teaser'])) {
                 print '<div class="swiper-slide">'  .
                         '<div class="image">' .
-                          '<a href="' . $item['image'] . '" class="fancybox" rel="gallery-h-' . $event['id'] . '" data-fancybox="gallery-h-' . $event['id'] . '" title="' . $item['label'] . '. ' . $item['note'] . '">' .
+                          '<a href="' . $item['image'] . '" class="fancybox" rel="gallery-h-' . $event['id'] . '" data-fancybox="gallery-h-' . $event['id'] . '" title="' . $item['note'] . '">' .
                             '<img src="' . $item['image_teaser'] . '" alt="' . $item['image_alt'] . '">' .
                           '</a>' .
                         '</div>' .
-                        '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['hobjects']['photos']) . '.</span> ' . $item['label'] . '. ' . $item['note'] . '</div>' .
+                        '<div class="image-note"><span>' . t('Photo') . ' ' . ++$i . ' ' . t('of', [], ['context' => '1 of 8']) . ' ' . count($event['hobjects']['photos']) . '.</span> ' . $item['note'] . '</div>' .
                       '</div>';
               }
             } ?>
@@ -66,7 +66,10 @@
     <?php endif; ?>
 
     <?php if (!empty($event['hobjects']['list_formatted'])): ?>
-    <div class="list"><?php print $event['hobjects']['list_formatted']; ?></div>
+    <div class="list">
+      <div class="label"><?php print t('List'); ?></div>
+      <?php print $event['hobjects']['list_formatted']; ?>
+    </div>
     <?php endif; ?>
   </div>
   <?php endif; ?>

@@ -80,16 +80,18 @@
  * @ingroup themeable
  */
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
+<a href="<?php print $node_url; ?>">
+  <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
-  <div class="node-info">
-    <?php print render($content['field_hp_gruppa']); ?>
+    <div class="node-info">
+      <?php print render($content['field_hp_gruppa']); ?>
+    </div>
+
+    <div class="node-title">
+      <?php print $title; ?>
+      <?php print render($content['field_hp_registrant']); ?>
+    </div>
+
+    <?php print render($content['field_hp_dv']); ?>
   </div>
-
-  <div class="node-title">
-    <a href="<?php print $node_url; ?>"><?php print $title; ?></a>
-    <?php print render($content['field_hp_registrant']); ?>
-  </div>
-
-  <?php print render($content['field_hp_dv']); ?>
-</div>
+</a>

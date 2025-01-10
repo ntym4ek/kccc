@@ -4560,28 +4560,30 @@ ul.action-links {
   .node-preparation .block {
     margin-bottom: 4rem; } }
 
-.node-pesticide.node-teaser .node-title {
-  display: flex;
-  justify-content: space-between; }
-.node-pesticide.node-teaser .field {
-  margin-bottom: 0; }
-.node-pesticide.node-teaser .field-name-field-hp-gruppa {
-  font-size: 0.889rem; }
-.node-pesticide.node-teaser .field-name-field-hp-registrant {
-  color: #7D7C7C;
-  font-size: 0.889rem;
-  font-weight: 400; }
-.node-pesticide.node-teaser .field-name-field-hp-dv {
-  font-size: 0.889rem;
-  padding: 0 1rem 1rem; }
+.node-pesticide.node-teaser {
+  color: #000; }
+  .node-pesticide.node-teaser .node-title {
+    display: flex;
+    justify-content: space-between; }
+  .node-pesticide.node-teaser .field {
+    margin-bottom: 0; }
+  .node-pesticide.node-teaser .field-name-field-hp-gruppa {
+    font-size: 0.889rem; }
+  .node-pesticide.node-teaser .field-name-field-hp-registrant {
+    color: #7D7C7C;
+    font-size: 0.889rem;
+    font-weight: 400; }
+  .node-pesticide.node-teaser .field-name-field-hp-dv {
+    font-size: 0.889rem;
+    padding: 0 1rem 1rem; }
 .node-pesticide.node-full .node-specs .field {
   display: flex;
-  margin-bottom: 0; }
+  margin-bottom: 10px; }
 .node-pesticide.node-full .node-specs .field-label {
   font-weight: 400;
   text-align: right;
-  margin-right: 1rem;
-  width: 280px; }
+  margin: 0 1rem 0 0;
+  flex: 0 0 50%; }
   .node-pesticide.node-full .node-specs .field-label:before {
     content: none; }
 .node-pesticide.node-full .node-reglaments table {
@@ -4590,6 +4592,7 @@ ul.action-links {
   .node-pesticide.node-full .node-reglaments table tr.even, .node-pesticide.node-full .node-reglaments table tr.odd {
     background: none; }
   .node-pesticide.node-full .node-reglaments table th {
+    color: #7D7C7C;
     font-size: 0.889rem;
     font-weight: 400;
     text-align: center; }
@@ -5210,7 +5213,11 @@ ul.action-links {
   .node-season .pvp-event-check .list,
   .node-season .pvp-event-treat .list {
     padding: 0 1rem;
-    margin-bottom: 1rem; }
+    margin: 1rem 0; }
+    .node-season .pvp-event-check .list .label,
+    .node-season .pvp-event-treat .list .label {
+      color: #ccc;
+      font-size: 0.889rem; }
     .node-season .pvp-event-check .list a:hover,
     .node-season .pvp-event-treat .list a:hover {
       text-decoration: underline; }
