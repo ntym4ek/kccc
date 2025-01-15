@@ -317,6 +317,7 @@ function ext_block_get_front_news()
 
   $dbr = db_select('node', 'n');
   $dbr->condition('n.type', 'article');
+  $dbr->condition('n.status', 1);
   $dbr->addField('n', 'nid');
   $dbr->orderBy('n.created', 'DESC');
   $dbr->range(0, 8);
