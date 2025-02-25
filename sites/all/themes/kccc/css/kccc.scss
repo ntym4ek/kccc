@@ -980,7 +980,7 @@ ul.action-links {
     }
     .top { text-align: center; }
     .node-title {
-      font-size: $font-size-h2; font-weight: 300;
+      font-size: $font-size-h1; font-weight: 500;
       padding-bottom: 1rem;
     }
     .summary {
@@ -1863,5 +1863,18 @@ ul.action-links {
       .process { min-height: 490px; }
     }
   }
+}
 
+.ajax-progress-throbber {
+  position: fixed; top: 0; bottom: 0; left:0; right: 0; z-index: 99;
+  background: #ffffffcc; background-size: cover;
+  border-radius: 40px;
+  display: flex; justify-content: center; align-items: center;
+  color: #fff;
+  transition: all 200ms;
+  .throbber {
+    background-image: url(../../kccc/images/icons/plant.gif);
+    height: 60px; width: 60px;
+  }
+  .message { color: $text-color; }
 }

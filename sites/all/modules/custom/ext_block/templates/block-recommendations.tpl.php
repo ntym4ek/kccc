@@ -6,10 +6,6 @@
     <div class="row">
       <div class="col-xs-12 col-md-6">
       <div class="intro">
-<!--        Эффективность применения ХСЗР напрямую зависит от строгого соблюдения регламентов применения препаратов и технологии приготовления рабочего раствора.-->
-<!--        Крайне важно соблюдать инструкции по применению пестицидов, следить за их дозировкой, не смешивать их без необходимости, использовать защитное снаряжение и соблюдать меры безопасности.-->
-<!--        Кроме того, неправильное использование пестицидов несет серьезные последствия для здоровья людей, животных и окружающей среды.-->
-<!--        В случае сомнений или вопросов всегда лучше проконсультироваться со специалистами нашей компании.-->
         <p><strong><?php print t('The effectiveness of the use of HCRP directly depends on strict compliance with the regulations for the use of preparations and the technology of preparation of the working solution.'); ?></strong></p>
         <p><?php print t('It is extremely important to follow the instructions for the use of pesticides, monitor their dosage, do not mix them unnecessarily, use protective equipment and observe safety measures.'); ?></p>
         <p><?php print t('In addition, the misuse of pesticides has serious consequences for human, animal and environmental health.'); ?></p>

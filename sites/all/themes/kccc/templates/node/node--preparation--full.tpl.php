@@ -87,7 +87,7 @@
     <div class="row">
       <div class="col-xs-12 col-md-4 col-lg-6">
         <div class="top show-xs hide-md">
-          <div class="title"><?php print $product_info['label']; ?></div>
+          <div class="node-title"><?php print $product_info['label']; ?></div>
           <div class="summary"><?php print $product_info['summary']; ?></div>
         </div>
         <div class="image">

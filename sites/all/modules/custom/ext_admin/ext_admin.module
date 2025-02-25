@@ -194,7 +194,7 @@ function ext_admin_preprocess_page(&$vars)
 function ext_admin_execute_form($form, $form_state)
 {
   $function = '';
-  $function = 'ext_admin_func_mail_send';
+  $function = 'ext_admin_pesticides_reglaments_export';
 //  $function = 'ext_admin_func_preparations_import';
 //  $function = 'ext_admin_func_terms_process';
 //  $function = 'ext_admin_func_pvps_date_process';
@@ -279,7 +279,63 @@ function ext_admin_func_mail_send()
 }
 
 /**
- * -- обработка: добавление англ наименования ДВ -----------------------------
+ * -- обработка: экспорт регламентов из спр Пестицидов -------------------------
+ */
+function ext_admin_pesticides_reglaments_export()
+{
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', 'pesticide');
+  $dbr->addField('n', 'nid');
+//    $dbr->condition('n.nid', 11746);
+//    $dbr->range(0, 10);
+//    $dbr->orderRandom();
+  if ($nodes_ids = $dbr->execute()->fetchCol()) {
+    $queue = DrupalQueue::get('processing_queue');
+    $queue->deleteQueue();
+    foreach ($nodes_ids as $nid) {
+      $queue->createItem(['func' => 'ext_admin_pesticides_reglament_process', 'item' => $nid]);
+    }
+    drupal_set_message('Добавлено ' . count($nodes_ids) . ' записей для обработки');
+  }
+
+  return true;
+}
+function ext_admin_pesticides_reglament_process($nid)
+{
+  $node_wr = entity_metadata_wrapper('node', $nid);
+
+  $text_arr = [];
+  foreach ($node_wr->	field_hp_reglamenty as $regl_wr) {
+    $cultures = explode(',', $regl_wr->field_hpr_koo->value());
+    $spends = explode('-', $regl_wr->field_hpr_npp->value());
+
+    foreach($cultures as $culture) {
+      $text_arr[] = [
+        $node_wr->label(),
+        $node_wr->field_hp_dv->value(),
+        $node_wr->field_hp_sdv->value(),
+        $node_wr->field_hp_pf->value(),
+        drupal_ucfirst(trim($culture)),
+        $regl_wr->field_hpr_vo->value(),
+        $spends[0] ?? '-',                      // min значение
+        $spends[1] ?? ($spends[0] ?? '-'),      // max значение
+        $regl_wr->field_hpr_svo->value(),
+        $node_wr->field_hp_registrant->value(),
+      ];
+    }
+  }
+
+  foreach($text_arr as $text_row) {
+    $text = implode('; ', $text_row) . "\n";
+    file_put_contents('d:/выгрузка регламентов.txt', $text,  FILE_APPEND );
+  }
+
+  return true;
+}
+
+
+/**
+ * -- обработка: добавление англ наименования ДВ -------------------------------
  */
 function ext_admin_func_terms_process()
 {
@@ -307,6 +363,27 @@ function ext_admin_func_terms_process()
       unset($term->translations->data["und"]);
       taxonomy_term_save($term);
     }
+  }
+
+  return true;
+}
+
+/**
+ * -- обработка: экспорт значений поля -----------------------------------------
+ */
+function ext_admin_func_nodes_field_export_process()
+{
+  $dbr = db_select('field_data_field_hp_dv', 'fd');
+  $dbr->innerJoin('node', 'n', 'n.nid = fd.entity_id');
+  $dbr->condition('n.type', 'pesticide');
+  $dbr->addField('fd', 'field_hp_dv_value');
+  $dbr->distinct();
+  if ($fields = $dbr->execute()->fetchCol()) {
+    $text = '';
+    foreach ($fields as $field) {
+      $text .= $field . "\n";
+    }
+    file_put_contents('d:/выгрузка ДВ из справочника.txt', $text);
   }
 
   return true;

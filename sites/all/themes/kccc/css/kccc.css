@@ -1421,28 +1421,6 @@ fieldset {
       visibility: visible;
       opacity: 1; }
 
-.ajax-progress {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  background: #ffffffcc;
-  background-size: cover;
-  border-radius: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  transition: all 200ms; }
-  .ajax-progress .throbber {
-    background-image: url(../../cbtheme/images/plant.gif);
-    height: 60px;
-    width: 60px; }
-  .ajax-progress .message {
-    color: #000; }
-
 @media print {
   *,
   *:before,
@@ -4317,8 +4295,8 @@ ul.action-links {
   .node-preparation .product-intro .top {
     text-align: center; }
   .node-preparation .product-intro .node-title {
-    font-size: 1.667rem;
-    font-weight: 300;
+    font-size: 2.5rem;
+    font-weight: 500;
     padding-bottom: 1rem; }
   .node-preparation .product-intro .summary {
     font-size: 1.222rem;
@@ -5280,5 +5258,27 @@ ul.action-links {
   .node-season .pvp-event-treat .culture,
   .node-season .pvp-event-treat .process {
     min-height: 490px; } }
+
+.ajax-progress-throbber {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: #ffffffcc;
+  background-size: cover;
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  transition: all 200ms; }
+  .ajax-progress-throbber .throbber {
+    background-image: url(../../kccc/images/icons/plant.gif);
+    height: 60px;
+    width: 60px; }
+  .ajax-progress-throbber .message {
+    color: #000; }
 
 /*# sourceMappingURL=kccc.css.map */
