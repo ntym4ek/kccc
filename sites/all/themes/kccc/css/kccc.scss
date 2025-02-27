@@ -1,7 +1,7 @@
-// переменные Базовой темы
-@import "../../cbtheme/css/variables";
 // переменные Текущей темы
 @import "variables";
+// переменные Базовой темы
+@import "../../cbtheme/css/variables";
 // стили Базовой темы
 @import "../../cbtheme/css/styles";
 
@@ -394,14 +394,6 @@ a { color: $brand-color; }
 .hover-zoom {
   transition: all 200ms;
   &:hover { transform: scale(1.05);  }
-}
-
-.btn {
-  &.btn-huge {
-    line-height: 1;
-    min-height: initial;
-    padding-top: 0.35em; padding-bottom: 0.35em;
-  }
 }
 
 .corner {

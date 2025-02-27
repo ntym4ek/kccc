@@ -1,4 +1,3 @@
-@import "../../cbtheme/css/variables"; // продублировано из styles.scss, чтобы переменные не подсвечивались
 
 $content-well-max-width:  1320px;
 $header-height:           75px;
@@ -6,10 +5,22 @@ $menu-mobile-btn-size:    4rem;
 
 //- colors
 //
-$brand-color:             #43B02A;
+$brand-blue:              #203D67;
+$brand-cyan:              #00ACEA;
+$brand-green:             #43B02A;
+$brand-orange:            #F99339;
+$brand-red:               #EF2931;
+
+$brand-primary:           $brand-green;
+$brand-info:              $brand-cyan;
+$brand-success:           $brand-green;
+$brand-warning:           $brand-orange;
+$brand-danger:            $brand-red;
+
+$brand-color:             $brand-green;
+
 $page-bkg:                #fff;
 $footer-bkg:              #EDEDED;
-$footer-text:             $text-color;
 
 $brand-insecticide:       #00ACEA;
 $brand-seedtreater:       #AC196F;

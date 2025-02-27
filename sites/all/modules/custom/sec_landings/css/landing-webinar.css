@@ -15,7 +15,7 @@ body {
   .landing.webinar img {
     max-width: 100%; }
   .landing.webinar .highlight {
-    background: #36AA3D;
+    background: #43B02A;
     color: #fff;
     font-size: 2em;
     font-weight: 700;
@@ -25,13 +25,13 @@ body {
     width: 100%; }
     .landing.webinar .highlight.inverted {
       background: none;
-      color: #36AA3D;
+      color: #43B02A;
       padding: .25em 0; }
   .landing.webinar .button {
     text-align: center;
     padding-top: 4em; }
     .landing.webinar .button a {
-      background: #36AA3D;
+      background: #43B02A;
       border-radius: 50px;
       color: #fff;
       font-size: 2em;
@@ -41,7 +41,7 @@ body {
       padding: .25em 1em;
       transition: all 200ms; }
       .landing.webinar .button a:hover {
-        background: #2a832f; }
+        background: #338720; }
   .landing.webinar .row-1 {
     background: url(../images/webinar/bkg.png) no-repeat no-repeat;
     background-size: 100%;
@@ -80,7 +80,7 @@ body {
         font-size: 1.33em;
         word-spacing: 100vw; }
       .landing.webinar .row-1 .text .title {
-        color: #36AA3D;
+        color: #43B02A;
         font-size: 2.5em;
         font-weight: 700;
         line-height: 1.2;
@@ -124,7 +124,7 @@ body {
       flex: 100%;
       padding: 0; }
       .landing.webinar .row-21 .text span {
-        color: #36AA3D;
+        color: #43B02A;
         font-weight: 700; }
     .landing.webinar .row-21 .image {
       flex: 100%;
@@ -153,7 +153,7 @@ body {
       font-weight: 600;
       padding: 0 4em 2em; }
       .landing.webinar .row-22 .block span {
-        background: #36AA3D;
+        background: #43B02A;
         display: inline-block;
         width: 80%;
         height: 3px;
