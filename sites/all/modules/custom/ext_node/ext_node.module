@@ -466,3 +466,16 @@ function ext_node_search_sort_order_getter_callback($item)
 
   return $index !== false ? $index : $weight;
 }
+
+/**
+ * Вернуть количество записей заданного типа
+ * (для страницы справочников)
+ */
+function ext_node_nodes_count($type)
+{
+  $dbr = db_select('node', 'n');
+  $dbr->condition('n.type', $type);
+  $dbr->condition('n.status', 1);
+
+  return $dbr->countQuery()->execute()->fetchField();
+}

@@ -11,14 +11,6 @@ function sec_pesticides_menu()
     'weight' => 5,
   );
 
-  $items['pesticides'] = array(
-    'title' => 'Pesticides',
-    'description' => t('Pesticides handbook'),
-    'page callback' => 'sec_pesticides_page',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-
   return $items;
 }
 
@@ -28,7 +20,7 @@ function sec_pesticides_menu()
 function sec_pesticides_cron_queue_info()
 {
   $queues['mcx_processing_queue'] = array(
-    'worker callback' => 'sec_pesticides_mcx_process_item',
+    'worker callback' => 'sec_pesticides_mcx_process_queue_item',
   );
 
   return $queues;
@@ -79,14 +71,6 @@ function sec_pesticides_preprocess_page(&$vars)
   }
 }
 
-// главная страница
-function sec_pesticides_page()
-{
-  $output = 'В разработке';
-
-  return  $output;
-}
-
 /**
  * Выполнить импорт справочника с сайта Минсельхоза
  */
@@ -97,8 +81,6 @@ function sec_pesticides_mcx_import($force_import = false)
       drupal_set_message('Текущая версия справочника уже импортирована');
       return;
     }
-    // сохранить версию импортированного файла
-    variable_set('mcx_file_version', $data_arr['filename']);
 
     $queue = DrupalQueue::get('mcx_processing_queue');
     $queue->deleteQueue(); // todo удалить
@@ -113,7 +95,6 @@ function sec_pesticides_mcx_import($force_import = false)
       foreach ($nids as $record) {
         $queue->createItem(['op' => 'delete', 'record' => $record]);
       }
-      entity_delete_multiple('node', $nids);
     }
 
     // Создать очередь на добавление записей по крону,
@@ -122,6 +103,9 @@ function sec_pesticides_mcx_import($force_import = false)
       $queue->createItem(['op' => 'import', 'record' => $record]);
     }
     drupal_set_message('Добавлено ' . count($data_arr['items']) . ' записей для обработки');
+
+    // сохранить версию импортированного файла
+    variable_set('mcx_file_version', $data_arr['filename']);
   }
 }
 
@@ -129,7 +113,7 @@ function sec_pesticides_mcx_import($force_import = false)
  * Выполнить удаление старой записи
  * или импорт новой записи справочника с сайта Минсельхоза
  */
-function sec_pesticides_mcx_process_item($data)
+function sec_pesticides_mcx_process_queue_item($data)
 {
   $record = $data['record'];
   if ($data['op'] == 'delete') {
@@ -151,10 +135,82 @@ function sec_pesticides_mcx_process_item($data)
       $node_wr->field_hp_dv = $record["Deystvuyushee_veshestvo"]["item"];
     if (isset($record["Soderzhanie_deystvuyushego_veshestva"]["item"]) && !is_array($record["Soderzhanie_deystvuyushego_veshestva"]["item"]))
       $node_wr->field_hp_sdv = $record["Soderzhanie_deystvuyushego_veshestva"]["item"];
-    if (isset($record["Preparativnaya_forma"]["item"]) && !is_array($record["Preparativnaya_forma"]["item"]))
-      $node_wr->field_hp_pf = $record["Preparativnaya_forma"]["item"];
-    if (isset($record["Registrant"]["item"]) && !is_array($record["Registrant"]["item"]))
-      $node_wr->field_hp_registrant = $record["Registrant"]["item"];
+    if (isset($record["Preparativnaya_forma"]["item"]) && !is_array($record["Preparativnaya_forma"]["item"])) {
+      $pf = $record["Preparativnaya_forma"]["item"];
+      // заменить сокращения с двойными обозначениями (ВГ/ВРГ)
+      if ($pf == 'ВГ') $pf = 'ВРГ';
+      if ($pf == 'ВГ') $pf = 'ВРГ';
+      if (in_array($pf,['ВК', 'РК'])) $pf = 'ВРК';
+      if ($pf == 'РКАП') $pf = 'ВРКАП';
+      // попадаются латинские bp вместо вр
+      if ($pf == 'TAБ') $pf = 'ТАБ';
+      if (in_array($pf,['BP', 'BР'])) $pf = 'ВР';
+      // вероятно ошибка в источнике
+      if ($pf == 'В КЭ') $pf = 'КЭ';
+      // расшифровать значение препаративной формы
+      $dbr = db_select('taxonomy_term_data', 't');
+      $dbr->condition('t.vid', taxonomy_vocabulary_machine_name_load('preparation_formulations')->vid);
+      $dbr->addField('t', 'name');
+      $dbr->innerJoin('field_data_field_acronym', 'fa', 'fa.entity_id = t.tid');
+      $dbr->condition('field_acronym_value', $pf);
+      if ($name = $dbr->execute()->fetchField()) {
+        $pf = $name;
+      }
+      $node_wr->field_hp_pf = $pf;
+    }
+
+    if (isset($record["Registrant"]["item"]) && !is_array($record["Registrant"]["item"])) {
+      $reg = $record["Registrant"]["item"];
+      $reg = str_replace(['ИНДИВИДУАЛЬНЫЙ ПРЕДПРИНИМАТЕЛЬ', 'Индивидуальный Предприниматель', 'Индивидуальный предприниматель'], 'ИП', $reg);
+      $reg = str_replace(['ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ', 'ОБЩЕСТВО с ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ', 'Общество с ограниченной ответственностью'], 'ООО', $reg);
+      $reg = str_replace(['АКЦИОНЕРНОЕ ОБЩЕСТВО', 'Акционерное Общество'], 'АО', $reg);
+      $reg = str_replace(['НАУЧНО-ПРОИЗВОДСТВЕННОЕ ОБЪЕДИНЕНИЕ', 'Научно-производственное объединение'], 'НПО', $reg);
+      $reg = str_replace(['СЕЛЬСКОХОЗЯЙСТВЕННОЕ ПРЕДПРИЯТИЕ', 'Сельскохозяйственное Предприятие'], 'СП', $reg);
+      $reg = str_replace(['НАУЧНО-ТЕХНОЛОГИЧЕСКОЕ ПРЕДПРИЯТИЕ', 'Научно-технологическое предприятие'], 'НТП', $reg);
+      $reg = str_replace(['ФЕДЕРАЛЬНОЕ КАЗЕННОЕ ПРЕДПРИЯТИЕ', 'Федеральное казенное предприятие'], 'ФКП', $reg);
+      $reg = str_replace(['ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ', 'Федеральное государственное бюджетное образовательное учреждение'], 'ФГБОУ', $reg);
+      $reg = str_replace(['ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ УЧРЕЖДЕНИЕ НАУКИ', 'Федеральное государственное бюджетное учреждение науки'], 'ФГБУН', $reg);
+      $reg = str_replace([' (Болгария)', ' (Республика Беларусь)', ' (Республика Сербия)', ' (Чешская Республика)', ' (Германия)', ' (Франция)', ' (Бельгия)', ' (Бельгия', ' (Аргентина)', ' (Индия)', ' (Китай)', '( Китай)', ' (Италия)', ' (Венгрия)', ' (Англия)', ' (КНР)', '(Великобритания)', ' (США)', ' (Япония)', ' (Австрия)'], '', $reg);
+      $reg = str_replace(['Интер Групп', 'Интер Груп', 'ИнтерГрупп', 'Паноксон, КЭ'], 'ИНТЕР ГРУПП', $reg);
+      $reg = str_replace(['АГРОХИМ-ХХI', 'Агрохим-ХХI', 'Агрохим-ХХ1', 'АГРОХИМ- ХХI', 'АГРОХИМ-ХХ1', 'АГРОХИМ - XXI', 'Агрохим -ХХI', 'АГРОХИМ - ХХI', 'АГРОХИМ - ХХ1', 'Агрохим – XXI', 'АГРОХИМ ХХI', 'АГРОХИМ – XXI'], 'АГРОХИМ-XXI', $reg);
+      $reg = str_replace('ООО АНПП', 'ООО «АНПП', $reg);
+      $reg = str_replace(['ООО ГЭ «ЗЕМЛЯКОФФ»', 'ООО Группа Компаний «ЗемлякоФФ»'], 'ООО ГК «ЗЕМЛЯКОФФ»', $reg);
+      $reg = str_replace(['Шандонг Вейфанг Рейнбоу Кемикал Ко., Лтд.', '«Шандонг Вейфанг Рейнбоу Кемикал Ко., Лтд»'], 'Шандонг Вейфанг Рейнбоу Кемикал Ко., Лтд', $reg);
+      $reg = str_replace(['«Шин-Етсу Кемикал Ко., Лтд.»', '«Шандонг Вейфанг Рейнбоу Кемикал Ко., Лтд»'], 'Шин-Етсу Кемикал Ко., Лтд', $reg);
+      $reg = str_replace(['СУМИТОМО КЕМИКАЛ АГРО ЕВРОПА С.А.С', 'Сумитомо-Кемикал Агро Юроп С.А.С.'], 'Сумитомо Кемикал Агро Юроп С.А.С.', $reg);
+      $reg = str_replace(['ООО «ФРАНДЕСА»', 'ООО «ФРАНДЕСА», ООО «Франдеса»', 'ООО « Франдеса»', 'ООО «Франдесса»'], 'ООО «Франдеса»', $reg);
+      $reg = str_replace(['ООО «Франдеса» ООО «Форвард»'], 'ООО «Франдеса», ООО «Форвард»', $reg);
+      $reg = str_replace(['Ниппон Сода Ко., Лтд.', 'НИППОН СОДА КО., ЛТД.'], 'Ниппон Сода Ко., Лтд', $reg);
+      $reg = str_replace(['«ПЕТЕРС&БУРГ Кфт.»', 'ПЕТЕРС&БУРГ Кфт.', 'ПЕТЕРС & БУРГ Кфт.'], 'ПЕТЕРС & БУРГ Кфт', $reg);
+      $reg = str_replace(['Нуфарм ГмбХ и КО КГ', 'НУФАРМ ГмбХ&Ко.КГ', 'НУФАРМ ГмбХ&Ко КГ'], 'НУФАРМ ГмбХ & Ко КГ', $reg);
+      $reg = str_replace(['ООО УК «АБТ-ГРУПП»,', 'ООО Управляющая компания «АБТ-ГРУПП»', 'ООО «Управляющая компания «АБТ-групп»'], 'ООО УК «АБТ-ГРУПП»', $reg);
+      $reg = str_replace(['ДАУ АГРОСАЕНСЕС ВЕРТРИБСГЕЗЕЛЬ-ШАФТ М.Б.Х.', 'ДАУ АГРОСАЕНСЕС ВЕРТИБСГЕЗЕЛЬ-ШАФТ МБХ', 'Дау АгроСаенсес Вертрибсгезельшафт В.М.Х.', 'ДАУ АГРОСАЕНСЕС ВЕРТРИБСГЕЗЕЛЬШАФТ М.Б.Х.'], 'Дау АгроСаенсес Вертрибсгезельшафт МБХ', $reg);
+      $reg = str_replace(['«Кингтай Кемикалз Ко.Лтд.»', 'Кингтай Кемикалз Ко., Лтд.'], 'Кингтай Кемикалз Ко. Лтд', $reg);
+      $reg = str_replace(['«АГРОТЕХИНВЕСТ»', '«АгроТехИнвест»'], 'ООО «АГРОТЕХИНВЕСТ»', $reg);
+      $reg = str_replace(['ООО «АДФ», ООО «Ярило»', 'ООО «Ярило», ООО «АФД»'], 'ООО «АФД», ООО «Ярило»', $reg);
+      $reg = str_replace('«АЛЬФААГРОХИМ»', 'ООО «АЛЬФААГРОХИМ»', $reg);
+      if ($reg == '«Байер Агрикалче БВ»') $reg = 'Байер Агрикалче БВ';
+      if ($reg == '«КЕМИНОВА А/С»') $reg = 'КЕМИНОВА А/С';
+      if ($reg == 'ООО «КЛЕВЕР ГРУПП»\'3/3') $reg = 'ООО «КЛЕВЕР ГРУПП»';
+      if ($reg == 'ООО «КЛЕВЕР') $reg = 'ООО «КЛЕВЕР ГРУПП»';
+      if ($reg == '«БАСФ СЕ»') $reg = 'БАСФ СЕ';
+      if ($reg == 'Байер АГ') $reg = 'Байер КропСайенс АГ';
+      if ($reg == 'ООО “СИНГЕНТА”') $reg = 'ООО «СИНГЕНТА»';
+      if ($reg == 'ООО «ЭфЭмСи»”') $reg = 'ООО «ЭфЭмСи»';
+      if ($reg == 'ФМСи Кемикал') $reg = 'ФМС Кемикал';
+      if ($reg == 'ООО «ФАСКО+') $reg = 'ООО «ФАСКО+»';
+      if ($reg == 'АЛЬБАУ ЮропСарл') $reg = 'Альбау Юроп Сарл';
+      if ($reg == '«Агро-Кеми Кфт.»') $reg = 'Агро-Кеми Кфт';
+      $reg = str_replace('МИКРООРГАНИЗ-МОВ', 'МИКРООРГАНИЗМОВ', $reg);
+      $reg = str_replace([' ; ', '; ', ';'], ', ', $reg);
+      $reg = str_replace(['&amp;'], '&', $reg);
+      $reg = str_replace(['ЛТД.', 'лтд.', 'Лтд.'], ['ЛТД', 'лтд', 'Лтд'], $reg);
+      $reg = str_replace(['Кфт.', 'кфт.', 'КФТ.'], ['Кфт', 'кфт', 'КФТ'], $reg);
+      $reg = str_replace(['Лимитед', '', ''], ['Лтд', '', ''], $reg);
+      $reg = str_replace(['с.а.с.', 'с.а.с', 'С.А.С.'], 'САС', $reg);
+
+      $node_wr->field_hp_registrant = $reg;
+    }
     if (isset($record["Klass_opasnosti"]["item"]) && !is_array($record["Klass_opasnosti"]["item"]))
       $node_wr->field_hp_ko = $record["Klass_opasnosti"]["item"];
     if (isset($record["Srok_registracii_Po"]["item"]) && !is_array($record["Srok_registracii_Po"]["item"]))
@@ -243,6 +299,7 @@ function sec_pesticides_mcx_get_new_info()
 function sec_pesticides_preprocess_node(&$vars)
 {
   if ($vars['view_mode'] == 'full' && $vars['node']->type == 'pesticide') {
+
     // сформировать таблицу из регламентов
     $header = [
       'Культура (обрабатываемый объект)',
@@ -274,3 +331,5 @@ function sec_pesticides_preprocess_node(&$vars)
     $vars['reglaments'] = theme('table', array('header' => $header, 'rows' => $rows, 'empty' => t('No strings available.')));
   }
 }
+
+
