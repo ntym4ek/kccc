@@ -90,6 +90,9 @@ function ext_block_block_info()
     'custom-block-recommendations' => [
       'info' => 'CB | Рекомендации по применению',
     ],
+    'custom-block-popup-tg' => [
+      'info' => 'CB | Всплывающее окно с подпиской на Tg',
+    ],
   ];
 }
 
@@ -167,6 +170,10 @@ function ext_block_block_view($delta = '')
   if (strpos($delta, 'custom-block-') === 0) {
     $block['subject'] = null;
     drupal_add_js(drupal_get_path('module', 'ext_block') . '/js/ext_block.js');
+  }
+
+  if ($delta == 'custom-block-popup-tg') {
+    drupal_add_library('system', 'jquery.cookie');
   }
 
   return $block;
@@ -289,6 +296,10 @@ function ext_block_theme()
     'custom-block-recommendations' => [
       'variables' => [],
       'template' => 'templates/block-recommendations',
+    ],
+    'custom-block-popup-tg' => [
+      'variables' => [],
+      'template' => 'templates/block-popup-tg',
     ],
   ];
 }
