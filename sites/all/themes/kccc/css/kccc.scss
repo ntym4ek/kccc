@@ -773,7 +773,6 @@ ul.action-links {
 
 .card-decor {
   padding: 0 2rem;
-
   .content {
     background: $well-bkg-clr;
     border-radius: 20px;
@@ -799,6 +798,7 @@ ul.action-links {
   .title {
     font-weight: 600; text-align: center;
     padding: 0 2rem; margin-bottom: 1rem;
+    a { color: inherit; }
   }
 
   @media #{$tablet} {
@@ -1137,9 +1137,39 @@ ul.action-links {
       .text { font-size: $font-size-large; font-weight: 500; }
     }
 
+    @media #{$tablet} {
+      margin-bottom: 4rem;
+    }
+  }
+
+  .product-reglaments-table {
+    margin-bottom: 2rem;
+    table {
+      font-size: $font-size-small;
+      width: 100%;
+      a {
+        color: inherit;
+        &:hover { text-decoration: underline; }
+      }
+      th {
+        font-weight: 400; text-align: center;
+        background-color: $well-bkg-clr;
+        border-top-color: $gray; border-left-color: $gray; border-bottom-width: 1px;
+        padding: .5rem .7rem;
+        &:last-child { border-right-color: $gray;  }
+      }
+      td {
+        background-color: white;
+        padding: .5rem .7rem;
+        &.category-bkg {
+          color: #fff;
+        }
+      }
+    }
 
     @media #{$tablet} {
       margin-bottom: 4rem;
+      table .category-bkg { min-width: 150px; }
     }
   }
 

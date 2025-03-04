@@ -2221,8 +2221,7 @@ ul.menu {
   .nav-mobile .branding {
     display: flex;
     flex-direction: column;
-    color: #fff;
-    font-size: 1.5rem;
+    align-items: center;
     padding: 3rem 0; }
     .nav-mobile .branding .logo {
       height: 80px;
@@ -4449,6 +4448,8 @@ ul.action-links {
     text-align: center;
     padding: 0 2rem;
     margin-bottom: 1rem; }
+    .card-decor .title a {
+      color: inherit; }
   @media only screen and (min-width: 1024px) {
     .card-decor {
       padding-right: 0; }
@@ -4780,6 +4781,35 @@ ul.action-links {
   @media only screen and (min-width: 1024px) {
     .node-preparation .product-reglaments {
       margin-bottom: 4rem; } }
+.node-preparation .product-reglaments-table {
+  margin-bottom: 2rem; }
+  .node-preparation .product-reglaments-table table {
+    font-size: 0.889rem;
+    width: 100%; }
+    .node-preparation .product-reglaments-table table a {
+      color: inherit; }
+      .node-preparation .product-reglaments-table table a:hover {
+        text-decoration: underline; }
+    .node-preparation .product-reglaments-table table th {
+      font-weight: 400;
+      text-align: center;
+      background-color: #f1f1f1;
+      border-top-color: #aaa;
+      border-left-color: #aaa;
+      border-bottom-width: 1px;
+      padding: .5rem .7rem; }
+      .node-preparation .product-reglaments-table table th:last-child {
+        border-right-color: #aaa; }
+    .node-preparation .product-reglaments-table table td {
+      background-color: white;
+      padding: .5rem .7rem; }
+      .node-preparation .product-reglaments-table table td.category-bkg {
+        color: #fff; }
+  @media only screen and (min-width: 1024px) {
+    .node-preparation .product-reglaments-table {
+      margin-bottom: 4rem; }
+      .node-preparation .product-reglaments-table table .category-bkg {
+        min-width: 150px; } }
 .node-preparation .product-how-it-works {
   margin-bottom: 2rem; }
   .node-preparation .product-how-it-works .banner {

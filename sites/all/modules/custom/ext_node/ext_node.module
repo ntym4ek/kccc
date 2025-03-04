@@ -259,10 +259,12 @@ function ext_node_preprocess_node(&$vars)
       $vars['section'] = $_GET['s'] ?? '';
       // секция Описание
       if (!$vars['section']) {
-        // подготовить карточки Регламентов и два пункта Характеристик
-        $reglaments_cards = [];
+        // подготовить Регламенты
         $cultures = $hobjects = [];
         if ($product_regs = sec_catalog_get_product_reglaments_info($node->nid)) {
+
+          // карточки Регламентов
+          $reglaments_cards = [];
           foreach ($product_regs as $reg) {
             $content = theme('content_reglament', ['card' => $reg]);
             $reglaments_cards[] = theme('card_decor', ['icon' => $reg['icon_num'], 'title' => $reg['cultures']['formatted'], 'content' => $content]);
@@ -274,8 +276,85 @@ function ext_node_preprocess_node(&$vars)
             $hobjects = array_merge($hobjects, $reg['hobjects']['pest_classes']);
             $hobjects = array_merge($hobjects, array_column($reg['hobjects']['list'], 'name'));
           }
+          $vars['product_info']['reglaments_cards'] = $reglaments_cards;
+
+          // todo таблица Регламентов
+          $rows = $spans = [];
+          $col_0_value = $col_1_value = $col_2_value = $col_3_value = $col_4_value = $col_5_value = 'init'; // пустая строка не подходит для инициализации
+          $col_0_count = $col_1_count = $col_2_count = $col_3_count = $col_4_count = $col_5_count = 0;
+          $col_0_id = $col_1_id = $col_2_id = $col_3_id = $col_4_id = $col_5_id = 0;
+          foreach($product_regs as $id => $reglament) {
+            if ($col_0_value != $reglament['cultures']['formatted']) {
+              $col_0_value = $reglament['cultures']['formatted'];
+              $col_0_id = $id; $col_0_count = 0;
+            } else $col_0_count++;
+            if ($col_1_value != $reglament['hobjects']['formatted']) {
+              $col_1_value = $reglament['hobjects']['formatted'];
+              $col_1_id = $id; $col_1_count = 0;
+            } else $col_1_count++;
+            if ($col_2_value != $reglament['prep_spends']['formatted_raw']) {
+              $col_2_value = $reglament['prep_spends']['formatted_raw'];
+              $col_2_id = $id; $col_2_count = 0;
+            } else $col_2_count++;
+            if ($col_3_value != $reglament['mix_spend']['formatted_raw']) {
+              $col_3_value = $reglament['mix_spend']['formatted_raw'];
+              $col_3_id = $id; $col_3_count = 0;
+            } else $col_3_count++;
+            if ($col_4_value != $reglament['description']) {
+              $col_4_value = $reglament['description'];
+              $col_4_id = $id; $col_4_count = 0;
+            } else $col_4_count++;
+            $col_5 = '';
+            if ($reglament['ratio']['formatted'] || $reglament['wait']['raw']) {
+              $col_5 = $reglament['wait']['raw'] . '/' . $reglament['ratio']['formatted'];
+            }
+            if ($col_5_value != $col_5) {
+              $col_5_value = $col_5;
+              $col_5_id = $id; $col_5_count = 0;
+            } else $col_5_count++;
+            if ($col_0_count) $spans[$col_0_id]['0'] = $col_0_count;
+            if ($col_1_count) $spans[$col_1_id]['1'] = $col_1_count;
+            if ($col_2_count) $spans[$col_2_id]['2'] = $col_2_count;
+            if ($col_3_count) $spans[$col_3_id]['3'] = $col_3_count;
+            if ($col_4_count) $spans[$col_4_id]['4'] = $col_4_count;
+            if ($col_5_count) $spans[$col_5_id]['5'] = $col_5_count;
+            $col_0 = $col_0_count ? '' : ['data' => $reglament['cultures']['formatted'], 'class' => 'category-bkg'];
+            $col_1 = $col_1_count ? '' : ['data' => $reglament['hobjects']['formatted']];
+            $col_2 = $col_2_count ? '' : ['data' => $reglament['prep_spends']['formatted_raw'], 'align' => 'center'];
+            $col_3 = $col_3_count ? '' : ['data' => $reglament['mix_spend']['formatted_raw'], 'align' => 'center'];
+            $col_4 = $col_4_count ? '' : ['data' => $reglament['description']];
+            $col_5 = $col_5_count || !$col_5 ? '' : ['data' => $col_5, 'align' => 'center'];
+
+            if ($col_0) $rows[$id]['0'] = $col_0;
+            if ($col_1) $rows[$id]['1'] = $col_1;
+            if ($col_2) $rows[$id]['2'] = $col_2;
+            if ($col_3) $rows[$id]['3'] = $col_3;
+            if ($col_4) $rows[$id]['4'] = $col_4;
+            if ($col_5) $rows[$id]['5'] = $col_5;
+          }
+          foreach ($spans as $id => $value) {
+            if (isset($value['0'])) $rows[$id]['0']['rowspan'] = $value['0']+1;
+            if (isset($rows[$id]['1']) && isset($value['1'])) $rows[$id]['1']['rowspan'] = $value['1']+1;
+            if (isset($value['2'])) $rows[$id]['2']['rowspan'] = $value['2']+1;
+            if (isset($value['3'])) $rows[$id]['3']['rowspan'] = $value['3']+1;
+            if (isset($value['4'])) $rows[$id]['4']['rowspan'] = $value['4']+1;
+            if (isset($rows[$id]['5']) && isset($value['5'])) $rows[$id]['5']['rowspan'] = $value['5']+1;
+          }
+
+          $header = [];
+          $key = array_key_first($rows);
+          if (isset($rows[$key]['0'])) $header[] = t('Culture or the object being processed');
+          if (isset($rows[$key]['1'])) $header[] = t('Harmful objects');
+          if (isset($rows[$key]['2'])) $header[] = t('Preparation use rate') . ', <span class="nowrap">' . $vars['product_info']['units']['short'] . '/' . $vars['product_info']['units']['apply'] . '</span>';
+          if (isset($rows[$key]['3'])) $header[] = t('Working fluid use rate, l/he');
+          if (isset($rows[$key]['4'])) $header[] = t('Method and time of treatment');
+          if (isset($rows[$key]['5'])) $header[] = t('Waiting period and treatments qty');
+
+          $vars['product_info']['reglaments_table'] = theme('table', array('header' => $header, 'rows' => $rows));
         }
-        $vars['product_info']['reglaments_cards'] = $reglaments_cards;
+
+
+        // подготовить два пункта Характеристик
         if ($cultures) {
           $vars['product_info']['specs'][] = [
             'icon_num' => '042',
@@ -289,7 +368,7 @@ function ext_node_preprocess_node(&$vars)
           ];
         }
 
-        // программно вставить блок Агро Калькулятор
+        // программно вставить блок АгроКалькулятор
         $block = block_load("ext_block", 'custom-block-agro-calculator');
         $blocks = _block_render_blocks([$block]);
         $vars['block_calc'] = _block_get_renderable_array($blocks);

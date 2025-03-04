@@ -169,14 +169,14 @@
     </div>
   </div>
 
-  <?php if ($product_info['reglaments_cards']): ?>
+  <?php if (isset($product_info['reglaments_cards'])): ?>
   <div class="product-reglaments">
     <div class="section-title category-clr">
       <div><?php print t('Application regulations'); ?></div>
       <div class="underline category-bkg"></div>
     </div>
 
-    <?php if (count($product_info['reglaments_cards']) > 2): ?>
+    <?php if (count($product_info['reglaments_cards']) > 1): ?>
     <div id="carousel-reglaments" class="carousel carousel-reglaments outer-pagination outer-navigation" data-autoheight="true" data-slidesperview-xs="1" data-slidesperview-md="1.5" data-slidesperview-lg="2">
       <div class="swiper">
         <div class="swiper-wrapper">
@@ -196,7 +196,7 @@
     <?php else: ?>
     <div class="row center-xs">
       <?php foreach($product_info['reglaments_cards'] as $card): ?>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-xs-12 col-md-8">
         <?php print $card?>
       </div>
       <?php endforeach; ?>
@@ -204,6 +204,13 @@
     <?php endif; ?>
   </div>
   <?php endif; ?>
+
+  <?php if (isset($product_info['reglaments_table'])): ?>
+  <div class="product-reglaments-table hide-xs show-lg">
+    <?php print $product_info['reglaments_table']; ?>
+  </div>
+  <?php endif; ?>
+
 
     <!-- блок Калькулятор -->
   <?php print drupal_render($block_calc); ?>

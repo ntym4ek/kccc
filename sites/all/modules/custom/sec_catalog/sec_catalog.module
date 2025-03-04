@@ -673,7 +673,7 @@ function sec_catalog_get_product_reglaments_info($product_id)
   foreach ($product_wr->field_prep_reglaments->getIterator() as $regl_wr) {
     $regl = sec_catalog_get_reglament_info($regl_wr->getIdentifier());
     $regl = sec_catalog_get_reglament_info_formatted($regl, $product_info);
-    $regls[] = $regl;
+    $regls[$regl_wr->getIdentifier()] = $regl;
   }
 
   return $regls;
@@ -798,15 +798,24 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
 
   // список Культур
   if ($regl['cultures']['list']) {
-    $cultures_f = implode(', ', array_values($regl['cultures']['list']));
-    if ($regl['cultures']['note']) $cultures_f .= ' (' . $regl['cultures']['note'] . ')';
+    $list = [];
+    foreach ($regl['cultures']['list'] as $key => $item) {
+      $list[] = '<a href="' . url('node/' . $key) . '" target="_blank">' . ($list ? drupal_strtolower($item) : $item) . '</a>';
+    }
+    $cultures_f = implode(', ', $list);
+    if ($regl['cultures']['note']) $cultures_f .= ' (' . drupal_strtolower($regl['cultures']['note']) . ')';
   } else {
     $cultures_f = $regl['cultures']['note'];
   }
-  $regl['cultures']['formatted'] = drupal_ucfirst(drupal_strtolower($cultures_f));
+  $regl['cultures']['formatted'] = $cultures_f;
 
   // список ВО
   $hobjects_arr = [];
+    // если категория не определена, вывести "Десикация"
+  if (!$regl['hobjects']['weed_groups'] && !$regl['hobjects']['pest_classes'] && !$regl['hobjects']['list'] && $product_info['category']['id'] == CAT_DESIC_TID) {
+    $regl['hobjects']['pest_classes'][] = t('Desiccation');
+  }
+
   if ($regl['hobjects']['weed_groups']) {
     foreach ($regl['hobjects']['weed_groups'] as $wg) {
       $hobjects_arr[] = ($wg['lifes'] ? implode(', ', $wg['lifes']) . ' ' : '') . implode(', ', $wg['classes']);
@@ -815,18 +824,25 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
   if ($regl['hobjects']['pest_classes']) {
     $hobjects_arr[] = implode(', ', $regl['hobjects']['pest_classes']);
   }
+
   if ($regl['hobjects']['list']) {
+    $list = [];
     foreach ($regl['hobjects']['list'] as $hi => $ho) {
-      $hobjects_arr[] = $ho['name'];
+      $list[] = '<a href="' . url('node/' . $hi) . '" target="_blank">' . ($list ? drupal_strtolower($ho['name']) : $ho['name']) . '</a>';
     }
   }
-  if ($hobjects_arr) {
-    $hobjects_f = implode(', ', array_values($hobjects_arr));
-    if ($regl['hobjects']['note']) $hobjects_f .= ' (' . $regl['hobjects']['note'] . ')';
+  if ($hobjects_arr || $list) {
+    $hobjects_f = '';
+    if ($hobjects_arr)  {
+      $hobjects_f .= implode(', ', array_values($hobjects_arr)) . ($list ? '. ' : '');
+      $hobjects_f =  drupal_ucfirst(drupal_strtolower($hobjects_f));
+    }
+    if ($list)          $hobjects_f .= implode(', ', $list);
+    if ($regl['hobjects']['note']) $hobjects_f .= ' (' . drupal_strtolower($regl['hobjects']['note']) . ')';
   } else {
     $hobjects_f = $regl['hobjects']['note'];
   }
-  $regl['hobjects']['formatted'] = drupal_ucfirst(drupal_strtolower($hobjects_f));
+  $regl['hobjects']['formatted'] = $hobjects_f;
 
   // оформить расход препарата
   $prep_spends_f = $prep_spends_f_field = '';
@@ -849,6 +865,7 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
       $prep_spends_f_field .= $prep_spends_f_field ? ' + ' . $join_field : $join_field;
     }
   }
+  $regl['prep_spends']['formatted_raw'] = $prep_spends_f;
   $prep_spends_f .= ' ' . $product_info['units']['short'] . '/' . $product_info['units']['apply'];
   $regl['prep_spends']['formatted'] = $prep_spends_f;
   if ($prep_spends_f_field) {
@@ -856,17 +873,11 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
     $regl['prep_spends']['field']['formatted'] = $prep_spends_f_field;
   }
 
-
-
   // оформить расход рабочей жидкости
   $mix_spend_f = $regl['mix_spend']['raw']['from'] == $regl['mix_spend']['raw']['to'] ? $regl['mix_spend']['raw']['to'] : ($regl['mix_spend']['raw']['from'] . '-' . $regl['mix_spend']['raw']['to']);
+  $regl['mix_spend']['formatted_raw'] = $mix_spend_f;
   $mix_spend_f .= ' ' . t('l', [], ['context' => 'units']) . '/' . $product_info['units']['apply'];
   $regl['mix_spend']['formatted'] = $mix_spend_f;
-
-  // если категория не определена, вывести "Десикация"
-  if (!$regl['hobjects']['weed_groups'] && !$regl['hobjects']['pest_classes'] && !$regl['hobjects']['list'] && $product_info['category']['id'] == CAT_DESIC_TID) {
-    $regl['hobjects']['pest_classes'][] = t('Desiccation');
-  }
 
   $regl['wait']['formatted'] = is_numeric($regl['wait']['raw']) ? format_plural($regl['wait']['raw'], '@count day', '@count days') : $regl['wait']['raw'];
 
