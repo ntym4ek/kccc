@@ -189,6 +189,7 @@ function sec_pesticides_mcx_process_queue_item($data)
       $reg = str_replace(['«АГРОТЕХИНВЕСТ»', '«АгроТехИнвест»'], 'ООО «АГРОТЕХИНВЕСТ»', $reg);
       $reg = str_replace(['ООО «АДФ», ООО «Ярило»', 'ООО «Ярило», ООО «АФД»'], 'ООО «АФД», ООО «Ярило»', $reg);
       $reg = str_replace('«АЛЬФААГРОХИМ»', 'ООО «АЛЬФААГРОХИМ»', $reg);
+      $reg = str_replace(['ИСК БИОСАЙЕНСИС Юроп Н.В.', 'ИСК Биосайнсис Юроп Н.В.'], 'ИСК Биосайенсис Юроп НВ', $reg);
       if ($reg == '«Байер Агрикалче БВ»') $reg = 'Байер Агрикалче БВ';
       if ($reg == '«КЕМИНОВА А/С»') $reg = 'КЕМИНОВА А/С';
       if ($reg == 'ООО «КЛЕВЕР ГРУПП»\'3/3') $reg = 'ООО «КЛЕВЕР ГРУПП»';
@@ -204,10 +205,13 @@ function sec_pesticides_mcx_process_queue_item($data)
       $reg = str_replace('МИКРООРГАНИЗ-МОВ', 'МИКРООРГАНИЗМОВ', $reg);
       $reg = str_replace([' ; ', '; ', ';'], ', ', $reg);
       $reg = str_replace(['&amp;'], '&', $reg);
-      $reg = str_replace(['ЛТД.', 'лтд.', 'Лтд.'], ['ЛТД', 'лтд', 'Лтд'], $reg);
-      $reg = str_replace(['Кфт.', 'кфт.', 'КФТ.'], ['Кфт', 'кфт', 'КФТ'], $reg);
-      $reg = str_replace(['Лимитед', '', ''], ['Лтд', '', ''], $reg);
+      $reg = str_replace(['ЛТД.', 'лтд.', 'Лтд.'], 'Лтд', $reg);
+      $reg = str_replace(['Кфт.', 'кфт.', 'КФТ.'], 'Кфт', $reg);
+      $reg = str_replace('Лимитед', 'Лтд', $reg);
+      $reg = str_replace('М.Б.Х.', 'МБХ', $reg);
       $reg = str_replace(['с.а.с.', 'с.а.с', 'С.А.С.'], 'САС', $reg);
+      $reg = str_replace(['С.П.А.', 'С.П.А', 'С.п.А.'], 'СпА', $reg);
+      $reg = str_replace(['Н.В.'], 'НВ', $reg);
 
       $node_wr->field_hp_registrant = $reg;
     }

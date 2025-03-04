@@ -797,7 +797,7 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
   }
 
   // список Культур
-  if ($regl['cultures']) {
+  if ($regl['cultures']['list']) {
     $cultures_f = implode(', ', array_values($regl['cultures']['list']));
     if ($regl['cultures']['note']) $cultures_f .= ' (' . $regl['cultures']['note'] . ')';
   } else {

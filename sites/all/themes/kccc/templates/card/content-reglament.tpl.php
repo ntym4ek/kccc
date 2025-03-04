@@ -1,9 +1,11 @@
 <?php
 ?>
 
+<?php if (!empty($card['hobjects']['formatted'])): ?>
 <div class="hobjects">
   <?php print $card['hobjects']['formatted']; ?>
 </div>
+<?php endif; ?>
 
 <div class="row">
   <div class="col-xs-6">
@@ -19,6 +21,7 @@
     </div>
   </div>
 </div>
+<?php if (!empty($card['wait']['formatted'] || !empty($card['ratio']['formatted']))): ?>
 <div class="row">
   <div class="col-xs-6">
     <div class="spec">
@@ -33,6 +36,7 @@
     </div>
   </div>
 </div>
+<?php endif; ?>
 <?php if ($card['description']): ?>
 <div class="row">
   <div class="col-xs-12">
