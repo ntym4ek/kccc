@@ -55,29 +55,39 @@ function sec_sellers_page()
         }
 
         if ($direction['areas']) {
+          $managers = $sellers = [];
           foreach ($direction['areas'] as $area) {
             if ($area['managers']) {
-              $content .= '<div class="row">';
-              foreach ($area['managers'] as $manager) {
-                $manager['active'] = true;
-                $content .= '<div class="col-xs-12 col-md-6">';
-                $content .=   theme('card_contact', $manager);
-                $content .= '</div>';
-              }
-              $content .= '</div>';
+              foreach ($area['managers'] as $manager) $managers[$manager['id']] = $manager;
             }
-
             if ($area['sellers']) {
-              $content .= '<div class="row">';
-              foreach ($area['sellers'] as $seller) {
-                $seller['active'] = true;
-                $content .= '<div class="col-xs-12 col-md-6">';
-                $content .=   theme('card_contact', $seller);
-                $content .= '</div>';
-              }
+              foreach ($area['sellers'] as $seller) $sellers[$seller['id']] = $seller;
+            }
+          }
+
+          $content .= '<div class="row">';
+          if ($managers) {
+            $content .= '<div class="col-xs-12">';
+            $content .=   '<div class="row">';
+            foreach ($managers as $manager) {
+              $manager['active'] = true;
+              $content .=   '<div class="col-xs-12 col-md-6">';
+              $content .=     theme('card_contact', $manager);
+              $content .=   '</div>';
+            }
+            $content .=   '</div>';
+            $content .= '</div>';
+          }
+
+          if ($sellers) {
+            foreach ($sellers as $seller) {
+              $seller['active'] = true;
+              $content .= '<div class="col-xs-12 col-md-6">';
+              $content .=   theme('card_contact', $seller);
               $content .= '</div>';
             }
           }
+          $content .= '</div>';
         }
       }
     }
