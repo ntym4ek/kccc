@@ -208,7 +208,7 @@ function ext_node_preprocess_node(&$vars)
   // -- Тип Видео
   if ($node->type == 'video') {
     // преобразовать ссылку https://www.youtube.com/watch?v=BiNh9OXi95g в embed (https://www.youtube.com/embed/BiNh9OXi95g)
-    $youtube_url = $vars['field_text'][0]['value'];
+    $youtube_url = $vars['field_text'][0]['value'] ?? '';
     $rutube_url = $vars['field_link_rutube'][0]['value'] ?? '';
     // предпочтение рутубу
     if ($rutube_url) {

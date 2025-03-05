@@ -133,4 +133,12 @@
   </div>
   <?php endif; ?>
 
+  <?php if (!empty($pvp_info['conclusion'])): ?>
+  <div class="pvp-conclusion">
+    <div class="h3">Выводы</div>
+    <p><?php print $pvp_info['conclusion']; ?></p>
+  </div>
+  <?php endif; ?>
+
+
 </div>

@@ -275,6 +275,7 @@ function sec_pvp_get_pvp_info($pvp_nid)
             'previous' => $pvp_wr->field_pvp_culture_previous->value(),
           ],
           'events' => [],
+          'conclusion' => $pvp_wr->field_pvp_conclusion->value(),
         ];
 
         $events = [];

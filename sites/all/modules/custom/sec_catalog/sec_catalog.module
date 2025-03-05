@@ -825,8 +825,8 @@ function sec_catalog_get_reglament_info_formatted($regl, $product_info, $field =
     $hobjects_arr[] = implode(', ', $regl['hobjects']['pest_classes']);
   }
 
+  $list = [];
   if ($regl['hobjects']['list']) {
-    $list = [];
     foreach ($regl['hobjects']['list'] as $hi => $ho) {
       $list[] = '<a href="' . url('node/' . $hi) . '" target="_blank">' . ($list ? drupal_strtolower($ho['name']) : $ho['name']) . '</a>';
     }
