@@ -517,11 +517,14 @@ function sec_catalog_get_product_info($node, $mode = 'full')
       if (strpos($product['title'], ' ') !== false) {
         if ($GLOBALS['language']->language == 'ru') {
           $product['label'] = preg_replace('/^((?:Солонайт)|(?:АгроМинерал)|(?:Гранберг)|(?:Октапон)|(?:Грандсил)|(?:Бетаниум)|(?:Глифор)|(?:Инстал Виктус))((?:\s.*?))$/', '$1' . $trademark . '$2', $product['title']);
+          $product['label_card'] = preg_replace('/^((?:Солонайт)|(?:АгроМинерал)|(?:Гранберг)|(?:Октапон)|(?:Грандсил)|(?:Бетаниум)|(?:Глифор)|(?:Инстал Виктус))\s((?:.*?))$/', '$1' . $trademark . '<br>' .  '$2', $product['title']);
         } else {
           $product['label'] = preg_replace('/^((?:Solonayt)|(?:AgroMineral)|(?:Granberg)|(?:Oktapon)|(?:Grandsil)|(?:Betanium)|(?:Glifor)|(?:Instal Viktus))((?:\s.*?))$/', '$1' . $trademark . '$2', $product['title']);
+          $product['label_card'] = preg_replace('/^((?:Solonayt)|(?:AgroMineral)|(?:Granberg)|(?:Oktapon)|(?:Grandsil)|(?:Betanium)|(?:Glifor)|(?:Instal Viktus))\s((?:.*?))$/', '$1' . $trademark . '<br>' . '$2', $product['title']);
         }
       } else {
         $product['label'] = $product['title'] . $trademark;
+        $product['label_card'] = $product['title'] . $trademark;
       }
       $image_uri = 'public://images/default/no_image.png';
       if ($node_wr->field_image->value()) {
