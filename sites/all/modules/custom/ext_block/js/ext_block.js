@@ -12,10 +12,11 @@
 
       // --- Popup Telegram ----------------------------------------------------
       setTimeout(()=> {
-        var popupTg = $.cookie('popup-tg');
+        var popupCookie = "popup-tg2";
+        var popupTg = $.cookie(popupCookie);
         if (!popupTg) {
           $(".popup-tg-close").closest(".block-popup-tg").fadeIn(200);
-          $.cookie('popup-tg', true, { expires: 30 }); // 30 days
+          $.cookie(popupCookie, true, { expires: 30 }); // 30 days
         }
       }, 5000);
 
