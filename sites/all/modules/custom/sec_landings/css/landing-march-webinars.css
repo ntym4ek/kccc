@@ -1,0 +1,82 @@
+.webinar-page {
+  position: relative; }
+  .webinar-page image {
+    width: 100%; }
+  .webinar-page .buttons-wrapper {
+    position: absolute;
+    top: 76.2%;
+    left: 0;
+    right: 0; }
+  .webinar-page .buttons-wrapper2 {
+    position: absolute;
+    top: 24%;
+    left: 0;
+    right: 0; }
+  .webinar-page .buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+    width: 88%; }
+    .webinar-page .buttons .btn {
+      font-weight: 700; }
+  .webinar-page .buttons2 {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+    width: 89%; }
+    .webinar-page .buttons2 .btn {
+      padding: 6px 2%;
+      font-size: 11px;
+      line-height: 16px;
+      border-radius: 10px;
+      height: 58px;
+      white-space: normal;
+      font-weight: 500;
+      width: 48%; }
+    .webinar-page .buttons2 span {
+      color: #EEFF26; }
+  @media only screen and (min-width: 768px) {
+    .webinar-page .buttons-wrapper {
+      top: 79.5%; }
+    .webinar-page .buttons-wrapper2 {
+      top: 25%; }
+    .webinar-page .buttons {
+      width: 100%; }
+      .webinar-page .buttons .btn {
+        padding: 15px 7%;
+        font-size: 20px;
+        line-height: 20px;
+        border-radius: 10px;
+        height: 53px; }
+    .webinar-page .buttons2 .btn {
+      font-weight: 700;
+      padding: 14px 2%;
+      font-size: 20px;
+      line-height: 24px;
+      border-radius: 10px;
+      height: 100px; } }
+  @media only screen and (min-width: 1193px) {
+    .webinar-page .buttons-wrapper {
+      justify-content: space-between;
+      top: 77%; }
+    .webinar-page .buttons-wrapper2 {
+      top: 24.5%; }
+    .webinar-page .buttons {
+      width: 65%; }
+    .webinar-page .buttons2 {
+      width: 72%; } }
+  @media only screen and (min-width: 1366px) {
+    .webinar-page .buttons .btn {
+      padding: 18px 7%;
+      font-size: 24px;
+      line-height: 24px;
+      border-radius: 10px;
+      height: 62px; }
+    .webinar-page .buttons2 .btn {
+      padding: 16px 2%;
+      font-size: 24px;
+      line-height: 28px;
+      border-radius: 10px;
+      height: 115px; } }
+
+/*# sourceMappingURL=landing-march-webinars.css.map */

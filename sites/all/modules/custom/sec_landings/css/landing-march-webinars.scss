@@ -1,0 +1,58 @@
+@import "../../../../themes/kccc/css/includes"; // продублировано из styles.scss, чтобы переменные не подсвечивались
+
+
+.webinar-page {
+  position: relative;
+  image { width: 100%; }
+  .buttons-wrapper { position: absolute; top: 76.2%; left: 0; right: 0; }
+  .buttons-wrapper2 { position: absolute; top: 24%; left: 0; right: 0; }
+  .buttons {
+    display: flex; justify-content: space-around;
+    margin: 0 auto;
+    width: 88%;
+    .btn { font-weight: 700; }
+  }
+  .buttons2 {
+    display: flex; justify-content: space-around;
+    margin: 0 auto;
+    width: 89%;
+    .btn {
+      @include button-size(6px, 2%, 11px, 16px, 10px, 58px);
+      white-space: normal;
+      font-weight: 500;
+      width: 48%;
+    }
+    span { color: #EEFF26; }
+  }
+
+  @media only screen and (min-width: 768px) {
+    .buttons-wrapper { top: 79.5%; }
+    .buttons-wrapper2 { top: 25%; }
+    .buttons {
+      width: 100%;
+      .btn { @include button-size(15px, 7%, 20px, 20px, 10px, 53px); }
+    }
+    .buttons2 {
+      .btn {
+        font-weight: 700;
+        @include button-size(14px, 2%, 20px, 24px, 10px, 100px);
+      }
+    }
+  }
+
+  @media only screen and (min-width: 1193px) {
+    .buttons-wrapper { justify-content: space-between; top: 77%; }
+    .buttons-wrapper2 { top: 24.5%; }
+    .buttons { width: 65%; }
+    .buttons2 { width: 72%; }
+  }
+
+  @media only screen and (min-width: 1366px) {
+    .buttons {
+      .btn { @include button-size(18px, 7%, 24px, 24px, 10px, 62px); }
+    }
+    .buttons2 {
+      .btn { @include button-size(16px, 2%, 24px, 28px, 10px, 115px); }
+    }
+  }
+}
