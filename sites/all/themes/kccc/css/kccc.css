@@ -4916,16 +4916,21 @@ ul.action-links {
   padding: .6rem; }
   .node-pesticide.node-full .node-note span {
     text-decoration: underline; }
-.node-pesticide.node-full .node-reglaments table {
-  font-size: 0.889rem;
-  font-weight: 400; }
-  .node-pesticide.node-full .node-reglaments table tr.even, .node-pesticide.node-full .node-reglaments table tr.odd {
-    background: none; }
-  .node-pesticide.node-full .node-reglaments table th {
-    color: #7D7C7C;
+.node-pesticide.node-full .node-reglaments {
+  overflow-x: scroll; }
+  .node-pesticide.node-full .node-reglaments table {
     font-size: 0.889rem;
-    font-weight: 400;
-    text-align: center; }
+    font-weight: 400; }
+    .node-pesticide.node-full .node-reglaments table tr.even, .node-pesticide.node-full .node-reglaments table tr.odd {
+      background: none; }
+    .node-pesticide.node-full .node-reglaments table th {
+      color: #7D7C7C;
+      font-size: 0.889rem;
+      font-weight: 400;
+      text-align: center; }
+  @media only screen and (min-width: 1024px) {
+    .node-pesticide.node-full .node-reglaments {
+      overflow-x: visible; } }
 
 .node-page .files {
   margin-bottom: 2rem; }

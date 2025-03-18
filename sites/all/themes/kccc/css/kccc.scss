@@ -1288,12 +1288,17 @@ ul.action-links {
       span { text-decoration: underline; }
     }
     .node-reglaments {
+      overflow-x: scroll;
       table {
         font-size: $font-size-small; font-weight: 400;
         tr.even, tr.odd { background: none; }
         th {
           color: $text-light; font-size: $font-size-small; font-weight: 400; text-align: center;
         }
+      }
+
+      @media #{$tablet} {
+        overflow-x: visible;
       }
     }
   }

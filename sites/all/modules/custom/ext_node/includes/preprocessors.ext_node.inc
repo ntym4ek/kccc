@@ -76,7 +76,7 @@ function ext_node_remove_all_links($text)
 {
   // составить паттерн исключений, содержащих текст
   $excludes_list = [
-    'youtu.be', 'youtube.com', 'rutube.ru', 'music.yandex.ru', 't.me',
+    'youtu.be', 'youtube.com', 'rutube.ru', 'music.yandex.ru', 't.me', 'clck.ru',
     'kccc.ru/video', 'kccc.ru/blog', 'kccc.ru/novosti', 'kccc.ru/spravochniki', 'kccc.ru/agro-kalkulator', 'kccc.ru/programmy-zashchity', 'kccc.ru/preparaty-v-pole',
   ];
   $excludes = [];

@@ -100,13 +100,13 @@
     </div>
   </div>
 
-  <?php if(strpos($field_hp_registrant[0]["value"], 'ИНТЕР ГРУПП') === false): ?>
+  <?php if(!empty($field_hp_registrant[0]["value"]) && strpos($field_hp_registrant[0]["value"], 'ИНТЕР ГРУПП') === false): ?>
   <div class="node-row node-note">
     <?php print 'Информация о препарате приведена в качестве справочной.<br>КССС <span>не продает</span> и <span>не несет ответственности</span> за качество работы данного препарата'; ?>
   </div>
   <?php endif; ?>
 
-  <div class="node-row node-reglaments">
+  <div class="node-row node-reglaments mobile-menu-disabled">
     <?php print $reglaments; ?>
   </div>
 
