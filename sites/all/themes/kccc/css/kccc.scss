@@ -1280,6 +1280,13 @@ ul.action-links {
         &:before { content: none; }
       }
     }
+    .node-note {
+      background: $brand-orange;
+      border-radius: 6px;
+      color: #fff; text-align: center;
+      padding: .6rem;
+      span { text-decoration: underline; }
+    }
     .node-reglaments {
       table {
         font-size: $font-size-small; font-weight: 400;

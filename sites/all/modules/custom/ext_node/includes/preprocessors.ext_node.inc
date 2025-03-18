@@ -76,7 +76,7 @@ function ext_node_remove_all_links($text)
 {
   // составить паттерн исключений, содержащих текст
   $excludes_list = [
-    'youtu.be', 'youtube.com', 'rutube.ru', 'music.yandex.ru',
+    'youtu.be', 'youtube.com', 'rutube.ru', 'music.yandex.ru', 't.me',
     'kccc.ru/video', 'kccc.ru/blog', 'kccc.ru/novosti', 'kccc.ru/spravochniki', 'kccc.ru/agro-kalkulator', 'kccc.ru/programmy-zashchity', 'kccc.ru/preparaty-v-pole',
   ];
   $excludes = [];
@@ -201,6 +201,7 @@ function ext_node_replacements_list()
   $query = db_select('node', 'n');
   $query->fields('n', ['nid', 'title']);
   $query->condition('n.type', 'preparation');
+  $query->condition('n.status', 1);
   $query->leftJoin('field_data_field_prep_formulation', 'pf', 'pf.entity_id = n.nid');
   $query->leftJoin('field_data_field_acronym', 'fa', 'fa.entity_id = pf.field_prep_formulation_tid');
   $query->condition('fa.bundle', 'preparation_formulations');
