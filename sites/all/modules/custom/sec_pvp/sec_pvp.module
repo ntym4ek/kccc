@@ -301,16 +301,18 @@ function sec_pvp_get_pvp_info($pvp_nid)
             ];
           }
           foreach ($check_wr->field_pvp_check_hobjects->getIterator() as $ch_wr) {
-            $ho = [
-              'id' => $ch_wr->field_hobject->getIdentifier(),
-              'label' => $ch_wr->field_hobject->label(),
-              'type' => $ch_wr->field_hobject->type->value(),
-            ];
-            if ($ch_wr->field_image->value()) {
-              $ho['photo_uri'] = $ch_wr->field_image->file->value()->uri;
-              $ho['note'] = $ch_wr->field_image->title->value();
+            if ($ch_wr->field_hobject->value()) { // в одной из записей не сохранилась ссылка на ВО и скрипт выбивает exeption
+              $ho = [
+                'id' => $ch_wr->field_hobject->getIdentifier(),
+                'label' => $ch_wr->field_hobject->label(),
+                'type' => $ch_wr->field_hobject->type->value(),
+              ];
+              if ($ch_wr->field_image->value()) {
+                $ho['photo_uri'] = $ch_wr->field_image->file->value()->uri;
+                $ho['note'] = $ch_wr->field_image->title->value();
+              }
+              $event['hobjects']['list'][] = $ho;
             }
-            $event['hobjects']['list'][] = $ho;
           }
 
           // при одинаковой дате сортируем по ID
