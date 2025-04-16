@@ -14,6 +14,18 @@ function sec_pesticides_menu()
   return $items;
 }
 
+function sec_pesticides_node_access($node, $op, $account)
+{
+  // todo убрать
+  // закрыть справочник от анонимов
+  $type = is_string($node) ? $node : $node->type;
+  if ($type == 'pesticide') {
+    if (!user_has_role(MARKETING_RID, $account->roles)) {
+      return NODE_ACCESS_DENY;
+    }
+  }
+}
+
 /**
  * Implements hook_cron_queue_info().
  */

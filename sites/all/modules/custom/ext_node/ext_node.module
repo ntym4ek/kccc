@@ -288,7 +288,8 @@ function ext_node_preprocess_node(&$vars)
               $col_0_value = $reglament['cultures']['formatted'];
               $col_0_id = $id; $col_0_count = 0;
             } else $col_0_count++;
-            if ($col_1_value != $reglament['hobjects']['formatted']) {
+            $col_1 = $reglament['hobjects']['formatted'];
+            if ($col_1_value != $col_1) {
               $col_1_value = $reglament['hobjects']['formatted'];
               $col_1_id = $id; $col_1_count = 0;
             } else $col_1_count++;
@@ -319,7 +320,7 @@ function ext_node_preprocess_node(&$vars)
             if ($col_4_count) $spans[$col_4_id]['4'] = $col_4_count;
             if ($col_5_count) $spans[$col_5_id]['5'] = $col_5_count;
             $col_0 = $col_0_count ? '' : ['data' => $reglament['cultures']['formatted'], 'class' => 'category-bkg'];
-            $col_1 = $col_1_count ? '' : ['data' => $reglament['hobjects']['formatted']];
+            $col_1 = $col_1_count || !$col_1? '' : ['data' => $reglament['hobjects']['formatted']];
             $col_2 = $col_2_count ? '' : ['data' => $reglament['prep_spends']['formatted_raw'], 'align' => 'center'];
             $col_3 = $col_3_count ? '' : ['data' => $reglament['mix_spend']['formatted_raw'], 'align' => 'center'];
             $col_4 = $col_4_count ? '' : ['data' => $reglament['description']];
